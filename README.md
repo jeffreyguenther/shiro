@@ -12,3 +12,6 @@ This project is the result of research being conducted at [Simon Fraser Universi
 * [Robert Woodbury](http://www.siat.sfu.ca/faculty/profile/rob-woodbury)
 * [Siniša Kolarić](http://www.sfu.ca/~skolaric/)
 * [Ankit Gupta](http://www.linkedin.com/pub/ankit-gupta/37/b7b/851)
+
+
+Mailing list: shiro-lang@googlegroups.com
