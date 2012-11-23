@@ -1,4 +1,4 @@
-shiro
+Shiro
 =====
 
 Shiro is a data flow programming language designed to be embedded into applications to help to support reuse and the exploration of alternatives.
