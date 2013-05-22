@@ -30,12 +30,39 @@
     <dependency>
       <groupId>org.antlr</groupId>
       <artifactId>antlr</artifactId>
-      <version>3.5</version>
+      <version>3.4</version>
     </dependency>
     <dependency>
       <groupId>net.sourceforge.collections</groupId>
       <artifactId>collections-generic</artifactId>
       <version>4.01</version>
     </dependency>
+   <dependency>
+      <groupId>org.antlr</groupId>
+      <artifactId>antlr3-maven-plugin</artifactId>
+      <version>3.4</version>
+    </dependency>
   </dependencies>
+   <build>
+
+        <plugins>
+            <plugin>
+                <groupId>org.antlr</groupId>
+                  <artifactId>antlr3-maven-plugin</artifactId>
+                  <version>3.4</version>
+                  <executions>
+                      <execution>
+                          <goals>
+                              <goal>antlr</goal>
+                          </goals>
+                      </execution>
+                  </executions>
+             </plugin>
+        </plugins>
+   </build>
+
+
+    
+   
+ 
 </project>
