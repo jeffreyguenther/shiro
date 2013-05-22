@@ -5,3 +5,4 @@
 *.war
 *.ear
 .DS_Store
+shiro/target
