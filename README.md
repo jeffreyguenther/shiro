@@ -8,7 +8,7 @@ Getting Started
 
 Shiro is implemented in Java. [Maven](http://maven.apache.org/) is used as the build system and dependency manager. The parser and tree walker for the interpretter were written [antlr 3.4](http://www.antlr3.org/) grammars. The grammars are used to generate Java code. The maven pom.xml file is setup to automatically generate the Java code at compile time. You can use maven from the commandline or use Netbeans or Eclipse, as both IDE's have support for maven projects.
 
-In the example_code folder, you'll find example.sro. It is a simple example of the language syntax. Currently, when the code is interpretted a large amount of debugging output is shown. It'll help you get a sense of what is actually going on inside the system. More examples are coming shortly. Pass example.sro as the first argument on the commandline to see the output.
+In the `example_code` folder, you'll find `example.sro`. It is a simple example of the language syntax. Currently, when the code is interpretted a large amount of debugging output is shown. It'll help you get a sense of what is actually going on inside the system. More examples are coming shortly. Pass example.sro as the first argument on the commandline to see the output.
 
 Questions can be sent to shiro-lang@googlegroups.com or [Jeff](mailto:jguenthe@sfu.ca). If you have taken the time to play with the language, please drop me a line and let me know what you think.
 
@@ -32,5 +32,8 @@ This project is the result of research being conducted at [Simon Fraser Universi
 * [Siniša Kolarić](http://www.sfu.ca/~skolaric/) - Research Group Colleague
 * [Ankit Gupta](http://www.linkedin.com/pub/ankit-gupta/37/b7b/851) - Research Group Colleague
 
-
 Mailing list: shiro-lang@googlegroups.com
+
+License
+-------
+Shiro is licensed under the [MIT license](http://opensource.org/licenses/MIT)
