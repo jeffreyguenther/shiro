@@ -10,7 +10,7 @@ Shiro is implemented in Java. [Maven](http://maven.apache.org/) is used as the b
 
 In the example_code folder, you'll find example.sro. It is a simple example of the language syntax. Currently, when the code is interpretted a large amount of debugging output is shown. It'll help you get a sense of what is actually going on inside the system. More examples are coming shortly. Pass example.sro as the first argument on the commandline to see the output.
 
-Questions can be sent to shiro-lang@googlegroups.com or [Jeff](jguenthe@sfu.ca). If you have taken the time to play with the language, please drop me a line and let me know what you think.
+Questions can be sent to shiro-lang@googlegroups.com or [Jeff](mailto:jguenthe@sfu.ca). If you have taken the time to play with the language, please drop me a line and let me know what you think.
 
 Ways You Can Help
 =================
