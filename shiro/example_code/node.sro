@@ -1,0 +1,6 @@
+node Point begin
+	port x Value
+	port y Value
+	eval update Point ( x[0], y[0] )// Notice the node's name and the evaluated port's multifunction have the same name. Names of nodes and names of multi-functions can be the same because they are completely different aspects of Shiro. One indicates the type of the port. The other indicates the name of the node. Multi-functions have their own package structure. 
+	port point Value ( update[0] )  // Shiro is case-sensitive, so "point" and "Point" are different names.
+end

@@ -1,0 +1,81 @@
+/*
+* A scaling box. Here is an example of how to build a simple geometric 	
+* parametric graph.
+* 
+* Author: Jeffrey Guenther
+* August 10, 2012
+*
+* ConstrainedBox_3.sro
+*/
+
+// Define your nodes
+node Point begin
+	port x Value
+	port y Value
+	eval update Point ( x[0], y[0] )
+	port point Value ( update[0] )
+end
+
+node Line[update] begin
+	port p1 Value
+	port p2 Value
+	eval update Line ( p1[0], p2[0] )
+	port length Value ( update["length"] )
+	port line Value ( update[0] )
+end
+
+node Area begin
+	port length1 Value
+	port length2 Value
+	eval update Multiply(length1[0], length2[0])
+	port area Value (update["value"])
+end
+
+// Graph
+graph constrainedBox begin
+	// produces syntax
+	//Point -> P1
+	Point -> P1 -> P2 -> P3 -> P4
+	Line -> L1 -> L2 -> L3 -> L4
+	
+	// syntax for editing a port's expression
+	P1.x(0)
+	P1.y(0)
+	
+	P2.x( 0 )
+	P2.y( 10)
+		
+	P3.x( 2.5 * P2.y[0])
+	P3.y( P2.y[0])
+	
+	P4.x(2.5 * P2.y[0])
+	P4.y(P1.y[0])
+	
+	L1.p1(P1.point[0])
+	L1.p2(P2.point[0])
+	
+	L2.p1(P1.point[0])
+	L2.p2(P4.point[0])
+	
+	L3.p1(P4.point[0])
+	L3.p2(P3.point[0])
+	
+	L4.p1(P2.point[0])
+	L4.p2(P3.point[0])
+	
+	// direct use of the Area node. As long as the name is in scope an
+	// instance will be created.
+	Area.length1(L1.length[0])
+	Area.length2(L2.length[0])
+		
+	// the same goes for Perimeter
+	Perimeter.length1(L1.length[0])
+	Perimeter.length2(L2.length[0])
+end
+
+node Perimeter begin
+	port length1 Value
+	port length2 Value
+	eval update Sum(2 * length1[0], 2 * length2[0])
+	port perimeter Value(update[0])
+end

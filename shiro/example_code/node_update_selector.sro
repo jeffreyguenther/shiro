@@ -1,0 +1,16 @@
+// a comment
+node Area[update] begin
+	port p1 Value
+	port p2 Value
+	port p3 Value
+	port p4 Value
+	eval areaFromPoints areaPoints(p1[0], p2[0], p3[0], p[4])
+
+	port length1 Value
+	port length2 Value
+	eval update Multiply(length1[0], length2[0])
+	
+	// area depends on the two eval ports.
+	// The active eval port will determine the value of area.
+	port area Value (update["value"] | areaFromPoints["value"])
+end
