@@ -3,9 +3,7 @@ package shiro;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.antlr.runtime.RecognitionException;
-import org.antlr.runtime.tree.CommonTree;
-import org.antlr.runtime.tree.CommonTreeNodeStream;
+import org.antlr.v4.runtime.RecognitionException;
 import org.apache.commons.collections15.map.HashedMap;
 import shiro.dag.DAGraph;
 import shiro.dag.DependencyRelation;
@@ -22,7 +20,7 @@ import shiro.functions.SumMFunc;
 import shiro.functions.ValueMFunc;
 import shiro.functions.graphics.LineMFunc;
 import shiro.functions.graphics.PointMFunc;
-import shiro.interpreter.ShiroDefinitionPass;
+//import shiro.interpreter.ShiroDefinitionPass;
 
 /**
  * A subjunctive parametric system.
@@ -33,7 +31,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
 
     private Map<String, MultiFunction> multiFunctions; // multifunction symbol table
     private DAGraph<Port> depGraph;                   // realized dependency graph
-    private Map<String, CommonTree> nodeASTDefinitions;// AST table
+//    private Map<String, CommonTree> nodeASTDefinitions;// AST table
     private Map<String, Node> nodes;                   // realized node table
     private Map<String, SubjunctiveNode> subjNodes;    // realized subj. node table
     private PortAction graphNodeAction;
@@ -45,7 +43,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         loadMultiFunctions(multiFunctions);
 
         depGraph = new DAGraph<Port>();
-        nodeASTDefinitions = new HashMap<String, CommonTree>();
+//        nodeASTDefinitions = new HashMap<String, CommonTree>();
         nodes = new HashedMap<String, Node>();
         subjNodes = new HashMap<String, SubjunctiveNode>();
         graphNodeAction = new PortAction();
@@ -199,7 +197,8 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
 
         // check to see if path refers to an unrealized node
         if (match == null
-                && nodeASTDefinitions.containsKey(p.getCurrentPathHead())) {
+                //&& nodeASTDefinitions.containsKey(p.getCurrentPathHead())
+                ) {
             // If it does, build the node.
             match = createNode(p.getCurrentPathHead());
 
@@ -325,10 +324,10 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
      * @param map map of node name to AST trees
      * @return the current state of the definitions map
      */
-    public Map<String, CommonTree> addNodeASTDefinitions(Map<String, CommonTree> map) {
-        nodeASTDefinitions.putAll(map);
-        return nodeASTDefinitions;
-    }
+//    public Map<String, CommonTree> addNodeASTDefinitions(Map<String, CommonTree> map) {
+//        nodeASTDefinitions.putAll(map);
+//        return nodeASTDefinitions;
+//    }
 
     /**
      * Print the names space the whole system
@@ -449,20 +448,20 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
     }
 
     private Node createNode(String path) {
-        // look up the AST of the node to duplicate
-        CommonTree nodeAST = nodeASTDefinitions.get(path);
-        // create an instance of the graph builder
-        CommonTreeNodeStream nodeASTTokens = new CommonTreeNodeStream(nodeAST);
-        // build the node from the AST
-        ShiroDefinitionPass defPass = new ShiroDefinitionPass(nodeASTTokens);
-        Node producedNode = null;
-        try {
-            defPass.shiro(this);
-            producedNode = defPass.getCreatedNode();
-
-        } catch (RecognitionException ex) {
-            Logger.getLogger(SubjunctiveParametricSystem.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return producedNode;
+//        // look up the AST of the node to duplicate
+//        CommonTree nodeAST = nodeASTDefinitions.get(path);
+//        // create an instance of the graph builder
+//        CommonTreeNodeStream nodeASTTokens = new CommonTreeNodeStream(nodeAST);
+//        // build the node from the AST
+//        ShiroDefinitionPass defPass = new ShiroDefinitionPass(nodeASTTokens);
+//        Node producedNode = null;
+//        try {
+//            defPass.shiro(this);
+//            producedNode = defPass.getCreatedNode();
+//
+//        } catch (RecognitionException ex) {
+//            Logger.getLogger(SubjunctiveParametricSystem.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+        return null;//producedNode;
     }
 }
