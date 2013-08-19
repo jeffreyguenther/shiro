@@ -7,15 +7,15 @@ options{
 }
 
 tokens{
-	NEGATION;
-	STATE_DECL;
-	PORT_DECL;
-	PORT_INIT;
-	PORT_ASSIGNMENT;
-	PORT_TAG;
-	PATH;
-	PORT_INDEX;
-	EVAL_SELECT;
+	NEGATION,
+	STATE_DEC,
+	PORT_DECL,
+	PORT_INIT,
+	PORT_ASSIGNMENT,
+	PORT_TAG,
+	PATH,
+	PORT_INDEX,
+	EVAL_SELECT
 	NODE_STMT;
 	NODE_UPDATE_PORT;
 	SUBJ_SELECT;
@@ -59,27 +59,26 @@ statement
 	| NEWLINE!
 	;
 	
-view	:	'view' IDENT mfName IDENT -> ^('view' IDENT mfName IDENT)
+view	:	'view' IDENT mfName IDENT
 	;
 	
 collection
 	:	'collection' IDENT orderingFunc path 'begin' NEWLINE
 			(collItem)+ NEWLINE?
 		'end'
-		-> ^('collection' IDENT orderingFunc path collItem+)
 	;
 
-collItem:	IDENT -> IDENT
+collItem:	IDENT
 	;
 
 orderingFunc
-	:	IDENT -> IDENT
+	:	IDENT
 	;
 	
 statestmt
 	:	'state' stateName 'begin' NEWLINE
 		stateHeader
-		'end' -> ^(STATE_DECL stateName stateHeader)
+		'end'
 	;
 	
 stateHeader
@@ -87,19 +86,19 @@ stateHeader
 	;
 	
 stateTimeStmt
-	:	'Time' time -> ^('Time' time)
+	:	'Time' time
 	;
 
 stateCommentStmt
-	:	'Comment' comment -> ^('Comment' comment)	
+	:	'Comment' comment	
 	;
 	
 stateParentStmt
-	:	'Parent' stateParent -> ^('Parent' stateParent)
+	:	'Parent' stateParent
 	;
 	
 stateGraphStmt
-	:	'Graph' stateGraph -> ^('Graph' stateGraph)
+	:	'Graph' stateGraph
 	;
 	
 stateName
@@ -125,18 +124,17 @@ activationPath
 	;
 
 activationList
-	:	'<' activation (',' activation)* '>' -> ^(ACTIVATION_LIST activation+)
+	:	'<' activation (',' activation)* '>'
 	;
 	
 activation
-	:	c=IDENT ('[' v=IDENT ']')? -> ^(ACTIVATION $c ($v)?)
+	:	c=IDENT ('[' v=IDENT ']')?
 	;
 	
 graphDecl
 	:	'graph' IDENT 'begin' NEWLINE
 		graphLine+
 		'end'
-		-> ^('graph' IDENT graphLine+)
 	;
 	
 graphLine
@@ -163,7 +161,7 @@ defs.put(nodeName , $nodestmt.tree);
 }
 	:	nodeType IDENT {nodeName = $IDENT.text;} ('[' activeSelector ']')? 'begin' NEWLINE
 		nodeInternal
-		'end' -> ^(NODE_STMT IDENT activeSelector? nodeInternal)
+		'end'
 	;
 	
 nodeType:	'node'| 'subjunct'
@@ -184,9 +182,9 @@ defs.put(nodeName, $sNode.tree);
 	;
 	
 subjunctDeclNodeProd
-	:	l=IDENT '->' r=IDENT 'begin' NEWLINE
+	:	IDENT '->' IDENT 'begin' NEWLINE
 		nodeInternal
-		'end' -> ^(SUBJ_NODE_PROD $l $r nodeInternal)
+		'end'
 	;
 	
 subjunctDecl
@@ -194,11 +192,11 @@ subjunctDecl
 	;
 	
 subjunctSelector
-	:	IDENT -> ^(SUBJ_SELECT IDENT)
+	:	IDENT
 	;
 	
 activeSelector	
-	:	IDENT -> ^(EVAL_SELECT IDENT)
+	:	IDENT
 	;
 
 nodeProduction
@@ -206,15 +204,15 @@ nodeProduction
 	;
 
 portAssignment
-	:	path '(' mfparams ')' NEWLINE -> ^(PORT_ASSIGNMENT path mfparams)
+	:	path '(' mfparams ')' NEWLINE
 	;	
 
 portDecl
-	:	portType portName mfName -> ^(PORT_DECL ^(PORT_TAG portType) portName mfName)
+	:	portType portName mfName
 	;
 	
 portDeclInit
-	:	portType portName mfCall -> ^(PORT_INIT ^(PORT_TAG portType) portName mfCall)
+	:	portType portName mfCall
 	;
 
 portstmt	
@@ -229,21 +227,21 @@ portType:	'port'
 	| 	'eval'
 	;
 	
-mfCall	:	mfName '(' mfparams ')' -> ^(mfName mfparams)
+mfCall	:	mfName '(' mfparams ')'
 	;
 	
 mfName 	:	IDENT
 	;
 
-mfparams:	expression(',' expression)* -> expression+
+mfparams:	expression(',' expression)* 
 	;
 
 // Path
-path 	:	(IDENT)('.' IDENT)*('[' pathIndex ']')? -> ^(PATH IDENT+ pathIndex?)
+path 	:	(IDENT)('.' IDENT)*('[' pathIndex ']')?
 	;
 	
 pathIndex
-	:	portIndex -> ^(PORT_INDEX portIndex)
+	:	portIndex
 	;
 	
 portIndex
@@ -252,24 +250,24 @@ portIndex
 
 // Expressions
 term 	:	path
-	|	'(' expression ')' -> expression
+	|	'(' expression ')'
 	|	NUMBER
 	| 	STRING_LITERAL
 	;
 	
-unary 	:	('+'^ | '-'^)* term
+unary 	:	('+' | '-')* term
 		
 	;
 
-mult 	:	unary (('*'^ | '/'^ | '%'^) unary)*
+mult 	:	unary (('*' | '/' | '%') unary)*
 	;
 
 add 	
-	:	mult (( '+'^ | '-'^ ) mult)*
+	:	mult (( '+' | '-' ) mult)*
 	;
 	
 expression
-	:	add (( '|'^ ) add)*
+	:	add (( '|' ) add)*
 	;
 
 // LEXEMES

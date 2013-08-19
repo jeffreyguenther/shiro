@@ -7,7 +7,7 @@ package shiro.dag;
 public interface DAGEvaluator {
 
     /**
-     * Parallel update method
+     *  Evaluate the DAG
      */
     void evaluate();
     

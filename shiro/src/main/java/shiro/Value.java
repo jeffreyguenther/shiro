@@ -4,7 +4,7 @@ package shiro;
  * Specifies the value of a index in a port's result tuple. It encapsulates 
  * a reference to the value and has a field that indicates the value's type.
  * It is used to make the identification of types easier and to prevent generics
- * from destoying an object's type.
+ * from destroying an object's type.
  * @author jeffreyguenther
  */
 public class Value{
