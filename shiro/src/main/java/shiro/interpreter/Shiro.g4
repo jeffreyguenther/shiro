@@ -20,7 +20,7 @@ statestmt
 	;
 	
 stateHeader
-	: 	(stateTimeStmt | stateCommentStmt | stateParentStmt | stateGraphStmt | activationPath | NEWLINE!)+ 	
+	: 	(stateTimeStmt | stateCommentStmt | stateParentStmt | stateGraphStmt | activationPath | NEWLINE)+ 	
 	;
 	
 stateTimeStmt
@@ -71,7 +71,7 @@ nodeInternal
     :   ( nodeProduction
         | portAssignment
         | portstmt
-        | NEWLINE!)+
+        | NEWLINE)+
     ;
 
 graphDecl
