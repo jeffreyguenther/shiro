@@ -43,7 +43,7 @@ public class Shiro {
         walker.walk(defpass, tree);
         
         ParseTree p = defpass.defs.get("Point");
-        walker.walk(new GraphPass(), p);
+        walker.walk(new GraphPass(), tree);
 //            
 //            // Add a node -> AST mapping in the parametric system
 //            Map<String, CommonTree> nodeDefinitions = g.getNodeDefinitions();

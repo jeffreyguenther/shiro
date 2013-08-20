@@ -142,17 +142,18 @@ path 	:	(IDENT)('.' IDENT)* ('[' pathIndex ']')?
 	;
 	
 pathIndex
-	:	( NUMBER |STRING_LITERAL )
+	:	index=(NUMBER              
+        |       STRING_LITERAL)
 	;
 	
 expr
-	:	expr  OR_OP expr
-        |       expr (MULT_OP | DIV_OP | MOD_OP) expr
-        |       expr ( PLUS_OP | MINUS_OP ) expr
-        |       path
-	|	NUMBER
-        |       STRING_LITERAL
-        |	'(' expr ')'
+	:	expr  OR_OP expr                        # OrExp
+        |       expr (MULT_OP | DIV_OP | MOD_OP) expr   # MultExp
+        |       expr ( PLUS_OP | MINUS_OP ) expr        # AddExp
+        |       path                                    # PathExp
+	|	NUMBER                                  # NumberExp
+    //    |     STRING_LITERAL                          # StringExp
+    //    |	'(' expr ')'                            # BracketsExp
 	;
 
 OR_OP :   '|';
