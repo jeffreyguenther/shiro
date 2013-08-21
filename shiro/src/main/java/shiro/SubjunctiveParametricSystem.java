@@ -4,6 +4,8 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.antlr.v4.runtime.RecognitionException;
+import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.apache.commons.collections15.map.HashedMap;
 import shiro.dag.DAGraph;
 import shiro.dag.DependencyRelation;
@@ -20,6 +22,7 @@ import shiro.functions.SumMFunc;
 import shiro.functions.ValueMFunc;
 import shiro.functions.graphics.LineMFunc;
 import shiro.functions.graphics.PointMFunc;
+import shiro.interpreter.NodeProductionListener;
 //import shiro.interpreter.ShiroDefinitionPass;
 
 /**
@@ -31,7 +34,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
 
     private Map<String, MultiFunction> multiFunctions; // multifunction symbol table
     private DAGraph<Port> depGraph;                   // realized dependency graph
-//    private Map<String, CommonTree> nodeASTDefinitions;// AST table
+    private Map<String, ParseTree> nodeASTDefinitions;// AST table
     private Map<String, Node> nodes;                   // realized node table
     private Map<String, SubjunctiveNode> subjNodes;    // realized subj. node table
     private PortAction graphNodeAction;
@@ -43,7 +46,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         loadMultiFunctions(multiFunctions);
 
         depGraph = new DAGraph<Port>();
-//        nodeASTDefinitions = new HashMap<String, CommonTree>();
+        nodeASTDefinitions = new HashMap<String, ParseTree>();
         nodes = new HashedMap<String, Node>();
         subjNodes = new HashMap<String, SubjunctiveNode>();
         graphNodeAction = new PortAction();
@@ -324,10 +327,10 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
      * @param map map of node name to AST trees
      * @return the current state of the definitions map
      */
-//    public Map<String, CommonTree> addNodeASTDefinitions(Map<String, CommonTree> map) {
-//        nodeASTDefinitions.putAll(map);
-//        return nodeASTDefinitions;
-//    }
+    public Map<String, ParseTree> addNodeASTDefinitions(Map<String, ParseTree> map) {
+        nodeASTDefinitions.putAll(map);
+        return nodeASTDefinitions;
+    }
 
     /**
      * Print the names space the whole system
@@ -448,20 +451,15 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
     }
 
     private Node createNode(String path) {
-//        // look up the AST of the node to duplicate
-//        CommonTree nodeAST = nodeASTDefinitions.get(path);
-//        // create an instance of the graph builder
-//        CommonTreeNodeStream nodeASTTokens = new CommonTreeNodeStream(nodeAST);
-//        // build the node from the AST
-//        ShiroDefinitionPass defPass = new ShiroDefinitionPass(nodeASTTokens);
-//        Node producedNode = null;
-//        try {
-//            defPass.shiro(this);
-//            producedNode = defPass.getCreatedNode();
-//
-//        } catch (RecognitionException ex) {
-//            Logger.getLogger(SubjunctiveParametricSystem.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-        return null;//producedNode;
+        // look up the parse tree of the node to duplicate
+        ParseTree nodeAST = nodeASTDefinitions.get(path);
+        // walk the parse tree to realize the node
+        ParseTreeWalker walker = new ParseTreeWalker();
+        // createa node production listener
+        NodeProductionListener nodeBuilder = new NodeProductionListener(this);
+        // walk the parse tree and build the node
+        walker.walk(nodeBuilder, nodeAST );
+        
+        return nodeBuilder.getCreatedNode();
     }
 }
