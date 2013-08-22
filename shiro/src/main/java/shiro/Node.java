@@ -413,9 +413,6 @@ public class Node implements PortEventListener, Container, Symbol{
                             deps.add(new DependencyRelation<Port>(p, dependedOn));
                         }
                     }
-//                    else{ // If the port does not depend on anything
-//                        deps.add(new DependencyRelation<Port>(p, null));
-//                    }
                 } catch (PathNotFoundException ex) {
                     Logger.getLogger(Node.class.getName()).log(Level.SEVERE, null, ex);
                 }

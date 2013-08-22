@@ -8,11 +8,12 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 /**
  * Pass 1 of Interpreter
- * Gets the node definitions by saving the ParseTrees of the nodes
+ * Gets the node and graph declarations by saving the ParseTrees of the nodes
  * @author jeffreyguenther
  */
 public class NodeDefinitionListener extends ShiroBaseListener{
     private Map<String, ParseTree> defs;
+    private ParseTree graph;
 
     public NodeDefinitionListener() {
         super();
@@ -27,10 +28,22 @@ public class NodeDefinitionListener extends ShiroBaseListener{
         return defs;
     }
 
+    /**
+     * Get the parse tree for the graph definition
+     * @return parse tree for the graph definition
+     */
+    public ParseTree getGraph() {
+        return graph;
+    }
+    
     @Override
     public void enterNodestmt(ShiroParser.NodestmtContext ctx) {
         String name = ctx.IDENT().getText();
         defs.put(name, ctx);
-        System.out.format("Saved %s\n", name);
+    }
+
+    @Override
+    public void enterGraphDecl(ShiroParser.GraphDeclContext ctx) {
+        graph = ctx;
     }
 }

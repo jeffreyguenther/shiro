@@ -7,12 +7,12 @@ import org.antlr.v4.runtime.ANTLRFileStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
-import shiro.Node;
 import shiro.SubjunctiveParametricSystem;
 
 /**
  * Shiro Runtime
- *
+ * Reads a .sro file and prints the output to the console
+ * TODO - Add REPL
  * @author jeffreyguenther
  */
 public class Shiro {
@@ -50,19 +50,20 @@ public class Shiro {
 
         // Get the node definitions
         Map<String, ParseTree> nodeDefinitions = defPass.getNodeDefinitions();
+        ParseTree graph = defPass.getGraph();
 
         // Store the ASTs in the tree
         subjPSystem.addNodeASTDefinitions(nodeDefinitions);
-        NodeProductionListener nodeBuilder = new NodeProductionListener(subjPSystem);
-        walker.walk(nodeBuilder, nodeDefinitions.get("Point") );
-        Node createdNode = nodeBuilder.getCreatedNode();
 
         // PASS 2: Build the dependency graph
         System.out.println("Build graph");
         System.out.println();
-        
-        // walk parse tree to get the graph definitions
-        walker.walk( new GraphBuilderListener(), tree);
+
+        /**
+         * Walk only the graph to prevent events from firing on the 
+         * other parts of the parse tree
+         */
+        walker.walk(new GraphBuilderListener(subjPSystem), graph);
 
         System.out.println("Parametric system built!");
         System.out.println();

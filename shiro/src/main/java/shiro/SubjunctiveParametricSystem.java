@@ -111,11 +111,10 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
             p.popPathHead();
             // attempt to find the path in the node
             matchedPort = matchedNode.resolvePath(p);
-        } else if (nodes.get(p.getCurrentPathHead()) != null) {
+        } else if (nodeASTDefinitions.get(p.getCurrentPathHead()) != null) {
             // determine if desired path is a node not yet realized
-            matchedNode = nodes.get(p.getCurrentPathHead());
-            // realize the node by adding a reference to it in the active nodes
-            nodes.put(matchedNode.getName(), matchedNode);
+            // create the new
+            matchedNode = produceNodeFromPath(p.getCurrentPathHead(), p.getCurrentPathHead());
             // attempt to find the port in the realized node
             // pop the path head
             p.popPathHead();

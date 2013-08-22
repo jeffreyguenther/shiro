@@ -268,7 +268,7 @@ public class Path implements Expression {
     public Set<Port> getPortsDependedOn() throws PathNotFoundException {
         Set<Port> ports = new HashSet<Port>();
         portReferenced = (Port) scope.resolvePath(this);
-        ports.add(portReferenced);
+;        ports.add(portReferenced);
         return ports;
 
     }

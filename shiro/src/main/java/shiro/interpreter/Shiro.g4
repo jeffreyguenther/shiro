@@ -20,7 +20,7 @@ statestmt
 	;
 	
 stateHeader
-	: 	(stateTimeStmt | stateCommentStmt | stateParentStmt | stateGraphStmt | activationPath | NEWLINE)+ 	
+	: 	(stateTimeStmt | stateCommentStmt | stateParentStmt | stateGraphStmt /*| activationPath |*/ NEWLINE)+ 	
 	;
 	
 stateTimeStmt
@@ -89,20 +89,21 @@ activeSelector
 	;
 
 nodeProduction
-	:	path (PROD_OP activationPath )+ NEWLINE
+	:	path (PROD_OP activation)+ NEWLINE//activationPath )+ NEWLINE
 	;
 
-activationPath
+/*activationPath
 	:	l=activation ('.' (r=activation | activationList))*
 	;
 
 activationList
 	:	'<' activation (',' activation)* '>'
 	;
-	
+*/	
 activation
-	:	c=IDENT ('[' v=IDENT ']')?
+	:	nodeName=IDENT ('[' updatePort=IDENT ']')?
 	;
+
 
 portAssignment
 	:	path '(' mfparams ')' NEWLINE
