@@ -6,7 +6,7 @@ Shiro is a data flow programming language designed to be embedded into applicati
 Getting Started
 ===============
 
-Shiro is implemented in Java. [Maven](http://maven.apache.org/) is used as the build system and dependency manager. The interpreter depends on[antlr 4.1](http://www.antlr.org/) to generate the parser, lexer and parse tree event listeners. The maven pom.xml file is setup to automatically generate the Java code at compile time. You can use maven from the commandline or use Netbeans or Eclipse, as both IDE's support maven projects.
+Shiro is implemented in Java. [Maven](http://maven.apache.org/) is used as the build system and dependency manager. The interpreter depends on [ANTLR 4.1](http://www.antlr.org/) to generate the parser, lexer and parse tree event listeners. The maven pom.xml file is setup to automatically generate the Java code at compile time. You can use maven from the commandline or use Netbeans or Eclipse, as both IDE's support maven projects.
 
 A helpful command is to remember if you just want to regenerate the parser, lexer, and listeners is:
 
