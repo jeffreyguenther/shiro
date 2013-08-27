@@ -38,10 +38,10 @@ end
 
 state DiagonalLine begin
     Graph line
-    endPoint[P2]
+    endPoint[P1]
 end
 
 state VerticalLine begin
     Graph line
-    endPoint[p2]
+    endPoint[P2]
 end

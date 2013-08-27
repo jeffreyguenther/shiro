@@ -21,6 +21,7 @@ import shiro.functions.SumMFunc;
 import shiro.functions.ValueMFunc;
 import shiro.functions.graphics.LineMFunc;
 import shiro.functions.graphics.PointMFunc;
+import shiro.interpreter.EvaluateAlternativeListener;
 import shiro.interpreter.NodeProductionListener;
 
 /**
@@ -34,8 +35,10 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
     private DAGraph<Port> depGraph;                    // realized dependency graph
     private Map<String, ParseTree> nodeDefs;           // AST table
     private Map<String, ParseTree> subjNodeDefs;        // AST table
+    private Map<String, ParseTree> alternativeDefs;        // AST table
     private Map<String, Node> nodes;                   // realized node table
     private Map<String, SubjunctiveNode> subjNodes;    // realized subj. node table
+    private Map<String, SystemState> alternatives;
     private PortAction graphNodeAction;
     private Set<SubjParametricSystemEventListener> listeners; // Event listeners
 
@@ -47,8 +50,10 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         depGraph = new DAGraph<Port>();
         nodeDefs = new HashMap<String, ParseTree>();
         subjNodeDefs = new HashMap<String, ParseTree>();
+        alternativeDefs = new HashMap<String, ParseTree>();
         nodes = new HashedMap<String, Node>();
         subjNodes = new HashMap<String, SubjunctiveNode>();
+        alternatives = new HashMap<String, SystemState>();
         graphNodeAction = new PortAction();
 
         listeners = new HashSet<SubjParametricSystemEventListener>();
@@ -72,14 +77,15 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         funcMap.put("Point", new PointMFunc());
         funcMap.put("Line", new LineMFunc());
     }
-    
+
     /**
      * Loads a multifunction.
+     *
      * @param name
      * @param mf
      */
-    public void loadMultiFunction(String name, MultiFunction mf){
-    	multiFunctions.put(name, mf);
+    public void loadMultiFunction(String name, MultiFunction mf) {
+        multiFunctions.put(name, mf);
     }
 
     /**
@@ -103,21 +109,21 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
     @Override
     public Symbol resolvePath(Path p) throws PathNotFoundException {
         Symbol matchedPort = null;
-        
+
         // check if any realized node names match the start of the path
-        Node  matchedNode = nodes.get(p.getCurrentPathHead());
+        Node matchedNode = nodes.get(p.getCurrentPathHead());
         SubjunctiveNode matchedSNode = subjNodes.get(p.getCurrentPathHead());
         if (matchedNode != null) {
             // pop the path head
             p.popPathHead();
             // attempt to find the path in the node
             matchedPort = matchedNode.resolvePath(p);
-        }else if(matchedSNode != null){
+        } else if (matchedSNode != null) {
             // pop the head of the path
             p.popPathHead();
-            
+
             matchedPort = matchedSNode.resolvePath(p);
-        }else if (nodeDefs.get(p.getCurrentPathHead()) != null) {
+        } else if (nodeDefs.get(p.getCurrentPathHead()) != null) {
             // determine if desired path is a node not yet realized
             // create the new
             matchedNode = produceNodeFromName(p.getCurrentPathHead(), p.getCurrentPathHead());
@@ -136,26 +142,25 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
 
         return matchedPort;
     }
-    
-    public Symbol produceSymbolFromName(String name, String newname){
+
+    public Symbol produceSymbolFromName(String name, String newname) {
         // check to see if the name is a node
-        if(nodeDefs.containsKey(name)){
+        if (nodeDefs.containsKey(name)) {
             return produceNodeFromName(name, newname);
-        // check if name is subjunctive node
-        }else if (subjNodeDefs.containsKey(name)){
-           return produceSubjNodeFromName(name, newname);
+            // check if name is subjunctive node
+        } else if (subjNodeDefs.containsKey(name)) {
+            return produceSubjNodeFromName(name, newname);
         }
-        
+
         return null;
     }
-    
-    public SubjunctiveNode produceSubjNodeFromName(String name, String newName){
+
+    public SubjunctiveNode produceSubjNodeFromName(String name, String newName) {
         SubjunctiveNode producedNode = createSubjNode(name);
         producedNode.setName(newName);
         addSubjunctiveNode(producedNode);
         return producedNode;
     }
-    
 
     /**
      * *
@@ -166,7 +171,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
      * @return new node produced using path and newName.
      */
     public Node produceNodeFromName(String name, String newName) {
-        
+
         Node producedNode = createNode(name);
 
         // change the node's name
@@ -187,8 +192,8 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
 
         return producedNode;
     }
-    
-    public void addSubjunctiveNode(SubjunctiveNode n){
+
+    public void addSubjunctiveNode(SubjunctiveNode n) {
         subjNodes.put(n.getName(), n);
     }
 
@@ -222,8 +227,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         Node match = nodes.get(p.getCurrentPathHead());
 
         // check to see if path refers to an unrealized node
-        if (match == null
-                //&& nodeASTDefinitions.containsKey(p.getCurrentPathHead())
+        if (match == null //&& nodeASTDefinitions.containsKey(p.getCurrentPathHead())
                 ) {
             // If it does, build the node.
             match = createNode(p.getCurrentPathHead());
@@ -358,10 +362,15 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         nodeDefs.putAll(map);
         return nodeDefs;
     }
-    
+
     public Map<String, ParseTree> addSubjNodeASTDefinitions(Map<String, ParseTree> map) {
         subjNodeDefs.putAll(map);
         return subjNodeDefs;
+    }
+
+    public Map<String, ParseTree> addAlternativeASTDefinitions(Map<String, ParseTree> map) {
+        alternativeDefs.putAll(map);
+        return alternativeDefs;
     }
 
     /**
@@ -400,6 +409,11 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
             sb.append("\n");
         }
 
+        for (SubjunctiveNode n : subjNodes.values()) {
+            sb.append(n);
+            sb.append("\n");
+        }
+
         return sb.toString();
     }
 
@@ -407,15 +421,59 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
      * Update the parametric system
      */
     public void update() {
-        // sort the graph
-        TopologicalSort<Port> sorter = new TopologicalSort<Port>(depGraph);
-        List<GraphNode<Port>> topologicalOrdering = sorter.getTopologicalOrdering();
 
-        // loop through all ports to update them.
-        for (GraphNode<Port> gn : topologicalOrdering) {
-            System.out.println(gn.getValue().getFullName());
-            gn.doAction();
+
+        ParseTreeWalker walker = new ParseTreeWalker();
+        EvaluateAlternativeListener genAlts = new EvaluateAlternativeListener(this);
+
+        for (ParseTree altTree : alternativeDefs.values()) {
+            walker.walk(genAlts, altTree);
         }
+
+        for (SystemState a : alternatives.values()) {
+            Map<SubjunctiveNode, Node> subjunctTable = a.getSubjunctsMapping();
+
+            for (SubjunctiveNode s : subjunctTable.keySet()) {
+                try {
+                    s.activate(subjunctTable.get(s).getName());
+                } catch (PathNotFoundException ex) {
+                    Logger.getLogger(SubjunctiveParametricSystem.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+
+            
+
+            List<DependencyRelation<Port>> deps = new ArrayList<DependencyRelation<Port>>();
+
+            // for each node generated in the graph generation process
+            for (Node n : getNodes()) {
+                // get all of the dependencies for each node
+                deps.addAll(n.getDependencies());
+            }
+
+            System.out.println();
+            System.out.println("Dependencies");
+            for (DependencyRelation<Port> d : deps) {
+                System.out.println(d.getDependent().getFullName() + " -> " + d.getDependedOn().getFullName());
+                addDependency(d);
+            }
+            
+            TopologicalSort<Port> sorter = new TopologicalSort<Port>(depGraph);
+            List<GraphNode<Port>> topologicalOrdering = sorter.getTopologicalOrdering();
+
+            // loop through all ports to update them.
+            for (GraphNode<Port> gn : topologicalOrdering) {
+                System.out.println(gn.getValue().getFullName());
+                gn.doAction();
+            }
+
+            System.out.println();
+            System.out.println("The results of alternative: " + a.getName());
+            System.out.println(printDependencyGraph());
+            depGraph.removeAllDependencies();
+        }
+
+
     }
 
     /**
@@ -490,12 +548,12 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         // createa node production listener
         NodeProductionListener nodeBuilder = new NodeProductionListener(this);
         // walk the parse tree and build the node
-        walker.walk(nodeBuilder, nodeAST );
-        
+        walker.walk(nodeBuilder, nodeAST);
+
         return nodeBuilder.getCreatedNode();
     }
-    
-    private SubjunctiveNode createSubjNode(String name){
+
+    private SubjunctiveNode createSubjNode(String name) {
         // look up the parse tree of the node to duplicate
         ParseTree nodeAST = subjNodeDefs.get(name);
         // walk the parse tree to realize the node
@@ -503,8 +561,16 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         // createa node production listener
         NodeProductionListener nodeBuilder = new NodeProductionListener(this);
         // walk the parse tree and build the node
-        walker.walk(nodeBuilder, nodeAST );
-        
+        walker.walk(nodeBuilder, nodeAST);
+
         return nodeBuilder.getCreatedSubjNode();
+    }
+
+    public SubjunctiveNode getSubjunctiveNode(String nodeName) {
+        return subjNodes.get(nodeName);
+    }
+
+    public void addAlternative(SystemState state) {
+        alternatives.put(state.getName(), state);
     }
 }

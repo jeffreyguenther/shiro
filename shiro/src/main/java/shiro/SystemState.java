@@ -12,6 +12,7 @@ public class SystemState {
     private DateTime timeCreated;
     private String comment;
     private Map<SubjunctiveNode, Node> subjunctsMapping;
+    private String name;
 
     public SystemState(String comment, Map<SubjunctiveNode, Node> subjunctsMapping) {
         this.comment = comment;
@@ -19,7 +20,8 @@ public class SystemState {
         this.timeCreated = new DateTime();
     }
     
-    public SystemState() {
+    public SystemState(String name) {
+        this.name = name;
         this.comment = "";
         this.subjunctsMapping = new HashMap<SubjunctiveNode, Node>();
         this.timeCreated = new DateTime();
@@ -27,6 +29,10 @@ public class SystemState {
     
     public void setActiveNode(SubjunctiveNode sNode, Node activeNode){
         subjunctsMapping.put(sNode, activeNode);
+    }
+    
+    public void setActiveNode(Map<SubjunctiveNode, Node> table){
+        subjunctsMapping.putAll(table);
     }
 
     public Map<SubjunctiveNode, Node> getSubjunctsMapping() {
@@ -36,6 +42,16 @@ public class SystemState {
     public DateTime getTimeCreated() {
         return timeCreated;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+    
 
     public String getComment() {
         return comment;

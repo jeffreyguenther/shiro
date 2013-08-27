@@ -148,11 +148,11 @@ public class NodeProductionListener extends ShiroBasePassListener {
     public void enterSubjunctDeclNodeProd(ShiroParser.SubjunctDeclNodeProdContext ctx) {
         // create node
         String name = ctx.nodeName.getText();
-        String newname = ctx.newName.getText();
+        String newName = ctx.newName.getText();
 
         // store the current node
-        createdNode = pSystem.produceNodeFromName(name, newname);
-
+        createdNode = pSystem.produceNodeFromName(name, newName);
+       
         // add the created node to subjunctive node, so the scope tree is preserved
         createdNode.setFullName(createdSNode.getFullName() + "." + createdNode.getFullName());
         createdSNode.addSubjunct(createdNode);

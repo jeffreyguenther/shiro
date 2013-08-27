@@ -272,4 +272,9 @@ public class DAGraph<T> {
             leafNodes.add(node);
         }
     }
+
+    public void removeAllDependencies() {
+        leafNodes.clear();
+        nodes.clear();
+    }
 }

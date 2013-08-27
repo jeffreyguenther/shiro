@@ -123,7 +123,18 @@ public class SubjunctiveNode implements Symbol, Container {
 
     @Override
     public String toString() {
-        return subjuncts.toString();
+        StringBuilder sb = new StringBuilder();
+        sb.append(getFullName())
+          .append(":")
+          .append(getType())
+          .append("\n");
+        
+        for(Node n: subjuncts.values()){
+            sb.append("\t")
+            .append(n.toString())
+            .append("\n");
+        }
+        return sb.toString();
     }
 
     @Override
@@ -153,7 +164,9 @@ public class SubjunctiveNode implements Symbol, Container {
 
     @Override
     public void deactivate() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        for(Node n: subjuncts.values()){
+            n.deactivate();
+        }
     }
 
     @Override

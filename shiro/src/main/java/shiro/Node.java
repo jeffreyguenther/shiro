@@ -452,8 +452,7 @@ public class Node implements PortEventListener, Container, Symbol{
     public String toString(){
         StringBuilder sb = new StringBuilder();
         // print node header
-        sb.append("Node:")
-          .append(name)
+        sb.append(getFullName())
           .append(":")
           .append(getType())
           .append("\n");
@@ -487,7 +486,7 @@ public class Node implements PortEventListener, Container, Symbol{
         // handle the port events bubbling up
         // fire the node event
         fireNodeEvent("Node updated.");
-        System.out.println("Node:" + getName() + " handled event: " + event.getMessage());
+        System.out.println( getFullName() + ":" + getType() + " handled event: " + event.getMessage());
     }
 
     @Override
