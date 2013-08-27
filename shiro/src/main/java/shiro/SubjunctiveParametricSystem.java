@@ -19,6 +19,7 @@ import shiro.functions.MultiFunction;
 import shiro.functions.MultiplyMFunc;
 import shiro.functions.SumMFunc;
 import shiro.functions.ValueMFunc;
+import shiro.functions.graphics.CanvasMFunc;
 import shiro.functions.graphics.LineMFunc;
 import shiro.functions.graphics.PointMFunc;
 import shiro.interpreter.EvaluateAlternativeListener;
@@ -76,6 +77,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         // add graphics MFs
         funcMap.put("Point", new PointMFunc());
         funcMap.put("Line", new LineMFunc());
+        funcMap.put("Canvas", new CanvasMFunc());
     }
 
     /**
