@@ -454,6 +454,8 @@ public class Node implements PortEventListener, Container, Symbol{
         // print node header
         sb.append("Node:")
           .append(name)
+          .append(":")
+          .append(getType())
           .append("\n");
 
         // print each port

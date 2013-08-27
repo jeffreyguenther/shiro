@@ -50,20 +50,27 @@ public class Shiro {
 
         // Get the node definitions
         Map<String, ParseTree> nodeDefinitions = defPass.getNodeDefinitions();
+        Map<String, ParseTree> subjNodeDefinitions = defPass.getSubjNodeDefinitions();
         ParseTree graph = defPass.getGraph();
 
         // Store the ASTs in the tree
         subjPSystem.addNodeASTDefinitions(nodeDefinitions);
+        subjPSystem.addSubjNodeASTDefinitions(subjNodeDefinitions);
 
         // PASS 2: Build the dependency graph
         System.out.println("Build graph");
         System.out.println();
 
         /**
-         * Walk only the graph to prevent events from firing on the 
+         * Walk only the graph parse tree to prevent events from firing on the 
          * other parts of the parse tree
          */
         walker.walk(new GraphBuilderListener(subjPSystem), graph);
+        
+        // Realize alternatives
+        // For each alternative
+            // Activate subjuncts in table
+            // Evaluate
 
         System.out.println("Parametric system built!");
         System.out.println();

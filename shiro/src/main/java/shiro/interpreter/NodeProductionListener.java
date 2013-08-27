@@ -3,14 +3,22 @@ package shiro.interpreter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import main.java.shiro.interpreter.ShiroParser;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
+import shiro.Container;
 import shiro.Node;
+import shiro.PathNotFoundException;
 import shiro.Port;
 import shiro.PortType;
+import shiro.Scope;
+import shiro.SubjunctiveNode;
 import shiro.SubjunctiveParametricSystem;
+import shiro.Symbol;
 import shiro.expressions.Expression;
+import shiro.expressions.Path;
 import shiro.functions.MultiFunction;
 
 /**
@@ -19,18 +27,47 @@ import shiro.functions.MultiFunction;
  * @author jeffreyguenther
  */
 public class NodeProductionListener extends ShiroBasePassListener {
-    private Node currentContainerNode;
+    /**
+     *  To produce a node, you need the new name for the node and the containing
+     *  scope.
+     */
+    
+    private String name;
+    private Symbol symbol;
+    private Scope scope;
+
+    private Container currentContainerNode;
     // node that listener is to create
     private Node createdNode;
+    private SubjunctiveNode createdSNode;
 
     public NodeProductionListener(SubjunctiveParametricSystem ps) {
         super(ps);
         currentContainerNode = null;
         createdNode = null;
+        createdSNode = null;
+    }
+    
+    public NodeProductionListener(SubjunctiveParametricSystem ps, String name){
+        super(ps);
+        this.name = name;
+        this.symbol = null;
+        this.scope = ps;
+        this.currentContainerNode = null;
+        this.createdNode = null;
+        this.createdSNode = null;
+    }
+    
+    public Symbol getSymbol(){
+        return symbol;
     }
 
     public Node getCreatedNode() {
         return createdNode;
+    }
+    
+    public SubjunctiveNode getCreatedSubjNode(){
+        return createdSNode;
     }
 
     @Override
@@ -41,7 +78,7 @@ public class NodeProductionListener extends ShiroBasePassListener {
             // create a new node
             createdNode = new Node(ctx.IDENT().getText(), currentScope);
             // add the node as a nested node
-            currentContainerNode.addNestedContainer(currentContainerNode);
+            currentContainerNode.addNestedContainer(createdNode);
 
         } else {
             createdNode = new Node(ctx.IDENT().getText(), currentScope);
@@ -87,8 +124,39 @@ public class NodeProductionListener extends ShiroBasePassListener {
     }
 
     @Override
-    public void enterNodeInternal(ShiroParser.NodeInternalContext ctx) {
-        //System.out.println("Enter Node Internal");
+    public void enterSNode(ShiroParser.SNodeContext ctx) {
+        System.out.println("Entered subjunctive node");
+        // TODO update to use the passed name
+        String nodeName = ctx.nodeName.getText();
+       
+        createdSNode = new SubjunctiveNode(nodeName, currentScope);
+        currentScope = createdSNode;
+    }
+
+    @Override
+    public void exitSNode(ShiroParser.SNodeContext ctx) {
+        System.out.println("Exited subjunctive node");
+        String activeSubjunct  = ctx.selectedSubjunct.getText();
+        try {
+            createdSNode.activate(activeSubjunct);
+        } catch (PathNotFoundException ex) {
+            Logger.getLogger(NodeProductionListener.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @Override
+    public void enterSubjunctDeclNodeProd(ShiroParser.SubjunctDeclNodeProdContext ctx) {
+        // create node
+        String name = ctx.nodeName.getText();
+        String newname = ctx.newName.getText();
+
+        // store the current node
+        createdNode = pSystem.produceNodeFromName(name, newname);
+
+        // add the created node to subjunctive node, so the scope tree is preserved
+        createdNode.setFullName(createdSNode.getFullName() + "." + createdNode.getFullName());
+        createdSNode.addSubjunct(createdNode);
+
     }
 
     @Override
@@ -162,5 +230,34 @@ public class NodeProductionListener extends ShiroBasePassListener {
         }
 
         createdNode.addPort(p);
+    }
+    
+    @Override
+    public void enterPortAssignment(ShiroParser.PortAssignmentContext ctx) {
+        // Get the node matched by the path to set the scope for expressions
+        Path p = createPath(currentScope, ctx.path());
+        createdNode = pSystem.getNode(p);
+        currentScope = createdNode;
+    }
+
+    @Override
+    public void exitPortAssignment(ShiroParser.PortAssignmentContext ctx) {
+        // look up port based on the path
+        try {
+            Port p = (Port) pSystem.resolvePath((Path) getExpr(ctx.path()));
+
+            List<Expression> mfExpressions = new ArrayList<Expression>();
+
+            for (ParseTree pt : ctx.mfparams().expr()) {
+                Expression exp = getExpr(pt);
+                mfExpressions.add(exp);
+            }
+            // set the port's expression
+            p.setArguments(mfExpressions);
+            System.out.println("Set port args: " + p);
+            System.out.println("Node is now:\n" + createdNode);
+        } catch (PathNotFoundException pnfe) {
+            System.out.println(pnfe);
+        }
     }
 }

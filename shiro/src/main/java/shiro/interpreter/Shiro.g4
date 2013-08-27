@@ -10,17 +10,18 @@ statement
     :   nodestmt
     |   statestmt
     |   graphDecl
+    |   sNode
     |   NEWLINE
     ;
 
 statestmt
-	:	'state' stateName 'begin' NEWLINE
+	:	STATE stateName BEGIN NEWLINE
 		stateHeader
-		'end'
+		END     
 	;
 	
 stateHeader
-	: 	(stateTimeStmt | stateCommentStmt | stateParentStmt | stateGraphStmt /*| activationPath |*/ NEWLINE)+ 	
+	: 	(stateTimeStmt | stateCommentStmt | stateParentStmt | stateGraphStmt | activation | /*activationPath |*/ NEWLINE)+ 	
 	;
 	
 stateTimeStmt
@@ -74,6 +75,26 @@ nodeInternal
         | NEWLINE)+
     ;
 
+sNode
+    :	SUBJ_NODE nodeName=IDENT '[' selectedSubjunct=IDENT ']' BEGIN NEWLINE
+		(subjunctDeclNodeProd | subjunctDecl | NEWLINE)+
+		END
+    ;
+	
+subjunctDeclNodeProd
+	:	nodeName=IDENT PROD_OP newName=IDENT BEGIN NEWLINE
+		nodeInternal
+		END
+	;
+	
+subjunctDecl
+	:	nodestmt
+	;
+	
+subjunctSelector
+	:	IDENT
+	;
+
 graphDecl
 	:	'graph' IDENT BEGIN NEWLINE
 		graphLine+
@@ -101,7 +122,7 @@ activationList
 	;
 */	
 activation
-	:	nodeName=IDENT ('[' updatePort=IDENT ']')?
+	:	nodeName=IDENT ('[' activeObject=IDENT ']')?
 	;
 
 
@@ -165,6 +186,14 @@ DIV_OP  : '/';
 MOD_OP : '%';
 
 PROD_OP : '->';
+
+STATE
+    : 'state'
+    ;
+
+SUBJ_NODE
+    : 'subjunctive node'
+    ;        
 
 NODE
     : 'node';

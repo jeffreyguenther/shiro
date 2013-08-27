@@ -4,106 +4,81 @@ import java.util.*;
 import shiro.expressions.Path;
 
 /**
- * Definition of a subjunctive node
+ * Definition of a subjunctive node // TODO - set default active node
+ *
  * @author jeffreyguenther
  */
 public class SubjunctiveNode implements Symbol, Container {
-    private String fullName;
-    private Node selectedNode;
-    private Set<Node> subjuncts;
-    private Map<Node, Set<Port>> boundaryPorts;
 
-    public SubjunctiveNode(String name) {
+    private Scope parentScope;
+    private String fullName;
+    private Node activeNode;
+    private Map<String, Node> subjuncts;
+
+    public SubjunctiveNode(String name, Scope scope) {
+        this.parentScope = scope;
         this.fullName = name;
-        selectedNode = null;
-        subjuncts = new HashSet<Node>();
-        boundaryPorts = new HashMap<Node, Set<Port>>();
+        this.activeNode = null;
+        this.subjuncts = new HashMap<String, Node>();
     }
-    
+
     /**
-     * Add a boundary port for a subjunct
-     * @param subjunct subjunct
-     * @param p boundary port
-     */
-    public void addBoundaryPort(Node subjunct, Port p){
-        Set<Port> ports = null;
-        if(boundaryPorts.containsKey(subjunct)){
-             ports = boundaryPorts.get(subjunct);
-             ports.add(p);
-        }else{
-            ports = new HashSet<Port>();
-            ports.add(p);
-            boundaryPorts.put(subjunct, ports);
-        }
-        
-    }
-    
-    /**
-     * Remove a boundary port for a subjunct node
-     * @param subjunct the subjunct whose boundaries to remove
-     */
-    private void removeBoundaryPortsForNode(Node subjunct){
-        // removes all of the boundary ports for a given node
-        boundaryPorts.remove(subjunct);
-    }
-    
-    /**
-     * Remove a boundary port for a node
-     * @param n node whose boundary port should be removed
-     * @param p boundary port to be removed
-     */
-    public void removeBoundaryPort(Node n, Port p){
-        Set<Port> ports = boundaryPorts.get(n);
-        ports.remove(p);
-    }
-            
-    /**
-     * Determine if the subjunct node hasSubjunct the node as a subjunct
+     * Determine if the subjunctive node contains the subjunct
+     *
      * @param node node to be checked for
      * @return true/false if <code>node</code> is a subjunct
      */
-    public boolean hasSubjunct(Node node){
-        return subjuncts.contains(node);
+    public boolean hasSubjunct(Node node) {
+        return subjuncts.containsValue(node);
     }
 
     /**
      * Add a subjunct to the dataset
+     *
      * @param node to be added as a subjunct
      */
-    public void addSubjunct(Node node){
-        subjuncts.add(node);
+    public void addSubjunct(Node node) {
+        subjuncts.put(node.getName(), node);
     }
-    
+
     /**
      * Add a subjunct and set the active node
+     *
      * @param node subjunct to be added
      * @param activeNode node to be set as active
-     * @throws SubjunctNotFoundException 
+     * @throws SubjunctNotFoundException
      */
-    public void addSubjunct(Node node, Node activeNode) throws SubjunctNotFoundException{
-        subjuncts.add(node);
-        setActiveNode(activeNode);
+    public void addSubjunct(Node node, boolean active) throws SubjunctNotFoundException {
+        addSubjunct(node);
+        if (active) {
+            setActiveNode(node);
+        }
     }
-    
+
     /**
      * Remove a subjunct from the node
+     *
      * @param node subjunct to be removed
-     * @throws SubjunctNotFoundException 
+     * @throws SubjunctNotFoundException
      */
-    public void removeSubjunct(Node node) throws SubjunctNotFoundException{
-        subjuncts.remove(node);
-        removeBoundaryPortsForNode(node);
-        
+    public void removeSubjunct(Node node) throws SubjunctNotFoundException {
+        subjuncts.remove(node.getFullName());
+
         // if the node is the selected node
-        if(node.equals(selectedNode)){
+        if (node.equals(activeNode)) {
             // set a new active subjunct to be the first element in the set
             // also know as the last added.
-            setActiveNode(new ArrayList<Node>(subjuncts).get(0));
+            setActiveNode(new ArrayList<Node>(subjuncts.values()).get(0));
         }
     }
     
+    public Node getActiveSubjunct(){
+        return activeNode;
+    }
+
     /**
      * Get the name of the node
+     *
      * @return name of the node
      */
     @Override
@@ -113,47 +88,31 @@ public class SubjunctiveNode implements Symbol, Container {
 
     /**
      * Set the name of the node
+     *
      * @param name name of the node
      */
     public void setName(String name) {
         this.fullName = name;
     }
-    
-    /**
-     * Get the ports for the subjunctive node based on the selected node
-     * @return set of boundary ports for the selected node
-     */
-    public Set<Port> getPorts(){
-        return boundaryPorts.get(selectedNode);
-    }
-    
+
     /**
      * Set the active node
+     *
      * @param node subjunct to be set active
-     * @throws SubjunctNotFoundException 
+     * @throws SubjunctNotFoundException
      */
-    public void setActiveNode(Node node) throws SubjunctNotFoundException {
+    private void setActiveNode(Node node) throws SubjunctNotFoundException {
         // check if the node is a subjunct
-        if (subjuncts.contains(node)) {
+        if (subjuncts.containsValue(node)) {
             // set the selected node to node passed in
-            selectedNode = node;
+            activeNode = node;
             // activate the selected node
-            selectedNode.activate();
+            activeNode.activate();
 
             // deactivate all other nodes
-            for (Node n : subjuncts) {
-                if (!selectedNode.equals(n)) {
+            for (Node n : subjuncts.values()) {
+                if (!activeNode.equals(n)) {
                     n.deactivate();
-
-                    // deactive the boundary ports for the deselected node
-                    for (Port p : boundaryPorts.get(n)) {
-                        p.deactivate();
-                    }
-                }
-
-                // activate the boundary ports for the subjunct
-                for (Port p : boundaryPorts.get(n)) {
-                    p.activate();
                 }
 
             }
@@ -184,7 +143,12 @@ public class SubjunctiveNode implements Symbol, Container {
 
     @Override
     public void activate(String key) throws PathNotFoundException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        try {
+            Node activenNode = subjuncts.get(key);
+            setActiveNode(activenNode);
+        } catch (SubjunctNotFoundException ex) {
+            throw new PathNotFoundException(key + " was not found.");
+        }
     }
 
     @Override
@@ -194,7 +158,16 @@ public class SubjunctiveNode implements Symbol, Container {
 
     @Override
     public Symbol resolvePath(Path p) throws PathNotFoundException {
-        throw new UnsupportedOperationException("Not supported yet.");
+
+        if (p.getCurrentPathHead().equals("active")) {
+            // move the path head to the right one element
+            p.popPathHead();
+
+            // resolve the path
+            return activeNode.resolvePath(p);
+        }
+
+        return null;
     }
 
     @Override
@@ -219,8 +192,7 @@ public class SubjunctiveNode implements Symbol, Container {
 
     @Override
     public Path getPath() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        List<String> pathParts = Arrays.asList(fullName.split("\\."));
+        return new Path(parentScope, pathParts);
     }
-    
-    
 }

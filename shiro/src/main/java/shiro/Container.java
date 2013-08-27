@@ -9,9 +9,30 @@ import shiro.expressions.Path;
  * @author jeffreyguenther
  */
 public interface Container extends Scope {
+    /**
+     * Activate the container's default update port or subjunct
+     */
     public void activate();
-    public void activate(Path key) throws PathNotFoundException;
-    public void activate(String key) throws PathNotFoundException;
+    
+    /**
+     * Activate a path in the container
+     * This option will search the whole scope tree
+     * @param path path to be activated
+     * @throws PathNotFoundException 
+     */
+    public void activate(Path path) throws PathNotFoundException;
+    
+    /**
+     * Activate a name
+     * Note this method DOES NOT search the whole scope tree
+     * @param name name of object to be activated
+     * @throws PathNotFoundException 
+     */
+    public void activate(String name) throws PathNotFoundException;
+    
+    /**
+     * Deactivate the whole container
+     */
     public void deactivate();
     
     public void addNestedContainer(Container c);

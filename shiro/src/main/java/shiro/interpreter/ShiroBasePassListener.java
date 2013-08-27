@@ -131,7 +131,7 @@ public class ShiroBasePassListener extends ShiroBaseListener {
     
     @Override
     public void enterPath(ShiroParser.PathContext ctx) {
-        System.out.println("Enter PathContext");
+        //System.out.println("Enter PathContext");
         
         // save the path for later
         setExpr(ctx, createPath(currentScope, ctx));
