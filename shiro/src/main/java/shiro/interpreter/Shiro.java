@@ -12,7 +12,6 @@ import shiro.SubjunctiveParametricSystem;
 /**
  * Shiro Runtime
  * Reads a .sro file and prints the output to the console
- * TODO - Add REPL
  * @author jeffreyguenther
  */
 public class Shiro {
@@ -41,7 +40,6 @@ public class Shiro {
         ParseTree tree = parser.shiro();
 
         System.out.println("Parsing complete.");
-        System.out.println();
 
         // PASS 1: Add a node -> AST mapping in the parametric system
         NodeDefinitionListener defPass = new NodeDefinitionListener();
@@ -61,7 +59,6 @@ public class Shiro {
 
         // PASS 2: Build the dependency graph
         System.out.println("Build graph");
-        System.out.println();
 
         /**
          * Walk only the graph parse tree to prevent events from firing on the 
@@ -69,14 +66,7 @@ public class Shiro {
          */
         walker.walk(new GraphBuilderListener(subjPSystem), graph);
         
-        // Realize alternatives
-        // For each alternative
-            // Activate subjuncts in table
-            // Evaluate
-
-        System.out.println("Parametric system built!");
-        System.out.println();
-        System.out.println("Evaluating parametric system...");
+        System.out.println("Evaluate alternatives");
 
         // Evaluate parametric system
         subjPSystem.update();

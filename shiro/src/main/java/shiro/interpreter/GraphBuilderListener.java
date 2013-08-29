@@ -34,7 +34,7 @@ public class GraphBuilderListener extends ShiroBasePassListener {
 
     @Override
     public void enterGraphDecl(ShiroParser.GraphDeclContext ctx) {
-        System.out.println("Enter graph Decl");
+        //System.out.println("Enter graph Decl");
     }
 
     @Override
@@ -59,7 +59,7 @@ public class GraphBuilderListener extends ShiroBasePassListener {
 
     @Override
     public void exitNodeProduction(ShiroParser.NodeProductionContext ctx) {
-        System.out.println("exit node production");
+        //System.out.println("exit node production");
 
         // get the path of LHS of production operator
         Path leftHandSide = (Path) getExpr(ctx.path());

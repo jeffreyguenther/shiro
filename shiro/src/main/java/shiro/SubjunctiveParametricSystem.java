@@ -35,12 +35,13 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
     private Map<String, MultiFunction> multiFunctions; // multifunction symbol table
     private DAGraph<Port> depGraph;                    // realized dependency graph
     private Map<String, ParseTree> nodeDefs;           // AST table
-    private Map<String, ParseTree> subjNodeDefs;        // AST table
-    private Map<String, ParseTree> alternativeDefs;        // AST table
+    private Map<String, ParseTree> subjNodeDefs;       // AST table
+    private Map<String, ParseTree> alternativeDefs;    // AST table
     private Map<String, Node> nodes;                   // realized node table
     private Map<String, SubjunctiveNode> subjNodes;    // realized subj. node table
-    private Map<String, SystemState> alternatives;
-    private PortAction graphNodeAction;
+    private Map<String, SystemState> alternatives;     // alternative specs
+    private PortAction graphNodeAction;                // action used in graph nodes
+    
     private Set<SubjParametricSystemEventListener> listeners; // Event listeners
 
     public SubjunctiveParametricSystem() {
@@ -64,8 +65,8 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
      * *
      * Creates a single instance of all of the multi-functions the system knows
      * about. This creates the symbol table for looking up multi-function
-     * objects This method will need to be changed if we do runtime loading of
-     * multi-functions
+     * objects This method will need to be changed if we load multi-functions at
+     * runtime.
      *
      * @param funcMap
      */
@@ -81,10 +82,10 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
     }
 
     /**
-     * Loads a multifunction.
+     * Store a multi-function in the symbol table.
      *
-     * @param name
-     * @param mf
+     * @param name of multi-function
+     * @param mf multi-function to be added
      */
     public void loadMultiFunction(String name, MultiFunction mf) {
         multiFunctions.put(name, mf);
@@ -374,36 +375,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         alternativeDefs.putAll(map);
         return alternativeDefs;
     }
-
-    /**
-     * Print the names space the whole system
-     */
-    public void printNameSpace() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("The parametic system has the following names:")
-                .append("\n")
-                .append("Nodes:\n");
-
-        // Print the values of a node
-        for (Node n : nodes.values()) {
-            // TODO add recursive printing for nested nodes.
-            sb.append(n.getName())
-                    .append("\n");
-
-            sb.append("\twith ports:\n");
-            for (Port p : n.getPorts()) {
-                if (p.getPortType() != PortType.Evaluated) {
-                    sb.append("\t\t")
-                            .append(p.getName())
-                            .append("\n");
-                }
-            }
-        }
-
-        // trim off the last new line and print.
-        System.out.println(sb.toString().trim());
-    }
-
+    
     public String printDependencyGraph() {
         StringBuilder sb = new StringBuilder();
         for (Node n : nodes.values()) {
@@ -442,8 +414,6 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
                     Logger.getLogger(SubjunctiveParametricSystem.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-
-            
 
             List<DependencyRelation<Port>> deps = new ArrayList<DependencyRelation<Port>>();
 
@@ -542,6 +512,12 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         return null;
     }
 
+    /**
+     * Produce node from the ParseTree
+     * Looks up the ParseTree in the map and generates the node
+     * @param name of node to produce
+     * @return Node object
+     */
     private Node createNode(String name) {
         // look up the parse tree of the node to duplicate
         ParseTree nodeAST = nodeDefs.get(name);
@@ -555,6 +531,12 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         return nodeBuilder.getCreatedNode();
     }
 
+    /**
+     * Produce a subjunctive node from the ParseTree
+     * Looks up the ParseTree in the map and generates the node
+     * @param name of subjunctive node to produce
+     * @return SubjunctiveNode object
+     */
     private SubjunctiveNode createSubjNode(String name) {
         // look up the parse tree of the node to duplicate
         ParseTree nodeAST = subjNodeDefs.get(name);
@@ -568,10 +550,19 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         return nodeBuilder.getCreatedSubjNode();
     }
 
+    /**
+     * Get a subjunctive node by name
+     * @param nodeName
+     * @return the Subjunctive node for the corresponding name.
+     */
     public SubjunctiveNode getSubjunctiveNode(String nodeName) {
         return subjNodes.get(nodeName);
     }
 
+    /**
+     * Add an alternative to the the parametric system
+     * @param state 
+     */
     public void addAlternative(SystemState state) {
         alternatives.put(state.getName(), state);
     }
