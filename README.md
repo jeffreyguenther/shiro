@@ -8,11 +8,17 @@ Getting Started
 
 Shiro is implemented in Java. [Maven](http://maven.apache.org/) is used as the build system and dependency manager. The interpreter depends on [ANTLR 4.1](http://www.antlr.org/) to generate the parser, lexer and parse tree event listeners. The maven pom.xml file is setup to automatically generate the Java code at compile time. You can use maven from the commandline or use Netbeans or Eclipse, as both IDE's support maven projects.
 
+You can build the Shiro interpreter using this command within the shiro subdirectory
+
+    $ mvn package
+
 A helpful command is to remember if you just want to regenerate the parser, lexer, and listeners is:
 
-    mvn antlr4:antlr4
+    $ mvn antlr4:antlr4
 
 In the `example_code` folder, you'll find `example.sro`. It is a simple example of the language syntax. Currently, when the code is interpretted a large amount of debugging output is shown. It'll help you get a sense of what is actually going on inside the system. More examples are coming shortly. Pass example.sro as the first argument on the commandline to see the output.
+
+    $ java -jar target/shiro-1.0-SNAPSHOT-standalone.jar ./example_code/example.sro
 
 Questions can be sent to shiro-lang@googlegroups.com or [Jeff](mailto:jguenthe@sfu.ca). If you have taken the time to play with the language, please drop me a line and let me know what you think.
 
