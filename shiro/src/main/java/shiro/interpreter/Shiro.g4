@@ -76,7 +76,7 @@ nodeInternal
     ;
 
 sNode
-    :	SUBJ_NODE nodeName=IDENT '[' selectedSubjunct=IDENT ']' BEGIN NEWLINE
+    :	SUBJ_NODE nodeName=IDENT LSQUARE selectedSubjunct=IDENT RSQUARE BEGIN NEWLINE
 		(subjunctDeclNodeProd | subjunctDecl | NEWLINE)+
 		END
     ;
@@ -122,7 +122,7 @@ activationList
 	;
 */	
 activation
-	:	nodeName=IDENT ('[' activeObject=IDENT ']')?
+	:	nodeName=IDENT ( LSQUARE activeObject=IDENT RSQUARE)?
 	;
 
 
@@ -160,7 +160,7 @@ mfparams:	expr(',' expr)*
 	;
 
 // Path
-path 	:	(IDENT)('.' IDENT)* ('[' pathIndex ']')?
+path 	:	(IDENT)('.' IDENT)* (LSQUARE pathIndex RSQUARE)?
 	;
 	
 pathIndex
@@ -184,6 +184,8 @@ MINUS_OP : '-';
 MULT_OP : '*';
 DIV_OP  : '/';
 MOD_OP : '%';
+LSQUARE: '[';
+RSQUARE: ']';
 
 PROD_OP : '->';
 

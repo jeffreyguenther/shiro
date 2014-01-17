@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import main.java.shiro.interpreter.ShiroParser;
+import shiro.interpreter.ShiroParser;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import shiro.Container;

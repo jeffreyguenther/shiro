@@ -2,8 +2,8 @@ package shiro.interpreter;
 
 import java.util.HashMap;
 import java.util.Map;
-import main.java.shiro.interpreter.ShiroBaseListener;
-import main.java.shiro.interpreter.ShiroParser;
+import shiro.interpreter.ShiroBaseListener;
+import shiro.interpreter.ShiroParser;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 /**
