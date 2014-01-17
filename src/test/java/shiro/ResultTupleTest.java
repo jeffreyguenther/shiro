@@ -1,10 +1,12 @@
 package shiro;
 
-import java.util.HashSet;
-import java.util.Set;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
-import org.junit.BeforeClass;
+
+import java.util.HashSet;
+import java.util.Set;
+
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -12,7 +14,7 @@ import org.junit.Test;
  * @author jeffreyguenther
  */
 public class ResultTupleTest {
-    private static ResultTuple tuple;
+    private ResultTuple tuple;
     private static final String x = "x";
     private static final String y = "y";
     private static final String flag = "flag";
@@ -20,8 +22,8 @@ public class ResultTupleTest {
     public ResultTupleTest() {
     }
 
-    @BeforeClass
-    public static void setUpClass() throws Exception {
+    @Before
+    public void setUpClass() throws Exception {
         tuple = new ResultTuple();
     }
 
@@ -44,6 +46,9 @@ public class ResultTupleTest {
      */
     @Test
     public void testGetNames() {
+    	tuple.setNameforIndex(x, 0);
+        tuple.setNameforIndex(y, 1);
+        tuple.setNameforIndex(flag, 2);
         Set<String> names = new HashSet<String>();
         names.add(x);
         names.add(y);
@@ -72,6 +77,10 @@ public class ResultTupleTest {
      */
     @Test
     public void testSetGetValueForName() {
+    	tuple.setNameforIndex(x, 0);
+        tuple.setNameforIndex(y, 1);
+        tuple.setNameforIndex(flag, 2);
+    	
         tuple.setValueForName(x, Value.createInteger(23));
         tuple.setValueForName(y, Value.createFloat(4.5636f));
         tuple.setValueForName(flag, Value.createString("blues"));
@@ -114,6 +123,9 @@ public class ResultTupleTest {
      */
     @Test
     public void testToString() {
+        tuple.setValueForIndex(0, Value.createInteger(23));
+        tuple.setValueForIndex(1, Value.createFloat(4.5636f));
+        tuple.setValueForIndex(2, Value.createString("blues"));
         String expected = "23, 4.5636, blues";
         assertEquals(expected, tuple.toString());
     }
@@ -123,6 +135,13 @@ public class ResultTupleTest {
      */
     @Test
     public void testEquals() {
+        tuple.setValueForIndex(0, Value.createInteger(23));
+        tuple.setValueForIndex(1, Value.createFloat(4.5636f));
+        tuple.setValueForIndex(2, Value.createString("blues"));
+        tuple.setNameforIndex(x, 0);
+        tuple.setNameforIndex(y, 1);
+        tuple.setNameforIndex(flag, 2);
+    	
         ResultTuple t1 = ResultTuple.createTuple("elephants");
         t1.setValueForIndex(1, Value.createDouble(2.3d));
         ResultTuple t2 = ResultTuple.createTuple(23);
