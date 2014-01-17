@@ -8,4 +8,8 @@
 shiro/target
 
 shiro/nbactions*
+nbactions.xml
+nb-configuration.xml
+.gradle/*
+build/*
 
