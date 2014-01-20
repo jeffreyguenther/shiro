@@ -2,8 +2,9 @@ description = "shiro - a data flow language for alternatives"
 apply plugin: 'java'
 apply plugin: 'application'
 apply from: file('gradle/idea.gradle')
+apply from: 'gradle/javafx.plugin'
 
-mainClassName = "shiro.interpreter.Shiro"
+//mainClassName = 'shiro.drawing.ProjectAmoeba'
 
 ext.versions = [
         junit: "4.10"
@@ -82,7 +83,14 @@ jar{
 }
 
 run {
+//    main = 'shiro.drawing.ProjectAmoeba'
     if(project.hasProperty('args')){
         args project.args.split('\\s+')
     }
+}
+
+javafx{
+    appID 'Shiro'
+    appName 'Shiro'
+    mainClass mainClassName
 }

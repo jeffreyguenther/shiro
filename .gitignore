@@ -13,3 +13,7 @@ nb-configuration.xml
 .gradle/*
 build/*
 
+.nb-gradle*
+
+
+src/generated-sources
