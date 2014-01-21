@@ -57,7 +57,12 @@ task generateGrammarSource(dependsOn: antlrOutputDir, type: JavaExec) {
     inputs.dir file(antlr.antlrSource)
     outputs.dir file(antlr.destinationDir)
 
-    def grammars = fileTree(antlr.antlrSource).include('**/*.g4')
+    def files  = fileTree(antlr.antlrSource)
+    files.include('**/*.g4')
+    // don't generate the shared grammar, just the expression and full shiro grammar
+    files.exclude('**/*Shared.g4')
+    
+    def grammars = files
 
     main = 'org.antlr.v4.Tool'
     classpath = configurations.antlr4

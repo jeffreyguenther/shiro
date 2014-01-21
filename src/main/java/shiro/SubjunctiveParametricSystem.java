@@ -26,7 +26,17 @@ import shiro.interpreter.EvaluateAlternativeListener;
 import shiro.interpreter.NodeProductionListener;
 
 /**
- * A subjunctive parametric system.
+ * This class defines the model of a subjunctive parametric system.
+ *
+ * It manages all instances of shiro nodes and is responsible for managing
+ * updates. On instantiation it loads the multi-functions available to the the
+ * runtime.
+ *
+ * In the future, runtime loading of multi-functions will be supported.
+ *
+ * To update the parametric system each of the ports is placed in a list. The
+ * graph of ports is topologically sorted into a list. The list is evaluated in
+ * sequence.
  *
  * @author jeffreyguenther
  */
@@ -40,26 +50,28 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
     private Map<String, Node> nodes;                   // realized node table
     private Map<String, SubjunctiveNode> subjNodes;    // realized subj. node table
     private Map<String, SystemState> alternatives;     // alternative specs
+    private Map<String, Integer> instanceCount;        // count of node instances by type
     private PortAction graphNodeAction;                // action used in graph nodes
-    
+
     private Set<SubjParametricSystemEventListener> listeners; // Event listeners
     //sds
 
     public SubjunctiveParametricSystem() {
-        multiFunctions = new HashMap<String, MultiFunction>();
+        multiFunctions = new HashMap<>();
         // load the multifunction map
         loadMultiFunctions(multiFunctions);
 
-        depGraph = new DAGraph<Port>();
-        nodeDefs = new HashMap<String, ParseTree>();
-        subjNodeDefs = new HashMap<String, ParseTree>();
-        alternativeDefs = new HashMap<String, ParseTree>();
-        nodes = new HashedMap<String, Node>();
-        subjNodes = new HashMap<String, SubjunctiveNode>();
-        alternatives = new HashMap<String, SystemState>();
+        depGraph = new DAGraph<>();
+        nodeDefs = new HashMap<>();
+        subjNodeDefs = new HashMap<>();
+        alternativeDefs = new HashMap<>();
+        nodes = new HashedMap<>();
+        subjNodes = new HashMap<>();
+        alternatives = new HashMap<>();
+        instanceCount = new HashMap<>();
         graphNodeAction = new PortAction();
 
-        listeners = new HashSet<SubjParametricSystemEventListener>();
+        listeners = new HashSet<>();
     }
 
     /**
@@ -243,7 +255,6 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         if (match != null) {
             p.popPathHead();
 
-
             // check if the path has any more
             if (match.hasNestedContainers() && !p.isEmpty() && !p.isPathToPortIndex()) {
 
@@ -367,6 +378,12 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         return nodeDefs;
     }
 
+    /**
+     * Add the parse trees for collection of subjunctive nodes
+     *
+     * @param map subjunctive node name to parse tree mappings
+     * @return the complete map subjunctive nodes
+     */
     public Map<String, ParseTree> addSubjNodeASTDefinitions(Map<String, ParseTree> map) {
         subjNodeDefs.putAll(map);
         return subjNodeDefs;
@@ -376,7 +393,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         alternativeDefs.putAll(map);
         return alternativeDefs;
     }
-    
+
     public String printDependencyGraph() {
         StringBuilder sb = new StringBuilder();
         for (Node n : nodes.values()) {
@@ -396,7 +413,6 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
      * Update the parametric system
      */
     public void update() {
-
 
         ParseTreeWalker walker = new ParseTreeWalker();
         EvaluateAlternativeListener genAlts = new EvaluateAlternativeListener(this);
@@ -430,7 +446,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
                 System.out.println(d.getDependent().getFullName() + " -> " + d.getDependedOn().getFullName());
                 addDependency(d);
             }
-            
+
             TopologicalSort<Port> sorter = new TopologicalSort<Port>(depGraph);
             List<GraphNode<Port>> topologicalOrdering = sorter.getTopologicalOrdering();
 
@@ -445,8 +461,6 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
             System.out.println(printDependencyGraph());
             depGraph.removeAllDependencies();
         }
-
-
     }
 
     /**
@@ -514,8 +528,9 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
     }
 
     /**
-     * Produce node from the ParseTree
-     * Looks up the ParseTree in the map and generates the node
+     * Produce node from the ParseTree Looks up the ParseTree in the map and
+     * generates the node
+     *
      * @param name of node to produce
      * @return Node object
      */
@@ -533,8 +548,77 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
     }
 
     /**
-     * Produce a subjunctive node from the ParseTree
-     * Looks up the ParseTree in the map and generates the node
+     * Generate a name
+     *
+     * @param nodePath node to use in name
+     * @param count number of nodes
+     * @return a string in the format <node definition name>-<counter>
+     */
+    public String generateNodeInstanceName(String nodePath, int count) {
+        return new StringBuilder()
+                .append(nodePath)
+                .append("-")
+                .append(count)
+                .toString();
+    }
+
+    /**
+     * Get the number of instances of a node
+     *
+     * @param nodePath the node to count
+     * @return number of instance of the node. Return 0 if the node is not
+     * found.
+     */
+    public int getInstanceCountForNode(String nodePath) {
+        if (instanceCount.containsKey(nodePath)) {
+            return instanceCount.get(nodePath);
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * Increment the count of instances of a node type
+     *
+     * @param nodePath node type to increment
+     * @return the current count of {@code  nodePath} nodes. Returns 0 if the
+     * node is not found
+     */
+    public int incrementCountOfInstances(String nodePath) {
+        int count = 0;
+        if (instanceCount.containsKey(nodePath)) {
+            count = instanceCount.get(nodePath);
+            count++;
+            instanceCount.put(nodePath, count);
+        }
+
+        return count;
+    }
+
+    /**
+     * Set the value of a port with an expression
+     *
+     * The value expression is parsed and any necessary dependencies are added
+     * Note: This will NOT cause the parametric system to update. You must call
+     * update() separately.
+     *
+     * @param portPath  The path to the port to update. 
+     * The path given must be the port's full name. For example, <code>Point.x</code>.
+     * @param value an expression giving the port's value.
+     */
+    public void setPortValue(String portPath, String value) {
+        // NOTE: the scope of the expression is the node
+
+        // Lex the expression
+        // Parse the expression to generate the parse tree
+        // Walk the parse tree to generate port dependencies
+        // Add the dependencies to the graph
+    }
+
+    /**
+     * Produce a subjunctive node from the ParseTree Looks up the ParseTree in
+     * the map and generates the node
+     *
      * @param name of subjunctive node to produce
      * @return SubjunctiveNode object
      */
@@ -553,6 +637,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
 
     /**
      * Get a subjunctive node by name
+     *
      * @param nodeName
      * @return the Subjunctive node for the corresponding name.
      */
@@ -562,7 +647,8 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
 
     /**
      * Add an alternative to the the parametric system
-     * @param state 
+     *
+     * @param state
      */
     public void addAlternative(SystemState state) {
         alternatives.put(state.getName(), state);

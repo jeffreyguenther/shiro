@@ -2,8 +2,6 @@ package shiro.interpreter;
 
 import java.util.ArrayList;
 import java.util.List;
-import shiro.interpreter.ShiroBaseListener;
-import shiro.interpreter.ShiroParser;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -29,7 +27,7 @@ public class ShiroBasePassListener extends ShiroBaseListener {
 
     public ShiroBasePassListener(SubjunctiveParametricSystem pSystem) {
         this.pSystem = pSystem;
-        this.expressions = new ParseTreeProperty<Expression>();
+        this.expressions = new ParseTreeProperty<>();
         currentScope = pSystem;
     }
     
@@ -64,16 +62,19 @@ public class ShiroBasePassListener extends ShiroBaseListener {
     public void exitMultExp(ShiroParser.MultExpContext ctx) {
         Expression op1 = getExpr(ctx.expr(0));
         Expression op2 = getExpr(ctx.expr(1));
-
-        if (ctx.getChild(1).getText().equals("*")) {
-            Multiply mult = new Multiply(op1, op2);
-            setExpr(ctx, mult);
-        } else if (ctx.getChild(1).getText().equals("/")) {
-            Divide div = new Divide(op1, op2);
-            setExpr(ctx, div);
-        } else {
-            Mod mod = new Mod(op1, op2);
-            setExpr(ctx, mod);
+        switch (ctx.getChild(1).getText()) {
+            case "*":
+                Multiply mult = new Multiply(op1, op2);
+                setExpr(ctx, mult);
+                break;
+            case "/":
+                Divide div = new Divide(op1, op2);
+                setExpr(ctx, div);
+                break;
+            default:
+                Mod mod = new Mod(op1, op2);
+                setExpr(ctx, mod);
+                break;
         }
     }
 
@@ -102,7 +103,7 @@ public class ShiroBasePassListener extends ShiroBaseListener {
     
     protected Path createPath(Scope currentScope, ShiroParser.PathContext ctx){
         // Declare a list to store the path's parts
-        List<String> parts = new ArrayList<String>();
+        List<String> parts = new ArrayList<>();
 
         Path p = new Path();
 
@@ -131,7 +132,6 @@ public class ShiroBasePassListener extends ShiroBaseListener {
     
     @Override
     public void enterPath(ShiroParser.PathContext ctx) {
-        //System.out.println("Enter PathContext");
         // save the path for later
         setExpr(ctx, createPath(currentScope, ctx));
     }

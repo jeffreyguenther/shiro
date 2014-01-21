@@ -56,16 +56,16 @@ public class Node implements PortEventListener, Container, Symbol{
         // set the node active by default
         this.active = true;
         // create map for the node's ports
-        ports = new HashMap<String,Port>();
+        ports = new HashMap<>();
         // create set for the node's evaluate ports
-        evaluatedPorts = new HashMap<String, Port>();
+        evaluatedPorts = new HashMap<>();
         // no evaluated port is selected when the object is created
         selectedEvaluatedPort = null;
         //initialize map of nested contaiers
-        nestedContainers = new HashMap<String, Container>();
+        nestedContainers = new HashMap<>();
 
         // intialize set of listeners
-        listeners = new HashSet<NodeEventListener>();
+        listeners = new HashSet<>();
     }
 
     /**
@@ -79,7 +79,6 @@ public class Node implements PortEventListener, Container, Symbol{
     /**
      * Nest a container inside the node.
      * @param c the container to be nested
-     * @return the container nested
      */
     @Override
     public void addNestedContainer(Container c){

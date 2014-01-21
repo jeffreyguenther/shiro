@@ -8,7 +8,7 @@ import shiro.SubjunctiveParametricSystem;
 import shiro.SystemState;
 
 /**
- *
+ * Walk the parse tree of an alternative to evaluate it.
  * @author jeffreyguenther
  */
 public class EvaluateAlternativeListener extends ShiroBasePassListener{
