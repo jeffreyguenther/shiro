@@ -22,8 +22,8 @@ import shiro.expressions.Subtract;
  */
 public class ShiroBasePassListener extends ShiroBaseListener {
     protected SubjunctiveParametricSystem pSystem;
-    protected ParseTreeProperty<Expression> expressions;
     protected Scope currentScope;
+    protected ParseTreeProperty<Expression> expressions;
 
     public ShiroBasePassListener(SubjunctiveParametricSystem pSystem) {
         this.pSystem = pSystem;
@@ -38,10 +38,9 @@ public class ShiroBasePassListener extends ShiroBaseListener {
      * @return expression stored for that parse tree node
      */
     protected Expression getExpr(ParseTree node) {
-        if(expressions.get(node) == null){
+        if (expressions.get(node) == null) {
             return expressions.get(node.getChild(0));
         }
-        
         return expressions.get(node);
     }
 

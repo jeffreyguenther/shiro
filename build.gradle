@@ -1,3 +1,8 @@
+/**
+ * This build script is based on https://github.com/ae6rt/gradle-antlr4-template
+ * 
+ * */
+
 description = "shiro - a data flow language for alternatives"
 apply plugin: 'java'
 apply plugin: 'application'
@@ -56,13 +61,8 @@ task generateGrammarSource(dependsOn: antlrOutputDir, type: JavaExec) {
 
     inputs.dir file(antlr.antlrSource)
     outputs.dir file(antlr.destinationDir)
-
-    def files  = fileTree(antlr.antlrSource)
-    files.include('**/*.g4')
-    // don't generate the shared grammar, just the expression and full shiro grammar
-    files.exclude('**/*Shared.g4')
     
-    def grammars = files
+    def grammars = fileTree(antlr.antlrSource).include('**/*.g4')
 
     main = 'org.antlr.v4.Tool'
     classpath = configurations.antlr4

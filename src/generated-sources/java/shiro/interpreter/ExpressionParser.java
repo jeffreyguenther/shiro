@@ -16,10 +16,10 @@ public class ExpressionParser extends Parser {
 		new PredictionContextCache();
 	public static final int
 		T__0=1, OR_OP=2, PLUS_OP=3, MINUS_OP=4, MULT_OP=5, DIV_OP=6, MOD_OP=7, 
-		LSQUARE=8, RSQUARE=9, STRING_LITERAL=10, NUMBER=11, IDENT=12;
+		LSQUARE=8, RSQUARE=9, STRING_LITERAL=10, NUMBER=11, IDENT=12, WS=13;
 	public static final String[] tokenNames = {
 		"<INVALID>", "'.'", "'|'", "'+'", "'-'", "'*'", "'/'", "'%'", "'['", "']'", 
-		"STRING_LITERAL", "NUMBER", "IDENT"
+		"STRING_LITERAL", "NUMBER", "IDENT", "WS"
 	};
 	public static final int
 		RULE_expression = 0, RULE_path = 1, RULE_pathIndex = 2, RULE_expr = 3;
@@ -423,7 +423,7 @@ public class ExpressionParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\uacf5\uee8c\u4f5d\u8b0d\u4a45\u78bd\u1b2f\u3378\3\16\60\4\2\t\2\4\3"+
+		"\3\uacf5\uee8c\u4f5d\u8b0d\u4a45\u78bd\u1b2f\u3378\3\17\60\4\2\t\2\4\3"+
 		"\t\3\4\4\t\4\4\5\t\5\3\2\3\2\3\3\3\3\3\3\7\3\20\n\3\f\3\16\3\23\13\3\3"+
 		"\3\3\3\3\3\3\3\5\3\31\n\3\3\4\3\4\3\5\3\5\3\5\5\5 \n\5\3\5\3\5\3\5\3\5"+
 		"\3\5\3\5\3\5\3\5\3\5\7\5+\n\5\f\5\16\5.\13\5\3\5\2\6\2\4\6\b\2\5\3\2\f"+

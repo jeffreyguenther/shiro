@@ -38,7 +38,7 @@ public class GraphBuilderListener extends ShiroBasePassListener {
 
     @Override
     public void exitGraphDecl(ShiroParser.GraphDeclContext ctx) {
-        List<DependencyRelation<Port>> deps = new ArrayList<DependencyRelation<Port>>();
+        List<DependencyRelation<Port>> deps = new ArrayList<>();
 
         // for each node generated in the graph generation process
         for (Node n : pSystem.getNodes()) {
@@ -122,7 +122,7 @@ public class GraphBuilderListener extends ShiroBasePassListener {
         try {
             Port p = (Port) pSystem.resolvePath((Path) getExpr(ctx.path()));
 
-            List<Expression> mfExpressions = new ArrayList<Expression>();
+            List<Expression> mfExpressions = new ArrayList<>();
 
             for (ParseTree pt : ctx.mfparams().expr()) {
                 Expression exp = getExpr(pt);

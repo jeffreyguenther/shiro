@@ -9,6 +9,17 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
  */
 public interface ShiroListener extends ParseTreeListener {
 	/**
+	 * Enter a parse tree produced by {@link ShiroParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void enterExpression(@NotNull ShiroParser.ExpressionContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ShiroParser#expression}.
+	 * @param ctx the parse tree
+	 */
+	void exitExpression(@NotNull ShiroParser.ExpressionContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link ShiroParser#MultExp}.
 	 * @param ctx the parse tree
 	 */

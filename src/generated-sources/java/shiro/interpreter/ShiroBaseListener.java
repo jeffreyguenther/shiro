@@ -17,6 +17,19 @@ public class ShiroBaseListener implements ShiroListener {
 	 * <p/>
 	 * The default implementation does nothing.
 	 */
+	@Override public void enterExpression(@NotNull ShiroParser.ExpressionContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
+	@Override public void exitExpression(@NotNull ShiroParser.ExpressionContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 * <p/>
+	 * The default implementation does nothing.
+	 */
 	@Override public void enterMultExp(@NotNull ShiroParser.MultExpContext ctx) { }
 	/**
 	 * {@inheritDoc}
