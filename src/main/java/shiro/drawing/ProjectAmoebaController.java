@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package shiro.drawing;
 
 import java.io.File;
@@ -27,9 +22,10 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.LineBuilder;
 
 import javax.imageio.ImageIO;
+import shiro.SubjunctiveParametricSystem;
 
 /**
- * 
+ * This class controls 
  * @author jeffreyguenther
  */
 public class ProjectAmoebaController {
@@ -47,6 +43,7 @@ public class ProjectAmoebaController {
 	private Node selectedObject;
 
 	private final ProjectAmoebaUI ui;
+        private SubjunctiveParametricSystem model;
 
 	public SimpleStringProperty selectObjectName;
 	private boolean createLineSuccessful;
@@ -63,7 +60,11 @@ public class ProjectAmoebaController {
 		createLineSuccessful = false;
 		
 		// create subjunctive parametric system
+                model = new SubjunctiveParametricSystem();
+                
 		// load point and line definitions
+                String defsFile = "example_code/point_line_defs.sro";
+                
 	}
 
 	void setWaitingMode() {
@@ -205,7 +206,7 @@ public class ProjectAmoebaController {
 				ui.getDrawGroup().getChildren().addAll(p);
 				
 				// create the point in the model
-				// TODO
+				
 
 				// create a point node
 				System.out.println("Point created at: [" + x + "," + y + "]");
@@ -236,7 +237,6 @@ public class ProjectAmoebaController {
 				tempPoint.setLayoutX(e.getX());
 				tempPoint.setLayoutY(e.getY());
 			}
-
 		}
 
 		if(mode.equals(Mode.Line)){

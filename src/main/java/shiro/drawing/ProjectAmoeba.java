@@ -7,7 +7,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 
 /**
- * 
+ * A prototype drawing program that demonstrates the use of subjuncts
  * @author jeffreyguenther
  */
 public class ProjectAmoeba extends Application {
@@ -19,6 +19,7 @@ public class ProjectAmoeba extends Application {
 		ui = new ProjectAmoebaUI();
 		Scene scene = new Scene(ui.getRoot(), 800, 600);
 
+                // Set up the window
 		stage.setMinHeight(600);
 		stage.setMinWidth(800);
 		stage.setTitle("Project Amoeba");
@@ -26,7 +27,7 @@ public class ProjectAmoeba extends Application {
 
 		stage.show();
 		
-		// Setup scene shortcuts
+		// Setup keyboard shortcuts
 		scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
 			@Override
 			public void handle(KeyEvent e) {

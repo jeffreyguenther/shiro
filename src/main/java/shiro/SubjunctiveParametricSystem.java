@@ -1,8 +1,12 @@
 package shiro;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.antlr.v4.runtime.ANTLRFileStream;
+import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.apache.commons.collections15.map.HashedMap;
@@ -23,7 +27,10 @@ import shiro.functions.graphics.CanvasMFunc;
 import shiro.functions.graphics.LineMFunc;
 import shiro.functions.graphics.PointMFunc;
 import shiro.interpreter.EvaluateAlternativeListener;
+import shiro.interpreter.NodeDefinitionListener;
 import shiro.interpreter.NodeProductionListener;
+import shiro.interpreter.ShiroLexer;
+import shiro.interpreter.ShiroParser;
 
 /**
  * This class defines the model of a subjunctive parametric system.
@@ -280,6 +287,10 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
      */
     public Set<Node> getNodes() {
         return new HashSet<Node>(nodes.values());
+    }
+
+    public ParseTree getNodeDef(String path) {
+        return nodeDefs.get(path);
     }
 
     /**
@@ -602,8 +613,8 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
      * Note: This will NOT cause the parametric system to update. You must call
      * update() separately.
      *
-     * @param portPath  The path to the port to update. 
-     * The path given must be the port's full name. For example, <code>Point.x</code>.
+     * @param portPath The path to the port to update. The path given must be
+     * the port's full name. For example, <code>Point.x</code>.
      * @param value an expression giving the port's value.
      */
     public void setPortValue(String portPath, String value) {
@@ -633,6 +644,69 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         walker.walk(nodeBuilder, nodeAST);
 
         return nodeBuilder.getCreatedSubjNode();
+    }
+
+    public void loadDefinitions() {
+        ANTLRInputStream is = null;
+        try {
+            is = new ANTLRInputStream(
+                    getClass().getClassLoader()
+                    .getResourceAsStream("shiro/node_defs.sro"));
+        } catch (IOException ex) {
+            Logger.getLogger(SubjunctiveParametricSystem.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        ShiroParser parser = parse(is);
+        this.addNodeASTDefinitions(generateNodeDefs(parser.shiro()));
+    }
+    
+    public Map<String, ParseTree> generateNodeDefs(ParseTree tree){
+        // Walk the parse tree to create the ndoe definitions
+        ParseTreeWalker walker = new ParseTreeWalker();
+        NodeDefinitionListener defPass = new NodeDefinitionListener();
+
+        // Walk the tree with the def pass listener
+        walker.walk(defPass, tree);
+
+        return defPass.getNodeDefinitions();
+    }
+
+    /**
+     * Load node definitions
+     * This method is helpful to load node definitions for use by a GUI
+     * @param filePath file to be loaded
+     */
+    public void loadDefinitions(String filePath) {
+        // Read in a file
+        ANTLRInputStream is = null;
+        try {
+            is = new ANTLRFileStream(filePath);
+        } catch (IOException ex) {
+            Logger.getLogger(SubjunctiveParametricSystem.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        // parse the input stream
+        ShiroParser parser = parse(is);
+        // generate the AST from the parse tree
+        this.addNodeASTDefinitions(generateNodeDefs(parser.shiro()));
+    }
+
+    /**
+     * Parse an input stream of shiro code
+     * @param inputStream a stream of the shiro code to be parsed
+     * @return reference to parser
+     */
+    public ShiroParser parse(ANTLRInputStream inputStream) {
+        // lex the stream
+        ShiroLexer lex = new ShiroLexer(inputStream);
+        CommonTokenStream ts = new CommonTokenStream(lex);
+
+        // parse the token stream
+        ShiroParser parser = new ShiroParser(ts);
+        // generate the parse tree during parsing
+        parser.setBuildParseTree(true);
+        
+        return parser;
     }
 
     /**

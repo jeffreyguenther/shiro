@@ -89,7 +89,11 @@ public class ExpressionParserTest {
         return tree.toStringTree(parser);
     }
 
-    
+    /**
+     * Generate a parse tree string for an expression
+     * @param expression to parse
+     * @return parse tree expression in lisp format
+     */
     private String generateParseTree(String expression) {
         ANTLRInputStream is = new ANTLRInputStream(expression);
         ShiroLexer lex = new ShiroLexer(is);
