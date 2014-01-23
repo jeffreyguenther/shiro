@@ -75,12 +75,12 @@ public class NodeProductionListener extends ShiroBasePassListener {
 
         if (currentContainerNode != null) {
             // create a new node
-            createdNode = new Node(ctx.IDENT().getText(), currentScope);
+            createdNode = new Node(currentContainerNode.getFullName() + ctx.IDENT().getText(), ctx.IDENT().getText(), currentScope);
             // add the node as a nested node
             currentContainerNode.addNestedContainer(createdNode);
 
         } else {
-            createdNode = new Node(ctx.IDENT().getText(), currentScope);
+            createdNode = new Node(ctx.IDENT().getText(), ctx.IDENT().getText(), currentScope);
             currentScope = createdNode;
         }
     }

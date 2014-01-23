@@ -17,7 +17,7 @@ import shiro.functions.MultiFunction;
 public class Port implements Symbol{
     // type of port
     private PortType type;              
-    // arguemtns to be passed to the multifunction
+    // arguements to be passed to the multifunction
     private List<Expression> arguments;
     // multi function that is evaluted
     private MultiFunction function;

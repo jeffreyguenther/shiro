@@ -63,8 +63,7 @@ public class ProjectAmoebaController {
                 model = new SubjunctiveParametricSystem();
                 
 		// load point and line definitions
-                String defsFile = "example_code/point_line_defs.sro";
-                
+                model.loadDefinitions();
 	}
 
 	void setWaitingMode() {
@@ -206,6 +205,8 @@ public class ProjectAmoebaController {
 				ui.getDrawGroup().getChildren().addAll(p);
 				
 				// create the point in the model
+                                // set port x to e.getX() as expression
+                                // set port y expression to e.getY()
 				
 
 				// create a point node

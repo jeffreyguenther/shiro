@@ -23,6 +23,8 @@ public class Node implements PortEventListener, Container, Symbol{
     // the node's parent scope; The value maybe another node, subjunctive node,
     // or the global parametric system.
     private Scope parentScope;
+    // type string for the node
+    private String defPath;
     // node's fully qualified name
     private String fullName;
     // node name
@@ -40,13 +42,17 @@ public class Node implements PortEventListener, Container, Symbol{
 
     // objects listening to the node
     private Set<NodeEventListener> listeners;
+    
 
     /**
      * Create a node
+     * @param type type string of the node Point or Area.Circle
      * @param name name of the node
      * @param scope scope of the node
      */
-    public Node(String name, Scope scope) {
+    public Node(String type, String name, Scope scope) {
+        // type of node
+        this.defPath = type; 
         // set the enclosing scope
         this.parentScope = scope;
         // set the parent's full
@@ -70,10 +76,10 @@ public class Node implements PortEventListener, Container, Symbol{
 
     /**
      * Default constructor
-     * Creates a node with no name, and no scope
+     * Creates a node with no type, no name, and no scope
      */
     public Node(){
-        this("", null);
+        this("", "", null);
     }
 
     /**
@@ -129,6 +135,22 @@ public class Node implements PortEventListener, Container, Symbol{
         // add the port to both sets
         evaluatedPorts.put(p.getName(), p);
         addPort(p);
+    }
+    
+    /**
+     * Get the definition path of the node
+     * @return the definition path of the node. Example, Point, or Area.Circle
+     */
+    public String getDefPath(){
+        return defPath;
+    }
+    
+    /**
+     * Set the definition path of the node
+     * @param path of the node's prototype
+     */
+    public void setDefPath(String path){
+        this.defPath = path;
     }
 
     /**

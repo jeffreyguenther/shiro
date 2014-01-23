@@ -179,10 +179,33 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
     }
 
     public SubjunctiveNode produceSubjNodeFromName(String name, String newName) {
-        SubjunctiveNode producedNode = createSubjNode(name);
+        SubjunctiveNode producedNode = realizeSubjNode(name);
         producedNode.setName(newName);
         addSubjunctiveNode(producedNode);
         return producedNode;
+    }
+    
+    public Node createNode(String type){
+        // increment the count of type
+        int count = incrementCountOfInstances(type);
+        
+        // generate a new name for the node
+        String name = generateNodeInstanceName(type, count);
+        
+        // produce the new node
+        Node node = produceNodeFromName(type, name);
+        
+        // TODO add the node to the map of realized nodes
+        // Add ports to depgraph
+        addNodeToGraph(node);
+        
+        return node;
+    }
+    
+    public void addNodeToGraph(Node node){
+        for (DependencyRelation<Port> d : node.getDependencies()){
+            addDependency(d);
+        }
     }
 
     /**
@@ -195,11 +218,11 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
      */
     public Node produceNodeFromName(String name, String newName) {
 
-        Node producedNode = createNode(name);
+        Node producedNode = realizeNode(name);
 
         // change the node's name
         producedNode.setFullName(newName);
-        addNode(producedNode);
+        addNode(producedNode); //TODO remove from method. It causes a side effect.
 
         //update the full name of all of the ports in the node
         for (Port p : producedNode.getPorts()) {
@@ -253,7 +276,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         if (match == null //&& nodeASTDefinitions.containsKey(p.getCurrentPathHead())
                 ) {
             // If it does, build the node.
-            match = createNode(p.getCurrentPathHead());
+            match = realizeNode(p.getCurrentPathHead());
 
             // add to collection of realized nodes.
             nodes.put(match.getName(), match);
@@ -286,7 +309,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
      * @return a set of all of the nodes in the system
      */
     public Set<Node> getNodes() {
-        return new HashSet<Node>(nodes.values());
+        return new HashSet<>(nodes.values());
     }
 
     public ParseTree getNodeDef(String path) {
@@ -334,7 +357,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
      * @param p port to be added
      */
     public void addPort(Port p) {
-        depGraph.addNode(new GraphNode<Port>(p, graphNodeAction));
+        depGraph.addNode(new GraphNode<>(p, graphNodeAction));
     }
 
     /**
@@ -539,13 +562,13 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
     }
 
     /**
-     * Produce node from the ParseTree Looks up the ParseTree in the map and
+     * Generate node from the ParseTree Looks up the ParseTree in the map and
      * generates the node
      *
      * @param name of node to produce
      * @return Node object
      */
-    private Node createNode(String name) {
+    private Node realizeNode(String name) {
         // look up the parse tree of the node to duplicate
         ParseTree nodeAST = nodeDefs.get(name);
         // walk the parse tree to realize the node
@@ -568,7 +591,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
     public String generateNodeInstanceName(String nodePath, int count) {
         return new StringBuilder()
                 .append(nodePath)
-                .append("-")
+                .append("_")
                 .append(count)
                 .toString();
     }
@@ -576,13 +599,16 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
     /**
      * Get the number of instances of a node
      *
-     * @param nodePath the node to count
+     * @param nodeTypePath the type path of the node.
+     * For example a Point node defined at the root, would be passed in as "Point"
+     * Warning this method does not work with nested types as nested types
+     * are implemented in shiro yet.
      * @return number of instance of the node. Return 0 if the node is not
      * found.
      */
-    public int getInstanceCountForNode(String nodePath) {
-        if (instanceCount.containsKey(nodePath)) {
-            return instanceCount.get(nodePath);
+    public int getInstanceCountForNode(String nodeTypePath) {
+        if (instanceCount.containsKey(nodeTypePath)) {
+            return instanceCount.get(nodeTypePath);
         } else {
             return 0;
         }
@@ -592,14 +618,15 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
      * Increment the count of instances of a node type
      *
      * @param nodePath node type to increment
-     * @return the current count of {@code  nodePath} nodes. Returns 0 if the
-     * node is not found
+     * @return the current count of {@code  nodePath} nodes.
      */
     public int incrementCountOfInstances(String nodePath) {
-        int count = 0;
+        int count = 1;
         if (instanceCount.containsKey(nodePath)) {
             count = instanceCount.get(nodePath);
             count++;
+            instanceCount.put(nodePath, count);
+        }else{ // if the type is new
             instanceCount.put(nodePath, count);
         }
 
@@ -633,7 +660,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
      * @param name of subjunctive node to produce
      * @return SubjunctiveNode object
      */
-    private SubjunctiveNode createSubjNode(String name) {
+    private SubjunctiveNode realizeSubjNode(String name) {
         // look up the parse tree of the node to duplicate
         ParseTree nodeAST = subjNodeDefs.get(name);
         // walk the parse tree to realize the node
@@ -646,6 +673,9 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         return nodeBuilder.getCreatedSubjNode();
     }
 
+    /**
+     * Load node definitions specified in the shiro/node_defs.sro package
+     */
     public void loadDefinitions() {
         ANTLRInputStream is = null;
         try {
@@ -660,6 +690,11 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         this.addNodeASTDefinitions(generateNodeDefs(parser.shiro()));
     }
     
+    /**
+     * Generate node AST's from the parse tree
+     * @param tree to generate AST frome
+     * @return map of node to parse tree object 
+     */
     public Map<String, ParseTree> generateNodeDefs(ParseTree tree){
         // Walk the parse tree to create the ndoe definitions
         ParseTreeWalker walker = new ParseTreeWalker();

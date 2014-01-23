@@ -32,11 +32,6 @@ public class GraphBuilderListener extends ShiroBasePassListener {
     }
 
     @Override
-    public void enterGraphDecl(ShiroParser.GraphDeclContext ctx) {
-        //System.out.println("Enter graph Decl");
-    }
-
-    @Override
     public void exitGraphDecl(ShiroParser.GraphDeclContext ctx) {
         List<DependencyRelation<Port>> deps = new ArrayList<>();
 
