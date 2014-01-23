@@ -10,15 +10,20 @@ apply from: file('gradle/idea.gradle')
 apply from: 'gradle/javafx.plugin'
 
 //mainClassName = 'shiro.drawing.ProjectAmoeba'
+gradle.projectsEvaluated {
+    tasks.withType(Compile) {
+        options.compilerArgs << "-Xlint:unchecked"
+    }
+}
 
 ext.versions = [
-        junit: "4.10"
+    junit: "4.10"
 ]
 
 ext.antlr = [
-        grammarpackage: "shiro.interpreter",
-        antlrSource: 'src/main/java',
-        destinationDir: "src/generated-sources/java"
+    grammarpackage: "shiro.interpreter",
+    antlrSource: 'src/main/java',
+    destinationDir: "src/generated-sources/java"
 ]
 
 repositories {
@@ -88,7 +93,7 @@ jar{
 }
 
 run {
-//    main = 'shiro.drawing.ProjectAmoeba'
+    //    main = 'shiro.drawing.ProjectAmoeba'
     if(project.hasProperty('args')){
         args project.args.split('\\s+')
     }
