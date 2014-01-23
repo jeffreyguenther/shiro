@@ -12,5 +12,5 @@ import shiro.Value;
  */
 public interface Expression {
     public Value evaluate() throws PortNotActiveException;
-    public Set<Port> getPortsDependedOn() throws PathNotFoundException;
+    public Set<Port> getPortsDependedOn()throws PathNotFoundException;
 }

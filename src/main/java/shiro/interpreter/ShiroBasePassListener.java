@@ -26,9 +26,13 @@ public class ShiroBasePassListener extends ShiroBaseListener {
     protected ParseTreeProperty<Expression> expressions;
 
     public ShiroBasePassListener(SubjunctiveParametricSystem pSystem) {
+        this(pSystem, pSystem);
+    }
+    
+    public ShiroBasePassListener(SubjunctiveParametricSystem pSystem, Scope scope){
         this.pSystem = pSystem;
         this.expressions = new ParseTreeProperty<>();
-        currentScope = pSystem;
+        currentScope = scope;
     }
     
     /**
@@ -37,7 +41,7 @@ public class ShiroBasePassListener extends ShiroBaseListener {
      * @param node parse tree node
      * @return expression stored for that parse tree node
      */
-    protected Expression getExpr(ParseTree node) {
+    public Expression getExpr(ParseTree node) {
         if (expressions.get(node) == null) {
             return expressions.get(node.getChild(0));
         }

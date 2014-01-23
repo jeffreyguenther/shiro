@@ -1,17 +1,14 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package shiro.expressions;
 
 import java.util.HashSet;
 import java.util.Set;
+import shiro.PathNotFoundException;
 import shiro.Port;
 import shiro.PortNotActiveException;
 import shiro.Value;
 
 /**
- *
+ * This class represents a number in the shiro lang
  * @author jeffreyguenther
  */
 public class Number implements Expression{
@@ -28,8 +25,8 @@ public class Number implements Expression{
     }
 
     @Override
-    public Set<Port> getPortsDependedOn() {
-        Set<Port> ports = new HashSet<Port>();
+    public Set<Port> getPortsDependedOn() throws PathNotFoundException {
+        Set<Port> ports = new HashSet<>();
         return ports;
     }
     

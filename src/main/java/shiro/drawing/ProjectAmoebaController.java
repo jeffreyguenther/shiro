@@ -205,6 +205,13 @@ public class ProjectAmoebaController {
 				ui.getDrawGroup().getChildren().addAll(p);
 				
 				// create the point in the model
+                                shiro.Node node = model.createNode("Point");
+                                
+                                // create path object for port
+                                // look up port from path
+                                // Parse the expression into an Expression object
+                                // Add the expression object to the ports arguments
+                                
                                 // set port x to e.getX() as expression
                                 // set port y expression to e.getY()
 				

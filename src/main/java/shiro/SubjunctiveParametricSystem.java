@@ -18,6 +18,7 @@ import shiro.events.NodeEvent;
 import shiro.events.NodeEventListener;
 import shiro.events.SubjParametricSystemEvent;
 import shiro.events.SubjParametricSystemEventListener;
+import shiro.expressions.Expression;
 import shiro.expressions.Path;
 import shiro.functions.MultiFunction;
 import shiro.functions.MultiplyMFunc;
@@ -29,6 +30,7 @@ import shiro.functions.graphics.PointMFunc;
 import shiro.interpreter.EvaluateAlternativeListener;
 import shiro.interpreter.NodeDefinitionListener;
 import shiro.interpreter.NodeProductionListener;
+import shiro.interpreter.ShiroBasePassListener;
 import shiro.interpreter.ShiroLexer;
 import shiro.interpreter.ShiroParser;
 
@@ -184,26 +186,37 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         addSubjunctiveNode(producedNode);
         return producedNode;
     }
-    
-    public Node createNode(String type){
+
+    /**
+     * Creates an instance of a node
+     *
+     * @param type of node to create
+     * @return a reference to created node
+     */
+    public Node createNode(String type) {
         // increment the count of type
         int count = incrementCountOfInstances(type);
-        
+
         // generate a new name for the node
         String name = generateNodeInstanceName(type, count);
-        
+
         // produce the new node
         Node node = produceNodeFromName(type, name);
-        
+
         // TODO add the node to the map of realized nodes
         // Add ports to depgraph
         addNodeToGraph(node);
-        
+
         return node;
     }
-    
-    public void addNodeToGraph(Node node){
-        for (DependencyRelation<Port> d : node.getDependencies()){
+
+    /**
+     * Adds the ports in a node to the dependency graph
+     *
+     * @param node
+     */
+    public void addNodeToGraph(Node node) {
+        for (DependencyRelation<Port> d : node.getDependencies()) {
             addDependency(d);
         }
     }
@@ -349,6 +362,12 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
 
         // remove the node
         nodes.remove(node.getName());
+    }
+
+    public Port setPortExpression(Path pathToPort, Expression expr) throws PathNotFoundException {
+        Port port = (Port) resolvePath(pathToPort);
+        port.setArgumentForPosition(0, expr);
+        return port;
     }
 
     /**
@@ -599,10 +618,10 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
     /**
      * Get the number of instances of a node
      *
-     * @param nodeTypePath the type path of the node.
-     * For example a Point node defined at the root, would be passed in as "Point"
-     * Warning this method does not work with nested types as nested types
-     * are implemented in shiro yet.
+     * @param nodeTypePath the type path of the node. For example a Point node
+     * defined at the root, would be passed in as "Point" Warning this method
+     * does not work with nested types as nested types are implemented in shiro
+     * yet.
      * @return number of instance of the node. Return 0 if the node is not
      * found.
      */
@@ -626,7 +645,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
             count = instanceCount.get(nodePath);
             count++;
             instanceCount.put(nodePath, count);
-        }else{ // if the type is new
+        } else { // if the type is new
             instanceCount.put(nodePath, count);
         }
 
@@ -685,17 +704,18 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         } catch (IOException ex) {
             Logger.getLogger(SubjunctiveParametricSystem.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         ShiroParser parser = parse(is);
         this.addNodeASTDefinitions(generateNodeDefs(parser.shiro()));
     }
-    
+
     /**
      * Generate node AST's from the parse tree
+     *
      * @param tree to generate AST frome
-     * @return map of node to parse tree object 
+     * @return map of node to parse tree object
      */
-    public Map<String, ParseTree> generateNodeDefs(ParseTree tree){
+    public Map<String, ParseTree> generateNodeDefs(ParseTree tree) {
         // Walk the parse tree to create the ndoe definitions
         ParseTreeWalker walker = new ParseTreeWalker();
         NodeDefinitionListener defPass = new NodeDefinitionListener();
@@ -707,8 +727,9 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
     }
 
     /**
-     * Load node definitions
-     * This method is helpful to load node definitions for use by a GUI
+     * Load node definitions This method is helpful to load node definitions for
+     * use by a GUI
+     *
      * @param filePath file to be loaded
      */
     public void loadDefinitions(String filePath) {
@@ -719,15 +740,27 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         } catch (IOException ex) {
             Logger.getLogger(SubjunctiveParametricSystem.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         // parse the input stream
         ShiroParser parser = parse(is);
         // generate the AST from the parse tree
         this.addNodeASTDefinitions(generateNodeDefs(parser.shiro()));
     }
 
+    public Expression parseExpression(Scope scope, String expr) {
+        ShiroParser parser = parse(new ANTLRInputStream(expr));
+        ParseTree expression = parser.expression();
+
+        ParseTreeWalker walker = new ParseTreeWalker();
+        ShiroBasePassListener ls = new ShiroBasePassListener(this, scope);
+        walker.walk(ls, expression);
+
+        return ls.getExpr(expression);
+    }
+
     /**
      * Parse an input stream of shiro code
+     *
      * @param inputStream a stream of the shiro code to be parsed
      * @return reference to parser
      */
@@ -740,7 +773,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         ShiroParser parser = new ShiroParser(ts);
         // generate the parse tree during parsing
         parser.setBuildParseTree(true);
-        
+
         return parser;
     }
 

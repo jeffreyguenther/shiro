@@ -47,10 +47,11 @@ public class DAGraph<T> {
      * references to create the dependences. If you create a new graph node
      * each time, you'll end up with a bunch of extra nodes in the graph.
      * @param value
+     * @param action
      * @return a reference to the graph node containing the value, returns null 
      * if no graph node can be found.
      */
-    public GraphNode<T> getNodeForValue(T value, NodeAction action) {
+    public GraphNode<T> getNodeForValue(T value, NodeAction<T> action) {
         GraphNode<T> matchedNode = null;
         for (GraphNode<T> n : nodes) {
             if (n.getValue().equals(value)) {
@@ -60,7 +61,7 @@ public class DAGraph<T> {
 
         // if the node has not been found create a new graph node
         if (matchedNode == null) {
-            matchedNode = new GraphNode<T>(value, action);
+            matchedNode = new GraphNode<>(value, action);
         }
         return matchedNode;
     }

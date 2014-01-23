@@ -266,9 +266,9 @@ public class Path implements Expression {
      */
     @Override
     public Set<Port> getPortsDependedOn() throws PathNotFoundException {
-        Set<Port> ports = new HashSet<Port>();
+        Set<Port> ports = new HashSet<>();
         portReferenced = (Port) scope.resolvePath(this);
-;        ports.add(portReferenced);
+        ports.add(portReferenced);
         return ports;
 
     }
@@ -277,7 +277,7 @@ public class Path implements Expression {
      * Evaluate the path expression
      *
      * @return the value for the path expression
-     * @throws PortNotActiveException  
+     * @throws PortNotActiveException
      */
     @Override
     public Value evaluate() throws PortNotActiveException {
@@ -289,16 +289,14 @@ public class Path implements Expression {
             portReferenced = (Port) scope.resolvePath(this);
 
             // if the port is active return the value
-            if(portReferenced.isActive()){
+            if (portReferenced.isActive()) {
                 // get the value
                 v = getValue();
-            }else{
+            } else {
                 throw new PortNotActiveException();
             }
-        } catch (PathNotFoundException ex) {
+        } catch (PathNotFoundException | PortIndexNotFoundException ex) {
             Logger.getLogger(Path.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (PortIndexNotFoundException pie) {
-            Logger.getLogger(Path.class.getName()).log(Level.SEVERE, null, pie);
         }
 
         return v;

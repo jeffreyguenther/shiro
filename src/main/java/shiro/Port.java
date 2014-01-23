@@ -144,11 +144,17 @@ public class Port implements Symbol{
     
     /**
      * Set the argument for the given argument position
+     * If the position is beyond the last index (size() -1),
+     * the expression is appended to the list
      * @param pos of the argument
      * @param exp expression to passed
      */
     public void setArgumentForPosition(int pos, Expression exp){
-        arguments.set(pos, exp);
+        if(arguments.isEmpty() || pos > arguments.size() -1){
+            arguments.add(exp);
+        }else{
+            arguments.set(pos, exp);
+        }
     }
     
     /**
