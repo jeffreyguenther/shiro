@@ -749,13 +749,14 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
 
     public Expression parseExpression(Scope scope, String expr) {
         ShiroParser parser = parse(new ANTLRInputStream(expr));
-        ParseTree expression = parser.expression();
+        ShiroParser.ExpressionContext expression = parser.expression();
+        
 
         ParseTreeWalker walker = new ParseTreeWalker();
         ShiroBasePassListener ls = new ShiroBasePassListener(this, scope);
         walker.walk(ls, expression);
 
-        return ls.getExpr(expression);
+        return ls.getExpr(expression.expr());
     }
 
     /**

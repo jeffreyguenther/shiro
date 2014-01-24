@@ -1,5 +1,9 @@
 package shiro;
 
+import java.util.ArrayList;
+import java.util.List;
+import shiro.expressions.Path;
+
 /**
  * Methods to help with creating names, and fully qualified names
  * @author jeffreyguenther
@@ -53,5 +57,18 @@ public class PathHelpers {
         }else{
             return parentFullName + "." + nodeName;
         }
+    }
+    
+    /**
+     * Creates a path for port with the passed node as scope
+     * @param node scope of the port
+     * @param port name of the port
+     * @return path representing the port
+     */
+    public static Path createPathForPort(Node node, String port){
+        List<String> pathParts = new ArrayList<>();
+            pathParts.add(node.getName());
+            pathParts.add(port);
+        return new Path(node, pathParts);
     }
 }

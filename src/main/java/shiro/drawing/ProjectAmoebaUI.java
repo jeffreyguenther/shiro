@@ -339,6 +339,7 @@ public class ProjectAmoebaUI {
 
 				if (controller.getMode().equals(Mode.Line)) {
 					Group g = (Group) event.getSource();
+                                        controller.setSelectedObject(g);
 					controller.completeLine(g.getLayoutX(), g.getLayoutY());
 				}
 			};
