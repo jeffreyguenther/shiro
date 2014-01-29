@@ -19,19 +19,19 @@ public class AddTest {
 
     @Before
     public void setup() {
-        Number n1 = new Number(1.1f);
-        Number n2 = new Number(2.1f);
-        Number n3 = new Number(100.3f);
+        Number n1 = new Number(1.1d);
+        Number n2 = new Number(2.1d);
+        Number n3 = new Number(100.3d);
         floatExpression1 = new Add(n1, n2);
         floatExpression2 = new Add(n3, floatExpression1);
 
         invalidAddExpression = new Add(new SString("Hello"), new Number(
-                10f));
+                10d));
 
 
-        Number n4 = new Number(1f);
-        Number n5 = new Number(2f);
-        Number n6 = new Number(100f);
+        Number n4 = new Number(1d);
+        Number n5 = new Number(2d);
+        Number n6 = new Number(100d);
         intExpression1 = new Add(n4, n5);
         intExpression2 = new Add(intExpression1, n6);
 

@@ -12,15 +12,15 @@ import shiro.Value;
  * @author jeffreyguenther
  */
 public class Number implements Expression{
-    private final Float number;
+    private final Double number;
 
-    public Number(Float number) {
+    public Number(Double number) {
         this.number = number;
     }
     
     @Override
     public Value evaluate() throws PortNotActiveException{
-           return Value.createFloat(number);
+           return Value.createDouble(number);
         
     }
 

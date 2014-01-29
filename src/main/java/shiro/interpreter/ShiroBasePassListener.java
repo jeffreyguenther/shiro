@@ -98,7 +98,7 @@ public class ShiroBasePassListener extends ShiroBaseListener {
     @Override
     public void exitNumberExp(ShiroParser.NumberExpContext ctx) {
         shiro.expressions.Number n = new shiro.expressions.Number(
-                Float.parseFloat(ctx.NUMBER().getText()));
+                Double.parseDouble(ctx.NUMBER().getText()));
 
         // save the result for later
         setExpr(ctx, n);

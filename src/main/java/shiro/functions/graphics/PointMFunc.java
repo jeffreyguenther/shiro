@@ -3,8 +3,8 @@ package shiro.functions.graphics;
 import shiro.ResultTuple;
 import shiro.Value;
 import shiro.functions.MultiFunction;
-import java.awt.geom.Point2D;
 import java.util.List;
+import javafx.geometry.Point2D;
 
 /**
  * A port for multiplying the values of each of a ports dependents
@@ -21,10 +21,10 @@ public class PointMFunc implements MultiFunction{
     @Override
     public ResultTuple evaluate(List<Value> arguments) {
         
-        float x = arguments.get(X).getValueAsFloat();
-        float y = arguments.get(Y).getValueAsFloat();
+        double x = arguments.get(X).getValueAsDouble();
+        double y = arguments.get(Y).getValueAsDouble();
         
-        Point2D point = new Point2D.Float(x, y);
+        Point2D point = new Point2D(x,y);
         Value pointValue = new Value(point, Point2D.class);
         
         ResultTuple result = new ResultTuple();

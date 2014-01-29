@@ -2,6 +2,8 @@ package shiro.drawing;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -9,6 +11,7 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
+import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -24,7 +27,9 @@ import javafx.scene.shape.LineBuilder;
 import javax.imageio.ImageIO;
 import shiro.PathHelpers;
 import shiro.PathNotFoundException;
+import shiro.Port;
 import shiro.SubjunctiveParametricSystem;
+import shiro.Value;
 import shiro.expressions.Expression;
 import shiro.expressions.Path;
 
@@ -53,6 +58,7 @@ public class ProjectAmoebaController {
     public SimpleStringProperty selectObjectName;
     private boolean createLineSuccessful;
     private String startPointName;
+    Map<shiro.Node, Line> lines;
 
     public ProjectAmoebaController(ProjectAmoebaUI ui) {
         mode = Mode.Waiting;
@@ -67,6 +73,8 @@ public class ProjectAmoebaController {
 
         // create subjunctive parametric system
         model = new SubjunctiveParametricSystem();
+        model.createDefaultState();
+        lines = new HashMap<>();
 
         // load point and line definitions
         model.loadDefinitions();
@@ -170,6 +178,7 @@ public class ProjectAmoebaController {
         
         // create a line in the model
         shiro.Node node = model.createNode("Line");
+        lines.put(node, activeLine);
         
         // get the nane of the end point
         String endPointName = (String) selectedObject.getUserData();
@@ -193,7 +202,6 @@ public class ProjectAmoebaController {
         }
         
         model.update();
-        System.out.println(model.printDependencyGraph());
 
         // Clear
         setLineStarted(false);
@@ -279,6 +287,18 @@ public class ProjectAmoebaController {
                 
                 // update the view
                 //TODO update the lines the might be dependent on the point
+                for(shiro.Node n: model.getNodesOfType("Line")){
+                    Port ePort = n.getSelectedEvaluatedPort();
+                    Value p1 = ePort.getValueForIndex(0);
+                    
+                    Line lTemp = (Line) p1.getValue();
+                    
+                    Line l = lines.get(n);
+                    l.setStartX(lTemp.getStartX());
+                    l.setStartY(lTemp.getStartY());
+                    l.setEndX(lTemp.getEndX());
+                    l.setEndY(lTemp.getEndY());
+                }
                 
                 System.out.println("Moving node...");
             }

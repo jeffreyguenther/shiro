@@ -3,9 +3,10 @@ package shiro.functions.graphics;
 import shiro.ResultTuple;
 import shiro.Value;
 import shiro.functions.MultiFunction;
-import java.awt.geom.Line2D;
-import java.awt.geom.Point2D;
 import java.util.List;
+import javafx.geometry.Point2D;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.LineBuilder;
 
 /**
  * A port for multiplying the values of each of a ports dependents
@@ -27,12 +28,19 @@ public class LineMFunc implements MultiFunction{
         Point2D p1 = (Point2D) p1Value.getValue();
         Point2D p2 = (Point2D) p2Value.getValue();
         
-        // create a line 
-        Line2D line = new Line2D.Float(p1, p2);
-        Value lineValue = new Value(line, Line2D.class);
+        Line line = LineBuilder.create()
+                .startX(p1.getX())
+                .startY(p1.getY())
+                .endX(p2.getX())
+                .endY(p2.getY())
+                .build();
         
-        Float length = (float) p1.distance(p2);
-        Value lengthValue = new Value(length, Float.class);
+        // create a line 
+//        Line2D line = new Line2D.Float(p1, p2);
+        Value lineValue = new Value(line, Line.class);
+        
+        Double length = (double) p1.distance(p2);
+        Value lengthValue = new Value(length, Double.class);
         
         ResultTuple result = new ResultTuple();
         result.setValueForIndex(0, lineValue);

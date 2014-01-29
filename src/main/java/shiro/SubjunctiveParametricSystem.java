@@ -205,7 +205,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
 
         // TODO add the node to the map of realized nodes
         // Add ports to depgraph
-        addNodeToGraph(node);
+//        addNodeToGraph(node);
 
         return node;
     }
@@ -273,6 +273,16 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
      */
     public Node getNode(String name) {
         return nodes.get(name);
+    }
+    
+    public Set<shiro.Node> getNodesOfType(String type){
+        Set<shiro.Node> matches = new HashSet<>();
+        for(shiro.Node n: getNodes()){
+            if(n.getDefPath().equals(type))
+                matches.add(n);
+        }
+        
+        return matches;
     }
 
     /**
@@ -460,6 +470,13 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         }
 
         return sb.toString();
+    }
+    
+    /**
+     * Method to create a default state to allow the graph to update
+     */
+    public void createDefaultState(){
+        addAlternative(new SystemState("Default"));
     }
 
     /**
