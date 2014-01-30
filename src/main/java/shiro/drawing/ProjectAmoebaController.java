@@ -11,7 +11,6 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
-import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -222,6 +221,14 @@ public class ProjectAmoebaController {
             System.out.println("Line drawing is unsuccessful.");
             createLineSuccessful = false;
         }
+    }
+    
+    public void clearCanvas(){
+        model.clear();
+    }
+    
+    public void clearAlternatives(){
+        model.clearAlternatives();
     }
 
     public void handleCanvasPaneMousePressed(MouseEvent e) {

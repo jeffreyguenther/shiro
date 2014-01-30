@@ -247,6 +247,7 @@ public class ProjectAmoebaUI {
 			@Override
 			public void handle(ActionEvent e) {
 				drawGroup.getChildren().clear();
+                                controller.clearCanvas();
 			}
 		});
 
@@ -255,7 +256,9 @@ public class ProjectAmoebaUI {
 
 			@Override
 			public void handle(ActionEvent e) {
-				imageStrip.getChildren().clear();
+				drawGroup.getChildren().clear();
+                                imageStrip.getChildren().clear();
+                                controller.clearAlternatives();
 			}
 		});
 

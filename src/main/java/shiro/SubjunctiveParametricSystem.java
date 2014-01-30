@@ -63,7 +63,6 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
     private PortAction graphNodeAction;                // action used in graph nodes
 
     private Set<SubjParametricSystemEventListener> listeners; // Event listeners
-    //sds
 
     public SubjunctiveParametricSystem() {
         multiFunctions = new HashMap<>();
@@ -81,6 +80,18 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         graphNodeAction = new PortAction();
 
         listeners = new HashSet<>();
+    }
+    
+    public void clear(){
+        instanceCount.clear();
+        nodes.clear();
+        subjNodes.clear();
+    }
+    
+    public void clearAlternatives(){
+        clear();
+        alternatives.clear();
+        createDefaultState();
     }
 
     /**
