@@ -1,4 +1,4 @@
-// Generated from /Users/jeffreyguenther/Development/shiro/src/main/java/shiro/interpreter/Shiro.g4 by ANTLR 4.1
+// Generated from /home/elrond/Workspace/Code/Shiro/shiro-lang/src/main/java/shiro/interpreter/Shiro.g4 by ANTLR 4.1
 package shiro.interpreter;
 
 import org.antlr.v4.runtime.ParserRuleContext;

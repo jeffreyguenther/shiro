@@ -1,0 +1,26 @@
+apply plugin: 'java'
+apply plugin: 'application'
+apply from: file('../../gradle/idea.gradle')
+apply from: '../../gradle/javafx.plugin'
+
+repositories{
+	mavenCentral()
+}
+
+dependencies {
+	compile project(':shiro-lang')
+}
+
+sourceSets{
+	main{
+		java{
+			srcDir 'src'
+		}
+	}
+}
+
+javafx{
+	appID 'DrawingEditor'
+	appName 'Drawing Editor'
+	mainClass 'shiro.drawing.ProjectAmoeba'
+}
