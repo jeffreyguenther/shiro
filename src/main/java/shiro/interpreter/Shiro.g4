@@ -3,6 +3,11 @@
 */
 grammar Shiro;
 
+@lexer::members{
+public static final int WHITESPACE = 1;
+public static final int COMMENTS = 2;
+}
+
 shiro : statement+
       ;
 
@@ -231,15 +236,15 @@ IDENT
     : (LCLETTER | UCLETTER | DIGIT)(LCLETTER | UCLETTER | DIGIT|'_')*
     ;
 
-WS :  (' '|'\t'|'\f')+ -> skip
+WS :  (' '|'\t'|'\f')+ -> channel(WHITESPACE)
    ;
 
 COMMENT 
-    :   '//' ~('\n'|'\r')* -> channel(HIDDEN)
+    :   '//' ~('\n'|'\r')* -> channel(COMMENTS)
     ;
 
 LINE_COMMENT 
-    :   '/*' .*? '*/' NEWLINE? -> skip
+    :   '/*' .*? '*/' NEWLINE? -> channel(WHITESPACE)
     ;
 
 NEWLINE : '\r'?'\n'

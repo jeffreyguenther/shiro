@@ -1,4 +1,4 @@
-// Generated from /Users/jeffreyguenther/Development/shiro/src/main/java/shiro/interpreter/Shiro.g4 by ANTLR 4.2-SNAPSHOT
+// Generated from /Users/jeffreyguenther/Development/shiro/src/main/java/shiro/interpreter/Shiro.g4 by ANTLR 4.2
 package shiro.interpreter;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
@@ -41,6 +41,10 @@ public class ShiroLexer extends Lexer {
 	};
 
 
+	public static final int WHITESPACE = 1;
+	public static final int COMMENTS = 2;
+
+
 	public ShiroLexer(CharStream input) {
 		super(input);
 		_interp = new LexerATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
@@ -63,6 +67,32 @@ public class ShiroLexer extends Lexer {
 
 	@Override
 	public ATN getATN() { return _ATN; }
+
+	@Override
+	public void action(RuleContext _localctx, int ruleIndex, int actionIndex) {
+		switch (ruleIndex) {
+		case 29: WS_action((RuleContext)_localctx, actionIndex); break;
+
+		case 30: COMMENT_action((RuleContext)_localctx, actionIndex); break;
+
+		case 31: LINE_COMMENT_action((RuleContext)_localctx, actionIndex); break;
+		}
+	}
+	private void LINE_COMMENT_action(RuleContext _localctx, int actionIndex) {
+		switch (actionIndex) {
+		case 2: _channel = WHITESPACE; break;
+		}
+	}
+	private void WS_action(RuleContext _localctx, int actionIndex) {
+		switch (actionIndex) {
+		case 0: _channel = WHITESPACE; break;
+		}
+	}
+	private void COMMENT_action(RuleContext _localctx, int actionIndex) {
+		switch (actionIndex) {
+		case 1: _channel = COMMENTS; break;
+		}
+	}
 
 	public static final String _serializedATN =
 		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\2#\u0111\b\1\4\2\t"+
@@ -147,12 +177,12 @@ public class ShiroLexer extends Lexer {
 		"\3\2\2\2\u00fa\u00fd\3\2\2\2\u00fb\u00fc\3\2\2\2\u00fb\u00f9\3\2\2\2\u00fc"+
 		"\u00fe\3\2\2\2\u00fd\u00fb\3\2\2\2\u00fe\u00ff\7,\2\2\u00ff\u0100\7\61"+
 		"\2\2\u0100\u0102\3\2\2\2\u0101\u0103\5C\"\2\u0102\u0101\3\2\2\2\u0102"+
-		"\u0103\3\2\2\2\u0103\u0104\3\2\2\2\u0104\u0105\b!\2\2\u0105B\3\2\2\2\u0106"+
+		"\u0103\3\2\2\2\u0103\u0104\3\2\2\2\u0104\u0105\b!\4\2\u0105B\3\2\2\2\u0106"+
 		"\u0108\7\17\2\2\u0107\u0106\3\2\2\2\u0107\u0108\3\2\2\2\u0108\u0109\3"+
 		"\2\2\2\u0109\u010a\7\f\2\2\u010aD\3\2\2\2\u010b\u010c\4c|\2\u010cF\3\2"+
 		"\2\2\u010d\u010e\4C\\\2\u010eH\3\2\2\2\u010f\u0110\4\62;\2\u0110J\3\2"+
 		"\2\2\17\2\u00c3\u00cb\u00d1\u00d3\u00d8\u00de\u00e0\u00e6\u00f0\u00fb"+
-		"\u0102\u0107\4\b\2\2\2\3\2";
+		"\u0102\u0107\5\3\37\2\3 \3\3!\4";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {
