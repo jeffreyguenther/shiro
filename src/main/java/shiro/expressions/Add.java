@@ -41,6 +41,9 @@ public class Add implements Expression{
     public String toString() {
         return "(" + op1 + " + " + op2 + ')';
     }
-    
-    
+
+    @Override
+    public String toCode() {
+        return op1.toCode() + " + " + op2.toCode();
+    }
 }

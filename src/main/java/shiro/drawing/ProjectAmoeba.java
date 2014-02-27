@@ -16,7 +16,7 @@ public class ProjectAmoeba extends Application {
 	@Override
 	public void start(Stage stage) {
 		// Create the UI
-		ui = new ProjectAmoebaUI();
+		ui = new ProjectAmoebaUI(stage);
 		Scene scene = new Scene(ui.getRoot(), 800, 600);
 
                 // Set up the window

@@ -22,11 +22,15 @@ public class EvaluateAlternativeListener extends ShiroBasePassListener{
     @Override
     public void exitStatestmt(ShiroParser.StatestmtContext ctx) {
         String stateName  = ctx.stateName().getText();
-        SystemState state = new SystemState(stateName);
+        String graphName = ctx.stateHeader().stateGraphStmt(0).stateGraph().IDENT().getText();
+        
+        SystemState state = new SystemState(pSystem.getGraphDef(graphName), stateName);
         state.setActiveNode(subjunctTable);
        
        pSystem.addAlternative(state); 
     }
+    
+    
 
     @Override
     public void enterActivation(ShiroParser.ActivationContext ctx) {

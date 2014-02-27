@@ -1,12 +1,17 @@
 package shiro;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.antlr.v4.runtime.ANTLRFileStream;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.apache.commons.collections15.map.HashedMap;
@@ -28,6 +33,7 @@ import shiro.functions.graphics.CanvasMFunc;
 import shiro.functions.graphics.LineMFunc;
 import shiro.functions.graphics.PointMFunc;
 import shiro.interpreter.EvaluateAlternativeListener;
+import shiro.interpreter.GraphBuilderListener;
 import shiro.interpreter.NodeDefinitionListener;
 import shiro.interpreter.NodeProductionListener;
 import shiro.interpreter.ShiroBasePassListener;
@@ -56,12 +62,16 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
     private Map<String, ParseTree> nodeDefs;           // AST table
     private Map<String, ParseTree> subjNodeDefs;       // AST table
     private Map<String, ParseTree> alternativeDefs;    // AST table
+    private Map<String, GraphDefinition> graphDefs;     // AST Table
+    private GraphDefinition currentGraphDef;
     private Map<String, Node> nodes;                   // realized node table
     private Map<String, SubjunctiveNode> subjNodes;    // realized subj. node table
     private Map<String, SystemState> alternatives;     // alternative specs
     private Map<String, Integer> instanceCount;        // count of node instances by type
     private PortAction graphNodeAction;                // action used in graph nodes
 
+    private CommonTokenStream ts;
+    
     private Set<SubjParametricSystemEventListener> listeners; // Event listeners
 
     public SubjunctiveParametricSystem() {
@@ -73,6 +83,9 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         nodeDefs = new HashMap<>();
         subjNodeDefs = new HashMap<>();
         alternativeDefs = new HashMap<>();
+        graphDefs = new HashMap<>();
+        currentGraphDef = null;
+        
         nodes = new HashedMap<>();
         subjNodes = new HashMap<>();
         alternatives = new HashMap<>();
@@ -80,18 +93,34 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         graphNodeAction = new PortAction();
 
         listeners = new HashSet<>();
+        
+        // create default graph and system state
+        createDefaultState();
     }
     
+    /**
+     * Remove all instances from the runtime.
+     * This method does not affect node and subjunctive node definitions or
+     * alternatives.
+     */
     public void clear(){
         instanceCount.clear();
         nodes.clear();
         subjNodes.clear();
+        graphDefs.clear();
     }
     
-    public void clearAlternatives(){
+    /**
+     * Clear all alternatives from the runtime
+     */
+    public void reset(){
         clear();
         alternatives.clear();
         createDefaultState();
+    }
+    
+    public GraphDefinition getGraphDef(String name){
+        return graphDefs.get(name);
     }
 
     /**
@@ -386,8 +415,21 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
     }
 
     public Port setPortExpression(Path pathToPort, Expression expr) throws PathNotFoundException {
+        return setPortExpression(pathToPort, expr, 0);
+    }
+    
+    public Port setPortExpression(Path pathToPort, Expression expr, int argPos) throws PathNotFoundException {
         Port port = (Port) resolvePath(pathToPort);
-        port.setArgumentForPosition(0, expr);
+        port.setArgumentForPosition(argPos, expr);
+        return port;
+    }
+    
+    public Port setPortExpression(PortAssignment assign) throws PathNotFoundException{
+        Port port = (Port) resolvePath(assign.getPath());
+        
+        for(Entry<Integer, Expression> e: assign.getArgs().entrySet()){
+            port.setArgumentForPosition(e.getKey(), e.getValue());
+        }
         return port;
     }
 
@@ -486,8 +528,13 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
     /**
      * Method to create a default state to allow the graph to update
      */
-    public void createDefaultState(){
-        addAlternative(new SystemState("Default"));
+    private void createDefaultState(){
+        // add a graph definition
+        currentGraphDef = new GraphDefinition("Default");
+        graphDefs.put(currentGraphDef.getName(), currentGraphDef);
+        
+        // add an alternative
+        addAlternative(new SystemState(currentGraphDef, "Default"));
     }
 
     /**
@@ -498,10 +545,12 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         ParseTreeWalker walker = new ParseTreeWalker();
         EvaluateAlternativeListener genAlts = new EvaluateAlternativeListener(this);
 
+        // Define system state objects from alternative def'ns
         for (ParseTree altTree : alternativeDefs.values()) {
             walker.walk(genAlts, altTree);
         }
-
+        
+        //Evaluate each alternative
         for (SystemState a : alternatives.values()) {
             Map<SubjunctiveNode, Node> subjunctTable = a.getSubjunctsMapping();
 
@@ -513,7 +562,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
                 }
             }
 
-            List<DependencyRelation<Port>> deps = new ArrayList<DependencyRelation<Port>>();
+            List<DependencyRelation<Port>> deps = new ArrayList<>();
 
             // for each node generated in the graph generation process
             for (Node n : getNodes()) {
@@ -629,7 +678,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
     }
 
     /**
-     * Generate a name
+     * Generate a name for an instance of a node
      *
      * @param nodePath node to use in name
      * @param count number of nodes
@@ -775,6 +824,12 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         this.addNodeASTDefinitions(generateNodeDefs(parser.shiro()));
     }
 
+    /**
+     * Parse an expression in the given scope
+     * @param scope of the new expression
+     * @param expr string
+     * @return the expression object representing the {@code expr}
+     */
     public Expression parseExpression(Scope scope, String expr) {
         ShiroParser parser = parse(new ANTLRInputStream(expr));
         ShiroParser.ExpressionContext expression = parser.expression();
@@ -796,7 +851,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
     public ShiroParser parse(ANTLRInputStream inputStream) {
         // lex the stream
         ShiroLexer lex = new ShiroLexer(inputStream);
-        CommonTokenStream ts = new CommonTokenStream(lex);
+        ts = new CommonTokenStream(lex);
 
         // parse the token stream
         ShiroParser parser = new ShiroParser(ts);
@@ -823,5 +878,93 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
      */
     public void addAlternative(SystemState state) {
         alternatives.put(state.getName(), state);
+    }
+    
+    /**
+     * Generate code for the runtime
+     * @return a string containing the shiro code representation of the current
+     * state of the runtime.
+     */
+    public String toCode(){
+        StringBuilder sb = new StringBuilder();
+        
+        // print node definitions
+        nodeDefs.values().stream().forEach((ParseTree t) -> {
+            sb.append(ts.getText((RuleContext) t)).append("\n\n");
+        });
+        
+        // print graphs
+        graphDefs.values().stream().forEach((GraphDefinition gd) -> { sb.append(gd.toCode()); });
+        
+        // print states
+        alternatives.values().stream().forEach((SystemState state) -> {
+            sb.append(state.toCode());
+        });
+        
+        return sb.toString();
+    }
+    
+    /**
+     * Write out the current state of the runtime as shiro code
+     * @param file file to write code
+     */
+    public void writeCode(File file){
+       try{ 
+        
+            if(!file.exists()){
+                file.createNewFile();
+            }
+            
+            FileWriter fw = new FileWriter(file.getAbsoluteFile());
+            BufferedWriter bw = new BufferedWriter(fw);
+            bw.write(toCode());
+            bw.close();
+        
+       }catch (IOException e){
+           
+       }
+    }
+    
+    public void loadCode(File file) throws IOException{
+        ParseTreeWalker walker = new ParseTreeWalker();
+        
+        // create a lexer
+        ShiroLexer lex = new ShiroLexer(new ANTLRFileStream(file.getAbsolutePath(), "UTF8"));
+
+        // Get the token stream
+        CommonTokenStream tokens = new CommonTokenStream(lex);
+
+        // Parse the file
+        ShiroParser parser = new ShiroParser(tokens);
+        parser.setBuildParseTree(true);
+
+        // Create the parse tree object
+        ParseTree tree = parser.shiro();
+
+        // PASS 1: Add a node -> AST mapping in the parametric system
+        NodeDefinitionListener defPass = new NodeDefinitionListener();
+        // Walk the tree with the def pass listener
+        walker.walk(defPass, tree);
+
+        // Get the node definitions
+        Map<String, ParseTree> nodeDefinitions = defPass.getNodeDefinitions();
+        Map<String, ParseTree> subjNodeDefinitions = defPass.getSubjNodeDefinitions();
+        Map<String, ParseTree> alternativeDefinitions = defPass.getAlternativeDefinitions();
+        ParseTree graph = defPass.getGraph();
+
+        // Store the ASTs in the tree
+        addNodeASTDefinitions(nodeDefinitions);
+        addSubjNodeASTDefinitions(subjNodeDefinitions);
+        addAlternativeASTDefinitions(alternativeDefinitions);
+
+        // PASS 2: Build the dependency graph
+        /**
+         * Walk only the graph parse tree to prevent events from firing on the 
+         * other parts of the parse tree
+         */
+        walker.walk(new GraphBuilderListener(this), graph);
+        
+        // Evaluate parametric system
+        update();
     }
 }

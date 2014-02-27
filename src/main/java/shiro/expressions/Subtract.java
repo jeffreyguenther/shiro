@@ -32,4 +32,9 @@ public class Subtract implements Expression{
         ports.addAll(op2.getPortsDependedOn());
         return ports;
     }
+
+    @Override
+    public String toCode() {
+        return op1.toCode() + " - " + op2.toCode();
+    }
 }

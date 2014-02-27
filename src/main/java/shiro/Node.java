@@ -514,4 +514,18 @@ public class Node implements PortEventListener, Container, Symbol{
     public SymbolType getType() {
         return SymbolType.Node;
     }
+    
+    public String toCode(){
+        StringBuilder sb = new StringBuilder();
+        sb.append("node ").append(getName()).append(" begin\n");
+        
+        
+        for(Port p: getPorts()){
+            sb.append("\t").append(p.toCode()).append("\n");
+        }
+        
+        sb.append("end\n");
+        
+        return sb.toString();
+    }
 }

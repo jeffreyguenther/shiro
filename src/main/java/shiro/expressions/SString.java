@@ -40,4 +40,9 @@ public class SString implements Expression, Serializable{
     public String toString() {
         return "(" + string + ')';
     }
+
+    @Override
+    public String toCode() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

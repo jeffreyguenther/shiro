@@ -527,4 +527,32 @@ public class Port implements Symbol{
           .append("]");
         return sb.toString();
     }
+    
+    public String toCode(){
+        StringBuilder sb = new StringBuilder();
+        if(getPortType().equals(PortType.Evaluated)){
+            sb.append("eval");
+        }else{
+            sb.append("port");
+        }
+        
+        sb.append(" ")
+          .append(getName())
+          .append(" ")
+          .append(function.getName());
+        
+        if(!arguments.isEmpty()){
+            sb.append("(");
+            
+            for(Expression e: arguments){
+                sb.append(e.toCode())
+                  .append(",");
+            }
+            
+            sb.deleteCharAt(sb.length() - 1)
+              .append(")");
+        }
+        
+        return sb.toString();
+    }
 }

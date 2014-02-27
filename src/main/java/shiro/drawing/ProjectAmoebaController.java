@@ -33,7 +33,7 @@ import shiro.expressions.Expression;
 import shiro.expressions.Path;
 
 /**
- * This class controls
+ * This class controls the underlying parametric system
  *
  * @author jeffreyguenther
  */
@@ -72,7 +72,6 @@ public class ProjectAmoebaController {
 
         // create subjunctive parametric system
         model = new SubjunctiveParametricSystem();
-        model.createDefaultState();
         lines = new HashMap<>();
 
         // load point and line definitions
@@ -228,7 +227,7 @@ public class ProjectAmoebaController {
     }
     
     public void clearAlternatives(){
-        model.clearAlternatives();
+        model.reset();
     }
 
     public void handleCanvasPaneMousePressed(MouseEvent e) {
@@ -426,5 +425,9 @@ public class ProjectAmoebaController {
         }
         
         return node;
+    }
+    
+    public void handleSave(File f){
+        model.writeCode(f);
     }
 }

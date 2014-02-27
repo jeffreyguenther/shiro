@@ -1,30 +1,37 @@
 package shiro;
 
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
-import org.joda.time.DateTime;
 
 /**
  * Definition of a system state.
  * @author jeffreyguenther
  */
 public class SystemState {
-    private DateTime timeCreated;
+    private Instant timeStamp;
     private String comment;
     private Map<SubjunctiveNode, Node> subjunctsMapping;
     private String name;
+    private GraphDefinition graphDef;
 
-    public SystemState(String comment, Map<SubjunctiveNode, Node> subjunctsMapping) {
+    public SystemState(GraphDefinition gDef, String comment, Map<SubjunctiveNode, Node> subjunctsMapping) {
+        this.graphDef = gDef;
         this.comment = comment;
         this.subjunctsMapping = subjunctsMapping;
-        this.timeCreated = new DateTime();
+        this.timeStamp = Instant.now();
     }
     
-    public SystemState(String name) {
-        this.name = name;
-        this.comment = "";
-        this.subjunctsMapping = new HashMap<SubjunctiveNode, Node>();
-        this.timeCreated = new DateTime();
+    public SystemState(GraphDefinition gDef, String name) {
+        this(gDef, "", new HashMap<>());
+    }
+
+    public GraphDefinition getGraphDef() {
+        return graphDef;
+    }
+
+    public void setGraphDef(GraphDefinition graphDef) {
+        this.graphDef = graphDef;
     }
     
     public void setActiveNode(SubjunctiveNode sNode, Node activeNode){
@@ -39,8 +46,8 @@ public class SystemState {
         return subjunctsMapping;
     }
 
-    public DateTime getTimeCreated() {
-        return timeCreated;
+    public Instant getTimeCreated() {
+        return timeStamp;
     }
 
     public String getName() {
@@ -71,5 +78,14 @@ public class SystemState {
         return sb.toString();
     }
     
-    
+    public String toCode(){
+        StringBuilder sb = new StringBuilder();
+        sb.append("state ").append(getName()).append(" begin\n");
+        sb.append("\tGraph").append(" ").append(graphDef.getName()).append("\n");
+        subjunctsMapping.forEach((SubjunctiveNode sn, Node n) -> {
+            sb.append("\t").append(sn.getName()).append("[").append(n.getName()).append("]\n");
+        });
+        sb.append("end\n");
+        return sb.toString();
+    }
 }

@@ -311,4 +311,18 @@ public class Path implements Expression {
     public String toString() {
         return "(" + path.toString() + ", Index:" + index + ", Key:" + indexKey + ")";
     }
+
+    @Override
+    public String toCode() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(getPathAsString());
+        
+        if(hasIntegerIndex()){
+            sb.append("[").append(getIndex()).append("]");
+        }else if(hasStringIndex()){
+            sb.append("[\"").append(getIndexKey()).append("\"]");
+        }
+        
+        return sb.toString();
+    }
 }

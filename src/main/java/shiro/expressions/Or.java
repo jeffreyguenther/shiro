@@ -43,4 +43,9 @@ public class Or implements Expression{
     public String toString() {
         return "(" + op1 + " | " + op2 + ')';
     }
+
+    @Override
+    public String toCode() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

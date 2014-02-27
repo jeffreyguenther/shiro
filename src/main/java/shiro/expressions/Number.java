@@ -34,6 +34,9 @@ public class Number implements Expression{
     public String toString() {
         return "(" + number + ')';
     }
-    
-    
+
+    @Override
+    public String toCode() {
+        return number.toString();
+    }
 }
