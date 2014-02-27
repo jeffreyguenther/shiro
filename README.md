@@ -10,7 +10,7 @@ Shiro is implemented in Java. [Gradle](http://www.gradle.org/) is used as the bu
 
 You can build the Shiro interpreter using this command within the shiro subdirectory
 
-    $ gradle build
+    $ gradle builds
 
 A helpful command is to remember if you just want to regenerate the parser, lexer, and listeners is:
 
