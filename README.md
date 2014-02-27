@@ -38,6 +38,7 @@ This project is the result of research being conducted at [Simon Fraser Universi
 
 #### People
 * [Jeffrey Guenther](http://jeffreyguenther.com) - Design and Implementer
+* [Chris Shaw](http://www.sfu.ca/~shaw/) - PhD Supervisor
 * [Robert Woodbury](http://www.siat.sfu.ca/faculty/profile/rob-woodbury) - PhD Commitee member
 * [Siniša Kolarić](http://www.sfu.ca/~skolaric/) - Research Group Colleague
 * [Ankit Gupta](http://www.linkedin.com/pub/ankit-gupta/37/b7b/851) - Research Group Colleague
