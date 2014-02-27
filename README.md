@@ -1,16 +1,16 @@
 Shiro
 =====
 
-Shiro is a data flow programming language designed to be embedded into applications to help to support reuse and the exploration of alternatives. The language is being designed as a part of Jeff's PhD thesis. This is research code. Use with a sense of humour and lots of patience.
+Shiro is a data flow programming language designed to be embedded into applications to help to support reuse and the exploration of alternatives. The language is part of Jeff's PhD thesis. This is research code. Use with a sense of humour and lots of patience.
 
 Getting Started
 ===============
 
-Shiro is implemented in Java. [Gradle](http://www.gradle.org/) is used as the build system and dependency manager. The interpreter depends on [ANTLR 4.1](http://www.antlr.org/) to generate the parser, lexer and parse tree event listeners. `build.gradle` is setup to automatically generate the Java code at compile time. You can use gradle from the commandline or use Netbeans or Eclipse, as both IDE's support gradle projects.
+Shiro is implemented in Java. [Gradle](http://www.gradle.org/) is used as the build system and dependency manager. The interpreter depends on [ANTLR 4.2](http://www.antlr.org/) to generate the parser, lexer and parse tree event listeners. `build.gradle` is setup to automatically generate the Java code at compile time. You can use gradle from the commandline or use Netbeans or Eclipse, as both IDE's support gradle projects.
 
 You can build the Shiro interpreter using this command within the shiro subdirectory
 
-    $ gradle builds
+    $ gradle build
 
 A helpful command is to remember if you just want to regenerate the parser, lexer, and listeners is:
 
