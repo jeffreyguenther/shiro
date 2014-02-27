@@ -29,7 +29,7 @@ ext.antlr = [
 repositories {
     mavenCentral()
     maven{
-        url "https://oss.sonatype.org/content/repositories/snapshots"
+        url "https://oss.sonatype.org/content/repositories/snapshots/"
     }
 }
 
@@ -40,10 +40,10 @@ configurations {
 }
 
 dependencies {
-    compile group: "org.antlr", name: "antlr4-runtime", version: "4.2-SNAPSHOT"
+    compile group: "org.antlr", name: "antlr4-runtime", version: "4.2"
     compile 'net.sourceforge.collections:collections-generic:4.01'
-    compile 'joda-time:joda-time:2.3'
-    antlr4 group: "org.antlr", name: "antlr4", version: "4.2-SNAPSHOT"
+    compile 'org.jfxtras:jfxtras-labs:8.0-r1-SNAPSHOT'
+    antlr4 group: "org.antlr", name: "antlr4", version: "4.2"
     testCompile group: "junit", name: "junit", version: versions.junit
 }
 
