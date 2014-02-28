@@ -177,7 +177,7 @@ public class ProjectAmoebaUI {
 
         root.setTop(createMenuBar());
         root.setLeft(createToolBar());
-        root.setRight(createListView());
+//        root.setRight(createListView());
         root.setCenter(scroll);
 
         return root;
@@ -229,10 +229,13 @@ public class ProjectAmoebaUI {
             @Override
             public void handle(ActionEvent t) {
                 FileChooser fileChooser = new FileChooser();
+                fileChooser.getExtensionFilters()
+                        .add(new FileChooser.ExtensionFilter("Shiro code", "*.sro"));
                 fileChooser.setTitle("Open Shiro File");
                 File file = fileChooser.showOpenDialog(stage);
                 
                 // TODO open the selected file
+                controller.handleOpen(file);
                 // IF project is already open prompt to save
             }
         });

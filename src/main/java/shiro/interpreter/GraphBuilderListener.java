@@ -6,9 +6,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import shiro.interpreter.ShiroParser.ActivationContext;
 import org.antlr.v4.runtime.tree.ParseTree;
+import shiro.GraphDefinition;
 import shiro.Node;
 import shiro.PathNotFoundException;
 import shiro.Port;
+import shiro.PortAssignment;
 import shiro.SubjunctiveNode;
 import shiro.SubjunctiveParametricSystem;
 import shiro.Symbol;
@@ -25,14 +27,27 @@ import shiro.expressions.Path;
 public class GraphBuilderListener extends ShiroBasePassListener {
 
     private Node currentNode;
+    private GraphDefinition graphDef;
 
     public GraphBuilderListener(SubjunctiveParametricSystem ps) {
         super(ps);
         currentNode = null;
+        
+    }
+    
+    public GraphDefinition getGraphDef(){
+        return graphDef;
+    }
+
+    @Override
+    public void enterGraphDecl(ShiroParser.GraphDeclContext ctx) {
+        graphDef = new GraphDefinition(ctx.IDENT().getText());
     }
 
     @Override
     public void exitGraphDecl(ShiroParser.GraphDeclContext ctx) {
+        
+        
         List<DependencyRelation<Port>> deps = new ArrayList<>();
 
         // for each node generated in the graph generation process
@@ -61,7 +76,10 @@ public class GraphBuilderListener extends ShiroBasePassListener {
         // for each activation
         for (ActivationContext ac : ctx.activation()) {
             String nodeName = ac.nodeName.getText();
-
+            
+            //TODO this might not work in the long run with long path names
+            graphDef.addNodeProduction(nodeName, leftHandSide.getCurrentPathHead());
+            
             // need to differentiate between creating nodes and subjunctive nodes
             Symbol producedSymbol = pSystem.produceSymbolFromName(leftHandSide.getPathAsString(), nodeName);
 
@@ -115,16 +133,25 @@ public class GraphBuilderListener extends ShiroBasePassListener {
     public void exitPortAssignment(ShiroParser.PortAssignmentContext ctx) {
         // look up port based on the path
         try {
-            Port p = (Port) pSystem.resolvePath((Path) getExpr(ctx.path()));
-
+            Path path = (Path) getExpr(ctx.path());
+            Port p = (Port) pSystem.resolvePath(path);
+            
             List<Expression> mfExpressions = new ArrayList<>();
 
+            int count = 0;
             for (ParseTree pt : ctx.mfparams().expr()) {
                 Expression exp = getExpr(pt);
                 mfExpressions.add(exp);
+                
+                graphDef.addPortAssignment(new PortAssignment(path, exp, count));
+                
+                count++;
             }
             // set the port's expression
             p.setArguments(mfExpressions);
+            
+            
+            
             System.out.println("Set port args: " + p);
             System.out.println("Node is now:\n" + currentNode);
         } catch (PathNotFoundException pnfe) {

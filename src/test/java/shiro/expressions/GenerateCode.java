@@ -1,8 +1,15 @@
 package shiro.expressions;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import junit.framework.Assert;
 import org.junit.Test;
 import shiro.Port;
@@ -84,9 +91,9 @@ public class GenerateCode {
     }
     
     @Test
-    public void outputNode(){
+    public void outputNode() throws IOException{
         SubjunctiveParametricSystem pSystem = new SubjunctiveParametricSystem();
-        pSystem.loadDefinitions();
-        pSystem.writeCode(new File("/Users/jeffreyguenther/Desktop/test.sro"));
+        pSystem.loadCode(new File("/Users/jeffreyguenther/Development/shiro/example_code/square.sro"));
+        pSystem.writeCode(new File("/Users/jeffreyguenther/Desktop/test.sro"));     
     }
 }

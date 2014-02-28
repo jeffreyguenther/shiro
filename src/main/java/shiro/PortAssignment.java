@@ -18,6 +18,7 @@ public class PortAssignment {
     public PortAssignment(Path path, Expression exp, int position) {
         this.path = path;
         args = new HashMap<>();
+        addArgument(position, exp);
     }
 
     public Path getPath() {
@@ -46,16 +47,20 @@ public class PortAssignment {
     
     public String toCode(){
         StringBuilder sb = new StringBuilder();
-        sb.append(path.toCode());
+        sb.append(path.toCode())
+        .append("(");
+        
+        // write out the args as code
         ArrayList<Integer> keys = new ArrayList<>(args.keySet());
         Collections.sort(keys);
-        
-        sb.append("(");
-        // write out the args as code
         for(Integer i: keys){
             sb.append(args.get(i).toCode()).append(",");
         }
-        sb.deleteCharAt(sb.length() -1 ).append((")"));
+        
+        if(sb.toString().endsWith(",")){
+            sb.deleteCharAt(sb.length() -1 );
+        }
+        sb.append(")");
         return sb.toString();
     }
 }

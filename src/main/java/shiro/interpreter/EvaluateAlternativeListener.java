@@ -13,6 +13,7 @@ import shiro.SystemState;
  */
 public class EvaluateAlternativeListener extends ShiroBasePassListener{
     private Map<SubjunctiveNode, Node> subjunctTable;
+    private String graphName = "<empty>";
 
     public EvaluateAlternativeListener(SubjunctiveParametricSystem pSystem) {
         super(pSystem);
@@ -22,12 +23,16 @@ public class EvaluateAlternativeListener extends ShiroBasePassListener{
     @Override
     public void exitStatestmt(ShiroParser.StatestmtContext ctx) {
         String stateName  = ctx.stateName().getText();
-        String graphName = ctx.stateHeader().stateGraphStmt(0).stateGraph().IDENT().getText();
         
         SystemState state = new SystemState(pSystem.getGraphDef(graphName), stateName);
         state.setActiveNode(subjunctTable);
        
        pSystem.addAlternative(state); 
+    }
+
+    @Override
+    public void enterStateGraph(ShiroParser.StateGraphContext ctx) {
+        graphName = ctx.IDENT().getText();
     }
     
     
@@ -42,7 +47,4 @@ public class EvaluateAlternativeListener extends ShiroBasePassListener{
        
        subjunctTable.put(sn, n);
     }
-    
-    
-    
 }

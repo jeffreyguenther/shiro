@@ -11,6 +11,7 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
+import javafx.geometry.Point2D;
 import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -429,5 +430,73 @@ public class ProjectAmoebaController {
     
     public void handleSave(File f){
         model.writeCode(f);
+    }
+    
+    public void handleOpen(File f){
+        if(f != null){
+            try {
+                model.loadCode(f);
+                // update canvas with new geometry
+                updateCanvas(ui.getDrawGroup());
+                
+            } catch (IOException ex) {
+                Logger.getLogger(ProjectAmoebaController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+    
+    /**
+     * Update the canvas
+     * @param canvas Group to add geometry to
+     */
+    public void updateCanvas(Group canvas){
+        // get geometry from parametric system
+        canvas.getChildren().clear();
+        
+        // for each line in the model
+        for(shiro.Node n: model.getNodesOfType("Line")){
+            // create a line object and render
+            Line l = getLine(n);
+            canvas.getChildren().add(l);
+        }
+        
+        // for each point in the model
+        for(shiro.Node n: model.getNodesOfType("Point")){
+            // create a point object and render
+            canvas.getChildren().add(getPoint(n));
+        }
+    }
+    
+    public Group getPoint(shiro.Node n){
+        Port ePort = n.getSelectedEvaluatedPort();
+        Value point = ePort.getValueForIndex(0);
+        Point2D tPoint = (Point2D) point.getValue();
+        
+        Group p = ui.createPoint(tPoint.getX(), tPoint.getY(), Color.BLACK);
+        p.setUserData(n.getFullName());
+        return p;
+    }
+    
+    public Line getLine(shiro.Node n){
+        Port ePort = n.getSelectedEvaluatedPort();
+        Value line = ePort.getValueForIndex(0);
+
+        Line lTemp = (Line) line.getValue();
+
+        Line l;
+        if(lines.containsKey(n)){
+             l = lines.get(n);
+        
+        }else{
+            l = new Line();
+            lines.put(n, l);
+        }
+        
+        l.setStartX(lTemp.getStartX());
+        l.setStartY(lTemp.getStartY());
+        l.setEndX(lTemp.getEndX());
+        l.setEndY(lTemp.getEndY());
+        
+        return l;
     }
 }

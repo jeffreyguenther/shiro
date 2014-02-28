@@ -15,15 +15,16 @@ public class SystemState {
     private String name;
     private GraphDefinition graphDef;
 
-    public SystemState(GraphDefinition gDef, String comment, Map<SubjunctiveNode, Node> subjunctsMapping) {
+    public SystemState(GraphDefinition gDef, String name, String comment, Map<SubjunctiveNode, Node> subjunctsMapping) {
         this.graphDef = gDef;
+        this.name = name;
         this.comment = comment;
         this.subjunctsMapping = subjunctsMapping;
         this.timeStamp = Instant.now();
     }
     
     public SystemState(GraphDefinition gDef, String name) {
-        this(gDef, "", new HashMap<>());
+        this(gDef, name, "", new HashMap<>());
     }
 
     public GraphDefinition getGraphDef() {

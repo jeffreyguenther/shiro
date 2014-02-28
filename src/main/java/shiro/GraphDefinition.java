@@ -1,7 +1,7 @@
 package shiro;
 
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -16,7 +16,7 @@ public class GraphDefinition {
 
     public GraphDefinition(String name) {
         nodeProductions = new HashMap<>();
-        portAssignments = new HashSet<>();
+        portAssignments = new LinkedHashSet<>();
         this.name = name;
     }
 
@@ -64,9 +64,10 @@ public class GraphDefinition {
         StringBuilder sb = new StringBuilder();
         sb.append("graph ").append(getName()).append(" begin\n");
         nodeProductions.entrySet().stream().forEach((e) -> {
-            sb.append("\t").append(e.getKey()).append(" -> ").append(e.getValue()).append("\n");
+            sb.append("\t").append(e.getValue()).append(" -> ").append(e.getKey()).append("\n");
         });
         
+        sb.append("\n");
         portAssignments.stream().forEach((PortAssignment a) -> { sb.append("\t").append(a.toCode()).append("\n"); });
         
         sb.append("end\n\n");

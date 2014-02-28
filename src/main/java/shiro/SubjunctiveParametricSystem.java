@@ -577,7 +577,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
                 addDependency(d);
             }
 
-            TopologicalSort<Port> sorter = new TopologicalSort<Port>(depGraph);
+            TopologicalSort<Port> sorter = new TopologicalSort<>(depGraph);
             List<GraphNode<Port>> topologicalOrdering = sorter.getTopologicalOrdering();
 
             // loop through all ports to update them.
@@ -888,7 +888,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
     public String toCode(){
         StringBuilder sb = new StringBuilder();
         
-        // print node definitions
+        // ptwrint node definitions
         nodeDefs.values().stream().forEach((ParseTree t) -> {
             sb.append(ts.getText((RuleContext) t)).append("\n\n");
         });
@@ -910,7 +910,6 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
      */
     public void writeCode(File file){
        try{ 
-        
             if(!file.exists()){
                 file.createNewFile();
             }
@@ -933,6 +932,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
 
         // Get the token stream
         CommonTokenStream tokens = new CommonTokenStream(lex);
+        ts = tokens;
 
         // Parse the file
         ShiroParser parser = new ShiroParser(tokens);
@@ -962,7 +962,15 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
          * Walk only the graph parse tree to prevent events from firing on the 
          * other parts of the parse tree
          */
-        walker.walk(new GraphBuilderListener(this), graph);
+        GraphBuilderListener graphBuilder = new GraphBuilderListener(this);
+        walker.walk(graphBuilder, graph);
+        
+        GraphDefinition graphDef = graphBuilder.getGraphDef();
+        graphDefs.remove("Default");
+        graphDefs.put(graphDef.getName(), graphDef);
+        currentGraphDef = graphDef;
+        
+        alternatives.remove("Default");
         
         // Evaluate parametric system
         update();
