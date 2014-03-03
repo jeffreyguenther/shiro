@@ -70,7 +70,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
     private Map<String, Integer> instanceCount;        // count of node instances by type
     private PortAction graphNodeAction;                // action used in graph nodes
 
-    private CommonTokenStream ts;
+    private CommonTokenStream tokens;
     
     private Set<SubjParametricSystemEventListener> listeners; // Event listeners
 
@@ -101,7 +101,8 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
     /**
      * Remove all instances from the runtime.
      * This method does not affect node and subjunctive node definitions or
-     * alternatives.
+     * alternatives. Note, this also removes all graph definitions as graphs
+     * define instances. The definition is erased. It is not emptied
      */
     public void clear(){
         instanceCount.clear();
@@ -242,10 +243,8 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
 
         // produce the new node
         Node node = produceNodeFromName(type, name);
-
-        // TODO add the node to the map of realized nodes
-        // Add ports to depgraph
-//        addNodeToGraph(node);
+        
+        currentGraphDef.addNodeProduction(type, name);
 
         return node;
     }
@@ -421,6 +420,8 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
     public Port setPortExpression(Path pathToPort, Expression expr, int argPos) throws PathNotFoundException {
         Port port = (Port) resolvePath(pathToPort);
         port.setArgumentForPosition(argPos, expr);
+        
+        currentGraphDef.addPortAssignment(new PortAssignment(pathToPort, expr, argPos));
         return port;
     }
     
@@ -429,7 +430,10 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         
         for(Entry<Integer, Expression> e: assign.getArgs().entrySet()){
             port.setArgumentForPosition(e.getKey(), e.getValue());
+            
         }
+        
+        currentGraphDef.addPortAssignment(assign);
         return port;
     }
 
@@ -782,7 +786,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
             Logger.getLogger(SubjunctiveParametricSystem.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        ShiroParser parser = parse(is);
+        ShiroParser parser = parse(true,is);
         this.addNodeASTDefinitions(generateNodeDefs(parser.shiro()));
     }
 
@@ -819,7 +823,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         }
 
         // parse the input stream
-        ShiroParser parser = parse(is);
+        ShiroParser parser = parse(true, is);
         // generate the AST from the parse tree
         this.addNodeASTDefinitions(generateNodeDefs(parser.shiro()));
     }
@@ -831,7 +835,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
      * @return the expression object representing the {@code expr}
      */
     public Expression parseExpression(Scope scope, String expr) {
-        ShiroParser parser = parse(new ANTLRInputStream(expr));
+        ShiroParser parser = parse(false, new ANTLRInputStream(expr));
         ShiroParser.ExpressionContext expression = parser.expression();
         
 
@@ -848,13 +852,22 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
      * @param inputStream a stream of the shiro code to be parsed
      * @return reference to parser
      */
-    public ShiroParser parse(ANTLRInputStream inputStream) {
+    public ShiroParser parse(boolean save, ANTLRInputStream inputStream) {
         // lex the stream
         ShiroLexer lex = new ShiroLexer(inputStream);
-        ts = new CommonTokenStream(lex);
-
-        // parse the token stream
-        ShiroParser parser = new ShiroParser(ts);
+        
+        ShiroParser parser;
+        
+        if(save){
+            tokens = new CommonTokenStream(lex);
+            parser = new ShiroParser(tokens);
+            
+        }else{
+            CommonTokenStream ts = new CommonTokenStream(lex);
+            parser = new ShiroParser(ts);
+        }
+        
+        
         // generate the parse tree during parsing
         parser.setBuildParseTree(true);
 
@@ -888,9 +901,9 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
     public String toCode(){
         StringBuilder sb = new StringBuilder();
         
-        // ptwrint node definitions
+        // print node definitions
         nodeDefs.values().stream().forEach((ParseTree t) -> {
-            sb.append(ts.getText((RuleContext) t)).append("\n\n");
+            sb.append(tokens.getText((RuleContext) t)).append("\n\n");
         });
         
         // print graphs
@@ -931,8 +944,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         ShiroLexer lex = new ShiroLexer(new ANTLRFileStream(file.getAbsolutePath(), "UTF8"));
 
         // Get the token stream
-        CommonTokenStream tokens = new CommonTokenStream(lex);
-        ts = tokens;
+        tokens = new CommonTokenStream(lex);
 
         // Parse the file
         ShiroParser parser = new ShiroParser(tokens);
@@ -969,6 +981,11 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         graphDefs.remove("Default");
         graphDefs.put(graphDef.getName(), graphDef);
         currentGraphDef = graphDef;
+        
+        // deal with name auto generation
+        for(String key: nodeDefs.keySet()){
+            instanceCount.put(key, getNodesOfType(key).size());
+        }
         
         alternatives.remove("Default");
         

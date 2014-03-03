@@ -477,6 +477,11 @@ public class ProjectAmoebaController {
         return p;
     }
     
+    /**
+     * Create a Line to
+     * @param n
+     * @return 
+     */
     public Line getLine(shiro.Node n){
         Port ePort = n.getSelectedEvaluatedPort();
         Value line = ePort.getValueForIndex(0);

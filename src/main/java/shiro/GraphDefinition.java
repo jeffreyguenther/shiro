@@ -4,19 +4,20 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import shiro.expressions.Path;
 
 /**
- *
+ * This class represents a graph definition.
  * @author jeffreyguenther
  */
 public class GraphDefinition {
-    private Map<String, String> nodeProductions;
-    private Set<PortAssignment> portAssignments;
+    private Map<String, String> nodeProductions; // name -> type. Names are unique
+    private Map<Path, PortAssignment> portAssignments;
     private String name;
 
     public GraphDefinition(String name) {
         nodeProductions = new HashMap<>();
-        portAssignments = new LinkedHashSet<>();
+        portAssignments = new HashMap<>();
         this.name = name;
     }
 
@@ -37,27 +38,31 @@ public class GraphDefinition {
     }
 
     public Set<PortAssignment> getPortAssignments() {
-        return portAssignments;
+        return new LinkedHashSet<>(portAssignments.values());
     }
 
     public void setPortAssignments(Set<PortAssignment> portAssignments) {
-        this.portAssignments = portAssignments;
+        for(PortAssignment pa: portAssignments){
+            this.portAssignments.put(pa.getPath(), pa);
+        }
+        
     }
     
-    public boolean addPortAssignment(PortAssignment assign){
-        return portAssignments.add(assign);
+    public void addPortAssignment(PortAssignment assign){
+        //portAssignments.
+        portAssignments.put(assign.getPath(), assign);
     }
 
     public boolean removePortAssignment(PortAssignment assign) {
-        return portAssignments.remove(assign);
+        return portAssignments.remove(assign.getPath(), assign);
     }
     
     public void addNodeProduction(String type, String name){
-        nodeProductions.put(type, name);
+        nodeProductions.put(name, type);
     }
     
     public void removeNodeProduction(String type, String name){
-        nodeProductions.remove(type, name);
+        nodeProductions.remove(name, type);
     }
     
     public String toCode(){
@@ -68,7 +73,7 @@ public class GraphDefinition {
         });
         
         sb.append("\n");
-        portAssignments.stream().forEach((PortAssignment a) -> { sb.append("\t").append(a.toCode()).append("\n"); });
+        portAssignments.values().stream().forEach((PortAssignment a) -> { sb.append("\t").append(a.toCode()).append("\n"); });
         
         sb.append("end\n\n");
         return sb.toString();

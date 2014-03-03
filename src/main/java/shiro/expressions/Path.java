@@ -2,6 +2,7 @@ package shiro.expressions;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -325,4 +326,40 @@ public class Path implements Expression {
         
         return sb.toString();
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 67 * hash + Objects.hashCode(this.path);
+        hash = 67 * hash + Objects.hashCode(this.indexKey);
+        hash = 67 * hash + this.index;
+        hash = 67 * hash + Objects.hashCode(this.scope);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Path other = (Path) obj;
+        if (!Objects.equals(this.path, other.path)) {
+            return false;
+        }
+        if (!Objects.equals(this.indexKey, other.indexKey)) {
+            return false;
+        }
+        if (this.index != other.index) {
+            return false;
+        }
+        if (!Objects.equals(this.scope, other.scope)) {
+            return false;
+        }
+        return true;
+    }
+    
+    
 }

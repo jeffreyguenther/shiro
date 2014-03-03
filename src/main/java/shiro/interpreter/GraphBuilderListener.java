@@ -78,7 +78,7 @@ public class GraphBuilderListener extends ShiroBasePassListener {
             String nodeName = ac.nodeName.getText();
             
             //TODO this might not work in the long run with long path names
-            graphDef.addNodeProduction(nodeName, leftHandSide.getCurrentPathHead());
+            graphDef.addNodeProduction(leftHandSide.getCurrentPathHead(), nodeName);
             
             // need to differentiate between creating nodes and subjunctive nodes
             Symbol producedSymbol = pSystem.produceSymbolFromName(leftHandSide.getPathAsString(), nodeName);
