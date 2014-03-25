@@ -29,8 +29,8 @@ public class SubjunctiveParametricSystemTest {
         pSystem.loadDefinitions();
         return pSystem;
     }
-    
-    private SubjunctiveParametricSystem setupPSystemWithSubjuncts() throws IOException{
+
+    private SubjunctiveParametricSystem setupPSystemWithSubjuncts() throws IOException {
         SubjunctiveParametricSystem pSystem = new SubjunctiveParametricSystem();
         URL resource = this.getClass().getResource("SimpleSubjunctiveExample.sro");
         pSystem.loadCode(new File(resource.getPath()));
@@ -92,18 +92,18 @@ public class SubjunctiveParametricSystemTest {
         try {
             // Load the basic parametric system with Point and Line
             SubjunctiveParametricSystem pSystem = setupPSystem();
-            
+
             // Create a node
             Node node = pSystem.createNode("Point");
             List<String> pathParts = new ArrayList<>();
             pathParts.add(node.getName());
             pathParts.add("x");
-            
+
             // create an path object for the port x
             Path x = new Path(node, pathParts);
             Expression parsedExpression = pSystem.parseExpression(node, 10 + "");
             Port portX = pSystem.setPortExpression(x, parsedExpression);
-            
+
             Assert.assertNotNull("Port should not be null", portX);
             assertThat(parsedExpression.getPortsDependedOn().isEmpty(), is(equalTo(true)));
             assertThat(portX.getArgumentForPosition(0).toString(), containsString("(10.0)"));
@@ -114,93 +114,133 @@ public class SubjunctiveParametricSystemTest {
             Logger.getLogger(SubjunctiveParametricSystemTest.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     @Test
-    public void resolvePrototypePath(){
+    public void resolvePrototypePath() {
         try {
             SubjunctiveParametricSystem pSystem = setupPSystemWithSubjuncts();
-            
+
             Path nodePath = new Path("Point");
-            Symbol pointStringPath = pSystem.findObject("Point");
-            Symbol pointPath = pSystem.findObject(nodePath);
+            Symbol pointStringPath = pSystem.find("Point");
+            Symbol pointPath = pSystem.find(nodePath);
             Assert.assertSame("should be equal", pointStringPath, pointPath);
             Assert.assertEquals("Should be a node", SymbolType.NODE, pointStringPath.getType());
             Assert.assertEquals("Should be a node", SymbolType.NODE, pointPath.getType());
-            
+
             Path subjNodePath = new Path("EndPoints");
-            Symbol endPointStringPath = pSystem.findObject("EndPoints");
-            Symbol endPointPath = pSystem.findObject(subjNodePath);
+            Symbol endPointStringPath = pSystem.find("EndPoints");
+            Symbol endPointPath = pSystem.find(subjNodePath);
             Assert.assertSame("should be equal", endPointStringPath, endPointPath);
             Assert.assertEquals("Should be a subjunctive node", SymbolType.SUBJ, endPointStringPath.getType());
             Assert.assertEquals("Should be a subjunctive node", SymbolType.SUBJ, endPointPath.getType());
-            
+
         } catch (IOException | PathNotFoundException | PathNotAccessibleException ex) {
             Logger.getLogger(SubjunctiveParametricSystemTest.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     @Test(expected = PathNotFoundException.class)
-    public void resolveInstancePath() throws PathNotFoundException{
-        try {
-            SubjunctiveParametricSystem pSystem = setupPSystemWithSubjuncts();
-            
-            Path error = new Path("startP4ints");
-            Symbol errorPathString = pSystem.findObject("startPoint");
-            Symbol errorpath = pSystem.findObject(error);
-            Assert.assertNull("should be null", errorPathString);
-            Assert.assertNull("should be null", errorpath);
-            
-            Path instance = new Path("startPoint");
-            Symbol startPointStringPath = pSystem.findObject("startPoint");
-            Symbol startPointPath = pSystem.findObject(instance);
-            Assert.assertNotNull(startPointStringPath);
-            Assert.assertNotNull(startPointPath);
-            Assert.assertSame("should be equal", startPointStringPath, startPointPath);
-            Assert.assertTrue("Should be a node", SymbolType.PORT == startPointStringPath.getType());
-//            Assert.assertEquals("Should be a node", , startPointPath.getType());
-           
-            
-        } catch (IOException | PathNotAccessibleException ex) {
-            Logger.getLogger(SubjunctiveParametricSystemTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
+    public void invalidPath() throws PathNotFoundException, IOException, PathNotAccessibleException {
+
+        SubjunctiveParametricSystem pSystem = setupPSystemWithSubjuncts();
+
+        Path error = new Path("startP4ints");
+        pSystem.find("startP4ints");
+        pSystem.find(error);
+    }
+
+    @Test
+    public void resolveInstancePath() throws IOException,
+            PathNotAccessibleException, PathNotFoundException {
+        SubjunctiveParametricSystem pSystem = setupPSystemWithSubjuncts();
+        Path instance = new Path("startPoint");
+        Symbol startPointStringPath = pSystem.find("startPoint");
+        Symbol startPointPath = pSystem.find(instance);
+
+        Assert.assertNotNull(startPointStringPath);
+        Assert.assertNotNull(startPointPath);
+        Assert.assertSame("should be equal", startPointStringPath, startPointPath);
+        Assert.assertEquals("Should be a node", SymbolType.NODE, startPointStringPath.getType());
+        Assert.assertEquals("Should be a node", SymbolType.NODE, startPointPath.getType());
+
+        Path subjInstance = new Path("endPoint");
+        Symbol endPointsStringPath = pSystem.find("endPoint");
+        Symbol endPointsPath = pSystem.find(subjInstance);
+
+        Assert.assertNotNull(endPointsStringPath);
+        Assert.assertNotNull(endPointsPath);
+        Assert.assertSame("should be equal", endPointsStringPath, endPointsPath);
+        Assert.assertEquals("Should be a node", SymbolType.SUBJ, endPointsStringPath.getType());
+        Assert.assertEquals("Should be a node", SymbolType.SUBJ, endPointsPath.getType());
     }
     
     @Test(expected = PathNotAccessibleException.class)
-    public void resolvePorts() throws PathNotAccessibleException{
-        try {
-            SubjunctiveParametricSystem pSystem = setupPSystemWithSubjuncts();
-            pSystem.findObject("Point");
-            
-            Path x = new Path("Point", "x");
-            Symbol xPortPath = pSystem.findObject(x);
-            Symbol xPortString = pSystem.findObject("Point.x");
-            Assert.assertSame("should be the same reference", xPortPath, xPortString);
-            assertThat("should be a port", xPortPath.getType(), is(equalTo(SymbolType.PORT)));
-            assertThat("should be a port", xPortString.getType(), is(equalTo(SymbolType.PORT)));
-            
-            Path y = new Path("Point", "y");
-            Symbol yPortPath = pSystem.findObject(y);
-            Symbol yPortString = pSystem.findObject("Point.y");
-            Assert.assertSame("should be the same reference", yPortPath, yPortString);
-            assertThat("should be a port", yPortPath.getType(), is(equalTo(SymbolType.PORT)));
-            assertThat("should be a port", yPortString.getType(), is(equalTo(SymbolType.PORT)));
-            
-            Path update = new Path("Point", "update");
-            Symbol updatePortPath = pSystem.findObject(update);
-            Symbol updatePortString = pSystem.findObject("Point.update");
-            Assert.assertSame("should be the same reference", updatePortPath, updatePortString);
-            assertThat("should be a port", updatePortPath.getType(), is(equalTo(SymbolType.PORT)));
-            assertThat("should be a port", updatePortString.getType(), is(equalTo(SymbolType.PORT)));
-            
-            Path point = new Path("Point", "point");
-            Symbol pointPortPath = pSystem.findObject(point);
-            Symbol pointPortString = pSystem.findObject("Point.point");
-            Assert.assertSame("should be the same reference", pointPortPath, pointPortString);
-            assertThat("should be a port", pointPortPath.getType(), is(equalTo(SymbolType.PORT)));
-            assertThat("should be a port", pointPortString.getType(), is(equalTo(SymbolType.PORT)));
-        } catch (IOException | PathNotFoundException ex) {
-            Logger.getLogger(SubjunctiveParametricSystemTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    public void inaccessiblePort() throws IOException, PathNotAccessibleException, PathNotFoundException{
+        SubjunctiveParametricSystem pSystem = setupPSystemWithSubjuncts();
+        pSystem.find("Point");
+        
+        Path update = new Path("Point", "update");
+        Symbol updatePortPath = pSystem.find(update);
+        Symbol updatePortString = pSystem.find("Point.update");
+        Assert.assertSame("should be the same reference", updatePortPath, updatePortString);
+        assertThat("should be a port", updatePortPath.getType(), is(equalTo(SymbolType.PORT)));
+        assertThat("should be a port", updatePortString.getType(), is(equalTo(SymbolType.PORT)));
+    }
+
+    @Test
+    public void resolvePorts() throws PathNotAccessibleException, IOException, PathNotFoundException {
+        SubjunctiveParametricSystem pSystem = setupPSystemWithSubjuncts();
+        pSystem.find("Point"); // needed to create the Point prototype
+
+        Path x = new Path("Point", "x");
+        Symbol xPortPath = pSystem.find(x);
+        Symbol xPortString = pSystem.find("Point.x");
+        Assert.assertSame("should be the same reference", xPortPath, xPortString);
+        assertThat("should be a port", xPortPath.getType(), is(equalTo(SymbolType.PORT)));
+        assertThat("should be a port", xPortString.getType(), is(equalTo(SymbolType.PORT)));
+
+        Path y = new Path("Point", "y");
+        Symbol yPortPath = pSystem.find(y);
+        Symbol yPortString = pSystem.find("Point.y");
+        Assert.assertSame("should be the same reference", yPortPath, yPortString);
+        assertThat("should be a port", yPortPath.getType(), is(equalTo(SymbolType.PORT)));
+        assertThat("should be a port", yPortString.getType(), is(equalTo(SymbolType.PORT)));
+
+        Path point = new Path("Point", "point");
+        Symbol pointPortPath = pSystem.find(point);
+        Symbol pointPortString = pSystem.find("Point.point");
+        Assert.assertSame("should be the same reference", pointPortPath, pointPortString);
+        assertThat("should be a port", pointPortPath.getType(), is(equalTo(SymbolType.PORT)));
+        assertThat("should be a port", pointPortString.getType(), is(equalTo(SymbolType.PORT)));
+
+        Path startPointX = new Path("startPoint", "x");
+        Symbol startPointXPath = pSystem.find(startPointX);
+        Symbol startPointXString = pSystem.find("startPoint.x");
+        Assert.assertSame("should be the same reference", startPointXPath, startPointXString);
+        assertThat("should be a port", startPointXPath.getType(), is(equalTo(SymbolType.PORT)));
+        assertThat("should be a port", startPointXString.getType(), is(equalTo(SymbolType.PORT)));
+        Port p = (Port) startPointXPath;
+        Assert.assertEquals("should have the same name", "startPoint.x", p.getFullName());
+        
+        Path activeX = new Path("endPoint", "active", "x");
+        Symbol activeXPath = pSystem.find(activeX);
+        Symbol activeXString = pSystem.find("endPoint.active.x");
+        Assert.assertSame("should be the same reference", activeXString, activeXPath);
+        Assert.assertEquals("should be port", SymbolType.PORT, activeXPath.getType());
+        Assert.assertEquals("should be port", SymbolType.PORT, activeXString.getType());
+        
+        Path p1X = new Path("endPoint", "P1", "x");
+        Symbol p1XPath = pSystem.find(p1X);
+        Symbol p1XString = pSystem.find("endPoint.P1.x");
+        Assert.assertSame("should be the same reference", p1XString, p1XPath);
+        Assert.assertEquals("should be port", SymbolType.PORT, p1XPath.getType());
+        Assert.assertEquals("should be port", SymbolType.PORT, p1XString.getType());
+        
+        Path p2X = new Path("endPoint", "P2", "x");
+        Symbol p2XPath = pSystem.find(p2X);
+        Symbol p2XString = pSystem.find("endPoint.P2.x");
+        Assert.assertSame("should be the same reference", p2XString, p2XPath);
+        Assert.assertEquals("should be port", SymbolType.PORT, p2XPath.getType());
+        Assert.assertEquals("should be port", SymbolType.PORT, p2XString.getType());
     }
 }

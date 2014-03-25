@@ -13,11 +13,6 @@ node Line begin
     port line Value ( update[0] )
 end
 
-node Canvas begin
-    port shape Value
-    eval update Canvas(shape[0])
-end
-
 subjunctive node EndPoints[P1] begin
     Point -> P1 begin
         P1.x(400)
@@ -40,8 +35,6 @@ graph line begin
 
     l.p1(startPoint.point[0])
     l.p2(endPoint.active.point[0])
-
-    Canvas.shape(l.line[0])
 end
 
 state DiagonalLine begin

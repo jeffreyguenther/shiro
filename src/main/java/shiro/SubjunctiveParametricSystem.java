@@ -167,7 +167,8 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         return multiFunctions.get(name);
     }
     
-    public Symbol findObject(Path p) throws PathNotFoundException, PathNotAccessibleException{
+    @Override
+    public Symbol find(Path p) throws PathNotFoundException, PathNotAccessibleException{
         Symbol matchedSymbol = null;
         
         // check proto instances
@@ -184,13 +185,25 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
             }else{
                 matchedSymbol = produceSubjNodeFromName(p.getCurrentPathHead(), p.getCurrentPathHead());
             }
-        }else if(nodes.containsKey(p.getCurrentPathHead()) && !p.isAtEnd()){
+        }else if(nodes.containsKey(p.getCurrentPathHead())){
             Node n = nodes.get(p.getCurrentPathHead());
             
-            p.popPathHead();
-            matchedSymbol = n.findObject(p);     
-        }else if(nodes.containsKey(p.getCurrentPathHead()) && p.isAtEnd()){
-            matchedSymbol = nodes.get(p.getCurrentPathHead());
+            if(!p.isAtEnd()){
+                p.popPathHead();
+                matchedSymbol = n.find(p);     
+            }else{
+                matchedSymbol = n;
+            }
+                
+        }else if(subjNodes.containsKey(p.getCurrentPathHead())){
+            SubjunctiveNode sn = subjNodes.get(p.getCurrentPathHead());
+            
+            if(!p.isAtEnd()){
+                p.popPathHead();
+                matchedSymbol = sn.find(p);
+            }else{
+                matchedSymbol = sn;
+            }
         }else{
             throw new PathNotFoundException(p + " cannot be found.");
         }
@@ -198,8 +211,8 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         return matchedSymbol;
     }
     
-    public Symbol findObject(String s) throws PathNotFoundException, PathNotAccessibleException{
-        return findObject(PathHelpers.createPath(s));
+    public Symbol find(String s) throws PathNotFoundException, PathNotAccessibleException{
+        return find(PathHelpers.createPath(s));
     }
     
 

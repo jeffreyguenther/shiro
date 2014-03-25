@@ -316,26 +316,37 @@ public class Node implements PortEventListener, Container, Symbol{
     }
 
     public Set<Port> getEvaluatedPorts(){
-        return new LinkedHashSet<Port>(evaluatedPorts.values());
+        return new LinkedHashSet<>(evaluatedPorts.values());
     }
 
     public Port getSelectedEvaluatedPort(){
         return selectedEvaluatedPort;
     }
     
-    public Symbol findObject(Path p) throws PathNotFoundException, PathNotAccessibleException{
+    @Override
+    public Symbol find(Path p) throws PathNotFoundException, PathNotAccessibleException{
         Symbol matched = null;
         
         if(ports.containsKey(p.getCurrentPathHead())){
             if(!evaluatedPorts.containsKey(p.getCurrentPathHead())){
                 matched = ports.get(p.getCurrentPathHead());
-            }else{
-                throw new PathNotAccessibleException(p + " is not accessible. It maybe an evaluated port.");
+            }else if(evaluatedPorts.containsKey(p.getCurrentPathHead())){
+                throw new PathNotAccessibleException(p + " is not accessible. "
+                        + "It is an evaluated port.");
             }
+        }else{
+            throw new PathNotFoundException(p + "cannot be found.");
         }
         
         return matched;
     }
+
+    @Override
+    public Symbol find(String path) throws PathNotFoundException, PathNotAccessibleException {
+        return find(PathHelpers.createPath(path));
+    }
+    
+    
 
     @Override
     public Symbol resolvePath(Path path) throws PathNotFoundException{

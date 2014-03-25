@@ -24,12 +24,13 @@ public class SubjunctiveNode implements Symbol, Container {
 
     /**
      * Get the subjuncts
+     *
      * @return the subjuncts
      */
-    public Set<Node> getSubjuncts(){
+    public Set<Node> getSubjuncts() {
         return new HashSet<>(subjuncts.values());
     }
-    
+
     /**
      * Determine if the subjunctive node contains the subjunct
      *
@@ -62,13 +63,14 @@ public class SubjunctiveNode implements Symbol, Container {
             setActiveNode(node);
         }
     }
-    
+
     /**
      * Get subjunct node by name
+     *
      * @param name name of subjunct to get
      * @return a reference to the subjunctive node with the given name
      */
-    public Node getSubjunct(String name){
+    public Node getSubjunct(String name) {
         return subjuncts.get(name);
     }
 
@@ -88,8 +90,8 @@ public class SubjunctiveNode implements Symbol, Container {
             setActiveNode(new ArrayList<Node>(subjuncts.values()).get(0));
         }
     }
-    
-    public Node getActiveSubjunct(){
+
+    public Node getActiveSubjunct() {
         return activeNode;
     }
 
@@ -142,14 +144,14 @@ public class SubjunctiveNode implements Symbol, Container {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append(getFullName())
-          .append(":")
-          .append(getType())
-          .append("\n");
-        
-        for(Node n: subjuncts.values()){
+                .append(":")
+                .append(getType())
+                .append("\n");
+
+        for (Node n : subjuncts.values()) {
             sb.append("\t")
-            .append(n.toString())
-            .append("\n");
+                    .append(n.toString())
+                    .append("\n");
         }
         return sb.toString();
     }
@@ -181,8 +183,43 @@ public class SubjunctiveNode implements Symbol, Container {
 
     @Override
     public void deactivate() {
-        for(Node n: subjuncts.values()){
+        for (Node n : subjuncts.values()) {
             n.deactivate();
+        }
+    }
+
+    @Override
+    public Symbol find(Path p) throws PathNotAccessibleException, PathNotFoundException {
+        Symbol matchedSymbol = null;
+
+        // if the path refers to the active node
+        if (p.getCurrentPathHead().equals("active")) {
+            Node n = getActiveSubjunct();
+
+            matchedSymbol = completePath(p, n);
+        } else if (subjuncts.containsKey(p.getCurrentPathHead())) {
+            Node n = subjuncts.get(p.getCurrentPathHead());
+
+            matchedSymbol = completePath(p, n);
+        } else {
+            throw new PathNotFoundException(p + " cannot be found.");
+        }
+
+        return matchedSymbol;
+    }
+
+    @Override
+    public Symbol find(String path) throws PathNotFoundException, PathNotAccessibleException {
+        return find(PathHelpers.createPath(path));
+    }
+
+    private Symbol completePath(Path p, Node n) throws PathNotAccessibleException,
+            PathNotFoundException {
+        if (!p.isAtEnd()) {
+            p.popPathHead();
+            return n.find(p);
+        } else {
+            return n;
         }
     }
 
@@ -195,14 +232,14 @@ public class SubjunctiveNode implements Symbol, Container {
 
             // resolve the path
             return activeNode.resolvePath(p);
-        }else{
+        } else {
             p.popPathHead();
-            
+
             Node containedNode = subjuncts.get(p.getCurrentPathHead());
-            
-            if(containedNode != null && !p.isAtEnd()){
+
+            if (containedNode != null && !p.isAtEnd()) {
                 return containedNode.resolvePath(p);
-            }else{
+            } else {
                 return containedNode;
             }
         }
