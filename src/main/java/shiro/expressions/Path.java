@@ -1,5 +1,6 @@
 package shiro.expressions;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -9,7 +10,30 @@ import java.util.logging.Logger;
 import shiro.*;
 
 /**
- * Represents a path in an expression
+ * Represents a path in Shiro. A path is an identifier in Shiro. 
+ * It can be used to identify node definitions (Point), ports within
+ * node definitions (Point.x), and port values (x[0] or x["first"]).
+ * 
+ * A path is represented as a list of strings instead of a string like 
+ * "Area.length". This is done to reduce the amount of string processing required
+ * when working with paths.
+ * 
+ * A path has a "path head." The path head refers to the string the pathHead index
+ * points to. You can non-destructively pop(or increment) the head of path to 
+ * move the path head down the list of strings that represent the path. 
+ * This allows the path to be shortened as each part of the path is processed 
+ * without losing the path as a whole. For example:
+ * <code>
+ * Path p = new Path("Area", "Length");
+ * System.out.println(p.getCurrentPathHead()); // "Area"
+ * p.popPathHead()
+ * System.out.println(p.getCurrentPathHead()); // "Length"
+ * </code>
+ * 
+ * A path may not have its portReferenced, or scope defined if it is being
+ * used to represent a simple path. For example, a simple path, like Point.x can,
+ * be create to access a. In this case, the path object does not have a scope and is
+ * used to encapsulate the dot separated strings.
  *
  * @author jeffreyguenther
  */
@@ -27,6 +51,10 @@ public class Path implements Expression {
      */
     public Path() {
         this(null, null);
+    }
+    
+    public Path(String...parts){
+        this(null, Arrays.asList(parts));
     }
 
     /**
@@ -102,21 +130,18 @@ public class Path implements Expression {
     }
 
     /**
-     * Determine if a path has only one element remaining. A path to a port will
-     * be at the end of the path. For example, the path
-     * <code>update["value"]</code> will return true A path that points to a
-     * node will also be at the end of a path. For example, the path
-     * <code>Area.length</code> when the head of the path is at length will also
-     * return true.
+     * Determine if a path has only one element remaining. 
+     * A path to a port will be at the end of the path. For example, the path
+     * <code>update["value"]</code> will return true. 
+     * 
+     * A path that points to a node will also be at the end of a path. 
+     * For example, the path <code>Area.length</code> when the pathHead points 
+     * to the last element in the list will also return true.
      *
      * @return true if the path is at the end, otherwise false
      */
     public boolean isAtEnd() {
-        if (pathHead == path.size() - 1) {
-            return true;
-        } else {
-            return false;
-        }
+        return pathHead == path.size() - 1;
     }
 
     /**
@@ -143,7 +168,7 @@ public class Path implements Expression {
      *
      * @return a list of strings that make up the path
      */
-    public List<String> getPath() {
+    public List<String> getPathParts() {
         return path;
     }
 
@@ -153,11 +178,10 @@ public class Path implements Expression {
      *
      * @return the string representing the path.
      */
-    public String getPathAsString() {
+    public String getPath() {
         StringBuilder sb = new StringBuilder();
         for (String s : path) {
             sb.append(".").append(s);
-
         }
         sb.replace(0, 1, "");
         return sb.toString();
@@ -244,7 +268,20 @@ public class Path implements Expression {
             return false;
         }
     }
+    
+    /**
+     * Determines if path has an index
+     * @return true if the path has an integer or string index, otherwise false
+     */
+    public boolean hasIndex(){
+        return hasIntegerIndex() || hasStringIndex();
+    }
 
+    /**
+     * Get the value of the port in the referenced port
+     * @return the value of the port in the referenced port
+     * @throws PortIndexNotFoundException - if path is not found
+     */
     private Value getValue() throws PortIndexNotFoundException {
         return portReferenced.getValueForPath(this);
     }
@@ -252,17 +289,17 @@ public class Path implements Expression {
     /**
      * Get the scope of the path
      *
-     * @return the scope of the path
+     * @return the scope of the path. Returns null if there is no scope defined
      */
     public Scope getScope() {
         return scope;
     }
 
     /**
-     * Get the ports depended upon. This method returns a set because the set
+     * Get the ports depended upon. This method returns a set because the set is
      * recursively added to for all paths in an expression.
      *
-     * @return the set of ports depended upon (For a path, it is only one)
+     * @return a set of one port is returned
      * @throws PathNotFoundException
      */
     @Override
@@ -271,7 +308,6 @@ public class Path implements Expression {
         portReferenced = (Port) scope.resolvePath(this);
         ports.add(portReferenced);
         return ports;
-
     }
 
     /**
@@ -316,7 +352,7 @@ public class Path implements Expression {
     @Override
     public String toCode() {
         StringBuilder sb = new StringBuilder();
-        sb.append(getPathAsString());
+        sb.append(getPath());
         
         if(hasIntegerIndex()){
             sb.append("[").append(getIndex()).append("]");
@@ -360,6 +396,4 @@ public class Path implements Expression {
         }
         return true;
     }
-    
-    
 }

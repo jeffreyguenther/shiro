@@ -6,18 +6,13 @@
 package shiro.drawing;
 
 import java.io.File;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Bounds;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.geometry.Side;
-import javafx.scene.Cursor;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -29,6 +24,7 @@ import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPaneBuilder;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.Separator;
 import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
@@ -40,6 +36,7 @@ import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.TilePaneBuilder;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -59,30 +56,27 @@ import javafx.stage.Stage;
  * @author jeffreyguenther
  */
 public class ProjectAmoebaUI {
-
-    private final ProjectAmoebaController controller;
-    private final Parent uiRoot;
-    private Pane canvasPane;
+    private final Parent sceneRoot; 
+    private StackPane layers;
     private Pane imageStrip;
-    private Group drawGroup;
-    private Stage stage;
-
+    private ListView<String> altsList;
+    private final Stage stage;
+    
+    private final ProjectAmoebaController controller;
+    
     public ProjectAmoebaUI(Stage stage) {
         this.stage = stage;
+        layers = new StackPane();
         controller = new ProjectAmoebaController(this);
-        uiRoot = createUI();
+        sceneRoot = createUI();
     }
 
-    public Parent getRoot() {
-        return uiRoot;
+    public Parent getSceneRoot() {
+        return sceneRoot;
     }
-
-    public Group getDrawGroup() {
-        return drawGroup;
-    }
-
-    public Pane getCanvasPane() {
-        return canvasPane;
+    
+    public StackPane getLayers(){
+        return layers;
     }
 
     public Pane getImageStrip() {
@@ -92,31 +86,17 @@ public class ProjectAmoebaUI {
     public ProjectAmoebaController getController() {
         return controller;
     }
+    
+    public ListView<String> getAltsList(){
+        return altsList;
+    }
 
     private Parent createUI() {
         final BorderPane root = new BorderPane();
-
-        // Create pane to catch drawing events
-        canvasPane = new Pane();
-        // canvasPane.setStyle("-fx-background-color: whitesmoke; -fx-border-color: pink; -fx-border-width: 2px;");
-        canvasPane.setStyle("-fx-background-color: whitesmoke;");
-
-        // A group to contain the actual drawing elements.
-        drawGroup = new Group();
-        canvasPane.getChildren().add(drawGroup);
-        drawGroup.layoutBoundsProperty().addListener(
-                new ChangeListener<Bounds>() {
-
-                    @Override
-                    public void changed(ObservableValue<? extends Bounds> ov,
-                            Bounds t, Bounds t1) {
-                        canvasPane.setMinSize(t1.getMaxX(), t1.getMaxY());
-                    }
-                });
-
+        
         // ScrollPane to allow access to entire canvas
         final ScrollPane scroll = ScrollPaneBuilder.create()
-                .content(canvasPane)
+                .content(layers)
                 .fitToHeight(true)
                 .fitToWidth(true)
                 .build();
@@ -127,12 +107,11 @@ public class ProjectAmoebaUI {
                 if (t.getCode().equals(KeyCode.CONTROL)) {
 
                     scroll.setPannable(true);
-                    canvasPane.setCursor(Cursor.OPEN_HAND);
+//                    canvasPane.setCursor(Cursor.OPEN_HAND);
 
                     controller.setPanning(true);
-
-                    System.out.println(t.getSource());
-                    System.out.println("CONTROL pressed");
+                    
+                    System.out.println(t.getSource() + ":CONTROL pressed");
                 }
             }
         });
@@ -148,56 +127,39 @@ public class ProjectAmoebaUI {
             }
         });
 
-        canvasPane.setOnMousePressed(new EventHandler<MouseEvent>() {
-
-            @Override
-            public void handle(MouseEvent e) {
-                controller.handleCanvasPaneMousePressed(e);
-            }
-        });
-
-        canvasPane.setOnMouseDragged(new EventHandler<MouseEvent>() {
-
-            @Override
-            public void handle(MouseEvent e) {
-                controller.handleCanvasPaneMouseDragged(e);
-
-            }
-        });
-
-        canvasPane.setOnMouseReleased(new EventHandler<MouseEvent>() {
-
-            @Override
-            public void handle(MouseEvent e) {
-                controller.handleCanvasMouseReleased(e);
-            }
-        });
-
         imageStrip = createImageStrip();
 
         root.setTop(createMenuBar());
         root.setLeft(createToolBar());
-//        root.setRight(createListView());
+        altsList = createListView();
+        root.setRight(altsList);
         root.setCenter(scroll);
 
         return root;
     }
     
-    private Node createListView(){
+    private ListView<String> createListView(){
         ListView<String> listView = new ListView<>();
-        listView.setEditable(true);
-        listView.setCellFactory(TextFieldListCell.forListView());
-        ObservableList<String> list = FXCollections.observableArrayList("Alternative 1", "Alteratnive 2");
-        listView.setItems(list);
+        listView.setPrefWidth(100);
         
-        list.addListener(new ListChangeListener<String>() {
+        listView.setCellFactory(TextFieldListCell.forListView());
+        listView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        listView.getSelectionModel().getSelectedItems().addListener(new ListChangeListener<String>() {
 
             @Override
-            public void onChanged(ListChangeListener.Change<? extends String> change) {
+            public void onChanged(ListChangeListener.Change<? extends String> c) {
+                if(c.getList().size() > 1){
+                    controller.handleMultipleSelectedAltChange(c.getList());
+                }else{
+                    controller.handleSingleSelectedAltChange(c.getList().get(0));
+                }
                 
-                System.out.println(list);
             }
         });
+        
+        ObservableList<String> list = controller.getAlternatives();
+        listView.setItems(list);
+        
         return listView;
     }
 
@@ -270,7 +232,6 @@ public class ProjectAmoebaUI {
 
             @Override
             public void handle(ActionEvent t) {
-                drawGroup.getChildren().clear();
                 imageStrip.getChildren().clear();
                 controller.clearAlternatives();
             }
@@ -281,7 +242,6 @@ public class ProjectAmoebaUI {
 
             @Override
             public void handle(ActionEvent t) {
-                drawGroup.getChildren().clear();
                 imageStrip.getChildren().clear();
                 controller.clearAlternatives();
             }
@@ -403,8 +363,8 @@ public class ProjectAmoebaUI {
             }
         ;
         });
-
-		g.setOnMouseReleased(new EventHandler<MouseEvent>() {
+        
+        g.setOnMouseReleased(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
                 System.out.println(event.getSource() + ":Point released");

@@ -322,6 +322,20 @@ public class Node implements PortEventListener, Container, Symbol{
     public Port getSelectedEvaluatedPort(){
         return selectedEvaluatedPort;
     }
+    
+    public Symbol findObject(Path p) throws PathNotFoundException, PathNotAccessibleException{
+        Symbol matched = null;
+        
+        if(ports.containsKey(p.getCurrentPathHead())){
+            if(!evaluatedPorts.containsKey(p.getCurrentPathHead())){
+                matched = ports.get(p.getCurrentPathHead());
+            }else{
+                throw new PathNotAccessibleException(p + " is not accessible. It maybe an evaluated port.");
+            }
+        }
+        
+        return matched;
+    }
 
     @Override
     public Symbol resolvePath(Path path) throws PathNotFoundException{
@@ -356,6 +370,11 @@ public class Node implements PortEventListener, Container, Symbol{
 
         return portReferenced;
 
+    }
+
+    @Override
+    public Symbol resolvePath(String path) throws PathNotFoundException {
+        return resolvePath(PathHelpers.createPath(path));
     }
 
     /**
@@ -512,7 +531,7 @@ public class Node implements PortEventListener, Container, Symbol{
 
     @Override
     public SymbolType getType() {
-        return SymbolType.Node;
+        return SymbolType.NODE;
     }
     
     public String toCode(){

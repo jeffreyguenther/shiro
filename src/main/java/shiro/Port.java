@@ -441,7 +441,7 @@ public class Port implements Symbol{
      */
     @Override
     public SymbolType getType(){
-        return SymbolType.Port;
+        return SymbolType.PORT;
     }
     
     /**

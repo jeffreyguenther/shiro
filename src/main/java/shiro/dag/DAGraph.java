@@ -274,6 +274,9 @@ public class DAGraph<T> {
         }
     }
 
+    /**
+     * Remove all nodes from the graph. 
+    */
     public void removeAllDependencies() {
         leafNodes.clear();
         nodes.clear();

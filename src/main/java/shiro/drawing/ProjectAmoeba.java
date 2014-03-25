@@ -17,7 +17,7 @@ public class ProjectAmoeba extends Application {
 	public void start(Stage stage) {
 		// Create the UI
 		ui = new ProjectAmoebaUI(stage);
-		Scene scene = new Scene(ui.getRoot(), 800, 600);
+		Scene scene = new Scene(ui.getSceneRoot(), 800, 600);
 
                 // Set up the window
 		stage.setMinHeight(600);

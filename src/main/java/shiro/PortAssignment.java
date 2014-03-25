@@ -18,7 +18,7 @@ public class PortAssignment {
     public PortAssignment(Path path, Expression exp, int position) {
         this.path = path;
         args = new HashMap<>();
-        addArgument(position, exp);
+        args.put(position, exp);
     }
 
     public Path getPath() {
@@ -63,6 +63,4 @@ public class PortAssignment {
         sb.append(")");
         return sb.toString();
     }
-    
-    
 }

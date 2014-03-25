@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 import junit.framework.Assert;
 import org.junit.Test;
 import shiro.Node;
-import shiro.PathHelpers;
+import shiro.PathHelpers;   
 import shiro.PathNotFoundException;
 import shiro.Port;
 import shiro.PortType;

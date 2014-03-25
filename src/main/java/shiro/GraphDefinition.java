@@ -10,7 +10,7 @@ import shiro.expressions.Path;
  * This class represents a graph definition.
  * @author jeffreyguenther
  */
-public class GraphDefinition {
+public class GraphDefinition implements Codeable{
     private Map<String, String> nodeProductions; // name -> type. Names are unique
     private Map<Path, PortAssignment> portAssignments;
     private String name;
@@ -45,7 +45,6 @@ public class GraphDefinition {
         for(PortAssignment pa: portAssignments){
             this.portAssignments.put(pa.getPath(), pa);
         }
-        
     }
     
     public void addPortAssignment(PortAssignment assign){
@@ -65,6 +64,7 @@ public class GraphDefinition {
         nodeProductions.remove(name, type);
     }
     
+    @Override
     public String toCode(){
         StringBuilder sb = new StringBuilder();
         sb.append("graph ").append(getName()).append(" begin\n");

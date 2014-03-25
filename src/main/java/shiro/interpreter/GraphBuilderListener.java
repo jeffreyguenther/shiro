@@ -81,9 +81,9 @@ public class GraphBuilderListener extends ShiroBasePassListener {
             graphDef.addNodeProduction(leftHandSide.getCurrentPathHead(), nodeName);
             
             // need to differentiate between creating nodes and subjunctive nodes
-            Symbol producedSymbol = pSystem.produceSymbolFromName(leftHandSide.getPathAsString(), nodeName);
+            Symbol producedSymbol = pSystem.produceSymbolFromName(leftHandSide.getPath(), nodeName);
 
-            if (producedSymbol.getType() == SymbolType.Node) {
+            if (producedSymbol.getType() == SymbolType.NODE) {
                 Node producedNode = (Node) producedSymbol;
                 //pSystem.produceNodeFromName(leftHandSide.getPathAsString(), nodeName);
 
@@ -101,7 +101,7 @@ public class GraphBuilderListener extends ShiroBasePassListener {
                         + producedNode.getSelectedEvaluatedPort());
                 System.out.println();
                 
-            } else if (producedSymbol.getType() == SymbolType.SubjNode) {
+            } else if (producedSymbol.getType() == SymbolType.SUBJ) {
                 SubjunctiveNode subjNode = (SubjunctiveNode) producedSymbol;
                 
                 if (ac.activeObject != null) {

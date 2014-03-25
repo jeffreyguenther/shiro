@@ -23,6 +23,14 @@ public class SubjunctiveNode implements Symbol, Container {
     }
 
     /**
+     * Get the subjuncts
+     * @return the subjuncts
+     */
+    public Set<Node> getSubjuncts(){
+        return new HashSet<>(subjuncts.values());
+    }
+    
+    /**
      * Determine if the subjunctive node contains the subjunct
      *
      * @param node node to be checked for
@@ -53,6 +61,15 @@ public class SubjunctiveNode implements Symbol, Container {
         if (active) {
             setActiveNode(node);
         }
+    }
+    
+    /**
+     * Get subjunct node by name
+     * @param name name of subjunct to get
+     * @return a reference to the subjunctive node with the given name
+     */
+    public Node getSubjunct(String name){
+        return subjuncts.get(name);
     }
 
     /**
@@ -139,7 +156,7 @@ public class SubjunctiveNode implements Symbol, Container {
 
     @Override
     public SymbolType getType() {
-        return SymbolType.SubjNode;
+        return SymbolType.SUBJ;
     }
 
     @Override
@@ -178,9 +195,22 @@ public class SubjunctiveNode implements Symbol, Container {
 
             // resolve the path
             return activeNode.resolvePath(p);
+        }else{
+            p.popPathHead();
+            
+            Node containedNode = subjuncts.get(p.getCurrentPathHead());
+            
+            if(containedNode != null && !p.isAtEnd()){
+                return containedNode.resolvePath(p);
+            }else{
+                return containedNode;
+            }
         }
+    }
 
-        return null;
+    @Override
+    public Symbol resolvePath(String path) throws PathNotFoundException {
+        return resolvePath(PathHelpers.createPath(path));
     }
 
     @Override

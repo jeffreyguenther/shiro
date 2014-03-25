@@ -121,7 +121,7 @@ public class Value{
     
     /**
      * Get the object as an <code>int</code>
-     * @return the object value as an <code>int</code>
+     * @return the object value as an <code>Integer</code>
      */
     public Integer getValueAsInt(){
         return (Integer) value;
@@ -129,7 +129,7 @@ public class Value{
     
     /**
      * Get the object as an <code>float</code>
-     * @return the object value as an <code>float</code>
+     * @return the object value as an <code>Float</code>
      */
     public Float getValueAsFloat(){
         return (Float) value;
@@ -137,7 +137,7 @@ public class Value{
     
     /**
      * Get the object as an <code>Double</code>
-     * @return the object value as an <code>Dobule</code>
+     * @return the object value as an <code>Double</code>
      */
     public Double getValueAsDouble(){
         return (Double) value;

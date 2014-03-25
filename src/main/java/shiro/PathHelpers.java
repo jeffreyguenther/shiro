@@ -1,6 +1,7 @@
 package shiro;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import shiro.expressions.Path;
 
@@ -70,5 +71,18 @@ public class PathHelpers {
             pathParts.add(node.getName());
             pathParts.add(port);
         return new Path(node, pathParts);
+    }
+    
+    /**
+     * Create a path from a string.
+     * For example, "Area.length" will be turned into a path
+     * object representing it. It should be noted that scope of
+     * the path is null.
+     * @param path the string to be turned into a path object
+     * @return path created from the string
+     */
+    public static Path createPath(String path){
+        String[] pathParts = path.split("\\.");
+        return new Path(pathParts);
     }
 }
