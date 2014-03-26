@@ -30,4 +30,16 @@ public class PathTest {
         
         Assert.assertEquals("paths should be equal", true, p1.equals(p2));
     }
+    
+    @Test
+    public void isAtEnd(){
+        Path p = new Path("Point");
+        Assert.assertTrue("should be at end", p.isAtEnd());
+        
+        Path p1 = new Path("Point", "x");
+        Assert.assertEquals("length should be 2", 2, p1.getPathParts().size());
+        Assert.assertEquals("path head should be 0", 0, p1.getPathHead());
+        Assert.assertFalse("should not be at end", p1.isAtEnd());
+        Assert.assertEquals("should be path", "Point.x", p1.getPath());
+    }
 }

@@ -26,6 +26,7 @@ import javafx.scene.shape.LineBuilder;
 
 import javax.imageio.ImageIO;
 import shiro.PathHelpers;
+import shiro.PathNotAccessibleException;
 import shiro.PathNotFoundException;
 import shiro.Port;
 import shiro.SubjunctiveParametricSystem;
@@ -40,9 +41,10 @@ import shiro.expressions.Path;
  * @author jeffreyguenther
  */
 public class ProjectAmoebaController {
+
     private final ProjectAmoebaUI ui;
     private SubjunctiveParametricSystem model;
-    
+
     private Mode mode;
     private int imageCounter;
     private boolean panning;
@@ -53,35 +55,35 @@ public class ProjectAmoebaController {
     private Group tempPoint;
     private boolean splitStarted;
     private MoveContext moveContext;
-    
+
     private boolean createLineSuccessful;
     private String startPointName;
     private Map<SystemState, Canvas> layers;
     private Canvas currentCanvas;
     private ObservableList<String> alternatives;
-    
+
     private Node selectedObject;
 
     public ProjectAmoebaController(ProjectAmoebaUI ui) {
         this.ui = ui;
         model = new SubjunctiveParametricSystem();
-        
+
         mode = Mode.Waiting;
         imageCounter = 0;
         panning = false;
         lineStarted = false;
         moveContext = new MoveContext();
-        
+
         createLineSuccessful = false;
-        
+
         layers = new HashMap<>();
         alternatives = FXCollections.observableArrayList();
 
         selectedObject = null;
-        
+
         // load point and line definitions
         model.loadDefinitions();
-        
+
         // create a Canvas for the default system state
         SystemState defaultState = model.getState("Default");
         currentCanvas = createCanvas();
@@ -90,17 +92,16 @@ public class ProjectAmoebaController {
     }
 
     /**
-     * Set controller mode to Waiting.
-     * When set the controller is waiting for input. When the controller is
-     * first created it's mode is Waiting.
+     * Set controller mode to Waiting. When set the controller is waiting for
+     * input. When the controller is first created it's mode is Waiting.
      */
     public void setWaitingMode() {
         mode = Mode.Waiting;
     }
 
     /**
-     * Set the controller mode to Line
-     * In Line mode the controller handles input to create lines
+     * Set the controller mode to Line In Line mode the controller handles input
+     * to create lines
      */
     public void setLineMode() {
         mode = Mode.Line;
@@ -108,8 +109,8 @@ public class ProjectAmoebaController {
     }
 
     /**
-     * Set the controller mode to Move
-     * In the Move mode the controller handles input to move points
+     * Set the controller mode to Move In the Move mode the controller handles
+     * input to move points
      */
     public void setMoveMode() {
         mode = Mode.Move;
@@ -117,8 +118,8 @@ public class ProjectAmoebaController {
     }
 
     /**
-     * Set the controller mode to Point
-     * In Point mode, the controller handles input to create points
+     * Set the controller mode to Point In Point mode, the controller handles
+     * input to create points
      */
     public void setPointMode() {
         mode = Mode.Point;
@@ -127,13 +128,14 @@ public class ProjectAmoebaController {
 
     /**
      * Get the controller's mode
+     *
      * @return the mode of the controller
      */
     public Mode getMode() {
         return mode;
     }
-    
-    public Canvas getCurrentCanvas(){
+
+    public Canvas getCurrentCanvas() {
         return currentCanvas;
     }
 
@@ -165,8 +167,8 @@ public class ProjectAmoebaController {
         selectedObject = n;
         System.out.println("Set selected object: " + selectedObject);
     }
-    
-    public ObservableList<String> getAlternatives(){
+
+    public ObservableList<String> getAlternatives() {
         return alternatives;
     }
 
@@ -213,10 +215,10 @@ public class ProjectAmoebaController {
         // set the end point to be the selected point
         activeLine.endXProperty().set(x);
         activeLine.endYProperty().set(y);
-        
+
         // create a line in the model
         shiro.Node node = model.createNode("Line");
-        
+
         // get the nane of the end point
         String endPointName = (String) selectedObject.getUserData();
         shiro.Node p1 = model.getNode(startPointName);
@@ -225,7 +227,7 @@ public class ProjectAmoebaController {
         // set the line's start/end port
         Path pathX = PathHelpers.createPathForPort(node, "p1");
         Path pathY = PathHelpers.createPathForPort(node, "p2");
-        
+
         // Parse the expression into an Expression object
         Expression p1Expr = model.parseExpression(p1, startPointName + ".point[0]");
         Expression p2Expr = model.parseExpression(p2, endPointName + ".point[0]");
@@ -237,7 +239,7 @@ public class ProjectAmoebaController {
         } catch (PathNotFoundException ex) {
             Logger.getLogger(ProjectAmoebaController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         model.update();
 
         // Clear
@@ -260,12 +262,12 @@ public class ProjectAmoebaController {
             createLineSuccessful = false;
         }
     }
-    
-    public void clearCanvas(){
+
+    public void clearCanvas() {
         model.clear();
     }
-    
-    public void clearAlternatives(){
+
+    public void clearAlternatives() {
         model.reset();
     }
 
@@ -289,7 +291,7 @@ public class ProjectAmoebaController {
             if (mode.equals(Mode.Point) && !e.isAltDown()) {
                 double x = e.getX();
                 double y = e.getY();
-                
+
                 // create the point and add it to the canvas
                 Group p = ui.createPoint(x, y, Color.BLACK);
                 addToCanvas(p);
@@ -322,19 +324,19 @@ public class ProjectAmoebaController {
 
                 // get the node name from the onscreen element
                 String nodeName = (String) selectedObject.getUserData();
-                shiro.Node node = model.getNode(new Path(nodeName));
-                
-                // update the node with drag location
-                updatePointNode(node, moveContext.getDragDestX(e.getX()), moveContext.getDragDestY(e.getY()));
-                
-                // clear all the canvases from the layers group
-                ObservableList<Node> children = ui.getLayers().getChildren();
-                children.clear();
-            
-                // Get the selected states' names
-                for(String s: ui.getAltsList().getSelectionModel().getSelectedItems()){
-                    Canvas c = renderState(model.getState(s));
-                    children.add(c);
+                try {
+                   shiro.Node node = (shiro.Node) model.find(PathHelpers.createPath(nodeName));
+
+                    // update the node with drag location
+                    updatePointNode(node, moveContext.getDragDestX(e.getX()), moveContext.getDragDestY(e.getY()));
+
+                    // Get the selected states' names
+                    for (String s : ui.getAltsList().getSelectionModel().getSelectedItems()) {
+                        renderState(model.getState(s));
+                    }
+
+                } catch (PathNotFoundException | PathNotAccessibleException ex) {
+                    Logger.getLogger(ProjectAmoebaController.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         }
@@ -389,8 +391,8 @@ public class ProjectAmoebaController {
 
         System.out.println("Mouse released on Canvas");
     }
-    
-    public void handleSingleSelectedAltChange(String altName){
+
+    public void handleSingleSelectedAltChange(String altName) {
         SystemState s = model.getState(altName);
 
         Canvas c = renderState(s);
@@ -399,15 +401,15 @@ public class ProjectAmoebaController {
         children.add(c);
         currentCanvas = c;
     }
-    
-    public void handleMultipleSelectedAltChange(List<? extends String> alts){
+
+    public void handleMultipleSelectedAltChange(List<? extends String> alts) {
         ObservableList<Node> children = ui.getLayers().getChildren();
         children.clear();
-            
-        for(String s: alts){
+
+        for (String s : alts) {
             Canvas c = renderState(model.getState(s));
             children.add(c);
-            
+
             // current canvas is set to the top canvas.
             currentCanvas = c;
         }
@@ -474,30 +476,32 @@ public class ProjectAmoebaController {
         } catch (PathNotFoundException ex) {
             Logger.getLogger(ProjectAmoebaController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         return node;
     }
-    
-    public void handleSave(File f){
+
+    public void handleSave(File f) {
         model.writeCode(f);
     }
-    
-    /***
+
+    /**
+     * *
      * Open a file and load the code into the application
+     *
      * @param f file to be loaded
      */
-    public void handleOpen(File f){
-        if(f != null){
+    public void handleOpen(File f) {
+        if (f != null) {
             try {
                 model.loadCode(f);
-                
+
                 // Add all the state names to the list of alternatives
                 alternatives.addAll(model.getStateNames());
-                
-                for(SystemState s: model.getStates()){
+
+                for (SystemState s : model.getStates()) {
                     layers.put(s, createCanvas());
                 }
-                
+
                 // set selected alternative to the first alternative in the list
                 // note: select handler is fired!!
                 ui.getAltsList().getSelectionModel().select(0);
@@ -506,96 +510,100 @@ public class ProjectAmoebaController {
             }
         }
     }
-    
+
     /**
      * Add the appropriate geometry to the canvas.
+     *
      * @param s
-     * @return 
+     * @return
      */
-    private Canvas renderState(SystemState s){
+    private Canvas renderState(SystemState s) {
         // evaluate the parametric system
         model.update(s);
-        
+
         // look up the state's Canvas
         Canvas c = layers.get(s);
-        
+
         // draw the geometry on the canvas
         updateCanvas(c.getDrawing());
-        
+
         return c;
     }
-    
+
     /**
      * Draw geometry on canvas
+     *
      * @param canvas Group to add geometry to
      */
-    public void updateCanvas(Group canvas){
+    public void updateCanvas(Group canvas) {
         // get geometry from parametric system
         canvas.getChildren().clear();
-        
+
         // for each line in the model
-        for(shiro.Node n: model.getNodesOfType("Line")){
+        for (shiro.Node n : model.getNodesOfType("Line")) {
             // create a line object and render
             Line l = getLine(n);
             canvas.getChildren().add(l);
         }
-        
+
         // for each point in the model
-        for(shiro.Node n: model.getNodesOfType("Point")){
+        for (shiro.Node n : model.getNodesOfType("Point")) {
             // if the node active, render it
-            if(n.isActive()){
+            if (n.isActive()) {
                 canvas.getChildren().add(getPoint(n));
             }
         }
     }
-    
-    public Group getPoint(shiro.Node n){
+
+    public Group getPoint(shiro.Node n) {
         Port ePort = n.getSelectedEvaluatedPort();
         Value point = ePort.getValueForIndex(0);
         Point2D tPoint = (Point2D) point.getValue();
-        
+
         Group p = ui.createPoint(tPoint.getX(), tPoint.getY(), Color.BLACK);
         p.setUserData(n.getFullName());
         return p;
     }
-    
+
     /**
      * Create a Line to
+     *
      * @param n
-     * @return 
+     * @return
      */
-    public Line getLine(shiro.Node n){
+    public Line getLine(shiro.Node n) {
         Port ePort = n.getSelectedEvaluatedPort();
         Value line = ePort.getValueForIndex(0);
 
         Line lTemp = (Line) line.getValue();
-        
-        Line l= new Line();
+
+        Line l = new Line();
         l.setStartX(lTemp.getStartX());
         l.setStartY(lTemp.getStartY());
         l.setEndX(lTemp.getEndX());
         l.setEndY(lTemp.getEndY());
-        
+
         return l;
     }
-    
+
     /**
      * Create a Canvas and setup the event handlers
+     *
      * @return Canvas object with event handlers set
      */
-    private Canvas createCanvas(){
+    private Canvas createCanvas() {
         Canvas c = new Canvas();
         c.setOnMousePressed(this::handleCanvasPaneMousePressed);
         c.setOnMouseDragged(this::handleCanvasPaneMouseDragged);
         c.setOnMouseReleased(this::handleCanvasMouseReleased);
         return c;
     }
-    
-    private void addToCanvas(Node n){
+
+    private void addToCanvas(Node n) {
         currentCanvas.getChildren().add(n);
     }
-    
-    private void removeFromCanvas(Node n){
+
+    private void removeFromCanvas(Node n) {
         currentCanvas.getChildren().remove(n);
     }
 }

@@ -211,6 +211,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         return matchedSymbol;
     }
     
+    @Override
     public Symbol find(String s) throws PathNotFoundException, PathNotAccessibleException{
         return find(PathHelpers.createPath(s));
     }
@@ -731,7 +732,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
 
     @Override
     public void handleNodeEvent(NodeEvent ne) {
-        System.out.println(ne.getMessage());
+//        System.out.println(ne.getMessage());
     }
 
     @Override

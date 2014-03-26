@@ -172,6 +172,29 @@ public class SubjunctiveParametricSystemTest {
         Assert.assertSame("should be equal", endPointsStringPath, endPointsPath);
         Assert.assertEquals("Should be a node", SymbolType.SUBJ, endPointsStringPath.getType());
         Assert.assertEquals("Should be a node", SymbolType.SUBJ, endPointsPath.getType());
+        
+        Path p1 = new Path("endPoint", "P1");
+        Symbol p1StringPath = pSystem.find("endPoint.P1");
+        Symbol p1Path = pSystem.find(p1);
+
+        Assert.assertNotNull(p1StringPath);
+        Assert.assertNotNull(p1Path);
+        Assert.assertSame("should be equal", p1StringPath, p1Path);
+        Assert.assertEquals("Should be a node", SymbolType.NODE, p1StringPath.getType());
+        Assert.assertEquals("Should be a node", SymbolType.NODE, p1Path.getType());
+        
+        Path p2 = new Path("endPoint", "P2");
+        Symbol p2StringPath = pSystem.find("endPoint.P2");
+        Symbol p2Path = pSystem.find(p2);
+
+        Assert.assertNotNull(p2StringPath);
+        Assert.assertNotNull(p2Path);
+        Assert.assertSame("should be equal", p2StringPath, p2Path);
+        Assert.assertEquals("Should be a node", SymbolType.NODE, p2StringPath.getType());
+        Assert.assertEquals("Should be a node", SymbolType.NODE, p2Path.getType());
+        Node n = (Node) p2Path;
+        Assert.assertEquals("endPoint.P2", n.getFullName());
+        
     }
     
     @Test(expected = PathNotAccessibleException.class)
