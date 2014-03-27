@@ -1,9 +1,10 @@
-package shiro;
+package shiro.definitions;
 
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import shiro.Codeable;
 import shiro.expressions.Path;
 
 /**

@@ -10,7 +10,6 @@ import java.util.logging.Logger;
 import junit.framework.Assert;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.core.Is.is;
-import org.hamcrest.core.IsSame;
 import static org.junit.Assert.assertThat;
 import org.junit.Test;
 import static org.junit.matchers.JUnitMatchers.containsString;
@@ -200,7 +199,7 @@ public class SubjunctiveParametricSystemTest {
     @Test(expected = PathNotAccessibleException.class)
     public void inaccessiblePort() throws IOException, PathNotAccessibleException, PathNotFoundException{
         SubjunctiveParametricSystem pSystem = setupPSystemWithSubjuncts();
-        pSystem.find("Point");
+        pSystem.find("Point"); // need to create prototype
         
         Path update = new Path("Point", "update");
         Symbol updatePortPath = pSystem.find(update);

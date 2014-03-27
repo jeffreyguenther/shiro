@@ -28,16 +28,14 @@ public class AddTest {
         invalidAddExpression = new Add(new SString("Hello"), new Number(
                 10d));
 
-
         Number n4 = new Number(1d);
         Number n5 = new Number(2d);
         Number n6 = new Number(100d);
         intExpression1 = new Add(n4, n5);
         intExpression2 = new Add(intExpression1, n6);
 
-
         intFloatExpression = new Add(floatExpression2, intExpression2);
-
+      
     }
 
     @Test
@@ -48,7 +46,7 @@ public class AddTest {
         } catch (PortNotActiveException ex) {
             Assert.fail("The expression must evaluate fine");
         }
-//Allowing an imprecision of 10^-6
+        //Allowing an imprecision of 10^-6
         Assert.assertEquals("The addition result must be 3.2",
                 value.getValueAsFloat(), 3.2, 0.000001);
 

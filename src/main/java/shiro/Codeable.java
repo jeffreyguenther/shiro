@@ -7,7 +7,7 @@
 package shiro;
 
 /**
- * Tags a class as being able to generate shiro code to represent itself.
+ * Tags a class as being able to generate the shiro code to represent itself.
  * @author jeffreyguenther
  */
 public interface Codeable {

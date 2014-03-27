@@ -1,4 +1,4 @@
-package shiro;
+package shiro.definitions;
 
 import java.util.ArrayList;
 import java.util.Collections;

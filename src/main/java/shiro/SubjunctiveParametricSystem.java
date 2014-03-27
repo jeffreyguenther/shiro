@@ -1,5 +1,7 @@
 package shiro;
 
+import shiro.definitions.GraphDefinition;
+import shiro.definitions.PortAssignment;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
