@@ -1,5 +1,4 @@
 node Point begin
-    port x Value(3)
     port y Value(3)
     eval update Point(x[0], y[0])
     port point Value(3, 5, 9)

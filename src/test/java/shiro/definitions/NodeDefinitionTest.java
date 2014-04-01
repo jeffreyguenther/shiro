@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import junit.framework.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -21,13 +20,10 @@ import org.junit.Test;
  * @author jeffreyguenther
  */
 public class NodeDefinitionTest {
-
-    private static String nodeDef;
-
-    @BeforeClass
-    public static void loadNodeDef() throws FileNotFoundException, IOException {
+    
+    private static String loadNodeDef(String def) throws FileNotFoundException, IOException {
         BufferedReader reader = new BufferedReader(new FileReader(
-                NodeDefinition.class.getResource("nodedef.sro").getFile()));
+                NodeDefinition.class.getResource(def).getFile()));
         StringBuilder sb = new StringBuilder();
         String line = null;
         String newLine = "\n";
@@ -36,7 +32,7 @@ public class NodeDefinitionTest {
             sb.append(newLine);
         }
         
-        nodeDef = sb.toString().trim();
+        return sb.toString().trim();
     }
     
     @Test
@@ -51,6 +47,7 @@ public class NodeDefinitionTest {
         
         List<PortDeclaration> ports = new ArrayList<>(expectedOrder);
         Collections.shuffle(ports);
+        Assert.assertFalse("should not match", expectedOrder.equals(ports));
         
         NodeDefinition def = new NodeDefinition("Point");
         def.setPorts(ports);
@@ -59,14 +56,23 @@ public class NodeDefinitionTest {
     }
 
     @Test
-    public void basicNode() {
+    public void basicNode() throws IOException {
+        String nodeDef = loadNodeDef("nodedef.sro");
+        
         NodeDefinition def = new NodeDefinition("Point");
         List<PortDeclaration> ports = new ArrayList<>();
         ports.add(new PortDeclaration(PortType.Input, "x", "Value", "3"));
+        ports.add(new PortDeclaration(PortType.Input, "y", "Value", "3"));
         ports.add(new PortDeclaration(PortType.Output, "point", "Value", "3", "5", "9"));
         ports.add(new PortDeclaration(PortType.Evaluated, "update", "Point", "x[0]", "y[0]"));
         def.setPorts(ports);
-
+        Assert.assertEquals("should match", nodeDef, def.toCode());
+        
+        String nodedefWOY = loadNodeDef("nodedef_wo_x.sro");
+        def.removePortDeclaration(new PortDeclaration(PortType.Input, "x", "Value", "3"));
+        Assert.assertEquals("should match", nodedefWOY, def.toCode());
+        
+        def.addPortDeclaration(new PortDeclaration(PortType.Input, "x", "Value", "3"));
         Assert.assertEquals("should match", nodeDef, def.toCode());
     }
 }

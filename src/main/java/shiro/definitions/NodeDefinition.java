@@ -25,6 +25,7 @@ public class NodeDefinition implements Definition{
     private Comment beginInLineComment;
     private List<PortDeclaration> ports;
     private Comment endInLineComment;
+    private boolean sorted;
 
     public NodeDefinition(String name) {
         this.name = name;
@@ -33,6 +34,7 @@ public class NodeDefinition implements Definition{
         this.ports = new ArrayList<>();
         this.beginInLineComment = null;
         this.endInLineComment = null;
+        this.sorted = false;
     }
 
     public NodeDefinition(String name, String activeUpdatePort,
@@ -43,12 +45,22 @@ public class NodeDefinition implements Definition{
         this.beginInLineComment = new Comment(Comment.Type.INLINE, beginInLineComment);
         this.ports = ports;
         this.endInLineComment = new Comment(Comment.Type.INLINE,endInLineComment);
+        this.sorted = false;
     }
     
+    public void addPortDeclaration(PortDeclaration d){
+        ports.add(d);
+        this.sorted = false;
+    }
     
+    public void removePortDeclaration(PortDeclaration d){
+        ports.remove(d);
+        this.sorted = false;
+    }
 
     public void setPorts(List<PortDeclaration> ports) {
         this.ports = ports;
+        this.sorted = false;
     }
 
     public String getActiveUpdatePort() {
@@ -64,12 +76,14 @@ public class NodeDefinition implements Definition{
     }
 
     public List<PortDeclaration> getPorts() {
-        
-        Map<PortType, List<PortDeclaration>> portTypes = ports.stream().collect(Collectors.groupingBy(p -> p.getType()));
-        ports.clear();
-        ports.addAll(sortAlpha(portTypes.get(PortType.Input)));
-        ports.addAll(sortAlpha(portTypes.get(PortType.Evaluated)));
-        ports.addAll(sortAlpha(portTypes.get(PortType.Output)));
+        if (!sorted) {
+            Map<PortType, List<PortDeclaration>> portTypes = ports.stream().collect(Collectors.groupingBy(p -> p.getType()));
+            ports.clear();
+            ports.addAll(sortAlpha(portTypes.get(PortType.Input)));
+            ports.addAll(sortAlpha(portTypes.get(PortType.Evaluated)));
+            ports.addAll(sortAlpha(portTypes.get(PortType.Output)));
+            sorted = true;
+        }
         return ports;
     }
     

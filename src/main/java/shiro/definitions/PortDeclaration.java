@@ -9,6 +9,7 @@ package shiro.definitions;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
@@ -116,5 +117,43 @@ public class PortDeclaration implements Definition{
         st.add("p", this);
         
         return st.render();
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 29 * hash + Objects.hashCode(this.type);
+        hash = 29 * hash + Objects.hashCode(this.name);
+        hash = 29 * hash + Objects.hashCode(this.multifunction);
+        hash = 29 * hash + (this.hasArgs ? 1 : 0);
+        hash = 29 * hash + Objects.hashCode(this.args);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final PortDeclaration other = (PortDeclaration) obj;
+        if (this.type != other.type) {
+            return false;
+        }
+        if (!Objects.equals(this.name, other.name)) {
+            return false;
+        }
+        if (!Objects.equals(this.multifunction, other.multifunction)) {
+            return false;
+        }
+        if (this.hasArgs != other.hasArgs) {
+            return false;
+        }
+        if (!Objects.equals(this.args, other.args)) {
+            return false;
+        }
+        return true;
     }
 }
