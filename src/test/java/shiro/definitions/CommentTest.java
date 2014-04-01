@@ -16,28 +16,31 @@ import org.junit.Test;
  */
 public class CommentTest {
     
-    private Comment c, c2;
+    private Comment inline, block;
     private static final String INLINE_COMMENT = "Hello world";
     private static final String BLOCK_COMMENT = "I'm a\nlong comment.";
     
     @Before
     public void setup(){
-        c = new Comment(Comment.Type.INLINE, INLINE_COMMENT);
-        c2 = new Comment(Comment.Type.BLOCK, BLOCK_COMMENT);
+        inline = new Comment(Comment.Type.INLINE, INLINE_COMMENT);
+        block = new Comment(Comment.Type.BLOCK, BLOCK_COMMENT);
     }
     
     @Test
     public void getters(){
-        Assert.assertEquals("should be \"Hello world\"", INLINE_COMMENT, c.getContent());
-        Assert.assertEquals("should be INLINE comment", Comment.Type.INLINE, c.getType());
+        Assert.assertEquals("should be \"Hello world\"", INLINE_COMMENT, inline.getContent());
+        Assert.assertEquals("should be INLINE comment", Comment.Type.INLINE, inline.getType());
+        Assert.assertEquals("should have only one line", 1, inline.getLines().size());
+        Assert.assertEquals("line should match content", inline.getContent(), inline.getLines().get(0));
         
-        Assert.assertEquals("should be \"Hello world\"", BLOCK_COMMENT, c2.getContent());
-        Assert.assertEquals("should be BLOCK comment", Comment.Type.BLOCK, c2.getType());
+        Assert.assertEquals("should be \"Hello world\"", BLOCK_COMMENT, block.getContent());
+        Assert.assertEquals("should be BLOCK comment", Comment.Type.BLOCK, block.getType());
+        Assert.assertEquals("should have multiple lines", 2, block.getLines().size());
     }
     
     @Test
     public void toCode(){
-        Assert.assertEquals("should be an INLINE comment", "// Hello world", c.toCode());
-        Assert.assertEquals("should be a BLOCK comment", "/*\n* I'm a\n* long comment.\n*/", c2.toCode());
+        Assert.assertEquals("should be an INLINE comment", "// Hello world", inline.toCode());
+        Assert.assertEquals("should be a BLOCK comment", "/*\n* I'm a\n* long comment.\n*/", block.toCode());
     }
 }

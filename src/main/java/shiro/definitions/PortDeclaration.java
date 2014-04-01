@@ -115,7 +115,6 @@ public class PortDeclaration implements Definition{
         ST st = group.getInstanceOf("portDecl");
         st.add("p", this);
         
-        
         return st.render();
     }
 }

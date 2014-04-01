@@ -8,6 +8,9 @@ package shiro.definitions;
 
 import java.util.Arrays;
 import java.util.List;
+import org.stringtemplate.v4.ST;
+import org.stringtemplate.v4.STGroup;
+import org.stringtemplate.v4.STGroupFile;
 
 /**
  * Defines an abstract representation of a comment in Shiro.
@@ -29,6 +32,10 @@ public class Comment implements Definition{
     public String getContent() {
         return content;
     }
+    
+    public List<String> getLines(){
+        return Arrays.asList(content.split("\n"));
+    }
 
     public Type getType() {
         return type;
@@ -36,24 +43,17 @@ public class Comment implements Definition{
     
     @Override
     public String toCode() {
-        StringBuilder sb = new StringBuilder();
-        if(type.equals(Type.INLINE)){
-            sb.append("// ")
-              .append(content);
-        }else{
-            
-            List<String> lines = Arrays.asList(content.split("\n"));
-            
-            sb.append("/*\n");
-               lines.stream().forEach((s) -> {
-                   sb.append("* ")
-                     .append(s)
-                     .append("\n");
-               });
-            sb.append("*/");
-        }
+        STGroup group = new STGroupFile("shiro/definitions/shiro.stg");
         
-        return sb.toString();
+        if(type.equals(Type.INLINE)){
+            ST st = group.getInstanceOf("inlineComment");
+            st.add("c", this);
+            return st.render();
+        }else{
+            ST st = group.getInstanceOf("blockComment");
+            st.add("c", this);
+            return st.render();
+        }
     }
     
 }

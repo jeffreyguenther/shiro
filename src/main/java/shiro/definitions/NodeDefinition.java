@@ -8,6 +8,8 @@ package shiro.definitions;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
@@ -20,9 +22,9 @@ public class NodeDefinition implements Definition{
     private String name;
     private String activeUpdatePort;
     private boolean hasActiveUpdatePort;
-    private String beginInLineComment;
+    private Comment beginInLineComment;
     private List<PortDeclaration> ports;
-    private String endInLineComment;
+    private Comment endInLineComment;
 
     public NodeDefinition(String name) {
         this.name = name;
@@ -33,6 +35,18 @@ public class NodeDefinition implements Definition{
         this.endInLineComment = null;
     }
 
+    public NodeDefinition(String name, String activeUpdatePort,
+            String beginInLineComment, List<PortDeclaration> ports, String endInLineComment) {
+        this.name = name;
+        this.activeUpdatePort = activeUpdatePort;
+        this.hasActiveUpdatePort = true;
+        this.beginInLineComment = new Comment(Comment.Type.INLINE, beginInLineComment);
+        this.ports = ports;
+        this.endInLineComment = new Comment(Comment.Type.INLINE,endInLineComment);
+    }
+    
+    
+
     public void setPorts(List<PortDeclaration> ports) {
         this.ports = ports;
     }
@@ -41,7 +55,7 @@ public class NodeDefinition implements Definition{
         return activeUpdatePort;
     }
 
-    public String getBeginInLineComment() {
+    public Comment getBeginInLineComment() {
         return beginInLineComment;
     }
 
@@ -50,20 +64,26 @@ public class NodeDefinition implements Definition{
     }
 
     public List<PortDeclaration> getPorts() {
+        
+        Map<PortType, List<PortDeclaration>> portTypes = ports.stream().collect(Collectors.groupingBy(p -> p.getType()));
+        ports.clear();
+        ports.addAll(sortAlpha(portTypes.get(PortType.Input)));
+        ports.addAll(sortAlpha(portTypes.get(PortType.Evaluated)));
+        ports.addAll(sortAlpha(portTypes.get(PortType.Output)));
         return ports;
+    }
+    
+    private List<PortDeclaration> sortAlpha(List<PortDeclaration> ports){
+        return ports.stream().sorted((p, s) -> p.getName().compareTo(s.getName())).collect(Collectors.toList());
     }
 
     public boolean hasActiveUpdatePort() {
         return hasActiveUpdatePort;
     }
-    
-    
 
-    public String getEndInLineComment() {
+    public Comment getEndInLineComment() {
         return endInLineComment;
     }
-    
-    
     
     @Override
     public String toCode() {
