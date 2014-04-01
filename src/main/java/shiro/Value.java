@@ -49,14 +49,14 @@ public class Value{
     }
     
     public Value plus(Value v){
-        if(this.type.equals(v.type) && this.type.equals(Float.class)){
-            return Value.createFloat((Float) value + v.getValueAsFloat());
+        if(this.type.equals(v.type) && this.type.equals(Double.class)){
+            return Value.createDouble((Double) value + v.getValueAsDouble());
         }
         return null;
     }
     
     public Value subtract(Value v){
-        if(this.type.equals(v.type) && this.type.equals(Float.class)){
+        if(this.type.equals(v.type) && this.type.equals(Double.class)){
             return Value.createFloat((Float) value - v.getValueAsFloat());
         }
         return null;
@@ -70,7 +70,7 @@ public class Value{
     }
     
     public Value over(Value v){
-        if(this.type.equals(v.type) && this.type.equals(Float.class)){
+        if(this.type.equals(v.type) && this.type.equals(Double.class)){
             return Value.createFloat((Float) value / v.getValueAsFloat());
         }
         return null;
@@ -124,7 +124,7 @@ public class Value{
      * @return the object value as an <code>Integer</code>
      */
     public Integer getValueAsInt(){
-        return (Integer) value;
+        return ((Number) value).intValue();
     }
     
     /**
@@ -132,7 +132,7 @@ public class Value{
      * @return the object value as an <code>Float</code>
      */
     public Float getValueAsFloat(){
-        return (Float) value;
+        return ((Number) value).floatValue();
     }
     
     /**
@@ -140,7 +140,7 @@ public class Value{
      * @return the object value as an <code>Double</code>
      */
     public Double getValueAsDouble(){
-        return (Double) value;
+        return ((Number) value).doubleValue();
     }
     
     /**

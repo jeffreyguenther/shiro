@@ -14,10 +14,10 @@ import org.junit.Test;
  * @author jeffreyguenther
  */
 public class SourceCodeTest {
-    private String code;
+    private static String code;
     
     @BeforeClass
-    public void loadCode(){
+    public static void loadCode(){
         code = "String";
     }
     

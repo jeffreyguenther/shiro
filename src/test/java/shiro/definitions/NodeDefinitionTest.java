@@ -25,7 +25,8 @@ public class NodeDefinitionTest {
 
     @BeforeClass
     public static void loadNodeDef() throws FileNotFoundException, IOException {
-        BufferedReader reader = new BufferedReader(new FileReader(NodeDefinition.class.getResource("nodedef.sro").getFile()));
+        BufferedReader reader = new BufferedReader(new FileReader(
+                NodeDefinition.class.getResource("nodedef.sro").getFile()));
         StringBuilder sb = new StringBuilder();
         String line = null;
         String newLine = "\n";

@@ -14,8 +14,8 @@ import shiro.Value;
  */
 public class AddTest {
 
-    private Add floatExpression1, floatExpression2, intExpression1, intExpression2, intFloatExpression;
-    private Add invalidAddExpression;
+    private static Add floatExpression1, floatExpression2, intExpression1, intExpression2, intFloatExpression;
+    private static Add invalidAddExpression;
 
     @Before
     public void setup() {
@@ -48,7 +48,7 @@ public class AddTest {
         }
         //Allowing an imprecision of 10^-6
         Assert.assertEquals("The addition result must be 3.2",
-                value.getValueAsFloat(), 3.2, 0.000001);
+                value.getValueAsDouble(), 3.2, 0.000001);
 
         try {
             value = floatExpression2.evaluate();
