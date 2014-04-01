@@ -4,12 +4,19 @@
  * and open the template in the editor.
  */
 
-package shiro;
+package shiro.definitions;
 
 /**
- * Tags a class as being able to generate the shiro code to represent itself.
+ * Defines a newline
  * @author jeffreyguenther
  */
-public interface Codeable {
-    public String toCode();
+public class Newline implements Definition{
+
+    public Newline() {
+    }
+
+    @Override
+    public String toCode() {
+        return "\n";
+    }
 }

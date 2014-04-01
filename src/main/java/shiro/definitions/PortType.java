@@ -1,9 +1,9 @@
-package shiro;
+package shiro.definitions;
 
 /**
  * Type of port
  * @author jeffreyguenther
  */
 public enum PortType {
-    Evaluated, Input, Output
+    Input, Evaluated, Output;
 }

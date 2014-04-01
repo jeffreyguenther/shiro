@@ -12,7 +12,7 @@ import shiro.Node;
 import shiro.PathHelpers;   
 import shiro.PathNotFoundException;
 import shiro.Port;
-import shiro.PortType;
+import shiro.definitions.PortType;
 import shiro.SubjunctiveParametricSystem;
 import shiro.drawing.ProjectAmoebaController;
 import shiro.functions.ValueMFunc;

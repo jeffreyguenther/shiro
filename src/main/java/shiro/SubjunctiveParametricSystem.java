@@ -10,6 +10,7 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.property.SimpleStringProperty;
 import org.antlr.v4.runtime.ANTLRFileStream;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -77,7 +78,9 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
     // to the last file loaded with loadCode()
     
     private Set<SubjParametricSystemEventListener> listeners; // Event listeners
-
+    
+    private SimpleStringProperty codeProperty;
+    
     public SubjunctiveParametricSystem() {
         multiFunctions = new HashMap<>();
         // load the multifunction map
@@ -100,6 +103,12 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         
         // create default graph and system state
         createDefaultState();
+        
+        codeProperty = new SimpleStringProperty("");
+    }
+    
+    public SimpleStringProperty codeProperty(){
+        return codeProperty;
     }
     
     /**
@@ -168,6 +177,36 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
     public MultiFunction getFunction(String name) {
         return multiFunctions.get(name);
     }
+    
+    public SubjunctiveNode split(Node nodeToSplit, String nameOfSubjunct){
+        // create a new subjunctive node
+        SubjunctiveNode result = new SubjunctiveNode(nameOfSubjunct, this);
+        
+        // replace reference to nodeToSplit in any expressions where it is used
+        // set expressions to use newly created subjunctive node active port
+        // rename nodeToSplit nodeName_1
+        // create instance of node
+        // set the arguments of the instance
+        // add instance to subjunctive node
+        
+        // remove node production from graph
+        // add production for new subjunctive node
+        // add subjunctive node selection to all existing alternatives
+        // create new alternative with split node selected
+        
+        
+        return result;
+    }
+    
+//    public Symbol findAllAndReplace(String find, String replace) throws PathNotAccessibleException, PathNotFoundException{
+//        return findAllAndReplace(PathHelpers.createPath(find), PathHelpers.createPath(replace));
+//    }
+//    
+//    public Symbol findAllAndReplace(Path toFind, Path toReplace) throws PathNotAccessibleException, PathNotFoundException{
+//        Symbol found = find(toFind);
+//        
+//        return null;
+//    }
     
     @Override
     public Symbol find(Path p) throws PathNotFoundException, PathNotAccessibleException{
@@ -1088,6 +1127,8 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         
         // Evaluate parametric system
         update();
+        
+        codeProperty.setValue(toCode());
     }
     
     public Collection<String> getStateNames(){

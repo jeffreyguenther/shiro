@@ -1,0 +1,12 @@
+nodeDecl(n) ::= <<
+node <n.name><if(n.hasActiveUpdatePort)> [<n.activeUpdatePort>]<endif> begin<if(n.beginInLineComment)> <n.beginInLineComment:inlineComment()><endif>
+    <n.ports:portDecl(); separator="\n">
+end<if(n.endInLineComment)> <n.endInLineComment:inlineComment()><endif>
+>>
+
+portDecl(p) 
+    ::= "<p.typeString> <p.name> <p.multifunction><if(p.args)>(<p.arguments:{ a |<a>}; separator=\", \">)<else>()<endif><if(p.comment)> <p.comment:inlineComment()><endif>"
+
+inlineComment(c) ::= "// <c>"
+
+newline() ::= "<\n>"

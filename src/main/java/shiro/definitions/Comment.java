@@ -10,14 +10,16 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- *
+ * Defines an abstract representation of a comment in Shiro.
+ * This class is part of the abstract syntax tree of Shiro. It is used to capture
+ * a comment from a source file and store it for output later.
  * @author jeffreyguenther
  */
 public class Comment implements Definition{
     public enum Type{ INLINE, BLOCK }
     
-    private Type type;
-    private String content;
+    private final Type type;
+    private final String content;
 
     public Comment(Type type, String content) {
         this.type = type;

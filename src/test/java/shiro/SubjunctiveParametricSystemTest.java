@@ -265,4 +265,24 @@ public class SubjunctiveParametricSystemTest {
         Assert.assertEquals("should be port", SymbolType.PORT, p2XPath.getType());
         Assert.assertEquals("should be port", SymbolType.PORT, p2XString.getType());
     }
+    
+    @Test
+    public void split() throws IOException, PathNotFoundException, PathNotAccessibleException{
+        SubjunctiveParametricSystem pSystem = setupPSystemWithSubjuncts();
+        Node nodeToSplit = (Node) pSystem.find("startPoint");
+        
+        
+        
+    }
+    
+//    @Test
+//    public void findAndReplace() throws IOException, PathNotAccessibleException, PathNotFoundException{
+//        SubjunctiveParametricSystem pSystem = setupPSystemWithSubjuncts();
+//        
+//        Symbol findAndReplace = pSystem.findAllAndReplace("l", "line01");
+//        Assert.assertNotNull("should return reference to symbol changed", 
+//                findAndReplace);
+//        Node n = (Node) findAndReplace;
+//        Assert.assertEquals("should be be a node with name", "line01", n.getFullName() );
+//    }
 }

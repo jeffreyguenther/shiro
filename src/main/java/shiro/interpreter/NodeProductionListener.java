@@ -11,7 +11,7 @@ import shiro.Container;
 import shiro.Node;
 import shiro.PathNotFoundException;
 import shiro.Port;
-import shiro.PortType;
+import shiro.definitions.PortType;
 import shiro.Scope;
 import shiro.SubjunctiveNode;
 import shiro.SubjunctiveParametricSystem;

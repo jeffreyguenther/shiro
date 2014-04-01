@@ -9,6 +9,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
@@ -61,6 +62,7 @@ public class ProjectAmoebaController {
     private Map<SystemState, Canvas> layers;
     private Canvas currentCanvas;
     private ObservableList<String> alternatives;
+    private SimpleStringProperty codeProperty;
 
     private Node selectedObject;
 
@@ -89,6 +91,12 @@ public class ProjectAmoebaController {
         currentCanvas = createCanvas();
         layers.put(defaultState, currentCanvas);
         ui.getLayers().getChildren().add(currentCanvas);
+        
+        codeProperty = model.codeProperty();
+    }
+    
+    public SimpleStringProperty codeProperty(){
+        return codeProperty;
     }
 
     /**

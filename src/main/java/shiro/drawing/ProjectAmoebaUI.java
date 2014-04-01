@@ -26,6 +26,8 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ScrollPaneBuilder;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.Separator;
+import javafx.scene.control.SplitPane;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.ToolBar;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.TextFieldListCell;
@@ -57,7 +59,7 @@ import javafx.stage.Stage;
  */
 public class ProjectAmoebaUI {
     private final Parent sceneRoot; 
-    private StackPane layers;
+    private final StackPane layers;
     private Pane imageStrip;
     private ListView<String> altsList;
     private final Stage stage;
@@ -133,7 +135,17 @@ public class ProjectAmoebaUI {
         root.setLeft(createToolBar());
         altsList = createListView();
         root.setRight(altsList);
-        root.setCenter(scroll);
+        
+        TextArea ta = new TextArea("Testing");
+        ta.textProperty().bind(controller.codeProperty());
+        ta.setEditable(false);
+        ta.setPrefWidth(250);
+        
+        SplitPane splitPane = new SplitPane();
+        splitPane.setDividerPosition(0, 0.75);
+        splitPane.getItems().addAll(scroll, ta);
+        
+        root.setCenter(splitPane);
 
         return root;
     }

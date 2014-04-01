@@ -11,7 +11,7 @@ import shiro.expressions.Path;
  * Defines a port assignment used in a graph definition
  * @author jeffreyguenther
  */
-public class PortAssignment {
+public class PortAssignment implements Definition{
     private Path path; //path of the port to update
     private Map<Integer, Expression> args; // expression and arg position
 
@@ -45,6 +45,7 @@ public class PortAssignment {
         this.args = args;
     }
     
+    @Override
     public String toCode(){
         StringBuilder sb = new StringBuilder();
         sb.append(path.toCode())

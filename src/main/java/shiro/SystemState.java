@@ -4,12 +4,13 @@ import shiro.definitions.GraphDefinition;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
+import shiro.definitions.Definition;
 
 /**
  * Definition of a system state.
  * @author jeffreyguenther
  */
-public class SystemState {
+public class SystemState implements Definition{
     private Instant timeStamp;
     private String comment;
     private Map<SubjunctiveNode, Node> subjunctsMapping;

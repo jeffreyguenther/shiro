@@ -4,14 +4,13 @@ import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-import shiro.Codeable;
 import shiro.expressions.Path;
 
 /**
  * This class represents a graph definition.
  * @author jeffreyguenther
  */
-public class GraphDefinition implements Codeable{
+public class GraphDefinition implements Definition{
     private Map<String, String> nodeProductions; // name -> type. Names are unique
     private Map<Path, PortAssignment> portAssignments;
     private String name;

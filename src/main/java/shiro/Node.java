@@ -46,7 +46,7 @@ public class Node implements PortEventListener, Container, Symbol{
 
     /**
      * Create a node
-     * @param type type string of the node Point or Area.Circle
+     * @param type type string of the node such as "Point", or "Circle"
      * @param name name of the node
      * @param scope scope of the node
      */

@@ -1,0 +1,5 @@
+node Point begin
+    port x Value(3)
+    port point Value(3, 5, 9)
+    eval update Point(x[0], y[0])
+end
