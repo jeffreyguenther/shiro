@@ -1,9 +1,9 @@
 package shiro;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import java.util.ArrayList;
 import java.util.Set;
-import org.apache.commons.collections15.BidiMap;
-import org.apache.commons.collections15.bidimap.DualHashBidiMap;
 
 /**
  * Defines a tuple of results
@@ -12,16 +12,16 @@ import org.apache.commons.collections15.bidimap.DualHashBidiMap;
  */
 public class ResultTuple{
     private ArrayList<Value> values;
-    private BidiMap<String, Integer> nameToIndexMap;
+    private BiMap<String, Integer> nameToIndexMap;
 
     public ResultTuple() {
         values = new ArrayList<Value>();
-        nameToIndexMap = new DualHashBidiMap<String, Integer>();
+        nameToIndexMap = HashBiMap.create();
     }
     
     public ResultTuple(int index, Value v) {
         values = new ArrayList<Value>();
-        nameToIndexMap = new DualHashBidiMap<String, Integer>();
+        nameToIndexMap = HashBiMap.create();
         setValueForIndex(index, v);
         
     }
@@ -41,7 +41,7 @@ public class ResultTuple{
      * @return the name of the index
      */
     public String getNameForIndex(int index){
-        return nameToIndexMap.getKey(index);
+        return nameToIndexMap.inverse().get(index);
     }
     
     /**
