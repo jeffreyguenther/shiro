@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
-import org.stringtemplate.v4.STGroupFile;
 
 /**
  * This class represents a graph definition.

@@ -1,6 +1,6 @@
 graphDecl(g) ::= <<
 graph <g.name> begin
-    <g.productions:production(); separator="\n">
+    <g.productions:production(); separator="\n"><\n>
     <g.portAssignments:portAssignment(); separator="\n">
 end
 >>

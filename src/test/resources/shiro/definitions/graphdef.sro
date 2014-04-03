@@ -2,6 +2,7 @@ graph line begin
     Point -> startPoint
     EndPoints -> endPoint
     Line -> l
+
     startPoint.x(100)
     startPoint.y(0)
 end
