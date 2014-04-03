@@ -56,7 +56,7 @@ public class Node implements PortEventListener, Container, Symbol{
         // set the enclosing scope
         this.parentScope = scope;
         // set the parent's full
-        this.fullName = PathHelpers.createFullName(scope.getFullName() , name);
+        this.fullName = Path.createFullName(scope.getFullName() , name);
         // set the name of the node
         this.name = name;
         // set the node active by default
@@ -168,7 +168,7 @@ public class Node implements PortEventListener, Container, Symbol{
      */
     public void setName(String name) {
         this.name = name;
-        this.fullName = PathHelpers.replaceNameInPath(fullName, name);
+        this.fullName = Path.replaceNameInPath(fullName, name);
     }
 
     /**
@@ -186,7 +186,7 @@ public class Node implements PortEventListener, Container, Symbol{
      */
     public void setFullName(String fullName) {
         this.fullName = fullName;
-        this.name = PathHelpers.getNameFromPath(fullName);
+        this.name = Path.getNameFromPath(fullName);
     }
 
     /**
@@ -343,7 +343,7 @@ public class Node implements PortEventListener, Container, Symbol{
 
     @Override
     public Symbol find(String path) throws PathNotFoundException, PathNotAccessibleException {
-        return find(PathHelpers.createPath(path));
+        return find(Path.createPath(path));
     }
     
     
@@ -385,7 +385,7 @@ public class Node implements PortEventListener, Container, Symbol{
 
     @Override
     public Symbol resolvePath(String path) throws PathNotFoundException {
-        return resolvePath(PathHelpers.createPath(path));
+        return resolvePath(Path.createPath(path));
     }
 
     /**

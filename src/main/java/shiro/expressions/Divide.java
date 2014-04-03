@@ -9,6 +9,7 @@ import shiro.Port;
 import shiro.Value;
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import shiro.PortNotActiveException;
 
@@ -47,4 +48,29 @@ public class Divide implements Expression, Serializable{
     public String toCode() {
         return op1.toCode() + " / " + op2.toCode();
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 67 * hash + Objects.hashCode(this.op1);
+        hash = 67 * hash + Objects.hashCode(this.op2);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Divide other = (Divide) obj;
+        if (!Objects.equals(this.op1, other.op1)) {
+            return false;
+        }
+        return true;
+    }
+    
+    
 }

@@ -8,6 +8,7 @@ package shiro.definitions;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
@@ -55,5 +56,40 @@ public class Comment implements Definition{
             return st.render();
         }
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 17 * hash + Objects.hashCode(this.type);
+        hash = 17 * hash + Objects.hashCode(this.content);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Comment other = (Comment) obj;
+        if (this.type != other.type) {
+            return false;
+        }
+        if (!Objects.equals(this.content, other.content)) {
+            return false;
+        }
+        return true;
+    }
     
+   
+    
+    public static Comment inline(String content){
+        return new Comment(Type.INLINE, content);
+    }
+    
+    public static Comment block(String content){
+        return new Comment(Type.BLOCK, content);
+    }
 }

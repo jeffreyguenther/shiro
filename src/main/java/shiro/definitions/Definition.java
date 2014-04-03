@@ -6,10 +6,19 @@
 
 package shiro.definitions;
 
+import org.stringtemplate.v4.STGroup;
+import org.stringtemplate.v4.STGroupFile;
+import shiro.expressions.Expression;
+
 /**
  *
  * @author jeffreyguenther
  */
 public interface Definition {
     public String toCode();
+    static STGroup getTemplate(){
+        STGroupFile templates = new STGroupFile("shiro/definitions/shiro.stg");
+        templates.registerModelAdaptor(Expression.class, new ExpressionAdapter());
+        return templates;
+    }
 }

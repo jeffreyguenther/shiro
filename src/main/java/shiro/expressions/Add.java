@@ -5,6 +5,7 @@
 package shiro.expressions;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import shiro.PathNotFoundException;
 import shiro.Port;
@@ -46,4 +47,32 @@ public class Add implements Expression{
     public String toCode() {
         return op1.toCode() + " + " + op2.toCode();
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 67 * hash + Objects.hashCode(this.op1);
+        hash = 67 * hash + Objects.hashCode(this.op2);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Add other = (Add) obj;
+        if (!Objects.equals(this.op1, other.op1)) {
+            return false;
+        }
+        if (!Objects.equals(this.op2, other.op2)) {
+            return false;
+        }
+        return true;
+    }
+    
+    
 }

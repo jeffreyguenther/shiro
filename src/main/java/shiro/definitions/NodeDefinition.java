@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
+import org.stringtemplate.v4.gui.STViz;
 
 /**
  *
@@ -101,7 +102,7 @@ public class NodeDefinition implements Definition{
     
     @Override
     public String toCode() {
-        STGroup group = new STGroupFile("shiro/definitions/shiro.stg");
+        STGroup group = Definition.getTemplate();
         ST st = group.getInstanceOf("nodeDecl");
         st.add("n", this);
         return st.render();

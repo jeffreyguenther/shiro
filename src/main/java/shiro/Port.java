@@ -46,19 +46,19 @@ public class Port implements Symbol{
     public Port(String fullName, MultiFunction function){
         this.type = PortType.Input;
         this.function = function;
-        this.arguments = new ArrayList<Expression>();
+        this.arguments = new ArrayList<>();
         this.valueTuple = null;
-        this.name = PathHelpers.getNameFromPath(fullName);
+        this.name = Path.getNameFromPath(fullName);
         this.fullName = fullName; 
         this.visited = false;
         this.deleted = false;
         this.isLeaf = false;
         this.updated = false;
         this.active = true;
-        portsDependedOn = new LinkedHashSet<Port>();
+        portsDependedOn = new LinkedHashSet<>();
         
         // initialize listener lists
-        listeners = new HashSet<PortEventListener>();
+        listeners = new HashSet<>();
     }
     
     /**
@@ -72,7 +72,7 @@ public class Port implements Symbol{
         this.function = function;
         this.arguments = args;
         this.valueTuple = null;
-        this.name = PathHelpers.getNameFromPath(fullName);
+        this.name = Path.getNameFromPath(fullName);
         this.fullName = fullName; 
         this.visited = false;
         this.deleted = false;
@@ -374,7 +374,7 @@ public class Port implements Symbol{
      */
     public void setFullName(String path) {
         this.fullName = path;
-        this.name = PathHelpers.getNameFromPath(path);
+        this.name = Path.getNameFromPath(path);
     }
     
     /**

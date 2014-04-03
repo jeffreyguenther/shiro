@@ -1,6 +1,7 @@
 package shiro.expressions;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import shiro.PathNotFoundException;
 import shiro.Port;
@@ -47,5 +48,31 @@ public class Or implements Expression{
     @Override
     public String toCode() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 31 * hash + Objects.hashCode(this.op1);
+        hash = 31 * hash + Objects.hashCode(this.op2);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Or other = (Or) obj;
+        if (!Objects.equals(this.op1, other.op1)) {
+            return false;
+        }
+        if (!Objects.equals(this.op2, other.op2)) {
+            return false;
+        }
+        return true;
     }
 }

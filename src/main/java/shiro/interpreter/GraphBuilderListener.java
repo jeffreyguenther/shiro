@@ -78,7 +78,7 @@ public class GraphBuilderListener extends ShiroBasePassListener {
             String nodeName = ac.nodeName.getText();
             
             //TODO this might not work in the long run with long path names
-            graphDef.addNodeProduction(leftHandSide.getCurrentPathHead(), nodeName);
+            graphDef.addProduction(leftHandSide.getCurrentPathHead(), nodeName);
             
             // need to differentiate between creating nodes and subjunctive nodes
             Symbol producedSymbol = pSystem.produceSymbolFromName(leftHandSide.getPath(), nodeName);
@@ -138,19 +138,14 @@ public class GraphBuilderListener extends ShiroBasePassListener {
             
             List<Expression> mfExpressions = new ArrayList<>();
 
-            int count = 0;
             for (ParseTree pt : ctx.mfparams().expr()) {
                 Expression exp = getExpr(pt);
                 mfExpressions.add(exp);
-                
-                graphDef.addPortAssignment(new PortAssignment(path, exp, count));
-                
-                count++;
-            }
-            // set the port's expression
+            }// set the port's expression
             p.setArguments(mfExpressions);
             
-            
+            PortAssignment pa = new PortAssignment(path, mfExpressions);
+            graphDef.addPortAssignment(pa);
             
             System.out.println("Set port args: " + p);
             System.out.println("Node is now:\n" + currentNode);

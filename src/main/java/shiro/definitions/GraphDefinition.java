@@ -1,23 +1,28 @@
 package shiro.definitions;
 
-import java.util.HashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Set;
-import shiro.expressions.Path;
+import java.util.ArrayList;
+import java.util.List;
+import org.stringtemplate.v4.ST;
+import org.stringtemplate.v4.STGroup;
+import org.stringtemplate.v4.STGroupFile;
 
 /**
  * This class represents a graph definition.
+ * It provides an abstract description of a graph declaration while at the same
+ * time keeping a record of the order of the lines. Lines of the graph will
+ * be stored in the order they are added.
  * @author jeffreyguenther
  */
 public class GraphDefinition implements Definition{
-    private Map<String, String> nodeProductions; // name -> type. Names are unique
-    private Map<Path, PortAssignment> portAssignments;
+    private List<Definition> lines;
+    private List<Production> productions; 
+    private List<PortAssignment> portAssignments;
     private String name;
 
     public GraphDefinition(String name) {
-        nodeProductions = new HashMap<>();
-        portAssignments = new HashMap<>();
+        lines = new ArrayList<>();
+        productions = new ArrayList<>();
+        portAssignments = new ArrayList<>();
         this.name = name;
     }
 
@@ -29,53 +34,65 @@ public class GraphDefinition implements Definition{
         this.name = name;
     }
 
-    public Map<String, String> getNodeProductions() {
-        return nodeProductions;
+    public List<Production> getProductions() {
+        return productions;
     }
 
-    public void setNodeProductions(Map<String, String> nodeProductions) {
-        this.nodeProductions = nodeProductions;
+    public void setProductions(List<Production> nodeProductions) {
+        this.productions = nodeProductions;
     }
 
-    public Set<PortAssignment> getPortAssignments() {
-        return new LinkedHashSet<>(portAssignments.values());
+    public List<PortAssignment> getPortAssignments() {
+        return portAssignments;
     }
 
-    public void setPortAssignments(Set<PortAssignment> portAssignments) {
-        for(PortAssignment pa: portAssignments){
-            this.portAssignments.put(pa.getPath(), pa);
-        }
+    public void setPortAssignments(List<PortAssignment> portAssignments) {
+        this.portAssignments = portAssignments;
     }
     
-    public void addPortAssignment(PortAssignment assign){
-        //portAssignments.
-        portAssignments.put(assign.getPath(), assign);
+    public boolean addPortAssignment(PortAssignment assign){
+        lines.add(assign);
+        return portAssignments.add(assign);
     }
 
     public boolean removePortAssignment(PortAssignment assign) {
-        return portAssignments.remove(assign.getPath(), assign);
+        lines.remove(assign);
+        return portAssignments.remove(assign);
     }
     
-    public void addNodeProduction(String type, String name){
-        nodeProductions.put(name, type);
+    public void addProduction(String type, String name){
+        addProduction(type, name, null);
     }
     
-    public void removeNodeProduction(String type, String name){
-        nodeProductions.remove(name, type);
+    public void addProduction(String type, String name, String inlineComment){
+        Production production = new Production(type, name, inlineComment);
+        lines.add(production);
+        productions.add(production);
+    }
+    
+    public void removeProduction(String type, String name){
+        Production p = new Production(type, name);
+        lines.remove(p);
+        productions.remove(p);
+    }
+    
+    public List<Definition> getLines(){
+        return lines;
+    }
+    
+    public void addNewLine(){
+        lines.add(new Newline());
+    }
+    
+    public void addComment(Comment c){
+        lines.add(c);
     }
     
     @Override
     public String toCode(){
-        StringBuilder sb = new StringBuilder();
-        sb.append("graph ").append(getName()).append(" begin\n");
-        nodeProductions.entrySet().stream().forEach((e) -> {
-            sb.append("\t").append(e.getValue()).append(" -> ").append(e.getKey()).append("\n");
-        });
-        
-        sb.append("\n");
-        portAssignments.values().stream().forEach((PortAssignment a) -> { sb.append("\t").append(a.toCode()).append("\n"); });
-        
-        sb.append("end\n\n");
-        return sb.toString();
+        STGroup group = Definition.getTemplate();
+        ST st = group.getInstanceOf("graphDecl");
+        st.add("g", this);
+        return st.render();
     }
 }

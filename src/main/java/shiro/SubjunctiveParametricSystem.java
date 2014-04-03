@@ -199,7 +199,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
     }
     
 //    public Symbol findAllAndReplace(String find, String replace) throws PathNotAccessibleException, PathNotFoundException{
-//        return findAllAndReplace(PathHelpers.createPath(find), PathHelpers.createPath(replace));
+//        return findAllAndReplace(Path.createPath(find), Path.createPath(replace));
 //    }
 //    
 //    public Symbol findAllAndReplace(Path toFind, Path toReplace) throws PathNotAccessibleException, PathNotFoundException{
@@ -254,7 +254,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
     
     @Override
     public Symbol find(String s) throws PathNotFoundException, PathNotAccessibleException{
-        return find(PathHelpers.createPath(s));
+        return find(Path.createPath(s));
     }
     
 
@@ -304,7 +304,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
 
     @Override
     public Symbol resolvePath(String path) throws PathNotFoundException {
-        return resolvePath(PathHelpers.createPath(path));
+        return resolvePath(Path.createPath(path));
     }
 
     /**
@@ -361,7 +361,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         // produce the new node
         Node node = produceNodeFromName(type, name);
         
-        currentGraphDef.addNodeProduction(type, name);
+        currentGraphDef.addProduction(type, name);
 
         return node;
     }
@@ -555,17 +555,14 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         Port port = (Port) resolvePath(pathToPort);
         port.setArgumentForPosition(argPos, expr);
         
-        currentGraphDef.addPortAssignment(new PortAssignment(pathToPort, expr, argPos));
+        currentGraphDef.addPortAssignment(new PortAssignment(pathToPort, expr));
         return port;
     }
     
     public Port setPortExpression(PortAssignment assign) throws PathNotFoundException{
         Port port = (Port) resolvePath(assign.getPath());
         
-        for(Entry<Integer, Expression> e: assign.getArgs().entrySet()){
-            port.setArgumentForPosition(e.getKey(), e.getValue());
-            
-        }
+        port.setArguments(assign.getArgs());
         
         currentGraphDef.addPortAssignment(assign);
         return port;

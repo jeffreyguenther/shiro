@@ -26,7 +26,6 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.LineBuilder;
 
 import javax.imageio.ImageIO;
-import shiro.PathHelpers;
 import shiro.PathNotAccessibleException;
 import shiro.PathNotFoundException;
 import shiro.Port;
@@ -233,8 +232,8 @@ public class ProjectAmoebaController {
         shiro.Node p2 = model.getNode(endPointName);
 
         // set the line's start/end port
-        Path pathX = PathHelpers.createPathForPort(node, "p1");
-        Path pathY = PathHelpers.createPathForPort(node, "p2");
+        Path pathX = Path.createPathForPort(node, "p1");
+        Path pathY = Path.createPathForPort(node, "p2");
 
         // Parse the expression into an Expression object
         Expression p1Expr = model.parseExpression(p1, startPointName + ".point[0]");
@@ -333,7 +332,7 @@ public class ProjectAmoebaController {
                 // get the node name from the onscreen element
                 String nodeName = (String) selectedObject.getUserData();
                 try {
-                   shiro.Node node = (shiro.Node) model.find(PathHelpers.createPath(nodeName));
+                   shiro.Node node = (shiro.Node) model.find(Path.createPath(nodeName));
 
                     // update the node with drag location
                     updatePointNode(node, moveContext.getDragDestX(e.getX()), moveContext.getDragDestY(e.getY()));
@@ -470,8 +469,8 @@ public class ProjectAmoebaController {
     private shiro.Node updatePointNode(shiro.Node node, double x, double y) {
         // set port x to e.getX() as expression
         // create path object for port
-        Path pathX = PathHelpers.createPathForPort(node, "x");
-        Path pathY = PathHelpers.createPathForPort(node, "y");
+        Path pathX = Path.createPathForPort(node, "x");
+        Path pathY = Path.createPathForPort(node, "y");
 
         // Parse the expression into an Expression object
         Expression xExpr = model.parseExpression(node, x + "");

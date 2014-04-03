@@ -1,11 +1,22 @@
+graphDecl(g) ::= <<
+graph <g.name> begin
+    <g.productions:production(); separator="\n">
+    <g.portAssignments:portAssignment(); separator="\n">
+end
+>>
+
 nodeDecl(n) ::= <<
-node <n.name><if(n.hasActiveUpdatePort)> [<n.activeUpdatePort>]<endif> begin<if(n.beginInLineComment)> <n.beginInLineComment:inlineComment()><endif>
+node <n.name><if(n.hasActiveUpdatePort)> [<n.activeUpdatePort>]<endif> begin<\\>
+<if(n.beginInLineComment)> <n.beginInLineComment:inlineComment()><endif>
     <n.ports:portDecl(); separator="\n">
 end<if(n.endInLineComment)> <n.endInLineComment:inlineComment()><endif>
 >>
 
-portDecl(p) 
-    ::= "<p.typeString> <p.name> <p.multifunction><if(p.args)>(<p.arguments:{ a |<a>}; separator=\", \">)<else>()<endif><if(p.comment)> <p.comment:inlineComment()><endif>"
+portDecl(p) ::= <<
+<p.typeString> <p.name> <p.multifunction><\\>
+<if(p.args)>(<p.arguments:{a |<a.code>}; separator=", ">)<else>()<endif><\\>
+<if(p.comment)> <p.comment:inlineComment()><endif>
+>>
 
 inlineComment(c) ::= "// <c.content>"
 blockComment(c) ::= <<
@@ -14,4 +25,8 @@ blockComment(c) ::= <<
 */
 >>
 
-newline() ::= "<\n>"
+production(p) ::= "<p.type> -> <p.instanceName><if(p.inlineComment)> <inlineComment(p.inlineComment)><endif>"
+
+portAssignment(a) ::= "<a.pathString>(<argList(a.args)>)"
+
+argList(args) ::= "<args:{a |<a.code>}; separator=\", \">"

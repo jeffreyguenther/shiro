@@ -39,6 +39,14 @@ public class CommentTest {
     }
     
     @Test
+    public void factoryMethods(){
+        Comment inlineFactory = Comment.inline(INLINE_COMMENT);
+        Comment blockFactory = Comment.block(BLOCK_COMMENT);
+        Assert.assertEquals("should match", inline, inlineFactory);
+        Assert.assertEquals("should match", block, blockFactory);
+    }
+    
+    @Test
     public void toCode(){
         Assert.assertEquals("should be an INLINE comment", "// Hello world", inline.toCode());
         Assert.assertEquals("should be a BLOCK comment", "/*\n* I'm a\n* long comment.\n*/", block.toCode());

@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Objects;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
-import org.stringtemplate.v4.STGroupFile;
+import shiro.expressions.Expression;
 
 /**
  * Defines a port declartion in shiro.
@@ -25,7 +25,7 @@ public class PortDeclaration implements Definition{
     private String name;
     private String multifunction;
     private boolean hasArgs;
-    private List<String> args;
+    private List<Expression> args;
     
     public PortDeclaration(PortType type, String name, String multifunction){
         this.type = type;
@@ -35,7 +35,7 @@ public class PortDeclaration implements Definition{
         args = new ArrayList<>();
     }
 
-    public PortDeclaration(PortType type, String name, String multifunction, List<String> args) {
+    public PortDeclaration(PortType type, String name, String multifunction, List<Expression> args) {
         this.type = type;
         this.name = name;
         this.multifunction = multifunction;
@@ -43,7 +43,7 @@ public class PortDeclaration implements Definition{
         this.hasArgs = true;
     }
     
-    public PortDeclaration(PortType type, String name, String multifunction, String... args) {
+    public PortDeclaration(PortType type, String name, String multifunction, Expression... args) {
         this.type = type;
         this.name = name;
         this.multifunction = multifunction;
@@ -67,11 +67,11 @@ public class PortDeclaration implements Definition{
         return hasArgs;
     }
 
-    public List<String> getArguments() {
+    public List<Expression> getArguments() {
         return args;
     }
     
-    public String getArgument(int i){
+    public Expression getArgument(int i){
         return args.get(i);
     }
     
@@ -87,12 +87,12 @@ public class PortDeclaration implements Definition{
         this.multifunction = multifunction;
     }
 
-    public void setArguments(List<String> args) {
+    public void setArguments(List<Expression> args) {
         this.args = args;
         hasArgs = true;
     }
     
-    public void setArgument(int i, String arg){
+    public void setArgument(int i, Expression arg){
         args.set(i, arg);
         hasArgs = true;
     }
@@ -112,7 +112,7 @@ public class PortDeclaration implements Definition{
 
     @Override
     public String toCode() {
-        STGroup group = new STGroupFile("shiro/definitions/shiro.stg");
+        STGroup group = Definition.getTemplate();
         ST st = group.getInstanceOf("portDecl");
         st.add("p", this);
         
@@ -122,11 +122,11 @@ public class PortDeclaration implements Definition{
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 29 * hash + Objects.hashCode(this.type);
-        hash = 29 * hash + Objects.hashCode(this.name);
-        hash = 29 * hash + Objects.hashCode(this.multifunction);
-        hash = 29 * hash + (this.hasArgs ? 1 : 0);
-        hash = 29 * hash + Objects.hashCode(this.args);
+        hash = 67 * hash + Objects.hashCode(this.type);
+        hash = 67 * hash + Objects.hashCode(this.name);
+        hash = 67 * hash + Objects.hashCode(this.multifunction);
+        hash = 67 * hash + (this.hasArgs ? 1 : 0);
+        hash = 67 * hash + Objects.hashCode(this.args);
         return hash;
     }
 

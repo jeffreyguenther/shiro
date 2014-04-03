@@ -1,9 +1,9 @@
 package shiro.definitions;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
+import org.stringtemplate.v4.ST;
+import org.stringtemplate.v4.STGroup;
 import shiro.expressions.Expression;
 import shiro.expressions.Path;
 
@@ -13,55 +13,70 @@ import shiro.expressions.Path;
  */
 public class PortAssignment implements Definition{
     private Path path; //path of the port to update
-    private Map<Integer, Expression> args; // expression and arg position
+    private List<Expression> args; // expression and arg position
 
-    public PortAssignment(Path path, Expression exp, int position) {
+    public PortAssignment(Path path, Expression exp) {
         this.path = path;
-        args = new HashMap<>();
-        args.put(position, exp);
+        args = new ArrayList<>();
+        args.add(exp);
+    }
+    
+    public PortAssignment(Path path, List<Expression> exps){
+        this.path = path;
+        this.args = exps;
     }
 
     public Path getPath() {
         return path;
+    }
+    
+    public String getPathString(){
+        return path.getPath();
     }
 
     public void setPath(Path path) {
         this.path = path;
     }
     
-    public Expression addArgument(int pos, Expression exp){
-        return args.put(pos, exp);
+    public void addArgument(int pos, Expression exp){
+        args.set(pos, exp);
+        
     }
     
     public Expression removeArgument(int i){
         return args.remove(i);
     }
 
-    public Map<Integer, Expression> getArgs() {
+    public List<Expression> getArgs() {
         return args;
     }
 
-    public void setArgs(Map<Integer, Expression> args) {
+    public void setArgs(List<Expression> args) {
         this.args = args;
     }
     
     @Override
     public String toCode(){
-        StringBuilder sb = new StringBuilder();
-        sb.append(path.toCode())
-        .append("(");
+        STGroup group = Definition.getTemplate();
+        ST st = group.getInstanceOf("portAssignment");
+        st.add("a", this);
+        return st.render();
         
-        // write out the args as code
-        ArrayList<Integer> keys = new ArrayList<>(args.keySet());
-        Collections.sort(keys);
-        for(Integer i: keys){
-            sb.append(args.get(i).toCode()).append(",");
-        }
-        
-        if(sb.toString().endsWith(",")){
-            sb.deleteCharAt(sb.length() -1 );
-        }
-        sb.append(")");
-        return sb.toString();
+//        StringBuilder sb = new StringBuilder();
+//        sb.append(path.toCode())
+//        .append("(");
+//        
+//        // write out the args as code
+//        ArrayList<Integer> keys = new ArrayList<>(args.keySet());
+//        Collections.sort(keys);
+//        for(Integer i: keys){
+//            sb.append(args.get(i).toCode()).append(",");
+//        }
+//        
+//        if(sb.toString().endsWith(",")){
+//            sb.deleteCharAt(sb.length() -1 );
+//        }
+//        sb.append(")");
+//        return sb.toString();
     }
 }

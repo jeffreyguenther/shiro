@@ -9,7 +9,6 @@ import java.util.logging.Logger;
 import junit.framework.Assert;
 import org.junit.Test;
 import shiro.Node;
-import shiro.PathHelpers;   
 import shiro.PathNotFoundException;
 import shiro.Port;
 import shiro.definitions.PortType;
@@ -111,8 +110,8 @@ public class GenerateCode {
     
     private Node createPoint(SubjunctiveParametricSystem model, double x, double y){
         shiro.Node node = model.createNode("Point");
-        Path pathX = PathHelpers.createPathForPort(node, "x");
-        Path pathY = PathHelpers.createPathForPort(node, "y");
+        Path pathX = Path.createPathForPort(node, "x");
+        Path pathY = Path.createPathForPort(node, "y");
 
         // Parse the expression into an Expression object
         Expression xExpr = model.parseExpression(node, x + "");
@@ -131,8 +130,8 @@ public class GenerateCode {
     
     private Node createLine(SubjunctiveParametricSystem model, Node p1, Node p2){
         shiro.Node node = model.createNode("Line");
-        Path pathX = PathHelpers.createPathForPort(node, "p1");
-        Path pathY = PathHelpers.createPathForPort(node, "p2");
+        Path pathX = Path.createPathForPort(node, "p1");
+        Path pathY = Path.createPathForPort(node, "p2");
         
         // Parse the expression into an Expression object
         Expression p1Expr = model.parseExpression(p1, p1.getName() + ".point[0]");

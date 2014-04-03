@@ -210,7 +210,7 @@ public class SubjunctiveNode implements Symbol, Container {
 
     @Override
     public Symbol find(String path) throws PathNotFoundException, PathNotAccessibleException {
-        return find(PathHelpers.createPath(path));
+        return find(Path.createPath(path));
     }
 
     private Symbol completePath(Path p, Node n) throws PathNotAccessibleException,
@@ -247,7 +247,7 @@ public class SubjunctiveNode implements Symbol, Container {
 
     @Override
     public Symbol resolvePath(String path) throws PathNotFoundException {
-        return resolvePath(PathHelpers.createPath(path));
+        return resolvePath(Path.createPath(path));
     }
 
     @Override
