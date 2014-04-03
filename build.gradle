@@ -41,9 +41,11 @@ configurations {
 
 dependencies {
     compile group: "org.antlr", name: "antlr4-runtime", version: "4.2.1"
-    compile 'net.sourceforge.collections:collections-generic:4.01'
     compile 'org.antlr:ST4:4.0.8'
     antlr4 group: "org.antlr", name: "antlr4", version: "4.2.1"
+    
+    compile 'com.google.guava:guava:12.0'
+    
     testCompile group: "junit", name: "junit", version: versions.junit
 }
 

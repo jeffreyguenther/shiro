@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
-import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.beans.property.SimpleStringProperty;
@@ -17,7 +16,6 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
-import org.apache.commons.collections15.map.HashedMap;
 import shiro.dag.DAGraph;
 import shiro.dag.DependencyRelation;
 import shiro.dag.GraphNode;
@@ -93,7 +91,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         graphDefs = new HashMap<>();
         currentGraphDef = null;
         
-        nodes = new HashedMap<>();
+        nodes = new HashMap<>();
         subjNodes = new HashMap<>();
         alternatives = new HashMap<>();
         instanceCount = new HashMap<>();
