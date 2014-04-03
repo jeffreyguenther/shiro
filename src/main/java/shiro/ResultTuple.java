@@ -15,12 +15,12 @@ public class ResultTuple{
     private BiMap<String, Integer> nameToIndexMap;
 
     public ResultTuple() {
-        values = new ArrayList<Value>();
+        values = new ArrayList<>();
         nameToIndexMap = HashBiMap.create();
     }
     
     public ResultTuple(int index, Value v) {
-        values = new ArrayList<Value>();
+        values = new ArrayList<>();
         nameToIndexMap = HashBiMap.create();
         setValueForIndex(index, v);
         
