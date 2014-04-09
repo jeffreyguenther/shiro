@@ -20,6 +20,7 @@ import shiro.dag.DAGraph;
 import shiro.dag.DependencyRelation;
 import shiro.dag.GraphNode;
 import shiro.dag.TopologicalSort;
+import shiro.definitions.NameManager;
 import shiro.events.NodeEvent;
 import shiro.events.NodeEventListener;
 import shiro.events.SubjParametricSystemEvent;
@@ -63,14 +64,14 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
     private Map<String, ParseTree> nodeDefs;           // AST table
     private Map<String, ParseTree> subjNodeDefs;       // AST table
     private Map<String, ParseTree> alternativeDefs;    // AST table
-    private Map<String, GraphDefinition> graphDefs;     // AST Table
+    private Map<String, GraphDefinition> graphDefs;    // AST Table
     private GraphDefinition currentGraphDef;
     
     private Map<String, Node> nodes;                   // realized node table
     private Map<String, SubjunctiveNode> subjNodes;    // realized subj. node table
     private Map<String, SystemState> alternatives;     // alternative specs
-    private Map<String, Integer> instanceCount;        // count of node instances by type
-    private PortAction graphNodeAction;                // action used in graph nodes
+    private final NameManager names;                   // class for managing name generation
+    private final PortAction graphNodeAction;          // action used in graph nodes
 
     private CommonTokenStream tokens;                  // reference to the tokens
     // to the last file loaded with loadCode()
@@ -94,7 +95,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         nodes = new HashMap<>();
         subjNodes = new HashMap<>();
         alternatives = new HashMap<>();
-        instanceCount = new HashMap<>();
+        names = new NameManager();
         graphNodeAction = new PortAction();
 
         listeners = new HashSet<>();
@@ -116,7 +117,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
      * define instances. The definition is erased. It is not emptied
      */
     public void clear(){
-        instanceCount.clear();
+        names.clear();
         nodes.clear();
         subjNodes.clear();
         graphDefs.clear();
@@ -133,6 +134,10 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
     
     public GraphDefinition getGraphDef(String name){
         return graphDefs.get(name);
+    }
+    
+    public int getInstanceCountForNode(String type){
+        return names.getNumberOfInstances(type);
     }
 
     /**
@@ -176,35 +181,39 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         return multiFunctions.get(name);
     }
     
-    public SubjunctiveNode split(Node nodeToSplit, String nameOfSubjunct){
+    public SubjunctiveNode split(Node nodeToSplit, String name, String nameOfSubjunct){
         // create a new subjunctive node
-        SubjunctiveNode result = new SubjunctiveNode(nameOfSubjunct, this);
-        
+        SubjunctiveNode result = new SubjunctiveNode(name, this);
+        Path toMatch = Path.createPath(nodeToSplit.getName());
+        List<Port> findAll = findAll(toMatch);
         // replace reference to nodeToSplit in any expressions where it is used
         // set expressions to use newly created subjunctive node active port
+        for(Port p: findAll){
+            replace(p, toMatch, name, true);
+        }
+        
         // rename nodeToSplit nodeName_1
+        
+        // lookup type
+        String type = nodeToSplit.getDefPath();
         // create instance of node
+        Node n = produceNodeFromName(type, nameOfSubjunct);
+        
+        // update created node's port expressions
+        
+        
         // set the arguments of the instance
         // add instance to subjunctive node
+        result.addSubjunct(nodeToSplit);
+        result.addSubjunct(n);
         
         // remove node production from graph
         // add production for new subjunctive node
         // add subjunctive node selection to all existing alternatives
         // create new alternative with split node selected
         
-        
         return result;
     }
-    
-//    public Symbol findAllAndReplace(String find, String replace) throws PathNotAccessibleException, PathNotFoundException{
-//        return findAllAndReplace(Path.createPath(find), Path.createPath(replace));
-//    }
-//    
-//    public Symbol findAllAndReplace(Path toFind, Path toReplace) throws PathNotAccessibleException, PathNotFoundException{
-//        Symbol found = find(toFind);
-//        
-//        return null;
-//    }
     
     @Override
     public Symbol find(Path p) throws PathNotFoundException, PathNotAccessibleException{
@@ -255,6 +264,38 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         return find(Path.createPath(s));
     }
     
+    public List<Port> findAll(Path p){
+        List<Port> found = new ArrayList<>();
+        for(Node n: nodes.values()){
+            for(Port port: n.getPorts()){
+                for(Expression e: port.getArguments()){
+                    if(e instanceof Path && 
+                            ((Path)e).getPath().startsWith(p.getPath())){
+                        found.add(port);
+                    }
+                }
+            }
+        }
+        
+        return found;
+    }
+    
+    public void replace(Port found, Path match, String s, boolean active){
+        for(Expression e: found.getArguments()){
+            if(e instanceof Path &&
+                    ((Path)e).getPath().startsWith(match.getPath())){
+                Path expr = (Path) e;
+                if(active){
+                    expr.getPathParts().set(0, s);
+                    expr.getPathParts().add(1, "active");
+                }else{
+                    expr.getPathParts().set(0, s);
+                }
+            }
+        }
+    }
+    
+   
 
     /**
      * Resolve a symbol from a given path.
@@ -350,11 +391,8 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
      * @return a reference to created node
      */
     public Node createNode(String type) {
-        // increment the count of type
-        int count = incrementCountOfInstances(type);
-
         // generate a new name for the node
-        String name = generateNodeInstanceName(type, count);
+        String name = names.getNextName(type);
 
         // produce the new node
         Node node = produceNodeFromName(type, name);
@@ -787,8 +825,8 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
     }
 
     /**
-     * Generate node from the ParseTree Looks up the ParseTree in the map and
-     * generates the node
+     * Instantiates the node from the ParseTree.
+     * Looks up the ParseTree in the map and generates the node
      *
      * @param name of node to produce
      * @return Node object
@@ -804,58 +842,6 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         walker.walk(nodeBuilder, nodeAST);
 
         return nodeBuilder.getCreatedNode();
-    }
-
-    /**
-     * Generate a name for an instance of a node
-     *
-     * @param nodePath node to use in name
-     * @param count number of nodes
-     * @return a string in the format <node definition name>-<counter>
-     */
-    public String generateNodeInstanceName(String nodePath, int count) {
-        return new StringBuilder()
-                .append(nodePath)
-                .append("_")
-                .append(count)
-                .toString();
-    }
-
-    /**
-     * Get the number of instances of a node
-     *
-     * @param nodeTypePath the type path of the node. For example a Point node
-     * defined at the root, would be passed in as "Point" Warning this method
-     * does not work with nested types as nested types are implemented in shiro
-     * yet.
-     * @return number of instance of the node. Return 0 if the node is not
-     * found.
-     */
-    public int getInstanceCountForNode(String nodeTypePath) {
-        if (instanceCount.containsKey(nodeTypePath)) {
-            return instanceCount.get(nodeTypePath);
-        } else {
-            return 0;
-        }
-    }
-
-    /**
-     * Increment the count of instances of a node type
-     *
-     * @param nodePath node type to increment
-     * @return the current count of {@code  nodePath} nodes.
-     */
-    public int incrementCountOfInstances(String nodePath) {
-        int count = 1;
-        if (instanceCount.containsKey(nodePath)) {
-            count = instanceCount.get(nodePath);
-            count++;
-            instanceCount.put(nodePath, count);
-        } else { // if the type is new
-            instanceCount.put(nodePath, count);
-        }
-
-        return count;
     }
 
     /**
@@ -1033,11 +1019,11 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         });
         
         // print graphs
-        graphDefs.values().stream().forEach((GraphDefinition gd) -> { sb.append(gd.toCode()); });
+        graphDefs.values().stream().forEach((GraphDefinition gd) -> { sb.append(gd.toCode()).append("\n\n"); });
         
         // print states
         alternatives.values().stream().forEach((SystemState state) -> {
-            sb.append(state.toCode());
+            sb.append(state.toCode()).append("\n\n");
         });
         
         return sb.toString();
@@ -1115,7 +1101,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         
         // deal with name auto generation
         for(String key: nodeDefs.keySet()){
-            instanceCount.put(key, getNodesOfType(key).size());
+            names.setInstanceCount(key, getNodesOfType(key).size());
         }
         
         alternatives.remove("Default");
