@@ -1,3 +1,22 @@
+state(s) ::= <<
+state <s.name> begin
+    Graph <s.graphDef.name>
+    <s.subjunctsMapping.keys:{sn |<sn.name>[<s.subjunctsMapping.(sn).name>]}>
+end
+>>
+
+subjunctiveNode(s) ::= <<
+subjunctive node <s.name>[<s.defaultSubjunct>] begin
+    <s.nodeProductions:subjunctiveNodeProd(); separator="\n">
+end
+>>
+
+subjunctiveNodeProd(p) ::= <<
+    <p.type> -> <p.name> begin
+        <p.portAssignments: portAssignment(); separator="\n">
+    end
+>>
+
 graphDecl(g) ::= <<
 graph <g.name> begin
     <g.productions:production(); separator="\n"><\n>

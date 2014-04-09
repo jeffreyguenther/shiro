@@ -4,6 +4,8 @@ import shiro.definitions.GraphDefinition;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
+import org.stringtemplate.v4.ST;
+import org.stringtemplate.v4.STGroup;
 import shiro.definitions.Definition;
 
 /**
@@ -81,14 +83,11 @@ public class SystemState implements Definition{
         return sb.toString();
     }
     
+    @Override
     public String toCode(){
-        StringBuilder sb = new StringBuilder();
-        sb.append("state ").append(getName()).append(" begin\n");
-        sb.append("\tGraph").append(" ").append(graphDef.getName()).append("\n");
-        subjunctsMapping.forEach((SubjunctiveNode sn, Node n) -> {
-            sb.append("\t").append(sn.getName()).append("[").append(n.getName()).append("]\n");
-        });
-        sb.append("end\n");
-        return sb.toString();
+        STGroup template = Definition.getTemplate();
+        ST state = template.getInstanceOf("state");
+        state.add("s", this);
+        return state.render();
     }
 }
