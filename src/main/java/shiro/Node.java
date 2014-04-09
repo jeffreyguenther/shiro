@@ -56,7 +56,13 @@ public class Node implements PortEventListener, Container, Symbol{
         // set the enclosing scope
         this.parentScope = scope;
         // set the parent's full
-        this.fullName = Path.createFullName(scope.getFullName() , name);
+        
+        if(scope != null){
+            this.fullName = Path.createFullName(scope.getFullName() , name);
+        }else{
+            this.fullName = name;
+        }
+        
         // set the name of the node
         this.name = name;
         // set the node active by default
