@@ -13,7 +13,6 @@ import junit.framework.Assert;
 import org.junit.Test;
 import shiro.Node;
 import shiro.SubjunctiveNode;
-import shiro.SystemState;
 
 /**
  *

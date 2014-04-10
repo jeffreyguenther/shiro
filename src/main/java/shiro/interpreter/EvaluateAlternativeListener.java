@@ -5,7 +5,7 @@ import java.util.Map;
 import shiro.Node;
 import shiro.SubjunctiveNode;
 import shiro.SubjunctiveParametricSystem;
-import shiro.SystemState;
+import shiro.definitions.SystemState;
 
 /**
  * Walk the parse tree of an alternative to evaluate it.

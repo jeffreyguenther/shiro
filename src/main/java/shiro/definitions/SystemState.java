@@ -1,12 +1,12 @@
-package shiro;
+package shiro.definitions;
 
-import shiro.definitions.GraphDefinition;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
-import shiro.definitions.Definition;
+import shiro.Node;
+import shiro.SubjunctiveNode;
 
 /**
  * Definition of a system state.

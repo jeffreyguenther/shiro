@@ -30,7 +30,7 @@ import shiro.PathNotAccessibleException;
 import shiro.PathNotFoundException;
 import shiro.Port;
 import shiro.SubjunctiveParametricSystem;
-import shiro.SystemState;
+import shiro.definitions.SystemState;
 import shiro.Value;
 import shiro.expressions.Expression;
 import shiro.expressions.Path;

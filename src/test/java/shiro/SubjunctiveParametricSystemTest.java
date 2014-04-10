@@ -4,7 +4,10 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import junit.framework.Assert;
@@ -268,10 +271,19 @@ public class SubjunctiveParametricSystemTest {
     @Test
     public void split() throws IOException, PathNotFoundException, PathNotAccessibleException {
         SubjunctiveParametricSystem pSystem = setupPSystemWithSubjuncts();
+        
+        Map<Path, List<Expression>> newValues = new HashMap<>();
+        newValues.put(Path.createPath("x"), Arrays.asList(new shiro.expressions.Number(200d)));
+        newValues.put(Path.createPath("y"), Arrays.asList(new shiro.expressions.Number(200d)));
+        
         Node n = (Node) pSystem.find("startPoint");
-        SubjunctiveNode subjunctiveNode = pSystem.split(n, "StartPoints", "P1");
+        SubjunctiveNode subjunctiveNode = pSystem.split(n, "StartPoints", "P1", newValues);
+        pSystem.addSubjunctiveNode(subjunctiveNode);
 
         Assert.assertNotNull(subjunctiveNode);
         Assert.assertEquals("StartPoints", subjunctiveNode.getFullName());
+        
+//        pSystem.update(pSystem.getState("state1"));
+        System.out.println(pSystem.toCode());
     }
 }

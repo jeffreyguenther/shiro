@@ -1,7 +1,7 @@
 state(s) ::= <<
 state <s.name> begin
     Graph <s.graphDef.name>
-    <s.subjunctsMapping.keys:{sn |<sn.name>[<s.subjunctsMapping.(sn).name>]}>
+    <s.subjunctsMapping.keys:{sn |<sn.name>[<s.subjunctsMapping.(sn).name>]}; separator="\n">
 end
 >>
 
