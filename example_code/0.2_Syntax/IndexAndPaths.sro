@@ -1,0 +1,63 @@
+/**
+Syntatical sugar:
+port[0] becomes port
+port[1] stays the same
+port["key"] becomes port.key
+**/
+
+node Cost[mult] begin
+    input area Value
+    input costPerSqft
+    option eval mult Multiply(area, costPerSqft)
+    option eval withTax Multiply(area, costPerSqft, 1.12)
+    
+    output total Value(mult | withTax)
+    // another way to write the line could be
+    // output total Value(active)
+end
+
+node Shape begin
+	option node Circle begin
+		input length Value
+        eval update CircleArea(r)
+        output area Value(update.area)
+	end
+	option Square begin
+        input length Value
+        eval update SquareArea(s)
+        output area Value(udpate.area)
+    end
+end
+
+graph shapes begin
+    Shape -> s
+    Cost -> c
+
+    s.length(22)
+
+    c.area(s.area)
+    c.costPerSqft(0.34)
+end
+
+state ByCircleArea begin
+    Graph shapes
+    s[Circle]
+end
+
+state BySquareArea begin
+    Graph shapes
+    s[Square]
+    // Because c has a default option picked, a subjunct selection is not needed. It's syntatical sugar
+end
+
+state ByCircleAreaWithTax begin
+    Graph shapes
+    s[Circle]
+    c[withTax]
+end
+
+state BySquareAreaWithTax begin
+    Graph shapes
+    s[Square]
+    c[withTax]
+end
