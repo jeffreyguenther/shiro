@@ -1,9 +1,12 @@
 package shiro.definitions;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
+import shiro.expressions.Path;
 
 /**
  * This class represents a graph definition.
@@ -15,13 +18,13 @@ import org.stringtemplate.v4.STGroup;
 public class GraphDefinition implements Definition{
     private List<Definition> lines;
     private List<Production> productions; 
-    private List<PortAssignment> portAssignments;
+    private Map<Path, PortAssignment> portAssignments;
     private String name;
 
     public GraphDefinition(String name) {
         lines = new ArrayList<>();
         productions = new ArrayList<>();
-        portAssignments = new ArrayList<>();
+        portAssignments = new HashMap<>();
         this.name = name;
     }
 
@@ -42,21 +45,27 @@ public class GraphDefinition implements Definition{
     }
 
     public List<PortAssignment> getPortAssignments() {
-        return portAssignments;
+        return new ArrayList<>(portAssignments.values());
     }
 
     public void setPortAssignments(List<PortAssignment> portAssignments) {
-        this.portAssignments = portAssignments;
+        for(PortAssignment pa: portAssignments){
+            this.portAssignments.put(pa.getPath(), pa);
+        }
+        
+        lines.addAll(portAssignments);
     }
     
-    public boolean addPortAssignment(PortAssignment assign){
+    public void addPortAssignment(PortAssignment assign){
+        this.portAssignments.put(assign.getPath(), assign);
+        
         lines.add(assign);
-        return portAssignments.add(assign);
     }
 
-    public boolean removePortAssignment(PortAssignment assign) {
+    public void removePortAssignment(PortAssignment assign) {
+        portAssignments.remove(assign.getPath());
+        
         lines.remove(assign);
-        return portAssignments.remove(assign);
     }
     
     public void addProduction(String type, String name){
