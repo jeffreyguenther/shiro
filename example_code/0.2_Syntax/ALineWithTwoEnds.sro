@@ -14,11 +14,11 @@ node Line begin
 end
 
 node EndPoints[P1] begin
-	option P1 <- Point begin
-		x(200)
-		this.y(200)
-	end
-	option P2 <- Point begin
+    option P1 <- Point begin
+        x(200)
+        this.y(200)
+    end
+    option P2 <- Point begin
         x(100)
         y(400)
     end

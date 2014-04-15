@@ -15,7 +15,6 @@ statement
     :   nodestmt
     |   statestmt
     |   graphDecl
-    |   sNode
     |   NEWLINE
     ;
 
@@ -26,19 +25,7 @@ statestmt
 	;
 	
 stateHeader
-	: 	(stateTimeStmt | stateCommentStmt | stateParentStmt | stateGraphStmt | activation | /*activationPath |*/ NEWLINE)+ 	
-	;
-	
-stateTimeStmt
-	:	'Time' time
-	;
-
-stateCommentStmt
-	:	'Comment' comment	
-	;
-	
-stateParentStmt
-	:	'Parent' stateParent
+	: 	(stateGraphStmt | activation | NEWLINE)+ 	
 	;
 	
 stateGraphStmt
@@ -49,57 +36,29 @@ stateName
 	:	IDENT
 	;
 	
-time	:	STRING_LITERAL	
-	;
-	
-comment	:	STRING_LITERAL
-	;
-	
-stateParent
-	:	IDENT
-	;
-	
 stateGraph
 	:	IDENT
 	;
 
 nodestmt
-    :   nodeType IDENT ('[' activeSelector ']')? BEGIN NEWLINE 
+    :   NODE IDENT ('[' activeSelector ']')? BEGIN NEWLINE 
         nodeInternal
         END
     ;
 
-nodeType 
-    :   NODE | SUBJUNCT
-    ;
-
 nodeInternal
-    :   ( nodeProduction
-        | portAssignment
+    :   ( portAssignment
         | portstmt
+        | subjunctDeclNodeProd
         | NEWLINE)+
-    ;
-
-sNode
-    :	SUBJ_NODE nodeName=IDENT LSQUARE selectedSubjunct=IDENT RSQUARE BEGIN NEWLINE
-		(subjunctDeclNodeProd | subjunctDecl | NEWLINE)+
-		END
     ;
 	
 subjunctDeclNodeProd
-	:	nodeName=IDENT PROD_OP newName=IDENT BEGIN NEWLINE
-		nodeInternal
+	:	OPTION instanceName=IDENT REFINES_OP type=IDENT BEGIN NEWLINE
+		(portAssignment | NEWLINE)+
 		END
 	;
 	
-subjunctDecl
-	:	nodestmt
-	;
-	
-subjunctSelector
-	:	IDENT
-	;
-
 graphDecl
 	:	'graph' IDENT BEGIN NEWLINE
 		graphLine+
@@ -115,17 +74,9 @@ activeSelector
 	;
 
 nodeProduction
-	:	path (PROD_OP activation)+ NEWLINE//activationPath )+ NEWLINE
+	:	path (PROD_OP activation)+ NEWLINE
 	;
-
-/*activationPath
-	:	l=activation ('.' (r=activation | activationList))*
-	;
-
-activationList
-	:	'<' activation (',' activation)* '>'
-	;
-*/	
+	
 activation
 	:	nodeName=IDENT ( LSQUARE activeObject=IDENT RSQUARE)?
 	;
@@ -136,11 +87,11 @@ portAssignment
 	;	
 
 portDecl
-	:	portType portName mfName
+	:	OPTION? portType portName mfName
 	;
 	
 portDeclInit
-	:	portType portName mfCall
+	:	OPTION? portType portName mfCall
 	;
 
 portstmt	
@@ -151,8 +102,9 @@ portName
 	:	IDENT
 	;
 	
-portType:	'port'
-	| 	'eval'
+portType:	'input'
+	| 	'output'
+        |       'eval'
 	;
 	
 mfCall	:	mfName '(' mfparams ')'
@@ -167,7 +119,7 @@ mfparams:	expr(',' expr)*
 expression: expr;
 
 // Path
-path 	:	(IDENT)('.' IDENT)* (LSQUARE pathIndex RSQUARE)?
+path 	:	(IDENT|THIS)('.' IDENT)* (LSQUARE pathIndex RSQUARE)?
 	;
 	
 pathIndex
@@ -190,7 +142,13 @@ expr
 * -----------------------------------------------------------------------------
 **/
 
+THIS : 'this';
+    
+OPTION : 'option';
+    
 PROD_OP : '->';
+
+REFINES_OP: '<-';
 
 STATE
     : 'state'
