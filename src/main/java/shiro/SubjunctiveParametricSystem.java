@@ -32,9 +32,10 @@ import shiro.functions.MultiFunction;
 import shiro.functions.MultiplyMFunc;
 import shiro.functions.SumMFunc;
 import shiro.functions.ValueMFunc;
-import shiro.functions.graphics.CanvasMFunc;
+import shiro.functions.graphics.CircleMFunc;
 import shiro.functions.graphics.LineMFunc;
 import shiro.functions.graphics.PointMFunc;
+import shiro.functions.graphics.RectMFunc;
 import shiro.interpreter.EvaluateAlternativeListener;
 import shiro.interpreter.GraphBuilderListener;
 import shiro.interpreter.NodeDefinitionListener;
@@ -158,7 +159,8 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         // add graphics MFs
         funcMap.put("Point", new PointMFunc());
         funcMap.put("Line", new LineMFunc());
-        funcMap.put("Canvas", new CanvasMFunc());
+        funcMap.put("Circle", new CircleMFunc());
+        funcMap.put("Rectangle", new RectMFunc());
     }
 
     /**
@@ -1071,6 +1073,64 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         } catch (IOException e) {
 
         }
+    }
+    
+    public void loadCode(String code){
+        ParseTreeWalker walker = new ParseTreeWalker();
+
+        // create a lexer
+        ShiroLexer lex = new ShiroLexer(new ANTLRInputStream(code));
+
+        // Get the token stream
+        tokens = new CommonTokenStream(lex);
+
+        // Parse the file
+        ShiroParser parser = new ShiroParser(tokens);
+        parser.setBuildParseTree(true);
+
+        // Create the parse tree object
+        ParseTree tree = parser.shiro();
+
+        // PASS 1: Add a node -> AST mapping in the parametric system
+        NodeDefinitionListener defPass = new NodeDefinitionListener();
+        // Walk the tree with the def pass listener
+        walker.walk(defPass, tree);
+
+        // Get the node definitions
+        Map<String, ParseTree> nodeDefinitions = defPass.getNodeDefinitions();
+        Map<String, ParseTree> subjNodeDefinitions = defPass.getSubjNodeDefinitions();
+        Map<String, ParseTree> alternativeDefinitions = defPass.getAlternativeDefinitions();
+        ParseTree graph = defPass.getGraph();
+
+        // Store the ASTs in the tree
+        addNodeASTDefinitions(nodeDefinitions);
+        addSubjNodeASTDefinitions(subjNodeDefinitions);
+        addAlternativeASTDefinitions(alternativeDefinitions);
+
+        // PASS 2: Build the dependency graph
+        /**
+         * Walk only the graph parse tree to prevent events from firing on the
+         * other parts of the parse tree
+         */
+        GraphBuilderListener graphBuilder = new GraphBuilderListener(this);
+        walker.walk(graphBuilder, graph);
+
+        GraphDefinition graphDef = graphBuilder.getGraphDef();
+        graphDefs.remove("Default");
+        graphDefs.put(graphDef.getName(), graphDef);
+        currentGraphDef = graphDef;
+
+        // deal with name auto generation
+        for (String key : nodeDefs.keySet()) {
+            names.setInstanceCount(key, getNodesOfType(key).size());
+        }
+
+        alternatives.remove("Default");
+
+        // Evaluate parametric system
+        update();
+
+        codeProperty.setValue(toCode());
     }
 
     /**

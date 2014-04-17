@@ -31,6 +31,17 @@ public interface ShiroListener extends ParseTreeListener {
 	void exitStateParent(@NotNull ShiroParser.StateParentContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link ShiroParser#StringExp}.
+	 * @param ctx the parse tree
+	 */
+	void enterStringExp(@NotNull ShiroParser.StringExpContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ShiroParser#StringExp}.
+	 * @param ctx the parse tree
+	 */
+	void exitStringExp(@NotNull ShiroParser.StringExpContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link ShiroParser#mfName}.
 	 * @param ctx the parse tree
 	 */

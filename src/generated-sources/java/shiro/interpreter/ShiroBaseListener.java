@@ -43,6 +43,19 @@ public class ShiroBaseListener implements ShiroListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterStringExp(@NotNull ShiroParser.StringExpContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitStringExp(@NotNull ShiroParser.StringExpContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterMfName(@NotNull ShiroParser.MfNameContext ctx) { }
 	/**
 	 * {@inheritDoc}
