@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link href='https://fonts.googleapis.com/css?family=Architects+Daughter' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <title>Shiro by jrguenther</title>
+  </head>
+
+  <body>
+    <header>
+      <div class="inner">
+        <h1>Shiro</h1>
+        <h2>Shiro - a declarative, dataflow programming language for exploring alternatives</h2>
+        <a href="https://github.com/jrguenther/shiro" class="button"><small>View project on</small>GitHub</a>
+      </div>
+    </header>
+
+    <div id="content-wrapper">
+      <div class="inner clearfix">
+        <section id="main-content">
+          <h1>
+<a name="shiro" class="anchor" href="#shiro"><span class="octicon octicon-link"></span></a>Shiro</h1>
+
+<p>Shiro is a data flow programming language designed to be embedded into applications to help to support reuse and the exploration of alternatives. The language is part of Jeff's PhD thesis. This is research code. Use with a sense of humour and lots of patience.</p>
+
+<h1>
+<a name="getting-started" class="anchor" href="#getting-started"><span class="octicon octicon-link"></span></a>Getting Started</h1>
+
+<p>Shiro is implemented in Java. <a href="http://www.gradle.org/">Gradle</a> is used as the build system and dependency manager. The interpreter depends on <a href="http://www.antlr.org/">ANTLR 4.2</a> to generate the parser, lexer and parse tree event listeners. <code>build.gradle</code> is setup to automatically generate the Java code at compile time. You can use gradle from the commandline or use Netbeans or Eclipse, as both IDE's support gradle projects.</p>
+
+<p>You can build the Shiro interpreter using this command within the shiro subdirectory</p>
+
+<pre><code>$ gradle build
+</code></pre>
+
+<p>A helpful command is to remember if you just want to regenerate the parser, lexer, and listeners is:</p>
+
+<pre><code>$ gradle generateGrammarSource
+</code></pre>
+
+<p>In the <code>example_code</code> folder, you'll find <code>example.sro</code>. It is a simple example of the language syntax. Currently, when the code is interpretted a large amount of debugging output is shown. It'll help you get a sense of what is actually going on inside the system. More examples are coming shortly. Pass example.sro as the first argument on the commandline to see the output.</p>
+
+<pre><code>$ gradle run -Pargs="example_code/example.sro"
+</code></pre>
+
+<p>Questions can be sent to <a href="mailto:shiro-lang@googlegroups.com">shiro-lang@googlegroups.com</a> or <a href="mailto:jguenthe@sfu.ca">Jeff</a>. If you have taken the time to play with the language, please drop me a line and let me know what you think.</p>
+
+<h1>
+<a name="ways-you-can-help" class="anchor" href="#ways-you-can-help"><span class="octicon octicon-link"></span></a>Ways You Can Help</h1>
+
+<p>Because this code is being developed for my thesis, I'm responsible for its design and implementation. That said, there are ways you can help give the language the polish it is needed. The scope of my thesis is quite narrow, but this language should be helpful to people outside of visual analytics.</p>
+
+<ul>
+<li>Give feedback on both the implementation and the language syntax</li>
+<li>Help create a REPL for a better commandline experience</li>
+<li>Help write multi-functions for the standard library
+This is one of the biggest and most important parts of the project after the basic language design is complete. We need a good library of multi-functions to make the language helpful to people in a variety of domains.</li>
+</ul><h2>
+<a name="acknowledgements" class="anchor" href="#acknowledgements"><span class="octicon octicon-link"></span></a>Acknowledgements</h2>
+
+<p>This project is the result of research being conducted at <a href="http://www.sfu.ca/">Simon Fraser University</a>'s <a href="http://www.siat.sfu.ca/">School of Interactive Arts and Technology</a> in the <a href="http://czsaw.iat.sfu.ca/">CZSaw Research Group</a>. </p>
+
+<h4>
+<a name="people" class="anchor" href="#people"><span class="octicon octicon-link"></span></a>People</h4>
+
+<ul>
+<li>
+<a href="http://jeffreyguenther.com">Jeffrey Guenther</a> - Design and Implementer</li>
+<li>
+<a href="http://www.sfu.ca/%7Eshaw/">Chris Shaw</a> - PhD Supervisor</li>
+<li>
+<a href="http://www.siat.sfu.ca/faculty/profile/rob-woodbury">Robert Woodbury</a> - PhD Commitee member</li>
+<li>
+<a href="http://www.sfu.ca/%7Eskolaric/">Siniša Kolarić</a> - Research Group Colleague</li>
+<li>
+<a href="http://www.linkedin.com/pub/ankit-gupta/37/b7b/851">Ankit Gupta</a> - Research Group Colleague</li>
+</ul><p>Mailing list: <a href="mailto:shiro-lang@googlegroups.com">shiro-lang@googlegroups.com</a></p>
+
+<h2>
+<a name="license" class="anchor" href="#license"><span class="octicon octicon-link"></span></a>License</h2>
+
+<p>Shiro is licensed under the <a href="http://opensource.org/licenses/MIT">MIT license</a></p>
+        </section>
+
+        <aside id="sidebar">
+          <a href="https://github.com/jrguenther/shiro/zipball/master" class="button">
+            <small>Download</small>
+            .zip file
+          </a>
+          <a href="https://github.com/jrguenther/shiro/tarball/master" class="button">
+            <small>Download</small>
+            .tar.gz file
+          </a>
+
+          <p class="repo-owner"><a href="https://github.com/jrguenther/shiro"></a> is maintained by <a href="https://github.com/jrguenther">jrguenther</a>.</p>
+
+          <p>This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the Architect theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.</p>
+        </aside>
+      </div>
+    </div>
+
+  
+  </body>
+</html>
