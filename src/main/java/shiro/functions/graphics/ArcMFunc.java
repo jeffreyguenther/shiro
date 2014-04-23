@@ -9,6 +9,8 @@ package shiro.functions.graphics;
 import java.util.List;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Arc;
+import javafx.scene.shape.ArcType;
 import javafx.scene.shape.Circle;
 import shiro.ResultTuple;
 import shiro.Value;
@@ -18,15 +20,16 @@ import shiro.functions.MultiFunction;
  *
  * @author jeffreyguenther
  */
-public class CircleMFunc implements MultiFunction{
-    private static final String NAME = "Circle";
+public class ArcMFunc implements MultiFunction{
+    private static final String NAME = "Arc";
     private static final int CENTER = 0;
     private static final int RADIUS = 1;
-    private static final int STROKE = 2;
-    private static final int STROKE_WIDTH = 3;
-    private static final int FILL = 4;
+    private static final int START_ANGLE = 2;
+    private static final int END_ANGLE = 3;
+    private static final int STROKE = 4;
+    private static final int STROKE_WIDTH = 5;
 
-    public CircleMFunc() {
+    public ArcMFunc() {
     }
     
     @Override
@@ -37,10 +40,21 @@ public class CircleMFunc implements MultiFunction{
         Value radiusValue = arguments.get(RADIUS);
         double radius = radiusValue.getValueAsDouble();
         
-        Circle c = new Circle();
+        Value startAngleValue = arguments.get(START_ANGLE);
+        double startAngle = startAngleValue.getValueAsDouble();
+        
+        Value endAngleValue = arguments.get(END_ANGLE);
+        double endAngle = endAngleValue.getValueAsDouble();
+        
+        Arc c = new Arc();
         c.setCenterX(center.getX());
         c.setCenterY(center.getY());
-        c.setRadius(radius);
+        c.setRadiusX(radius);
+        c.setRadiusY(radius);
+        c.setStartAngle(startAngle);
+        c.setLength(endAngle);
+        c.setType(ArcType.OPEN);
+        c.setFill(Color.TRANSPARENT);
         
         if(arguments.size() >= STROKE + 1){
             Value strokeValue = arguments.get(STROKE);
@@ -54,17 +68,9 @@ public class CircleMFunc implements MultiFunction{
             c.setStrokeWidth(stroke);
         }
         
-        if(arguments.size() >= FILL + 1){
-            Value fill = arguments.get(FILL);
-            String color = fill.getValueAsString();
-            c.setFill(Color.web("rgb("+ color +")"));
-        }else{
-            c.setFill(Color.TRANSPARENT);
-        }
-        
         ResultTuple result = new ResultTuple();
-        result.setValueForIndex(0, new Value(c, Circle.class));
-        result.setNameforIndex("circle", 0);
+        result.setValueForIndex(0, new Value(c, Arc.class));
+        result.setNameforIndex("arc", 0);
         return result;
     }
     

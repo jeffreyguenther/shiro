@@ -21,7 +21,7 @@
           <children>
             <AnchorPane id="AnchorPane" maxWidth="-1.0" minHeight="-1.0" prefHeight="-1.0">
               <children>
-                <Button fx:id="run" mnemonicParsing="false" onAction="#handleRun" text="Run" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="10.0" />
+                <Button fx:id="run" defaultButton="false" mnemonicParsing="false" onAction="#handleRun" text="Run" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="10.0" />
               </children>
             </AnchorPane>
             <TextArea fx:id="code" prefHeight="-1.0" prefWidth="-1.0" promptText="Enter Shiro code" wrapText="true" VBox.vgrow="ALWAYS" />
@@ -81,12 +81,12 @@
           <items>
             <MenuItem mnemonicParsing="true" onAction="#handleFileOpen" text="Open…">
               <accelerator>
-                <KeyCodeCombination alt="UP" code="O" control="UP" meta="DOWN" shift="UP" shortcut="UP" />
+                <KeyCodeCombination alt="UP" code="O" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
               </accelerator>
             </MenuItem>
             <MenuItem mnemonicParsing="true" onAction="#handleSave" text="Save">
               <accelerator>
-                <KeyCodeCombination alt="UP" code="S" control="UP" meta="DOWN" shift="UP" shortcut="UP" />
+                <KeyCodeCombination alt="UP" code="S" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
               </accelerator>
             </MenuItem>
             <MenuItem mnemonicParsing="false" onAction="#handleSaveAs" text="Save As…" />

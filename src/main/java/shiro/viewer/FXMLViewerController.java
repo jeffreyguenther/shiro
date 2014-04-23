@@ -21,6 +21,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
@@ -29,11 +30,15 @@ import javafx.scene.control.TextArea;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Arc;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
@@ -87,13 +92,22 @@ public class FXMLViewerController {
         lightTable = new Group();
         moveContext = new MoveContext();
         selectedTile = null;
+        root.setBottom(null);
+        
+        
     }
 
     @FXML
     private void handleRun(ActionEvent event) {
+        run();
+    }
+    
+    public void run(){
         altsList.getItems().clear();
         gallery.getChildren().clear();
         lightTable.getChildren().clear();
+        snapshots.clear();
+        layers.clear();
         model.clear();
 
         model.loadCode(code.getText());
@@ -354,6 +368,11 @@ public class FXMLViewerController {
             Circle c = getCircle(n);
             canvas.getChildren().add(c);
         }
+        
+        for(shiro.Node n: model.getNodesOfType("Arc")){
+            Arc ac = getArc(n);
+            canvas.getChildren().add(ac);
+        }
 
 //        // for each point in the model
 //        for (shiro.Node n : model.getNodesOfType("Point")) {
@@ -373,6 +392,7 @@ public class FXMLViewerController {
 //        p.setUserData(n.getFullName());
 //        return p;
 //    }
+    
     /**
      * Create a Line to
      *
@@ -414,9 +434,9 @@ public class FXMLViewerController {
 
     public Circle getCircle(shiro.Node n) {
         Port ePort = n.getSelectedEvaluatedPort();
-        Value rect = ePort.getValueForIndex(0);
+        Value circle = ePort.getValueForIndex(0);
 
-        Circle cTemp = (Circle) rect.getValue();
+        Circle cTemp = (Circle) circle.getValue();
 
         Circle c = new Circle();
         c.setRadius(cTemp.getRadius());
@@ -425,6 +445,27 @@ public class FXMLViewerController {
         c.setStroke(cTemp.getStroke());
         c.setStrokeWidth(cTemp.getStrokeWidth());
         c.setFill(cTemp.getFill());
+
+        return c;
+    }
+    
+    public Arc getArc(shiro.Node n) {
+        Port ePort = n.getSelectedEvaluatedPort();
+        Value arc = ePort.getValueForIndex(0);
+
+        Arc cTemp = (Arc) arc.getValue();
+
+        Arc c = new Arc();
+        c.setRadiusX(cTemp.getRadiusX());
+        c.setRadiusY(cTemp.getRadiusY());
+        c.setCenterX(cTemp.getCenterX());
+        c.setCenterY(cTemp.getCenterY());
+        c.setStartAngle(cTemp.getStartAngle());
+        c.setLength(cTemp.getLength());
+        c.setStroke(cTemp.getStroke());
+        c.setStrokeWidth(cTemp.getStrokeWidth());
+        c.setFill(cTemp.getFill());
+        c.setType(cTemp.getType());
 
         return c;
     }
