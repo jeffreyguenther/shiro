@@ -1,4 +1,4 @@
-// Generated from /Users/jeffreyguenther/Development/shiro/src/main/java/shiro/interpreter/Shiro.g4 by ANTLR 4.2.1
+// Generated from /Users/jeffreyguenther/Development/shiro/src/main/java/shiro/interpreter/Shiro.g4 by ANTLR 4.2.2
 package shiro.interpreter;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
@@ -1892,7 +1892,7 @@ public class ShiroParser extends Parser {
 			setState(257);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,15,_ctx);
-			while ( _alt!=2 && _alt!=-1 ) {
+			while ( _alt!=2 && _alt!=ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					{
 					{
@@ -2036,6 +2036,18 @@ public class ShiroParser extends Parser {
 			if ( listener instanceof ShiroListener ) ((ShiroListener)listener).exitOrExp(this);
 		}
 	}
+	public static class StringExpContext extends ExprContext {
+		public TerminalNode STRING_LITERAL() { return getToken(ShiroParser.STRING_LITERAL, 0); }
+		public StringExpContext(ExprContext ctx) { copyFrom(ctx); }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof ShiroListener ) ((ShiroListener)listener).enterStringExp(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof ShiroListener ) ((ShiroListener)listener).exitStringExp(this);
+		}
+	}
 	public static class AddExpContext extends ExprContext {
 		public List<ExprContext> expr() {
 			return getRuleContexts(ExprContext.class);
@@ -2084,7 +2096,7 @@ public class ShiroParser extends Parser {
 			int _alt;
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(271);
+			setState(272);
 			switch (_input.LA(1)) {
 			case IDENT:
 				{
@@ -2103,28 +2115,36 @@ public class ShiroParser extends Parser {
 				setState(270); match(NUMBER);
 				}
 				break;
+			case STRING_LITERAL:
+				{
+				_localctx = new StringExpContext(_localctx);
+				_ctx = _localctx;
+				_prevctx = _localctx;
+				setState(271); match(STRING_LITERAL);
+				}
+				break;
 			default:
 				throw new NoViableAltException(this);
 			}
 			_ctx.stop = _input.LT(-1);
-			setState(284);
+			setState(285);
 			_errHandler.sync(this);
 			_alt = getInterpreter().adaptivePredict(_input,19,_ctx);
-			while ( _alt!=2 && _alt!=-1 ) {
+			while ( _alt!=2 && _alt!=ATN.INVALID_ALT_NUMBER ) {
 				if ( _alt==1 ) {
 					if ( _parseListeners!=null ) triggerExitRuleEvent();
 					_prevctx = _localctx;
 					{
-					setState(282);
+					setState(283);
 					switch ( getInterpreter().adaptivePredict(_input,18,_ctx) ) {
 					case 1:
 						{
 						_localctx = new OrExpContext(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
-						setState(273);
-						if (!(precpred(_ctx, 5))) throw new FailedPredicateException(this, "precpred(_ctx, 5)");
-						setState(274); match(OR_OP);
-						setState(275); expr(6);
+						setState(274);
+						if (!(precpred(_ctx, 6))) throw new FailedPredicateException(this, "precpred(_ctx, 6)");
+						setState(275); match(OR_OP);
+						setState(276); expr(7);
 						}
 						break;
 
@@ -2132,15 +2152,15 @@ public class ShiroParser extends Parser {
 						{
 						_localctx = new MultExpContext(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
-						setState(276);
-						if (!(precpred(_ctx, 4))) throw new FailedPredicateException(this, "precpred(_ctx, 4)");
 						setState(277);
+						if (!(precpred(_ctx, 5))) throw new FailedPredicateException(this, "precpred(_ctx, 5)");
+						setState(278);
 						_la = _input.LA(1);
 						if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << MULT_OP) | (1L << DIV_OP) | (1L << MOD_OP))) != 0)) ) {
 						_errHandler.recoverInline(this);
 						}
 						consume();
-						setState(278); expr(5);
+						setState(279); expr(6);
 						}
 						break;
 
@@ -2148,21 +2168,21 @@ public class ShiroParser extends Parser {
 						{
 						_localctx = new AddExpContext(new ExprContext(_parentctx, _parentState));
 						pushNewRecursionContext(_localctx, _startState, RULE_expr);
-						setState(279);
-						if (!(precpred(_ctx, 3))) throw new FailedPredicateException(this, "precpred(_ctx, 3)");
 						setState(280);
+						if (!(precpred(_ctx, 4))) throw new FailedPredicateException(this, "precpred(_ctx, 4)");
+						setState(281);
 						_la = _input.LA(1);
 						if ( !(_la==PLUS_OP || _la==MINUS_OP) ) {
 						_errHandler.recoverInline(this);
 						}
 						consume();
-						setState(281); expr(4);
+						setState(282); expr(5);
 						}
 						break;
 					}
 					} 
 				}
-				setState(286);
+				setState(287);
 				_errHandler.sync(this);
 				_alt = getInterpreter().adaptivePredict(_input,19,_ctx);
 			}
@@ -2187,17 +2207,17 @@ public class ShiroParser extends Parser {
 	}
 	private boolean expr_sempred(ExprContext _localctx, int predIndex) {
 		switch (predIndex) {
-		case 0: return precpred(_ctx, 5);
+		case 0: return precpred(_ctx, 6);
 
-		case 1: return precpred(_ctx, 4);
+		case 1: return precpred(_ctx, 5);
 
-		case 2: return precpred(_ctx, 3);
+		case 2: return precpred(_ctx, 4);
 		}
 		return true;
 	}
 
 	public static final String _serializedATN =
-		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3#\u0122\4\2\t\2\4"+
+		"\3\u0430\ud6d1\u8206\uad2d\u4417\uaef1\u8d80\uaadd\3#\u0123\4\2\t\2\4"+
 		"\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t"+
 		"\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\4\20\t\20\4\21\t\21\4\22\t\22"+
 		"\4\23\t\23\4\24\t\24\4\25\t\25\4\26\t\26\4\27\t\27\4\30\t\30\4\31\t\31"+
@@ -2216,18 +2236,18 @@ public class ShiroParser extends Parser {
 		"\3\33\3\34\3\34\3\34\3\34\3\35\3\35\3\35\3\35\3\36\3\36\5\36\u00e6\n\36"+
 		"\3\36\3\36\3\37\3\37\3 \3 \3!\3!\3!\3!\3!\3\"\3\"\3#\3#\3#\7#\u00f8\n"+
 		"#\f#\16#\u00fb\13#\3$\3$\3%\3%\3%\7%\u0102\n%\f%\16%\u0105\13%\3%\3%\3"+
-		"%\3%\5%\u010b\n%\3&\3&\3\'\3\'\3\'\5\'\u0112\n\'\3\'\3\'\3\'\3\'\3\'\3"+
-		"\'\3\'\3\'\3\'\7\'\u011d\n\'\f\'\16\'\u0120\13\'\3\'\2\3L(\2\4\6\b\n\f"+
-		"\16\20\22\24\26\30\32\34\36 \"$&(*,.\60\62\64\668:<>@BDFHJL\2\7\3\2\21"+
-		"\22\3\2\3\4\3\2\35\36\3\2\30\32\3\2\26\27\u011b\2O\3\2\2\2\4X\3\2\2\2"+
-		"\6Z\3\2\2\2\bg\3\2\2\2\nk\3\2\2\2\fn\3\2\2\2\16q\3\2\2\2\20t\3\2\2\2\22"+
-		"w\3\2\2\2\24y\3\2\2\2\26{\3\2\2\2\30}\3\2\2\2\32\177\3\2\2\2\34\u0081"+
+		"%\3%\5%\u010b\n%\3&\3&\3\'\3\'\3\'\3\'\5\'\u0113\n\'\3\'\3\'\3\'\3\'\3"+
+		"\'\3\'\3\'\3\'\3\'\7\'\u011e\n\'\f\'\16\'\u0121\13\'\3\'\2\3L(\2\4\6\b"+
+		"\n\f\16\20\22\24\26\30\32\34\36 \"$&(*,.\60\62\64\668:<>@BDFHJL\2\7\3"+
+		"\2\21\22\3\2\3\4\3\2\35\36\3\2\30\32\3\2\26\27\u011d\2O\3\2\2\2\4X\3\2"+
+		"\2\2\6Z\3\2\2\2\bg\3\2\2\2\nk\3\2\2\2\fn\3\2\2\2\16q\3\2\2\2\20t\3\2\2"+
+		"\2\22w\3\2\2\2\24y\3\2\2\2\26{\3\2\2\2\30}\3\2\2\2\32\177\3\2\2\2\34\u0081"+
 		"\3\2\2\2\36\u008e\3\2\2\2 \u0094\3\2\2\2\"\u0098\3\2\2\2$\u00a8\3\2\2"+
 		"\2&\u00b0\3\2\2\2(\u00b2\3\2\2\2*\u00b4\3\2\2\2,\u00c2\3\2\2\2.\u00c4"+
 		"\3\2\2\2\60\u00c6\3\2\2\2\62\u00cf\3\2\2\2\64\u00d5\3\2\2\2\66\u00db\3"+
 		"\2\2\28\u00df\3\2\2\2:\u00e5\3\2\2\2<\u00e9\3\2\2\2>\u00eb\3\2\2\2@\u00ed"+
 		"\3\2\2\2B\u00f2\3\2\2\2D\u00f4\3\2\2\2F\u00fc\3\2\2\2H\u00fe\3\2\2\2J"+
-		"\u010c\3\2\2\2L\u0111\3\2\2\2NP\5\4\3\2ON\3\2\2\2PQ\3\2\2\2QO\3\2\2\2"+
+		"\u010c\3\2\2\2L\u0112\3\2\2\2NP\5\4\3\2ON\3\2\2\2PQ\3\2\2\2QO\3\2\2\2"+
 		"QR\3\2\2\2R\3\3\2\2\2SY\5\34\17\2TY\5\6\4\2UY\5*\26\2VY\5\"\22\2WY\7#"+
 		"\2\2XS\3\2\2\2XT\3\2\2\2XU\3\2\2\2XV\3\2\2\2XW\3\2\2\2Y\5\3\2\2\2Z[\7"+
 		"\17\2\2[\\\5\22\n\2\\]\7\23\2\2]^\7#\2\2^_\5\b\5\2_`\7\24\2\2`\7\3\2\2"+
@@ -2281,14 +2301,15 @@ public class ShiroParser extends Parser {
 		"\u0103\3\2\2\2\u0106\u0107\7\33\2\2\u0107\u0108\5J&\2\u0108\u0109\7\34"+
 		"\2\2\u0109\u010b\3\2\2\2\u010a\u0106\3\2\2\2\u010a\u010b\3\2\2\2\u010b"+
 		"I\3\2\2\2\u010c\u010d\t\4\2\2\u010dK\3\2\2\2\u010e\u010f\b\'\1\2\u010f"+
-		"\u0112\5H%\2\u0110\u0112\7\36\2\2\u0111\u010e\3\2\2\2\u0111\u0110\3\2"+
-		"\2\2\u0112\u011e\3\2\2\2\u0113\u0114\f\7\2\2\u0114\u0115\7\25\2\2\u0115"+
-		"\u011d\5L\'\b\u0116\u0117\f\6\2\2\u0117\u0118\t\5\2\2\u0118\u011d\5L\'"+
-		"\7\u0119\u011a\f\5\2\2\u011a\u011b\t\6\2\2\u011b\u011d\5L\'\6\u011c\u0113"+
-		"\3\2\2\2\u011c\u0116\3\2\2\2\u011c\u0119\3\2\2\2\u011d\u0120\3\2\2\2\u011e"+
-		"\u011c\3\2\2\2\u011e\u011f\3\2\2\2\u011fM\3\2\2\2\u0120\u011e\3\2\2\2"+
-		"\26QXgi\u0087\u0094\u0096\u00a2\u00a4\u00bb\u00c2\u00cb\u00d3\u00e5\u00f9"+
-		"\u0103\u010a\u0111\u011c\u011e";
+		"\u0113\5H%\2\u0110\u0113\7\36\2\2\u0111\u0113\7\35\2\2\u0112\u010e\3\2"+
+		"\2\2\u0112\u0110\3\2\2\2\u0112\u0111\3\2\2\2\u0113\u011f\3\2\2\2\u0114"+
+		"\u0115\f\b\2\2\u0115\u0116\7\25\2\2\u0116\u011e\5L\'\t\u0117\u0118\f\7"+
+		"\2\2\u0118\u0119\t\5\2\2\u0119\u011e\5L\'\b\u011a\u011b\f\6\2\2\u011b"+
+		"\u011c\t\6\2\2\u011c\u011e\5L\'\7\u011d\u0114\3\2\2\2\u011d\u0117\3\2"+
+		"\2\2\u011d\u011a\3\2\2\2\u011e\u0121\3\2\2\2\u011f\u011d\3\2\2\2\u011f"+
+		"\u0120\3\2\2\2\u0120M\3\2\2\2\u0121\u011f\3\2\2\2\26QXgi\u0087\u0094\u0096"+
+		"\u00a2\u00a4\u00bb\u00c2\u00cb\u00d3\u00e5\u00f9\u0103\u010a\u0112\u011d"+
+		"\u011f";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

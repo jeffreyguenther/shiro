@@ -133,7 +133,7 @@ expr
         |       expr ( PLUS_OP | MINUS_OP ) expr        # AddExp
         |       path                                    # PathExp
 	|	NUMBER                                  # NumberExp
-    //    |     STRING_LITERAL                          # StringExp
+        |       STRING_LITERAL                          # StringExp
     //    |	'(' expr ')'                            # BracketsExp
 	;
 

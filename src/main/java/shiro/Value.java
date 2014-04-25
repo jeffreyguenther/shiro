@@ -57,21 +57,21 @@ public class Value{
     
     public Value subtract(Value v){
         if(this.type.equals(v.type) && this.type.equals(Double.class)){
-            return Value.createFloat((Float) value - v.getValueAsFloat());
+            return Value.createDouble((Float) value - v.getValueAsFloat());
         }
         return null;
     }
     
     public Value times(Value v){
-        if(this.type.equals(v.type) && this.type.equals(Float.class)){
-            return Value.createFloat((Float) value * v.getValueAsFloat());
+        if(this.type.equals(v.type) && this.type.equals(Double.class)){
+            return Value.createDouble((Double) value * v.getValueAsDouble());
         }
         return null;
     }
     
     public Value over(Value v){
         if(this.type.equals(v.type) && this.type.equals(Double.class)){
-            return Value.createFloat((Float) value / v.getValueAsFloat());
+            return Value.createDouble((Double) value / v.getValueAsFloat());
         }
         return null;
     }

@@ -14,6 +14,7 @@ import shiro.expressions.Mod;
 import shiro.expressions.Multiply;
 import shiro.expressions.Or;
 import shiro.expressions.Path;
+import shiro.expressions.SString;
 import shiro.expressions.Subtract;
 
 /**
@@ -103,6 +104,15 @@ public class ShiroBasePassListener extends ShiroBaseListener {
         // save the result for later
         setExpr(ctx, n);
     }
+
+    @Override
+    public void exitStringExp(ShiroParser.StringExpContext ctx) {
+        String literal = ctx.STRING_LITERAL().getText();
+        SString s = new SString(literal.substring(1, literal.length() -1));
+        setExpr(ctx, s);
+    }
+    
+    
     
     protected Path createPath(Scope currentScope, ShiroParser.PathContext ctx){
         // Declare a list to store the path's parts

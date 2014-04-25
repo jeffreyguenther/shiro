@@ -1,4 +1,4 @@
-// Generated from /Users/jeffreyguenther/Development/shiro/src/main/java/shiro/interpreter/Shiro.g4 by ANTLR 4.2.1
+// Generated from /Users/jeffreyguenther/Development/shiro/src/main/java/shiro/interpreter/Shiro.g4 by ANTLR 4.2.2
 package shiro.interpreter;
 
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -37,6 +37,19 @@ public class ShiroBaseListener implements ShiroListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitStateParent(@NotNull ShiroParser.StateParentContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterStringExp(@NotNull ShiroParser.StringExpContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitStringExp(@NotNull ShiroParser.StringExpContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

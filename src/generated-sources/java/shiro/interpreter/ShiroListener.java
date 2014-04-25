@@ -1,4 +1,4 @@
-// Generated from /Users/jeffreyguenther/Development/shiro/src/main/java/shiro/interpreter/Shiro.g4 by ANTLR 4.2.1
+// Generated from /Users/jeffreyguenther/Development/shiro/src/main/java/shiro/interpreter/Shiro.g4 by ANTLR 4.2.2
 package shiro.interpreter;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
@@ -29,6 +29,17 @@ public interface ShiroListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitStateParent(@NotNull ShiroParser.StateParentContext ctx);
+
+	/**
+	 * Enter a parse tree produced by {@link ShiroParser#StringExp}.
+	 * @param ctx the parse tree
+	 */
+	void enterStringExp(@NotNull ShiroParser.StringExpContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ShiroParser#StringExp}.
+	 * @param ctx the parse tree
+	 */
+	void exitStringExp(@NotNull ShiroParser.StringExpContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link ShiroParser#mfName}.
