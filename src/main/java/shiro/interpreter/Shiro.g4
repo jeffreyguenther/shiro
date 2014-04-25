@@ -47,14 +47,14 @@ nodestmt
     ;
 
 nodeInternal
-    :   ( portAssignment
-        | portstmt
+    :   ( portstmt
         | subjunctDeclNodeProd
+        | OPTION? nodestmt
         | NEWLINE)+
     ;
 	
 subjunctDeclNodeProd
-	:	OPTION instanceName=IDENT REFINES_OP type=IDENT BEGIN NEWLINE
+	:	OPTION instanceName=IDENT PROD_OP type=IDENT BEGIN NEWLINE
 		(portAssignment | NEWLINE)+
 		END
 	;
