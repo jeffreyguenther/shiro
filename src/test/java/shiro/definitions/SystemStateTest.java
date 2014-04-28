@@ -12,7 +12,6 @@ import java.util.Map;
 import junit.framework.Assert;
 import org.junit.Test;
 import shiro.Node;
-import shiro.SubjunctiveNode;
 
 /**
  *
@@ -25,9 +24,9 @@ public class SystemStateTest {
         
         GraphDefinition g = new GraphDefinition("line");
         Node n = new Node("Point", "P1", null);
-        SubjunctiveNode sn = new SubjunctiveNode("endPoint", null);
+        Node sn = new Node("EndPoint", "endPoint", null);
         
-        Map<SubjunctiveNode, Node> subjuncts = new HashMap<>();
+        Map<Node, Node> subjuncts = new HashMap<>();
         subjuncts.put(sn, n);
         
         SystemState state = new SystemState(g, "DiagonalLine", "", subjuncts);

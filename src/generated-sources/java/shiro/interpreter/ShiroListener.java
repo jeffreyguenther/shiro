@@ -20,17 +20,6 @@ public interface ShiroListener extends ParseTreeListener {
 	void exitStateGraphStmt(@NotNull ShiroParser.StateGraphStmtContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link ShiroParser#stateParent}.
-	 * @param ctx the parse tree
-	 */
-	void enterStateParent(@NotNull ShiroParser.StateParentContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ShiroParser#stateParent}.
-	 * @param ctx the parse tree
-	 */
-	void exitStateParent(@NotNull ShiroParser.StateParentContext ctx);
-
-	/**
 	 * Enter a parse tree produced by {@link ShiroParser#StringExp}.
 	 * @param ctx the parse tree
 	 */
@@ -62,28 +51,6 @@ public interface ShiroListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitAddExp(@NotNull ShiroParser.AddExpContext ctx);
-
-	/**
-	 * Enter a parse tree produced by {@link ShiroParser#subjunctSelector}.
-	 * @param ctx the parse tree
-	 */
-	void enterSubjunctSelector(@NotNull ShiroParser.SubjunctSelectorContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ShiroParser#subjunctSelector}.
-	 * @param ctx the parse tree
-	 */
-	void exitSubjunctSelector(@NotNull ShiroParser.SubjunctSelectorContext ctx);
-
-	/**
-	 * Enter a parse tree produced by {@link ShiroParser#stateCommentStmt}.
-	 * @param ctx the parse tree
-	 */
-	void enterStateCommentStmt(@NotNull ShiroParser.StateCommentStmtContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ShiroParser#stateCommentStmt}.
-	 * @param ctx the parse tree
-	 */
-	void exitStateCommentStmt(@NotNull ShiroParser.StateCommentStmtContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link ShiroParser#portName}.
@@ -273,6 +240,17 @@ public interface ShiroListener extends ParseTreeListener {
 	void exitGraphLine(@NotNull ShiroParser.GraphLineContext ctx);
 
 	/**
+	 * Enter a parse tree produced by {@link ShiroParser#useStatement}.
+	 * @param ctx the parse tree
+	 */
+	void enterUseStatement(@NotNull ShiroParser.UseStatementContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link ShiroParser#useStatement}.
+	 * @param ctx the parse tree
+	 */
+	void exitUseStatement(@NotNull ShiroParser.UseStatementContext ctx);
+
+	/**
 	 * Enter a parse tree produced by {@link ShiroParser#pathIndex}.
 	 * @param ctx the parse tree
 	 */
@@ -282,17 +260,6 @@ public interface ShiroListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitPathIndex(@NotNull ShiroParser.PathIndexContext ctx);
-
-	/**
-	 * Enter a parse tree produced by {@link ShiroParser#stateParentStmt}.
-	 * @param ctx the parse tree
-	 */
-	void enterStateParentStmt(@NotNull ShiroParser.StateParentStmtContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ShiroParser#stateParentStmt}.
-	 * @param ctx the parse tree
-	 */
-	void exitStateParentStmt(@NotNull ShiroParser.StateParentStmtContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link ShiroParser#portDecl}.
@@ -315,39 +282,6 @@ public interface ShiroListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitMfCall(@NotNull ShiroParser.MfCallContext ctx);
-
-	/**
-	 * Enter a parse tree produced by {@link ShiroParser#nodeType}.
-	 * @param ctx the parse tree
-	 */
-	void enterNodeType(@NotNull ShiroParser.NodeTypeContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ShiroParser#nodeType}.
-	 * @param ctx the parse tree
-	 */
-	void exitNodeType(@NotNull ShiroParser.NodeTypeContext ctx);
-
-	/**
-	 * Enter a parse tree produced by {@link ShiroParser#sNode}.
-	 * @param ctx the parse tree
-	 */
-	void enterSNode(@NotNull ShiroParser.SNodeContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ShiroParser#sNode}.
-	 * @param ctx the parse tree
-	 */
-	void exitSNode(@NotNull ShiroParser.SNodeContext ctx);
-
-	/**
-	 * Enter a parse tree produced by {@link ShiroParser#subjunctDecl}.
-	 * @param ctx the parse tree
-	 */
-	void enterSubjunctDecl(@NotNull ShiroParser.SubjunctDeclContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ShiroParser#subjunctDecl}.
-	 * @param ctx the parse tree
-	 */
-	void exitSubjunctDecl(@NotNull ShiroParser.SubjunctDeclContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link ShiroParser#portstmt}.
@@ -394,17 +328,6 @@ public interface ShiroListener extends ParseTreeListener {
 	void exitNodestmt(@NotNull ShiroParser.NodestmtContext ctx);
 
 	/**
-	 * Enter a parse tree produced by {@link ShiroParser#stateTimeStmt}.
-	 * @param ctx the parse tree
-	 */
-	void enterStateTimeStmt(@NotNull ShiroParser.StateTimeStmtContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ShiroParser#stateTimeStmt}.
-	 * @param ctx the parse tree
-	 */
-	void exitStateTimeStmt(@NotNull ShiroParser.StateTimeStmtContext ctx);
-
-	/**
 	 * Enter a parse tree produced by {@link ShiroParser#portDeclInit}.
 	 * @param ctx the parse tree
 	 */
@@ -414,28 +337,6 @@ public interface ShiroListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitPortDeclInit(@NotNull ShiroParser.PortDeclInitContext ctx);
-
-	/**
-	 * Enter a parse tree produced by {@link ShiroParser#comment}.
-	 * @param ctx the parse tree
-	 */
-	void enterComment(@NotNull ShiroParser.CommentContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ShiroParser#comment}.
-	 * @param ctx the parse tree
-	 */
-	void exitComment(@NotNull ShiroParser.CommentContext ctx);
-
-	/**
-	 * Enter a parse tree produced by {@link ShiroParser#time}.
-	 * @param ctx the parse tree
-	 */
-	void enterTime(@NotNull ShiroParser.TimeContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link ShiroParser#time}.
-	 * @param ctx the parse tree
-	 */
-	void exitTime(@NotNull ShiroParser.TimeContext ctx);
 
 	/**
 	 * Enter a parse tree produced by {@link ShiroParser#activation}.

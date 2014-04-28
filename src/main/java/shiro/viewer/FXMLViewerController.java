@@ -400,7 +400,7 @@ public class FXMLViewerController {
      * @return
      */
     public Line getLine(shiro.Node n) {
-        Port ePort = n.getSelectedEvaluatedPort();
+        Port ePort = n.getActiveEvalPort();
         Value line = ePort.getValueForIndex(0);
 
         Line lTemp = (Line) line.getValue();
@@ -415,7 +415,7 @@ public class FXMLViewerController {
     }
 
     public Rectangle getRect(shiro.Node n) {
-        Port ePort = n.getSelectedEvaluatedPort();
+        Port ePort = n.getActiveEvalPort();
         Value rect = ePort.getValueForIndex(0);
 
         Rectangle rTemp = (Rectangle) rect.getValue();
@@ -433,7 +433,7 @@ public class FXMLViewerController {
     }
 
     public Circle getCircle(shiro.Node n) {
-        Port ePort = n.getSelectedEvaluatedPort();
+        Port ePort = n.getActiveEvalPort();
         Value circle = ePort.getValueForIndex(0);
 
         Circle cTemp = (Circle) circle.getValue();
@@ -450,7 +450,7 @@ public class FXMLViewerController {
     }
     
     public Arc getArc(shiro.Node n) {
-        Port ePort = n.getSelectedEvaluatedPort();
+        Port ePort = n.getActiveEvalPort();
         Value arc = ePort.getValueForIndex(0);
 
         Arc cTemp = (Arc) arc.getValue();

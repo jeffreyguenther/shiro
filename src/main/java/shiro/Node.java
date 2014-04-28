@@ -3,7 +3,9 @@ package shiro;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import static java.util.stream.Collectors.toSet;
 import shiro.dag.DependencyRelation;
+import shiro.definitions.PortType;
 import shiro.events.NodeEvent;
 import shiro.events.NodeEventListener;
 import shiro.events.PortEvent;
@@ -12,155 +14,174 @@ import shiro.expressions.Expression;
 import shiro.expressions.Path;
 
 /**
- * Specifies a node in a subjunctive dependency graph.
- * A node is simply a reference to a collection of ports.
- * Each node has at least one special port called an "evaluated port." We will
- * call them e-ports for short. This port acts as an update method for the node.
- * All node dependent ports depend on the evaluated port.
+ * Specifies a node in a subjunctive dependency graph. A node is simply a
+ * reference to a collection of ports. Each node has at least one special port
+ * called an "evaluated port." We will call them e-ports for short. This port
+ * acts as an update method for the node. All node dependent ports depend on the
+ * evaluated port.
+ *
  * @author jeffreyguenther
  */
-public class Node implements PortEventListener, Container, Symbol{
-    // the node's parent scope; The value maybe another node, subjunctive node,
-    // or the global parametric system.
+public class Node implements PortEventListener, Symbol, Scope {
+
+    // the node's parent scope; The value maybe another node or the global parametric system.
     private Scope parentScope;
     // type string for the node
-    private String defPath;
+    private String type;
     // node's fully qualified name
     private String fullName;
     // node name
     private String name;
     // flag to indicate if node is active
     private boolean active;
-    // map of all  ports in node (includes e-ports); name -> Port
+
+    //--- Contained items ----
+    // options - could be nodes, or ports
+    private Map<String, Symbol> options;
+    // active option
+    private Symbol activeOption;
+    // nested nodes
+    private Map<String, Node> nestedNodes;
+    // ports mapped localname -> Port
     private Map<String, Port> ports;
-    // set of evaluated ports (e-port); name -> Port
-    private Map<String, Port> evaluatedPorts;
-    // currently select e-port
-    private Port selectedEvaluatedPort;
-    // map of the nested container objects; name -> Container
-    private Map<String, Container> nestedContainers;
 
     // objects listening to the node
     private Set<NodeEventListener> listeners;
-    
 
     /**
      * Create a node
+     *
      * @param type type string of the node such as "Point", or "Circle"
      * @param name name of the node
      * @param scope scope of the node
      */
     public Node(String type, String name, Scope scope) {
         // type of node
-        this.defPath = type; 
+        this.type = type;
         // set the enclosing scope
         this.parentScope = scope;
         // set the parent's full
-        
-        if(scope != null){
-            this.fullName = Path.createFullName(scope.getFullName() , name);
-        }else{
+
+        if (scope != null) {
+            this.fullName = Path.createFullName(scope.getFullName(), name);
+        } else {
             this.fullName = name;
         }
-        
+
         // set the name of the node
         this.name = name;
         // set the node active by default
         this.active = true;
+
+        // create map of options
+        options = new HashMap<>();
+        // initialize the first option to null
+        activeOption = null;
+        // map of nested nodes
+        nestedNodes = new HashMap<>();
+
         // create map for the node's ports
         ports = new HashMap<>();
-        // create set for the node's evaluate ports
-        evaluatedPorts = new HashMap<>();
-        // no evaluated port is selected when the object is created
-        selectedEvaluatedPort = null;
-        //initialize map of nested contaiers
-        nestedContainers = new HashMap<>();
 
         // intialize set of listeners
         listeners = new HashSet<>();
     }
 
     /**
-     * Default constructor
-     * Creates a node with no type, no name, and no scope
+     * Default constructor Creates a node with no type, no name, and no scope
      */
-    public Node(){
+    public Node() {
         this("", "", null);
     }
 
-    /**
-     * Nest a container inside the node.
-     * @param c the container to be nested
-     */
-    @Override
-    public void addNestedContainer(Container c){
-        // add a contained item
-        nestedContainers.put(c.getName(), c);
+    public void addNestedNode(Node n) {
+        nestedNodes.put(n.getName(), n);
+    }
+    
+    public boolean hasNestedNodes(){
+        return !nestedNodes.isEmpty();
+    }
+    
+    public Set<Node> getNestedNodes(){
+        return new HashSet<>(nestedNodes.values());
     }
 
-    /**
-     * Indicates whether the node has nested containers
-     * @return true if node has nested containers, false if not
-     */
-    @Override
-    public boolean hasNestedContainers(){
-        return !nestedContainers.isEmpty();
+    public void setActiveOption(String name) {
+        Symbol active = options.get(name);
+
+        Set<Symbol> inactive = new HashSet<>(options.values());
+        inactive.remove(active);
+
+        for (Symbol s : inactive) {
+            s.deactivate();
+        }
+
+        active.activate();
+    }
+    
+    public Port getActiveEvalPort(){
+        if(activeOption.getSymbolType().equals(PortType.Evaluated)){
+            return (Port) activeOption;
+        }
+        
+        return null;
+    }
+    
+    public void addOption(Symbol option){
+        if(option.getSymbolType().equals(SymbolType.NODE)){
+            Node n = (Node) option;
+            options.put(n.getName(), option);
+            addNestedNode(n);
+        }
+    }
+    
+    public void activateDefaultOption(){
+        Set<Symbol> inactive = new HashSet<>(options.values());
+        inactive.remove(activeOption);
+
+        for (Symbol s : inactive) {
+            s.deactivate();
+        }
+
+        activeOption.activate();
     }
 
-    /**
-     * Get the set of nested nodes
-     * @return set of nested nodes
-     */
-    @Override
-    public Set<Container> getNestedContainers() {
-        return (Set<Container>) nestedContainers.values();
-    }
-
-    public Node getNode(Path p){
+    public Node getNode(Path p) {
         Node match = null;
 
-        if(hasNestedContainers() && !p.isPathToPortIndex()){
-            Container c_match = nestedContainers.get(p.getCurrentPathHead());
-            match = (Node) c_match;
-            if(match != null){
+        if (!nestedNodes.isEmpty() && !p.isPathToPortIndex()) {
+            match = nestedNodes.get(p.getCurrentPathHead());
+            if (match != null) {
                 match.getNode(p);
             }
-        }else{
+        } else {
             return match;
         }
 
         return match;
     }
 
-    /***
-     * Add the evaluated port p to the node
-     * Does not deal with dependencies. Dependencies are created by in DepGraph.
-     * @param p port to be added as evaluated port
-     */
-    public void addEvaluatedPort(Port p){
-        // add the port to both sets
-        evaluatedPorts.put(p.getName(), p);
-        addPort(p);
-    }
-    
     /**
      * Get the definition path of the node
+     *
      * @return the definition path of the node. Example, Point, or Area.Circle
      */
-    public String getDefPath(){
-        return defPath;
+    public String getType() {
+        return type;
     }
-    
+
     /**
      * Set the definition path of the node
+     *
      * @param path of the node's prototype
      */
-    public void setDefPath(String path){
-        this.defPath = path;
+    public void setType(String path) {
+        this.type = path;
     }
 
     /**
      * Get the name of the node
+     *
      * @return the name of the node
      */
     @Override
@@ -168,8 +189,10 @@ public class Node implements PortEventListener, Container, Symbol{
         return name;
     }
 
-    /***
+    /**
+     * *
      * Set the name of the node
+     *
      * @param name of the node to be set
      */
     public void setName(String name) {
@@ -179,15 +202,17 @@ public class Node implements PortEventListener, Container, Symbol{
 
     /**
      * Get the node's full name
+     *
      * @return node's full name
      */
     @Override
     public String getFullName() {
         return fullName;
     }
-    
+
     /**
      * Set the node's full name
+     *
      * @param fullName name to be set
      */
     public void setFullName(String fullName) {
@@ -197,16 +222,18 @@ public class Node implements PortEventListener, Container, Symbol{
 
     /**
      * Get a path object representing the full name
+     *
      * @return a Path object corresponding to the full name.
      */
     @Override
-    public Path getPath(){
-    	List<String> pathParts = Arrays.asList(fullName.split("\\."));
-    	return new Path(parentScope, pathParts);
+    public Path getPath() {
+        List<String> pathParts = Arrays.asList(fullName.split("\\."));
+        return new Path(parentScope, pathParts);
     }
 
     /**
      * Get a reference to the scop object the node is contained in
+     *
      * @return a reference to the parent scope
      */
     public Scope getParentScope() {
@@ -215,7 +242,8 @@ public class Node implements PortEventListener, Container, Symbol{
 
     /**
      * Set the parent scope
-     * @param enclosingScope 
+     *
+     * @param enclosingScope
      */
     public void setParentScope(Scope enclosingScope) {
         this.parentScope = enclosingScope;
@@ -223,6 +251,7 @@ public class Node implements PortEventListener, Container, Symbol{
 
     /**
      * Determine if the node is active
+     *
      * @return true/false depending if the node is active
      */
     public boolean isActive() {
@@ -230,10 +259,9 @@ public class Node implements PortEventListener, Container, Symbol{
     }
 
     /**
-     * Activate the node.
-     * Goes through all the ports the node references and sets them active.
-     * Takes care to only activate the selected evaluated port. All other e-ports
-     * are left inactive.
+     * Activate the node. Goes through all the ports the node references and
+     * sets them active. Takes care to only activate the selected evaluated
+     * port. All other e-ports are left inactive.
      */
     @Override
     public void activate() {
@@ -241,109 +269,95 @@ public class Node implements PortEventListener, Container, Symbol{
         this.active = true;
 
         // Activate all the ports
-        for(Port p: ports.values()){
-            // except the unselected evaluated ports
-            if(!evaluatedPorts.containsValue(p)){
-                p.activate();
-            }else if(evaluatedPorts.containsValue(p) && p.equals(selectedEvaluatedPort)){
-                p.activate();
-            }
+        for (Port p : ports.values()) {
+            p.activate();
         }
 
         // activate the nested containers
-        if(hasNestedContainers()){
-            for(Container c: nestedContainers.values()){
-                c.activate();
-            }
+        for (Node n : nestedNodes.values()) {
+            n.activate();
         }
+        
+        activateDefaultOption();
     }
 
-    /***
+    /**
+     * *
      * Deactivate the node by deactivating all of its ports.
      */
     @Override
-    public void deactivate(){
+    public void deactivate() {
         // Deactivate the node
         this.active = false;
 
         // Deactivate all the ports
-        for(Port p: ports.values()){
+        for (Port p : ports.values()) {
             p.deactivate();
         }
 
         // deactivate the nested container
-        if(hasNestedContainers()){
-            for(Container c: nestedContainers.values()){
-                c.deactivate();
-            }
+        for(Node n: nestedNodes.values()){
+            n.deactivate();
         }
     }
 
     /**
-     * Add a port to the node
-     * Registers the node as a listener to the port p's events
+     * Add a port to the node Registers the node as a listener to the port p's
+     * events
+     *
      * @param p port to be added
      */
-    public void addPort(Port p){
+    public void addPort(Port p) {
         p.addPortEventListener(this);
         ports.put(p.getName(), p);
     }
 
     /**
      * Remove a port from the node
+     *
      * @param p port to be removed
      * @return true if remove was successful, otherwise false
      */
-    public boolean removePort(Port p){
-        if(ports.remove(p.getName()) != null){
+    public boolean removePort(Port p) {
+        if (ports.remove(p.getName()) != null) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
 
-    /***
+    /**
+     * *
      * Gets a set of all the names of the ports
+     *
      * @return the set of the names of all of the ports in the node.
      */
-    public Set<String> getPortNames(){
-        Set<String> names = new HashSet<String>();
-        for(Port p: ports.values()){
-             // only give the names of the none evaluated ports
-             if(!evaluatedPorts.containsValue(p)){
-                names.add(p.getName());
-             }
-        }
-        return names;
-    }
-
-    public Set<Port> getPorts(){
-        return new LinkedHashSet<Port>(ports.values());
-    }
-
-    public Set<Port> getEvaluatedPorts(){
-        return new LinkedHashSet<>(evaluatedPorts.values());
-    }
-
-    public Port getSelectedEvaluatedPort(){
-        return selectedEvaluatedPort;
-    }
-    
-    @Override
-    public Symbol find(Path p) throws PathNotFoundException, PathNotAccessibleException{
-        Symbol matched = null;
+    public Set<String> getPortNames() {
+        Set<Port> ioPorts = ports.values().stream().filter((p) -> !p.getPortType().equals(PortType.Evaluated)).collect(toSet());
         
-        if(ports.containsKey(p.getCurrentPathHead())){
-            if(!evaluatedPorts.containsKey(p.getCurrentPathHead())){
+        return ioPorts.stream().map(p -> p.getName()).collect(toSet());
+    }
+
+    public Set<Port> getPorts() {
+        return new LinkedHashSet<>(ports.values());
+    }
+
+    @Override
+    public Symbol find(Path p) throws PathNotFoundException, PathNotAccessibleException {
+        Symbol matched = null;
+
+        if (ports.containsKey(p.getCurrentPathHead())) {
+            Port match = ports.get(p.getCurrentPathHead());
+            if (!match.getPortType().equals(PortType.Evaluated)) {
                 matched = ports.get(p.getCurrentPathHead());
-            }else if(evaluatedPorts.containsKey(p.getCurrentPathHead())){
+            } else{
                 throw new PathNotAccessibleException(p + " is not accessible. "
                         + "It is an evaluated port.");
             }
-        }else{
+        } else {
             throw new PathNotFoundException(p + "cannot be found.");
         }
-        
+
         return matched;
     }
 
@@ -351,32 +365,29 @@ public class Node implements PortEventListener, Container, Symbol{
     public Symbol find(String path) throws PathNotFoundException, PathNotAccessibleException {
         return find(Path.createPath(path));
     }
-    
-    
 
     @Override
-    public Symbol resolvePath(Path path) throws PathNotFoundException{
+    public Symbol resolvePath(Path path) throws PathNotFoundException {
         Symbol portReferenced = null;
 
         // if the value is local to the current node
         if (path.isAtEnd()) {
             String portName = path.getCurrentPathHead();
 
-
             // check each port to see if it is a match
             portReferenced = ports.get(portName);
             path.resetPathHead();
 
-        }else {
+        } else {
             // check the nested nodes
-            if (hasNestedContainers()) {
-                Scope nestedNodeMatch = nestedContainers.get(path.getCurrentPathHead());
-                if(nestedNodeMatch != null){
+            if (!nestedNodes.isEmpty()) {
+                Scope nestedNodeMatch = nestedNodes.get(path.getCurrentPathHead());
+                if (nestedNodeMatch != null) {
                     // pop the head and begin exploring
-                        path.popPathHead();
-                        portReferenced = nestedNodeMatch.resolvePath(path);
+                    path.popPathHead();
+                    portReferenced = nestedNodeMatch.resolvePath(path);
                 }
-            }else{ //CASE: no nested nodes to check
+            } else { //CASE: no nested nodes to check
 
                 // reset the path offset to allow future downward traversal
                 path.resetPathHead();
@@ -394,75 +405,22 @@ public class Node implements PortEventListener, Container, Symbol{
         return resolvePath(Path.createPath(path));
     }
 
-    /**
-     * Activate the evaluated port
-     * @param key path of the port to be activated
-     * @throws PathNotFoundException
-     */
-    @Override
-    public void activate(Path key) throws PathNotFoundException {
-        if(key.isAtEnd()){
-            try {
-                activateEvalPort(key.getCurrentPathHead());
-            } catch (EvaluatedPortNotFoundException ex) {
-                throw new PathNotFoundException(ex.getMessage());
-            }
-        }else{
-            throw new PathNotFoundException(key + " was not found."
-                    + " The path given is too long and points somewhere beyond "
-                    + "this node.");
-        }
-
-    }
-
-    /**
-     * Active the evaluated port with the given name.
-     * @param ePortName name of the evaluated port to be activated
-     * @throws PathNotFoundException
-     */
-    @Override
-    public void activate(String ePortName)throws PathNotFoundException{
-        try {
-            activateEvalPort(ePortName);
-        } catch (EvaluatedPortNotFoundException ex) {
-            throw new PathNotFoundException(ex.getMessage());
-        }
-    }
-
-    private void activateEvalPort(String ePortName) throws EvaluatedPortNotFoundException{
-        if(evaluatedPorts.containsKey(ePortName)){
-            // activate the evaluated port
-            selectedEvaluatedPort = evaluatedPorts.get(ePortName);
-            selectedEvaluatedPort.activate();
-
-            // deactive all other evaluated ports
-            for(Port q: evaluatedPorts.values()){
-                if(!q.equals(selectedEvaluatedPort)){
-                    q.deactivate();
-                }
-            }
-        }else{
-            throw new EvaluatedPortNotFoundException(ePortName + " is not an evaluated port.");
-        }
-    }
-
-
     public Set<DependencyRelation<Port>> getDependencies() {
         // Store all dependency relations
         Set<DependencyRelation<Port>> deps = new HashSet<DependencyRelation<Port>>();
 
         // For each expression in the node's ports
         for (Port p : ports.values()) {
-            
+
             // get the expressions
             List<Expression> exps = p.getArguments();
-            
+
             // Resolve the dependencies for each expression.
             for (Expression e : exps) {
                 try {
                     // Get the ports the expression depends on
                     Set<Port> portsDependedOn = e.getPortsDependedOn();
-                    
+
                     // If the expression depends on other port
                     if (!portsDependedOn.isEmpty()) {
                         // create the dependencies
@@ -480,53 +438,56 @@ public class Node implements PortEventListener, Container, Symbol{
 
     /**
      * Register listener with the node
+     *
      * @param l object that implements the interface
      */
-    public synchronized void addNodeEventListener(NodeEventListener l){
+    public synchronized void addNodeEventListener(NodeEventListener l) {
         listeners.add(l);
     }
 
     /**
      * Unregister the listener with the node
+     *
      * @param l object that has been registered with the node as a listener
      */
-    public synchronized void removeNodeEventListener(NodeEventListener l){
+    public synchronized void removeNodeEventListener(NodeEventListener l) {
         listeners.remove(l);
     }
 
     /**
      * Fire the node event
+     *
      * @param msg to be passed to the listeners
      */
-    private synchronized void fireNodeEvent(String msg){
+    private synchronized void fireNodeEvent(String msg) {
         NodeEvent event = new NodeEvent(this, msg);
-        for(NodeEventListener l: listeners){
+        for (NodeEventListener l : listeners) {
             l.handleNodeEvent(event);
         }
     }
 
     @Override
-    public String toString(){
+    public String toString() {
         StringBuilder sb = new StringBuilder();
         // print node header
         sb.append(getFullName())
-          .append(":")
-          .append(getType())
-          .append("\n");
+                .append(":")
+                .append(getSymbolType())
+                .append("\n");
 
         // print each port
-        for(Port p: ports.values()){
+        for (Port p : ports.values()) {
             sb.append("\t")
-              .append(p.getName())
-              .append(": ")
-              .append(p.toString())
-              .append("\n");
+                    .append(p.getName())
+                    .append(": ")
+                    .append(p.toString())
+                    .append("\n");
         }
 
-        if(hasNestedContainers()){
+        if (!nestedNodes.isEmpty()) {
             sb.append(name)
-              .append(" has the following nested nodes:\n");
-            for(Container nested: getNestedContainers()) {
+                    .append(" has the following nested nodes:\n");
+            for (Node nested : nestedNodes.values()) {
                 sb.append(nested.toString());
             }
         }
@@ -543,25 +504,24 @@ public class Node implements PortEventListener, Container, Symbol{
         // handle the port events bubbling up
         // fire the node event
         fireNodeEvent("Node updated.");
-        System.out.println( getFullName() + ":" + getType() + " handled event: " + event.getMessage());
+        System.out.println(getFullName() + ":" + getSymbolType() + " handled event: " + event.getMessage());
     }
 
     @Override
-    public SymbolType getType() {
+    public SymbolType getSymbolType() {
         return SymbolType.NODE;
     }
-    
-    public String toCode(){
+
+    public String toCode() {
         StringBuilder sb = new StringBuilder();
         sb.append("node ").append(getName()).append(" begin\n");
-        
-        
-        for(Port p: getPorts()){
+
+        for (Port p : getPorts()) {
             sb.append("\t").append(p.toCode()).append("\n");
         }
-        
+
         sb.append("end\n");
-        
+
         return sb.toString();
     }
 }

@@ -7,5 +7,7 @@ package shiro;
  * @author jeffreyguenther
  */
 public interface Symbol {
-    public SymbolType getType();
+    public SymbolType getSymbolType();
+    public void activate();
+    public void deactivate();
 }

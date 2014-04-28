@@ -563,7 +563,7 @@ public class ProjectAmoebaController {
     }
 
     public Group getPoint(shiro.Node n) {
-        Port ePort = n.getSelectedEvaluatedPort();
+        Port ePort = n.getActiveEvalPort();
         Value point = ePort.getValueForIndex(0);
         Point2D tPoint = (Point2D) point.getValue();
 
@@ -579,7 +579,7 @@ public class ProjectAmoebaController {
      * @return
      */
     public Line getLine(shiro.Node n) {
-        Port ePort = n.getSelectedEvaluatedPort();
+        Port ePort = n.getActiveEvalPort();
         Value line = ePort.getValueForIndex(0);
 
         Line lTemp = (Line) line.getValue();

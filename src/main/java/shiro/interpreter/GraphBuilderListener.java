@@ -2,8 +2,6 @@ package shiro.interpreter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import shiro.interpreter.ShiroParser.ActivationContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 import shiro.definitions.GraphDefinition;
@@ -11,10 +9,8 @@ import shiro.Node;
 import shiro.PathNotFoundException;
 import shiro.Port;
 import shiro.definitions.PortAssignment;
-import shiro.SubjunctiveNode;
 import shiro.SubjunctiveParametricSystem;
 import shiro.Symbol;
-import shiro.SymbolType;
 import shiro.dag.DependencyRelation;
 import shiro.expressions.Expression;
 import shiro.expressions.Path;
@@ -32,10 +28,10 @@ public class GraphBuilderListener extends ShiroBasePassListener {
     public GraphBuilderListener(SubjunctiveParametricSystem ps) {
         super(ps);
         currentNode = null;
-        
+
     }
-    
-    public GraphDefinition getGraphDef(){
+
+    public GraphDefinition getGraphDef() {
         return graphDef;
     }
 
@@ -46,8 +42,7 @@ public class GraphBuilderListener extends ShiroBasePassListener {
 
     @Override
     public void exitGraphDecl(ShiroParser.GraphDeclContext ctx) {
-        
-        
+
         List<DependencyRelation<Port>> deps = new ArrayList<>();
 
         // for each node generated in the graph generation process
@@ -76,46 +71,21 @@ public class GraphBuilderListener extends ShiroBasePassListener {
         // for each activation
         for (ActivationContext ac : ctx.activation()) {
             String nodeName = ac.nodeName.getText();
-            
+
             //TODO this might not work in the long run with long path names
             graphDef.addProduction(leftHandSide.getCurrentPathHead(), nodeName);
-            
+
             // need to differentiate between creating nodes and subjunctive nodes
             Symbol producedSymbol = pSystem.produceSymbolFromName(leftHandSide.getPath(), nodeName);
 
-            if (producedSymbol.getType() == SymbolType.NODE) {
-                Node producedNode = (Node) producedSymbol;
-                //pSystem.produceNodeFromName(leftHandSide.getPathAsString(), nodeName);
+            Node producedNode = (Node) producedSymbol;
 
-                if (ac.activeObject != null) {
-                    try {
-                        String updatePort = ac.activeObject.getText();
-                        producedNode.activate(updatePort);
-                    } catch (PathNotFoundException ex) {
-                        Logger.getLogger(GraphBuilderListener.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-                
+            if (ac.activeObject != null) {
+                String updatePort = ac.activeObject.getText();
+                producedNode.setActiveOption(updatePort);
+
                 System.out.println("Node produced: "
-                        + producedNode.getFullName() + " with active update "
-                        + producedNode.getSelectedEvaluatedPort());
-                System.out.println();
-                
-            } else if (producedSymbol.getType() == SymbolType.SUBJ) {
-                SubjunctiveNode subjNode = (SubjunctiveNode) producedSymbol;
-                
-                if (ac.activeObject != null) {
-                    try {
-                        String activeSubjunct = ac.activeObject.getText();
-                        subjNode.activate(activeSubjunct);
-                    } catch (PathNotFoundException ex) {
-                        Logger.getLogger(GraphBuilderListener.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                }
-                
-                System.out.println("SubjNode produced: "
-                        + subjNode.getFullName() + " with active subjunct "
-                        + subjNode.getActiveSubjunct());
+                        + producedNode.getFullName() + " with active update ");
                 System.out.println();
             }
         }
@@ -135,7 +105,7 @@ public class GraphBuilderListener extends ShiroBasePassListener {
         try {
             Path path = (Path) getExpr(ctx.path());
             Port p = (Port) pSystem.resolvePath(path);
-            
+
             List<Expression> mfExpressions = new ArrayList<>();
 
             for (ParseTree pt : ctx.mfparams().expr()) {
@@ -143,10 +113,10 @@ public class GraphBuilderListener extends ShiroBasePassListener {
                 mfExpressions.add(exp);
             }// set the port's expression
             p.setArguments(mfExpressions);
-            
+
             PortAssignment pa = new PortAssignment(path, mfExpressions);
             graphDef.addPortAssignment(pa);
-            
+
             System.out.println("Set port args: " + p);
             System.out.println("Node is now:\n" + currentNode);
         } catch (PathNotFoundException pnfe) {

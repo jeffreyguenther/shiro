@@ -71,7 +71,6 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
     private GraphDefinition currentGraphDef;
 
     private Map<String, Node> nodes;                   // realized node table
-    private Map<String, SubjunctiveNode> subjNodes;    // realized subj. node table
     private Map<String, SystemState> alternatives;     // alternative specs
     private final NameManager names;                   // class for managing name generation
     private final PortAction graphNodeAction;          // action used in graph nodes
@@ -96,7 +95,6 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         currentGraphDef = null;
 
         nodes = new HashMap<>();
-        subjNodes = new HashMap<>();
         alternatives = new HashMap<>();
         names = new NameManager();
         graphNodeAction = new PortAction();
@@ -122,7 +120,6 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
     public void clear() {
         names.clear();
         nodes.clear();
-        subjNodes.clear();
         graphDefs.clear();
     }
 
@@ -186,58 +183,58 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         return multiFunctions.get(name);
     }
 
-    public SubjunctiveNode split(Node nodeToSplit, String name,
-            String nameOfSubjunct, Map<Path, List<Expression>> newValues)
-            throws PathNotFoundException, PathNotAccessibleException {
-        // create a new subjunctive node
-        SubjunctiveNode result = new SubjunctiveNode(name, this);
-        Path toMatch = Path.createPath(nodeToSplit.getName());
-        List<Port> findAll = findAll(toMatch);
-        // replace reference to nodeToSplit in any expressions where it is used
-        // set expressions to use newly created subjunctive node active port
-        for (Port p : findAll) {
-            replace(p, toMatch, name, true);
-        }
-
-        // rename nodeToSplit nodeName_1
-        // lookup type
-        String type = nodeToSplit.getDefPath();
-        // create instance of node
-        Node n = produceNodeFromName(type, nameOfSubjunct);
-
-        // set the arguments of the instance
-        for (Path p : newValues.keySet()) {
-            Port port = (Port) n.find(p);
-            port.setArguments(newValues.get(p));
-
-        }
-        
-        // add instance to subjunctive node
-        result.addSubjunct(nodeToSplit);
-        result.addSubjunct(n);
-
-        // remove node production from graph
-        currentGraphDef.removeProduction(nodeToSplit.getDefPath(), nodeToSplit.getName());
-        
-        // add production for new subjunctive node
-        currentGraphDef.addProduction(result.getName(), names.getNextName(result.getName()));
-        
-        // add subjunctive node selection to all existing alternatives
-        boolean first = true;
-        for(SystemState s: getStates()){
-            if(first){
-                SystemState newState = new SystemState(currentGraphDef, names.getNextName("state"));
-                newState.setActiveNode(s.getSubjunctsMapping());
-                newState.setActiveNode(result, n);
-                addAlternative(newState);
-                
-                first = false;
-            }
-            s.setActiveNode(result, nodeToSplit);
-        }
-        
-        return result;
-    }
+//    public SubjunctiveNode split(Node nodeToSplit, String name,
+//            String nameOfSubjunct, Map<Path, List<Expression>> newValues)
+//            throws PathNotFoundException, PathNotAccessibleException {
+//        // create a new subjunctive node
+//        SubjunctiveNode result = new SubjunctiveNode(name, this);
+//        Path toMatch = Path.createPath(nodeToSplit.getName());
+//        List<Port> findAll = findAll(toMatch);
+//        // replace reference to nodeToSplit in any expressions where it is used
+//        // set expressions to use newly created subjunctive node active port
+//        for (Port p : findAll) {
+//            replace(p, toMatch, name, true);
+//        }
+//
+//        // rename nodeToSplit nodeName_1
+//        // lookup type
+//        String type = nodeToSplit.getType();
+//        // create instance of node
+//        Node n = produceNodeFromName(type, nameOfSubjunct);
+//
+//        // set the arguments of the instance
+//        for (Path p : newValues.keySet()) {
+//            Port port = (Port) n.find(p);
+//            port.setArguments(newValues.get(p));
+//
+//        }
+//        
+//        // add instance to subjunctive node
+//        result.addSubjunct(nodeToSplit);
+//        result.addSubjunct(n);
+//
+//        // remove node production from graph
+//        currentGraphDef.removeProduction(nodeToSplit.getType(), nodeToSplit.getName());
+//        
+//        // add production for new subjunctive node
+//        currentGraphDef.addProduction(result.getName(), names.getNextName(result.getName()));
+//        
+//        // add subjunctive node selection to all existing alternatives
+//        boolean first = true;
+//        for(SystemState s: getStates()){
+//            if(first){
+//                SystemState newState = new SystemState(currentGraphDef, names.getNextName("state"));
+//                newState.setActiveNode(s.getSubjunctsMapping());
+//                newState.setActiveNode(result, n);
+//                addAlternative(newState);
+//                
+//                first = false;
+//            }
+//            s.setActiveNode(result, nodeToSplit);
+//        }
+//        
+//        return result;
+//    }
 
     @Override
     public Symbol find(Path p) throws PathNotFoundException, PathNotAccessibleException {
@@ -251,12 +248,6 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
             } else {
                 matchedSymbol = produceNodeFromName(p.getCurrentPathHead(), p.getCurrentPathHead());
             }
-        } else if (p.isAtEnd() && subjNodeDefs.containsKey(p.getCurrentPathHead())) {
-            if (subjNodes.containsKey(p.getCurrentPathHead())) {
-                matchedSymbol = subjNodes.get(p.getCurrentPathHead());
-            } else {
-                matchedSymbol = produceSubjNodeFromName(p.getCurrentPathHead(), p.getCurrentPathHead());
-            }
         } else if (nodes.containsKey(p.getCurrentPathHead())) {
             Node n = nodes.get(p.getCurrentPathHead());
 
@@ -265,16 +256,6 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
                 matchedSymbol = n.find(p);
             } else {
                 matchedSymbol = n;
-            }
-
-        } else if (subjNodes.containsKey(p.getCurrentPathHead())) {
-            SubjunctiveNode sn = subjNodes.get(p.getCurrentPathHead());
-
-            if (!p.isAtEnd()) {
-                p.popPathHead();
-                matchedSymbol = sn.find(p);
-            } else {
-                matchedSymbol = sn;
             }
         } else {
             throw new PathNotFoundException(p + " cannot be found.");
@@ -332,18 +313,12 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
 
         // check if any realized node names match the start of the path
         Node matchedNode = nodes.get(p.getCurrentPathHead());
-        SubjunctiveNode matchedSNode = subjNodes.get(p.getCurrentPathHead());
         if (matchedNode != null) {
             // pop the path head
             p.popPathHead();
             // attempt to find the path in the node
             matchedPort = matchedNode.resolvePath(p);
-        } else if (matchedSNode != null) {
-            // pop the head of the path
-            p.popPathHead();
-
-            matchedPort = matchedSNode.resolvePath(p);
-        } else if (nodeDefs.get(p.getCurrentPathHead()) != null) {
+        }else if (nodeDefs.get(p.getCurrentPathHead()) != null) {
             // determine if desired path is a node not yet realized
             // create the new
             matchedNode = produceNodeFromName(p.getCurrentPathHead(), p.getCurrentPathHead());
@@ -380,31 +355,9 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         if (nodeDefs.containsKey(type)) {
             return produceNodeFromName(type, name);
             // check if name is subjunctive node
-        } else if (subjNodeDefs.containsKey(type)) {
-            return produceSubjNodeFromName(type, name);
         }
 
         return null;
-    }
-
-    /**
-     * Instantiate a subjunctive node
-     *
-     * @param type of subjunctive node to instantiate
-     * @param name of the instance
-     * @return the instantiate subjunctive node
-     */
-    public SubjunctiveNode produceSubjNodeFromName(String type, String name) {
-        SubjunctiveNode producedNode = realizeSubjNode(type);
-        producedNode.setName(name);
-        addSubjunctiveNode(producedNode);
-
-        // update the internal node's names
-        for (Node n : producedNode.getSubjuncts()) {
-            n.setFullName(producedNode.getFullName() + "." + n.getName());
-        }
-
-        return producedNode;
     }
 
     /**
@@ -467,10 +420,6 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         return producedNode;
     }
 
-    public void addSubjunctiveNode(SubjunctiveNode n) {
-        subjNodes.put(n.getName(), n);
-    }
-
     /**
      * Add a node to the system
      *
@@ -483,7 +432,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
     public Set<shiro.Node> getNodesOfType(String type) {
         Set<shiro.Node> matches = new HashSet<>();
         for (shiro.Node n : getNodes()) {
-            if (n.getDefPath().equals(type)) {
+            if (n.getType().equals(type)) {
                 matches.add(n);
             }
         }
@@ -498,14 +447,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
      * @return a reference to the node of the given name.
      */
     public Node getNode(String name) {
-        if (nodes.get(name) == null) {
-            String[] parts = name.split("\\.");
-
-            SubjunctiveNode subj = subjNodes.get(parts[0]);
-            return subj.getSubjunct(name);
-        } else {
-            return nodes.get(name);
-        }
+       return nodes.get(name);
     }
 
     /**
@@ -519,7 +461,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         Node match = nodes.get(p.getCurrentPathHead());
 
         // check to see if path refers to an unrealized node
-        if (match == null && !subjNodes.containsKey(p.getCurrentPathHead())) {
+        if (match == null) {
             // If it does, build the node.
             match = realizeNode(p.getCurrentPathHead());
 
@@ -527,24 +469,13 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
             nodes.put(match.getName(), match);
         }
 
-        SubjunctiveNode sNode = subjNodes.get(p.getCurrentPathHead());
-        if (sNode != null) {
-            try {
-
-                Node n = (Node) sNode.resolvePath(p);
-                return n;
-            } catch (PathNotFoundException ex) {
-                Logger.getLogger(SubjunctiveParametricSystem.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-
         if (match != null) {
             p.popPathHead();
 
             // check if the path has any more
-            if (match.hasNestedContainers() && !p.isEmpty() && !p.isPathToPortIndex()) {
+            if (match.hasNestedNodes()&& !p.isEmpty() && !p.isPathToPortIndex()) {
 
-                for (Container nested : match.getNestedContainers()) {
+                for (Node nested : match.getNestedNodes()) {
                     Node nestedNode = (Node) nested;
                     Node match2 = nestedNode.getNode(p);
                     if (match2 != null) {
@@ -570,41 +501,6 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
 
     public ParseTree getNodeDef(String path) {
         return nodeDefs.get(path);
-    }
-
-    /**
-     * Remove a node
-     *
-     * @param name of node to be removed
-     */
-    public void removeNode(String name) {
-        removeNode(nodes.get(name));
-    }
-
-    /**
-     * Remove a node
-     *
-     * @param node reference to the node to be removed
-     */
-    public void removeNode(Node node) {
-        // remove all of the node's ports from the graph
-        for (Port p : node.getPorts()) {
-            //depGraph.removePort(p.getFullName());
-        }
-
-        // take care of removing the node if it is in aa subjunct
-        for (SubjunctiveNode sn : subjNodes.values()) {
-            if (sn.hasSubjunct(node)) {
-                try {
-                    sn.removeSubjunct(node);
-                } catch (SubjunctNotFoundException ex) {
-                    Logger.getLogger(SubjunctiveParametricSystem.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        }
-
-        // remove the node
-        nodes.remove(node.getName());
     }
 
     public Port setPortExpression(Path pathToPort, Expression expr) throws PathNotFoundException {
@@ -667,14 +563,9 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
      *
      * @param sNode the subjunctive node
      * @param activeNode the node to be set as active subjunct
-     * @throws SubjunctNotFoundException
      */
-    public void setActiveNode(SubjunctiveNode sNode, Node activeNode) throws SubjunctNotFoundException {
-        try {
-            sNode.activate(activeNode.getPath());
-        } catch (PathNotFoundException ex) {
-            throw new SubjunctNotFoundException(ex.getMessage());
-        }
+    public void setActiveNode(Node sNode, Node activeNode){
+            sNode.setActiveOption(activeNode.getName());
     }
 
     /**
@@ -708,11 +599,6 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
     public String printDependencyGraph() {
         StringBuilder sb = new StringBuilder();
         for (Node n : nodes.values()) {
-            sb.append(n);
-            sb.append("\n");
-        }
-
-        for (SubjunctiveNode n : subjNodes.values()) {
             sb.append(n);
             sb.append("\n");
         }
@@ -752,14 +638,10 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
     }
 
     public void update(SystemState alt) {
-        Map<SubjunctiveNode, Node> subjunctTable = alt.getSubjunctsMapping();
+        Map<Node, Node> subjunctTable = alt.getSubjunctsMapping();
 
-        for (SubjunctiveNode s : subjunctTable.keySet()) {
-            try {
-                s.activate(subjunctTable.get(s).getName());
-            } catch (PathNotFoundException ex) {
-                Logger.getLogger(SubjunctiveParametricSystem.class.getName()).log(Level.SEVERE, null, ex);
-            }
+        for (Node s : subjunctTable.keySet()) {
+            s.setActiveOption(subjunctTable.get(s).getName());
         }
 
         List<DependencyRelation<Port>> deps = new ArrayList<>();
@@ -819,10 +701,6 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         StringBuilder sb = new StringBuilder();
         for (Node n : nodes.values()) {
             sb.append(n.toString());
-        }
-
-        for (SubjunctiveNode sn : subjNodes.values()) {
-            sb.append(sn.toString());
         }
 
         return sb.toString();
@@ -886,26 +764,6 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         // Parse the expression to generate the parse tree
         // Walk the parse tree to generate port dependencies
         // Add the dependencies to the graph
-    }
-
-    /**
-     * Produce a subjunctive node from the ParseTree Looks up the ParseTree in
-     * the map and generates the node
-     *
-     * @param name of subjunctive node to produce
-     * @return SubjunctiveNode object
-     */
-    private SubjunctiveNode realizeSubjNode(String name) {
-        // look up the parse tree of the node to duplicate
-        ParseTree nodeAST = subjNodeDefs.get(name);
-        // walk the parse tree to realize the node
-        ParseTreeWalker walker = new ParseTreeWalker();
-        // createa node production listener
-        NodeProductionListener nodeBuilder = new NodeProductionListener(this);
-        // walk the parse tree and build the node
-        walker.walk(nodeBuilder, nodeAST);
-
-        return nodeBuilder.getCreatedSubjNode();
     }
 
     /**
@@ -1011,16 +869,6 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
     }
 
     /**
-     * Get a subjunctive node by name
-     *
-     * @param nodeName
-     * @return the Subjunctive node for the corresponding name.
-     */
-    public SubjunctiveNode getSubjunctiveNode(String nodeName) {
-        return subjNodes.get(nodeName);
-    }
-
-    /**
      * Add an alternative to the the parametric system
      *
      * @param state
@@ -1100,13 +948,11 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
 
         // Get the node definitions
         Map<String, ParseTree> nodeDefinitions = defPass.getNodeDefinitions();
-        Map<String, ParseTree> subjNodeDefinitions = defPass.getSubjNodeDefinitions();
         Map<String, ParseTree> alternativeDefinitions = defPass.getAlternativeDefinitions();
         ParseTree graph = defPass.getGraph();
 
         // Store the ASTs in the tree
         addNodeASTDefinitions(nodeDefinitions);
-        addSubjNodeASTDefinitions(subjNodeDefinitions);
         addAlternativeASTDefinitions(alternativeDefinitions);
 
         // PASS 2: Build the dependency graph
@@ -1164,13 +1010,11 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
 
         // Get the node definitions
         Map<String, ParseTree> nodeDefinitions = defPass.getNodeDefinitions();
-        Map<String, ParseTree> subjNodeDefinitions = defPass.getSubjNodeDefinitions();
         Map<String, ParseTree> alternativeDefinitions = defPass.getAlternativeDefinitions();
         ParseTree graph = defPass.getGraph();
 
         // Store the ASTs in the tree
         addNodeASTDefinitions(nodeDefinitions);
-        addSubjNodeASTDefinitions(subjNodeDefinitions);
         addAlternativeASTDefinitions(alternativeDefinitions);
 
         // PASS 2: Build the dependency graph

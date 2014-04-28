@@ -8,8 +8,11 @@ public static final int WHITESPACE = 1;
 public static final int COMMENTS = 2;
 }
 
-shiro : statement+
+shiro : useStatement* statement+
       ;
+
+useStatement: USE STRING_LITERAL NEWLINE
+            ;
 
 statement
     :   nodestmt
@@ -54,7 +57,7 @@ nodeInternal
     ;
 	
 subjunctDeclNodeProd
-	:	OPTION instanceName=IDENT PROD_OP type=IDENT BEGIN NEWLINE
+	:	OPTION type=IDENT PROD_OP instanceName=IDENT BEGIN NEWLINE
 		(portAssignment | NEWLINE)+
 		END
 	;
@@ -141,6 +144,8 @@ expr
 * Tokens
 * -----------------------------------------------------------------------------
 **/
+    
+USE: 'use';
 
 THIS : 'this';
     

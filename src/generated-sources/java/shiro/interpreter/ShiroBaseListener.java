@@ -30,19 +30,6 @@ public class ShiroBaseListener implements ShiroListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterStateParent(@NotNull ShiroParser.StateParentContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitStateParent(@NotNull ShiroParser.StateParentContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterStringExp(@NotNull ShiroParser.StringExpContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -76,32 +63,6 @@ public class ShiroBaseListener implements ShiroListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitAddExp(@NotNull ShiroParser.AddExpContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterSubjunctSelector(@NotNull ShiroParser.SubjunctSelectorContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitSubjunctSelector(@NotNull ShiroParser.SubjunctSelectorContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterStateCommentStmt(@NotNull ShiroParser.StateCommentStmtContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitStateCommentStmt(@NotNull ShiroParser.StateCommentStmtContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -329,6 +290,19 @@ public class ShiroBaseListener implements ShiroListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterUseStatement(@NotNull ShiroParser.UseStatementContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitUseStatement(@NotNull ShiroParser.UseStatementContext ctx) { }
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterPathIndex(@NotNull ShiroParser.PathIndexContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -336,19 +310,6 @@ public class ShiroBaseListener implements ShiroListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitPathIndex(@NotNull ShiroParser.PathIndexContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterStateParentStmt(@NotNull ShiroParser.StateParentStmtContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitStateParentStmt(@NotNull ShiroParser.StateParentStmtContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -375,45 +336,6 @@ public class ShiroBaseListener implements ShiroListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitMfCall(@NotNull ShiroParser.MfCallContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterNodeType(@NotNull ShiroParser.NodeTypeContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitNodeType(@NotNull ShiroParser.NodeTypeContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterSNode(@NotNull ShiroParser.SNodeContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitSNode(@NotNull ShiroParser.SNodeContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterSubjunctDecl(@NotNull ShiroParser.SubjunctDeclContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitSubjunctDecl(@NotNull ShiroParser.SubjunctDeclContext ctx) { }
 
 	/**
 	 * {@inheritDoc}
@@ -472,19 +394,6 @@ public class ShiroBaseListener implements ShiroListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterStateTimeStmt(@NotNull ShiroParser.StateTimeStmtContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitStateTimeStmt(@NotNull ShiroParser.StateTimeStmtContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterPortDeclInit(@NotNull ShiroParser.PortDeclInitContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -492,32 +401,6 @@ public class ShiroBaseListener implements ShiroListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitPortDeclInit(@NotNull ShiroParser.PortDeclInitContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterComment(@NotNull ShiroParser.CommentContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitComment(@NotNull ShiroParser.CommentContext ctx) { }
-
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterTime(@NotNull ShiroParser.TimeContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitTime(@NotNull ShiroParser.TimeContext ctx) { }
 
 	/**
 	 * {@inheritDoc}

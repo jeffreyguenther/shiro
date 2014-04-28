@@ -3,7 +3,6 @@ package shiro.interpreter;
 import java.util.HashMap;
 import java.util.Map;
 import shiro.Node;
-import shiro.SubjunctiveNode;
 import shiro.SubjunctiveParametricSystem;
 import shiro.definitions.SystemState;
 
@@ -12,12 +11,12 @@ import shiro.definitions.SystemState;
  * @author jeffreyguenther
  */
 public class EvaluateAlternativeListener extends ShiroBasePassListener{
-    private Map<SubjunctiveNode, Node> subjunctTable;
+    private Map<Node, Node> subjunctTable;
     private String graphName = "<empty>";
 
     public EvaluateAlternativeListener(SubjunctiveParametricSystem pSystem) {
         super(pSystem);
-        subjunctTable = new HashMap<SubjunctiveNode, Node>();
+        subjunctTable = new HashMap<>();
     }
 
     @Override
@@ -42,9 +41,9 @@ public class EvaluateAlternativeListener extends ShiroBasePassListener{
        String nodeName = ctx.nodeName.getText();
        String activeObject = ctx.activeObject.getText();
        
-       SubjunctiveNode sn = pSystem.getSubjunctiveNode(nodeName);
-       Node n = pSystem.getNode(activeObject);
+       Node node = pSystem.getNode(nodeName);
+       Node subjunct = pSystem.getNode(activeObject);
        
-       subjunctTable.put(sn, n);
+       subjunctTable.put(node, subjunct);
     }
 }

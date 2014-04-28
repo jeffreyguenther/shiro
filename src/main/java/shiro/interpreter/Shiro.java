@@ -46,13 +46,11 @@ public class Shiro {
 
         // Get the node definitions
         Map<String, ParseTree> nodeDefinitions = defPass.getNodeDefinitions();
-        Map<String, ParseTree> subjNodeDefinitions = defPass.getSubjNodeDefinitions();
         Map<String, ParseTree> alternativeDefinitions = defPass.getAlternativeDefinitions();
         ParseTree graph = defPass.getGraph();
 
         // Store the ASTs in the tree
         subjPSystem.addNodeASTDefinitions(nodeDefinitions);
-        subjPSystem.addSubjNodeASTDefinitions(subjNodeDefinitions);
         subjPSystem.addAlternativeASTDefinitions(alternativeDefinitions);
 
         // PASS 2: Build the dependency graph

@@ -6,7 +6,6 @@ import java.util.Map;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import shiro.Node;
-import shiro.SubjunctiveNode;
 
 /**
  * Definition of a system state.
@@ -15,11 +14,11 @@ import shiro.SubjunctiveNode;
 public class SystemState implements Definition{
     private Instant timeStamp;
     private String comment;
-    private Map<SubjunctiveNode, Node> subjunctsMapping;
+    private Map<Node, Node> subjunctsMapping;
     private String name;
     private GraphDefinition graphDef;
 
-    public SystemState(GraphDefinition gDef, String name, String comment, Map<SubjunctiveNode, Node> subjunctsMapping) {
+    public SystemState(GraphDefinition gDef, String name, String comment, Map<Node, Node> subjunctsMapping) {
         this.graphDef = gDef;
         this.name = name;
         this.comment = comment;
@@ -39,15 +38,15 @@ public class SystemState implements Definition{
         this.graphDef = graphDef;
     }
     
-    public void setActiveNode(SubjunctiveNode sNode, Node activeNode){
+    public void setActiveNode(Node sNode, Node activeNode){
         subjunctsMapping.put(sNode, activeNode);
     }
     
-    public void setActiveNode(Map<SubjunctiveNode, Node> table){
+    public void setActiveNode(Map<Node, Node> table){
         subjunctsMapping.putAll(table);
     }
 
-    public Map<SubjunctiveNode, Node> getSubjunctsMapping() {
+    public Map<Node, Node> getSubjunctsMapping() {
         return subjunctsMapping;
     }
 
@@ -75,7 +74,7 @@ public class SystemState implements Definition{
     public String toString() {
         StringBuilder sb = new StringBuilder();
         // print the subjunct table
-        for(SubjunctiveNode subNodes: subjunctsMapping.keySet()){
+        for(Node subNodes: subjunctsMapping.keySet()){
             String tableRow = String.format("%16s|%16s%n", subNodes.getName(), 
                     subjunctsMapping.get(subNodes).getName());
             sb.append(tableRow);

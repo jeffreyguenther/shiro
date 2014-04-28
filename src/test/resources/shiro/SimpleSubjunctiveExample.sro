@@ -1,25 +1,25 @@
 node Point begin
-    port x Value
-    port y Value
+    input x Value
+    input y Value
     eval update Point(x[0], y[0])
-    port point Value(update[0])
+    output point Value(update[0])
 end
 
 node Line begin
-    port p1 Value
-    port p2 Value
+    input p1 Value
+    input p2 Value
     eval update Line ( p1[0], p2[0] )
-    port length Value ( update["length"] )
-    port line Value ( update[0] )
+    output length Value ( update["length"] )
+    output line Value ( update[0] )
 end
 
-subjunctive node EndPoints[P1] begin
-    Point -> P1 begin
+node EndPoints[P1] begin
+    option Point -> P1 begin
         P1.x(400)
         P1.y(400)
     end
 
-    Point -> P2 begin
+    option Point -> P2 begin
         P2.x(100)
         P2.y(400)
     end

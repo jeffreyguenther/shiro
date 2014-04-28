@@ -11,15 +11,13 @@ import org.antlr.v4.runtime.tree.ParseTree;
  */
 public class NodeDefinitionListener extends ShiroBaseListener{
     private Map<String, ParseTree> defs;
-    private Map<String, ParseTree> subjDefs;
     private Map<String, ParseTree> alternativeDefs;
     private ParseTree graph;
 
     public NodeDefinitionListener() {
         super();
-        defs = new HashMap<String, ParseTree>();
-        subjDefs = new HashMap<String, ParseTree>();
-        alternativeDefs = new HashMap<String, ParseTree>();
+        defs = new HashMap<>();
+        alternativeDefs = new HashMap<>();
     }
     
     /**
@@ -28,10 +26,6 @@ public class NodeDefinitionListener extends ShiroBaseListener{
      */
     public Map<String, ParseTree> getNodeDefinitions() {
         return defs;
-    }
-    
-    public Map<String, ParseTree> getSubjNodeDefinitions(){
-        return subjDefs;
     }
     
     public Map<String, ParseTree> getAlternativeDefinitions(){
@@ -53,12 +47,6 @@ public class NodeDefinitionListener extends ShiroBaseListener{
     }
 
     @Override
-    public void enterSNode(ShiroParser.SNodeContext ctx) {
-        String name = ctx.nodeName.getText();
-        subjDefs.put(name, ctx);
-    }
-
-    @Override
     public void enterGraphDecl(ShiroParser.GraphDeclContext ctx) {
         graph = ctx;
     }
@@ -67,6 +55,4 @@ public class NodeDefinitionListener extends ShiroBaseListener{
     public void enterStatestmt(ShiroParser.StatestmtContext ctx) {
         alternativeDefs.put(ctx.stateName().getText(), ctx);
     }
-    
-    
 }
