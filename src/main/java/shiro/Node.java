@@ -22,7 +22,7 @@ import shiro.expressions.Path;
  *
  * @author jeffreyguenther
  */
-public class Node implements PortEventListener, Symbol, Scope {
+public class Node implements Symbol, Scope {
 
     // the node's parent scope; The value maybe another node or the global parametric system.
     private Scope parentScope;
@@ -82,9 +82,6 @@ public class Node implements PortEventListener, Symbol, Scope {
 
         // create map for the node's ports
         ports = new HashMap<>();
-
-        // intialize set of listeners
-        listeners = new HashSet<>();
     }
 
     /**
@@ -354,7 +351,6 @@ public class Node implements PortEventListener, Symbol, Scope {
      * @param p port to be added
      */
     public void addPort(Port p) {
-        p.addPortEventListener(this);
         ports.put(p.getName(), p);
     }
 
@@ -512,36 +508,6 @@ public class Node implements PortEventListener, Symbol, Scope {
         return deps;
     }
 
-    /**
-     * Register listener with the node
-     *
-     * @param l object that implements the interface
-     */
-    public synchronized void addNodeEventListener(NodeEventListener l) {
-        listeners.add(l);
-    }
-
-    /**
-     * Unregister the listener with the node
-     *
-     * @param l object that has been registered with the node as a listener
-     */
-    public synchronized void removeNodeEventListener(NodeEventListener l) {
-        listeners.remove(l);
-    }
-
-    /**
-     * Fire the node event
-     *
-     * @param msg to be passed to the listeners
-     */
-    private synchronized void fireNodeEvent(String msg) {
-        NodeEvent event = new NodeEvent(this, msg);
-        for (NodeEventListener l : listeners) {
-            l.handleNodeEvent(event);
-        }
-    }
-
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -569,18 +535,6 @@ public class Node implements PortEventListener, Symbol, Scope {
         }
 
         return sb.toString();
-    }
-
-    /*
-     * Handle the port event
-     * @param event port event to be handled
-     */
-    @Override
-    public void handlePortEvent(PortEvent event) {
-        // handle the port events bubbling up
-        // fire the node event
-        fireNodeEvent("Node updated.");
-        System.out.println(getFullName() + ":" + getSymbolType() + " handled event: " + event.getMessage());
     }
 
     @Override

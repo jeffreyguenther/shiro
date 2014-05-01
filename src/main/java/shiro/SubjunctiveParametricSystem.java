@@ -404,15 +404,6 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         producedNode.setFullName(newName);
         addNode(producedNode);
 
-        //update the full name of all of the ports in the node
-        for (Port p : producedNode.getPorts()) {
-//            String newPath = producedNode.getFullName() + "." + p.getName();
-//            p.setFullName(newPath);
-            // remove the null listeners created during duplication process
-            p.clearListeners();
-            p.addPortEventListener(producedNode);
-        }
-
         // set the enclosing scope of the new node to the current SPS reference
         producedNode.setParentScope(this);
 

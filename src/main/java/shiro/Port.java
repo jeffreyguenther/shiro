@@ -34,9 +34,6 @@ public class Port implements Symbol{
     // set of all the ports this port has edges to
     // A port knows who it depends upon.
     private Set<Port> portsDependedOn;
-    
-    // references to objects listening for port events
-    private Set<PortEventListener> listeners;
 
     /**
      * Create a port
@@ -56,9 +53,6 @@ public class Port implements Symbol{
         this.updated = false;
         this.active = true;
         portsDependedOn = new LinkedHashSet<>();
-        
-        // initialize listener lists
-        listeners = new HashSet<>();
     }
     
     /**
@@ -80,9 +74,6 @@ public class Port implements Symbol{
         this.updated = false;
         this.active = true;
         portsDependedOn = new LinkedHashSet<>();
-        
-        // initialize listener lists
-        listeners = new HashSet<>();
     }
     
     /**
@@ -114,7 +105,6 @@ public class Port implements Symbol{
             // evaluate the function
             valueTuple = function.evaluate(args);
             updated = true;
-            firePortEvent(name + " evaluated.");
         }
     }
 
@@ -483,42 +473,6 @@ public class Port implements Symbol{
     public void setValueTuple(ResultTuple value) {
         this.valueTuple = value;
     }
-    
-    /**
-     * Clear all of the port's listeners
-     */
-    public void clearListeners(){
-        listeners.clear();
-    }
-    
-    /***
-     * Register an object as a listener to the port's events
-     * @param l object to be registered
-     */
-    public synchronized void addPortEventListener(PortEventListener l){
-        listeners.add(l);
-        
-    }
-    
-    /**
-     * Unregister an object as a listener
-     * @param l object to be removed as a listener
-     */
-    public synchronized void removePortEventListener(PortEventListener l){
-        listeners.remove(l);
-    }
-    
-   /**
-    * Fire the port event
-    * @param msg the message to be passed along with the event
-    */
-    protected synchronized void firePortEvent(String msg){
-        PortEvent event = new PortEvent(this, msg);
-        for(PortEventListener l: listeners){
-            l.handlePortEvent(event);
-        }
-    }
-    
     
     /**
      * Create a string form for the port object.
