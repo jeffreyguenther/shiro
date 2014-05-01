@@ -69,4 +69,40 @@ public class NodeTest {
         Assert.assertEquals("should have new scope", n, childNode.getParentScope());
         Assert.assertTrue("should have nested nodes", n.hasNestedNodes());
     }
+    
+    @Test
+    public void setNameAndFullName(){
+        SubjunctiveParametricSystem ps = new SubjunctiveParametricSystem();
+        String type = "EndPoints";
+        String name = "endPoints";
+        Node n = new Node(type, name, ps);
+        
+        String childNodeType = "Point";
+        String expectedChildNodeName = "P1";
+        Node childNode = new Node(childNodeType, expectedChildNodeName, ps);
+        Assert.assertEquals("should update name", expectedChildNodeName, childNode.getName());
+        n.addNestedNode(childNode);
+        
+        // Add ports
+        Port p1 = new Port();
+        p1.setName("x");
+        
+        childNode.addPort(p1);
+        
+        childNode.setName("A1");
+        Assert.assertEquals("should update full name", "endPoints.A1", childNode.getFullName());
+        Assert.assertEquals("should update name", "A1", childNode.getName());
+        
+        Assert.assertEquals("port should be renamed", "endPoints.A1.x", p1.getFullName());
+        
+        n.setName("greenPoints");
+        Assert.assertEquals("should update full name", "greenPoints.A1", childNode.getFullName());
+        Assert.assertEquals("should update name", "A1", childNode.getName());
+        Assert.assertEquals("port should be renamed", "greenPoints.A1.x", p1.getFullName());
+        
+        n.setFullName("dogs.cats.endPoints");
+        Assert.assertEquals("should update full name", "dogs.cats.endPoints.A1", childNode.getFullName());
+        Assert.assertEquals("should update name", "A1", childNode.getName());
+        Assert.assertEquals("port should be renamed", "dogs.cats.endPoints.A1.x", p1.getFullName());
+    }
 }
