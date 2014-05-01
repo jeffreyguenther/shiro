@@ -6,10 +6,7 @@ import java.util.logging.Logger;
 import static java.util.stream.Collectors.toSet;
 import shiro.dag.DependencyRelation;
 import shiro.definitions.PortType;
-import shiro.events.NodeEvent;
 import shiro.events.NodeEventListener;
-import shiro.events.PortEvent;
-import shiro.events.PortEventListener;
 import shiro.expressions.Expression;
 import shiro.expressions.Path;
 
@@ -40,6 +37,8 @@ public class Node implements Symbol, Scope {
     private Map<String, Symbol> options;
     // active option
     private Symbol activeOption;
+    // default option
+    private Symbol defaultOption;
     // nested nodes
     private Map<String, Node> nestedNodes;
     // ports mapped localname -> Port
@@ -77,6 +76,8 @@ public class Node implements Symbol, Scope {
         options = new HashMap<>();
         // initialize the first option to null
         activeOption = null;
+        // initialize default option
+        defaultOption = null;
         // map of nested nodes
         nestedNodes = new HashMap<>();
 
@@ -92,10 +93,9 @@ public class Node implements Symbol, Scope {
     }
 
     /**
-     * Adds a nested node.
-     * The node is stored in a map by its name.
-     * When a node is nested it's name is changed to reflect its
-     * position in the hierarchy
+     * Adds a nested node. The node is stored in a map by its name. When a node
+     * is nested it's name is changed to reflect its position in the hierarchy
+     *
      * @param n node to nest
      */
     public void addNestedNode(Node n) {
@@ -103,95 +103,162 @@ public class Node implements Symbol, Scope {
         n.setFullName(Path.createFullName(fullName, n.getName()));
         nestedNodes.put(n.getName(), n);
     }
-    
+
     /**
      * Gets whether the node has nested nodes
+     *
      * @return true if there are nested nodes, otherwise false
      */
-    public boolean hasNestedNodes(){
+    public boolean hasNestedNodes() {
         return !nestedNodes.isEmpty();
     }
-    
+
     /**
      * Gets the nested nodes
+     *
      * @return the set of nested nodes
      */
-    public Set<Node> getNestedNodes(){
+    public Set<Node> getNestedNodes() {
         return new HashSet<>(nestedNodes.values());
     }
 
     /**
-     * Sets the node's active option.
-     * Options are stored in a node in map by the options name.
-     * To set the active option use the symbol's name, not it's full name
+     * Sets the node's active option. Options are stored in a node in map by the
+     * options name. To set the active option use the symbol's name, not it's
+     * full name
+     *
      * @param name name of symbol to set active
      * @return the symbol set active, returns null if name is not found
      */
     public Symbol setActiveOption(String name) {
         Symbol activeItem = options.get(name);
-
-        Set<Symbol> inactive = new HashSet<>(options.values());
-        inactive.remove(activeItem);
-
-        inactive.stream().forEach((s) -> s.deactivate());
-
-        activeItem.activate();
+        
+        activateOption(activeItem);
+        
         activeOption = activeItem;
         return activeOption;
     }
-    
-    
+
     /**
      * Gets the node's active option
+     *
      * @return Returns the symbol of the node's active option. If no option is
      * active returns null.
      */
-    public Symbol getActiveOption(){
+    public Symbol getActiveOption() {
         return activeOption;
     }
-    
+
     /**
-     * Gets the node's active eval port.
-     * The method is a shortcut to determine if a node has an eval port
-     * as an option and it is currently the active option.
+     * Gets the node's active eval port. The method is a shortcut to determine
+     * if a node has an eval port as an option and it is currently the active
+     * option.
+     *
      * @return the active eval port of the node. If the activeOption is anything
      * else, it returns null.
      */
-    public Port getActiveEvalPort(){
-        if(activeOption.getSymbolType().isPort()){
+    public Port getActiveEvalPort() {
+        if (activeOption.getSymbolType().isPort()) {
             Port p = (Port) activeOption;
-            if(p.isEval())
-            return p;
+            if (p.isEval()) {
+                return p;
+            }
         }
-        
+
         return null;
     }
-    
-    public void addOption(Symbol option){
-        if(option.getSymbolType().equals(SymbolType.NODE)){
-            option.setFullName(Path.createFullName(fullName, option.getName()));
-            
+
+    /**
+     * Adds an option to the node The option is renamed to have the correct full
+     * name. If another option exists that has the same name, it is overwritten.
+     *
+     * @param option option to be added
+     */
+    public void addOption(Symbol option) {
+        option.setFullName(Path.createFullName(fullName, option.getName()));
+        options.put(option.getName(), option);
+
+        // add the option to the appropriate collection
+        if (option.getSymbolType().isNode()) {
             Node n = (Node) option;
-            options.put(n.getName(), option);
             addNestedNode(n);
+        } else { // option is a port
+            Port p = (Port) option;
+            addPort(p);
         }
     }
-    
-    public boolean hasOptions(){
+
+    /**
+     * Gets whether the node has options
+     * @return true if the node has options, otherwise false
+     */
+    public boolean hasOptions() {
         return !options.isEmpty();
     }
     
-    public void activateDefaultOption(){
-        if(activeOption != null){
-            Set<Symbol> inactive = new HashSet<>(options.values());
-            inactive.remove(activeOption);
+    /**
+     * Gets the set of options
+     * @return the node's options
+     */
+    public Set<Symbol> getOptions(){
+        return new HashSet<>(options.values());
+    }
 
-            for (Symbol s : inactive) {
-                s.deactivate();
-            }
-
-            activeOption.activate();
+    /**
+     * Sets the node's default option If the option does not already exist in
+     * the collection of options, it is added.
+     *
+     * @param option Symbol to set as default option
+     */
+    public void setDefaultOption(Symbol option) {
+        if (!options.containsValue(option)) {
+            addOption(option);
         }
+        defaultOption = option;
+    }
+    
+    /**
+     * Gets the default option
+     * @return the default option
+     */
+    public Symbol getDefaultOption(){
+        return defaultOption;
+    }
+
+    /**
+     * Determines if node has a default option.
+     *
+     * @return true if a default option is set, otherwise false
+     */
+    public boolean hasDefaultOption() {
+        return defaultOption != null;
+    }
+
+    /**
+     * Activates the default option. All other options are set inactive.
+     */
+    public void activateDefaultOption() {
+        if (defaultOption != null) {
+            activateOption(defaultOption);
+            activeOption = defaultOption;
+        }
+    }
+
+    /**
+     * Activates the passed option
+     * Deactivates all other options
+     * @param option the option to activate
+     */
+    private void activateOption(Symbol option) {
+        // Create a set of the inactive options
+        Set<Symbol> inactive = new HashSet<>(options.values());
+        inactive.remove(option);
+        
+        // deactivate the inactive options
+        inactive.stream().forEach((s) -> s.deactivate());
+        
+        // activate the passed options
+        option.activate();
     }
 
     /**
@@ -224,7 +291,7 @@ public class Node implements Symbol, Scope {
 
     /**
      * *
-     * Set the name of the node
+     * Set the name of the node Updates the
      *
      * @param name of the node to be set
      */
@@ -232,6 +299,9 @@ public class Node implements Symbol, Scope {
     public void setName(String name) {
         this.name = name;
         this.fullName = Path.replaceNameInPath(fullName, name);
+
+        // update all the contained nodes and options
+        updateNames(fullName);
     }
 
     /**
@@ -253,17 +323,20 @@ public class Node implements Symbol, Scope {
     public void setFullName(String fullName) {
         this.fullName = fullName;
         this.name = Path.getNameFromPath(fullName);
-        
-        for(Port p: ports.values()){
+
+        updateNames(this.fullName);
+    }
+
+    /**
+     * Updates the names of all nested nodes and ports
+     * @param fullName 
+     */
+    private void updateNames(String fullName) {
+        for (Port p : ports.values()) {
             p.setFullName(Path.createFullName(fullName, p.getName()));
         }
-        
-        for(Node nested: nestedNodes.values()){
+        for (Node nested : nestedNodes.values()) {
             nested.setFullName(Path.createFullName(fullName, nested.getName()));
-        }
-        
-        for(Symbol s: options.values()){
-            s.setFullName(Path.createFullName(fullName, s.getName()));
         }
     }
 
@@ -306,9 +379,8 @@ public class Node implements Symbol, Scope {
     }
 
     /**
-     * Activate the node. Goes through all the ports the node references and
-     * sets them active. Takes care to only activate the selected evaluated
-     * port. All other e-ports are left inactive.
+     * Activate the node. 
+     * Activates all nested nodes and ports and sets the default option as active
      */
     @Override
     public void activate() {
@@ -320,17 +392,17 @@ public class Node implements Symbol, Scope {
             p.activate();
         }
 
-        // activate the nested containers
+        // Activate the nested nodess
         for (Node n : nestedNodes.values()) {
             n.activate();
         }
-        
+
         activateDefaultOption();
     }
 
     /**
      * *
-     * Deactivate the node by deactivating all of its ports.
+     * Deactivate the node by deactivating all of its ports and nested nodes
      */
     @Override
     public void deactivate() {
@@ -342,13 +414,13 @@ public class Node implements Symbol, Scope {
             p.deactivate();
         }
 
-        // deactivate the nested container
-        for(Node n: nestedNodes.values()){
+        // Deactivate the nested nodes
+        for (Node n : nestedNodes.values()) {
             n.deactivate();
         }
     }
-    
-    public boolean hasPorts(){
+
+    public boolean hasPorts() {
         return !ports.isEmpty();
     }
 
@@ -380,7 +452,7 @@ public class Node implements Symbol, Scope {
      */
     public Set<String> getPortNames() {
         Set<Port> ioPorts = ports.values().stream().filter((p) -> !p.getPortType().equals(PortType.Evaluated)).collect(toSet());
-        
+
         return ioPorts.stream().map(p -> p.getName()).collect(toSet());
     }
 
@@ -391,34 +463,34 @@ public class Node implements Symbol, Scope {
     @Override
     public Symbol find(Path p) throws PathNotFoundException, PathNotAccessibleException {
         Symbol matched = null;
-        
-        if(p.getCurrentPathHead().equals("active")){
+
+        if (p.getCurrentPathHead().equals("active")) {
             p.popPathHead();
-            if(activeOption.getSymbolType().equals(SymbolType.NODE)){
+            if (activeOption.getSymbolType().equals(SymbolType.NODE)) {
                 Node n = (Node) activeOption;
                 return n.find(p);
             }
         }
-        
+
         if (ports.containsKey(p.getCurrentPathHead())) {
             Port match = ports.get(p.getCurrentPathHead());
             if (!match.getPortType().equals(PortType.Evaluated)) {
                 matched = ports.get(p.getCurrentPathHead());
-            } else{
+            } else {
                 throw new PathNotAccessibleException(p + " is not accessible. "
                         + "It is an evaluated port.");
             }
-        } else if(options.containsKey(p.getCurrentPathHead())){
+        } else if (options.containsKey(p.getCurrentPathHead())) {
             Symbol result = options.get(p.getCurrentPathHead());
-            if(p.isAtEnd()){
+            if (p.isAtEnd()) {
                 matched = result;
-            }else{
-                if(result.getSymbolType().equals(SymbolType.NODE)){
+            } else {
+                if (result.getSymbolType().equals(SymbolType.NODE)) {
                     p.popPathHead();
                     matched = ((Node) result).find(p);
                 }
             }
-        }else {
+        } else {
             throw new PathNotFoundException(p + "cannot be found.");
         }
 
@@ -436,18 +508,18 @@ public class Node implements Symbol, Scope {
 
         // if the value is local to the current node
         String pathHead = path.getCurrentPathHead();
-        if (pathHead.equals("active") 
+        if (pathHead.equals("active")
                 || pathHead.equals("this") || path.isAtEnd()) {
-            if(pathHead.equals("active")){
+            if (pathHead.equals("active")) {
                 path.popPathHead();
                 // TODO deal with different cases of active
-                if(activeOption.getSymbolType().equals(SymbolType.NODE)){
+                if (activeOption.getSymbolType().equals(SymbolType.NODE)) {
                     Node subjunct = (Node) activeOption;
                     portReferenced = subjunct.resolvePath(path);
                 }
-            }else{
-            
-                if(pathHead.equals("this")){
+            } else {
+
+                if (pathHead.equals("this")) {
                     path.popPathHead();
                 }
 
@@ -467,7 +539,7 @@ public class Node implements Symbol, Scope {
                     path.popPathHead();
                     portReferenced = nestedNodeMatch.resolvePath(path);
                 }
-            }else { //CASE: no nested nodes to check
+            } else { //CASE: no nested nodes to check
 
                 // reset the path offset to allow future downward traversal
                 path.resetPathHead();
@@ -485,6 +557,10 @@ public class Node implements Symbol, Scope {
         return resolvePath(Path.createPath(path));
     }
 
+    /**
+     * Gets the set of dependency relations for all of its ports
+     * @return the set of dependency relations for all of its ports
+     */
     public Set<DependencyRelation<Port>> getDependencies() {
         // Store all dependency relations
         Set<DependencyRelation<Port>> deps = new HashSet<>();

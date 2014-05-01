@@ -105,4 +105,103 @@ public class NodeTest {
         Assert.assertEquals("should update name", "A1", childNode.getName());
         Assert.assertEquals("port should be renamed", "dogs.cats.endPoints.A1.x", p1.getFullName());
     }
+    
+    @Test
+    public void options(){
+        Node n = new Node();
+        
+        // case: option is port
+        Port xPort = new Port("x", null);
+        n.addOption(xPort);
+        Assert.assertTrue(n.getPorts().contains(xPort));
+        Assert.assertTrue(n.getOptions().contains(xPort));
+        Assert.assertTrue("should have options", n.hasOptions());
+        Assert.assertFalse("should not have a default", n.hasDefaultOption());
+        
+        // case: option is node
+        Node iNode = new Node("P", "i", null);
+        n.addOption(iNode);
+        Assert.assertTrue(n.getNestedNodes().contains(iNode));
+        Assert.assertTrue(n.getOptions().contains(iNode));
+        Assert.assertFalse("should not have a default", n.hasDefaultOption());
+
+        // case: set active option
+        n.setActiveOption("x");
+        Assert.assertEquals("should match", xPort, n.getActiveOption());
+        n.setActiveOption("i");
+        Assert.assertEquals("should match", iNode, n.getActiveOption());
+        
+        // case: set default option where the option exists
+        n.setDefaultOption(xPort);
+        Assert.assertEquals("should match", xPort, n.getDefaultOption());
+        n.setDefaultOption(iNode);
+        Assert.assertEquals("should match", iNode, n.getDefaultOption());
+        
+        // case: set default option where the option does not exist
+        // add port
+        Port defaultPort = new Port("a", null);
+        n.setDefaultOption(defaultPort);
+        Assert.assertEquals("should match", defaultPort, n.getDefaultOption());
+        
+        // add nested node
+        Node defaultNode = new Node("T", "defaultNode", null);
+        n.setDefaultOption(defaultNode);
+        Assert.assertEquals("should match", defaultNode, n.getDefaultOption());
+        
+        // case:  activate default option
+        n.setActiveOption("x");
+        Assert.assertEquals("should match", xPort, n.getActiveOption());
+        Assert.assertFalse(iNode.isActive());
+        Assert.assertFalse(defaultNode.isActive());
+        Assert.assertFalse(defaultPort.isActive());
+        
+        n.activateDefaultOption();
+        Assert.assertEquals("should match", defaultNode, n.getDefaultOption());
+    }
+    
+    @Test
+    public void activate(){
+        Node n = new Node();
+        Node nested = new Node("T", "nested", n);
+        Port p = new Port("port", null);
+        n.addNestedNode(nested);
+        n.addPort(p);
+        
+        n.activate();
+        Assert.assertTrue(p.isActive());
+        Assert.assertTrue(nested.isActive());
+        Assert.assertTrue(n.isActive());
+    }
+    
+    @Test
+    public void deactivate(){
+        Node n = new Node();
+        Node nested = new Node("T", "nested", n);
+        Port p = new Port("port", null);
+        n.addNestedNode(nested);
+        n.addPort(p);
+        
+        n.deactivate();
+        Assert.assertFalse(p.isActive());
+        Assert.assertFalse(nested.isActive());
+        Assert.assertFalse(n.isActive());
+    }
+    
+    @Test
+    public void afterDeactivateThenActivateDefaultOptionIsActive(){
+        Node n = new Node();
+        Node nested = new Node("T", "nested", n);
+        Port p = new Port("port", null);
+        n.setDefaultOption(nested);
+        n.addOption(p);
+        
+        n.deactivate();
+        Assert.assertFalse(p.isActive());
+        Assert.assertFalse(nested.isActive());
+        Assert.assertFalse(n.isActive());
+        n.activate();
+        Assert.assertEquals(nested, n.getDefaultOption());
+        Assert.assertEquals(nested, n.getActiveOption());
+        Assert.assertFalse(p.isActive());
+    }
 }
