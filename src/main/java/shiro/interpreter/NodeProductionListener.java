@@ -2,12 +2,9 @@ package shiro.interpreter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.Stack;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import shiro.Node;
-import shiro.PathNotFoundException;
 import shiro.Port;
 import shiro.definitions.PortType;
 import shiro.SubjunctiveParametricSystem;
@@ -21,15 +18,11 @@ import shiro.functions.MultiFunction;
  * @author jeffreyguenther
  */
 public class NodeProductionListener extends ShiroBasePassListener {
-    private Node parentNode;
     private Node createdNode;
-    private Stack<Node> nodes;
 
     public NodeProductionListener(SubjunctiveParametricSystem ps) {
         super(ps);
-        parentNode = null;
         createdNode = null;
-        nodes = new Stack<>();
     }
 
     public Node getCreatedNode() {
@@ -40,23 +33,23 @@ public class NodeProductionListener extends ShiroBasePassListener {
     public void enterNodestmt(ShiroParser.NodestmtContext ctx) {
         System.out.println("Enter Node Statement");
         
-        // if the parent node is defined, then the node is nested.
-        if (!nodes.isEmpty()) {
-            currentScope = nodes.peek();
-            parentNode = nodes.peek();
+        // if there is at least one node on the scope stack
+        // stack will always be size 1 because of the parametric system
+        if (scope.size() > 1) {
+            Node parentNode = (Node) scope.peek();
             
             // create a new node
             String type = Path.createFullName(parentNode.getFullName(), ctx.IDENT().getText());
-            createdNode = new Node(type, ctx.IDENT().getText(), currentScope);
+            createdNode = new Node(type, ctx.IDENT().getText(), parentNode);
             
             // add the node as a nested node
             parentNode.addNestedNode(createdNode);
-            nodes.push(createdNode);
+            scope.push(createdNode);
 
         } else {
             // the type is the same as the names
-            createdNode = new Node(ctx.IDENT().getText(), ctx.IDENT().getText(), currentScope);
-            nodes.push(createdNode);
+            createdNode = new Node(ctx.IDENT().getText(), ctx.IDENT().getText(), scope.peek());
+            scope.push(createdNode);
         }
     }
 
@@ -66,11 +59,17 @@ public class NodeProductionListener extends ShiroBasePassListener {
 
         // Set the default options
         // This depends on nodeInternal adding ports and nodes before hand.
-        nodes.peek().setActiveOption(ctx.activeSelector().IDENT().getText());
+        if(ctx.activeSelector() != null){
+            // Get a reference to the current node
+            Node node = (Node) scope.peek();
+            
+            // set the node's active option
+            node.setActiveOption(ctx.activeSelector().IDENT().getText());
+        }
         
         // if the stack is not empty, pop
-        if(!nodes.empty()){
-            nodes.pop();
+        if(scope.size() > 1){
+            createdNode = (Node) scope.pop();
         }
     }
 
@@ -82,13 +81,20 @@ public class NodeProductionListener extends ShiroBasePassListener {
 
         // store the current node
         createdNode = pSystem.produceNodeFromName(name, newName);
+        createdNode.setParentScope(scope.peek());
        
         // add the created node to subjunctive node, so the scope tree is preserved
-        createdNode.setFullName(Path.createFullName(nodes.peek().getFullName(), newName));
-        nodes.peek().addOption(createdNode);
+        Node parentNode = (Node) scope.peek();
+        parentNode.addOption(createdNode);
+        scope.push(createdNode);
 
     }
 
+    @Override
+    public void exitSubjunctDeclNodeProd(ShiroParser.SubjunctDeclNodeProdContext ctx) {
+        scope.pop();
+    }
+    
     @Override
     public void exitPortDeclInit(ShiroParser.PortDeclInitContext ctx) {
         // Get the token of the multifunction name
@@ -123,6 +129,8 @@ public class NodeProductionListener extends ShiroBasePassListener {
         }
 
         setPortType(portType, p);
+        
+        createdNode.addPort(p);
     }
     
     /**
@@ -135,7 +143,7 @@ public class NodeProductionListener extends ShiroBasePassListener {
             p.setPortType(PortType.Evaluated);
         }else if(type.equals("input")){
             p.setPortType(PortType.Input);
-        }else if (type.equals("ouput")){
+        }else if (type.equals("output")){
             p.setPortType(PortType.Output);
         }
     }
@@ -168,34 +176,5 @@ public class NodeProductionListener extends ShiroBasePassListener {
         setPortType(portType, p);
 
         createdNode.addPort(p);
-    }
-    
-    @Override
-    public void enterPortAssignment(ShiroParser.PortAssignmentContext ctx) {
-        // Get the node matched by the path to set the scope for expressions
-        Path p = createPath(currentScope, ctx.path());
-        createdNode = pSystem.getNode(p);
-        currentScope = createdNode;
-    }
-
-    @Override
-    public void exitPortAssignment(ShiroParser.PortAssignmentContext ctx) {
-        // look up port based on the path
-        try {
-            Port p = (Port) pSystem.resolvePath((Path) getExpr(ctx.path()));
-
-            List<Expression> mfExpressions = new ArrayList<>();
-
-            for (ParseTree pt : ctx.mfparams().expr()) {
-                Expression exp = getExpr(pt);
-                mfExpressions.add(exp);
-            }
-            // set the port's expression
-            p.setArguments(mfExpressions);
-            System.out.println("Set port args: " + p);
-            System.out.println("Node is now:\n" + createdNode);
-        } catch (PathNotFoundException pnfe) {
-            System.out.println(pnfe);
-        }
     }
 }

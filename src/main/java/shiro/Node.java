@@ -117,6 +117,7 @@ public class Node implements PortEventListener, Symbol, Scope {
         }
 
         active.activate();
+        activeOption = active;
     }
     
     public Port getActiveEvalPort(){
@@ -129,21 +130,29 @@ public class Node implements PortEventListener, Symbol, Scope {
     
     public void addOption(Symbol option){
         if(option.getSymbolType().equals(SymbolType.NODE)){
+            option.setFullName(Path.createFullName(fullName, option.getName()));
+            
             Node n = (Node) option;
             options.put(n.getName(), option);
             addNestedNode(n);
         }
     }
     
+    public boolean hasOptions(){
+        return !options.isEmpty();
+    }
+    
     public void activateDefaultOption(){
-        Set<Symbol> inactive = new HashSet<>(options.values());
-        inactive.remove(activeOption);
+        if(activeOption != null){
+            Set<Symbol> inactive = new HashSet<>(options.values());
+            inactive.remove(activeOption);
 
-        for (Symbol s : inactive) {
-            s.deactivate();
+            for (Symbol s : inactive) {
+                s.deactivate();
+            }
+
+            activeOption.activate();
         }
-
-        activeOption.activate();
     }
 
     public Node getNode(Path p) {
@@ -215,9 +224,22 @@ public class Node implements PortEventListener, Symbol, Scope {
      *
      * @param fullName name to be set
      */
+    @Override
     public void setFullName(String fullName) {
         this.fullName = fullName;
         this.name = Path.getNameFromPath(fullName);
+        
+        for(Port p: ports.values()){
+            p.setFullName(Path.createFullName(fullName, p.getName()));
+        }
+        
+        for(Node nested: nestedNodes.values()){
+            nested.setFullName(Path.createFullName(fullName, nested.getName()));
+        }
+        
+        for(Symbol s: options.values()){
+            s.setFullName(Path.createFullName(fullName, s.getName()));
+        }
     }
 
     /**
@@ -345,7 +367,15 @@ public class Node implements PortEventListener, Symbol, Scope {
     @Override
     public Symbol find(Path p) throws PathNotFoundException, PathNotAccessibleException {
         Symbol matched = null;
-
+        
+        if(p.getCurrentPathHead().equals("active")){
+            p.popPathHead();
+            if(activeOption.getSymbolType().equals(SymbolType.NODE)){
+                Node n = (Node) activeOption;
+                return n.find(p);
+            }
+        }
+        
         if (ports.containsKey(p.getCurrentPathHead())) {
             Port match = ports.get(p.getCurrentPathHead());
             if (!match.getPortType().equals(PortType.Evaluated)) {
@@ -354,7 +384,17 @@ public class Node implements PortEventListener, Symbol, Scope {
                 throw new PathNotAccessibleException(p + " is not accessible. "
                         + "It is an evaluated port.");
             }
-        } else {
+        } else if(options.containsKey(p.getCurrentPathHead())){
+            Symbol result = options.get(p.getCurrentPathHead());
+            if(p.isAtEnd()){
+                matched = result;
+            }else{
+                if(result.getSymbolType().equals(SymbolType.NODE)){
+                    p.popPathHead();
+                    matched = ((Node) result).find(p);
+                }
+            }
+        }else {
             throw new PathNotFoundException(p + "cannot be found.");
         }
 
@@ -371,12 +411,28 @@ public class Node implements PortEventListener, Symbol, Scope {
         Symbol portReferenced = null;
 
         // if the value is local to the current node
-        if (path.isAtEnd()) {
-            String portName = path.getCurrentPathHead();
+        String pathHead = path.getCurrentPathHead();
+        if (pathHead.equals("active") 
+                || pathHead.equals("this") || path.isAtEnd()) {
+            if(pathHead.equals("active")){
+                path.popPathHead();
+                // TODO deal with different cases of active
+                if(activeOption.getSymbolType().equals(SymbolType.NODE)){
+                    Node subjunct = (Node) activeOption;
+                    portReferenced = subjunct.resolvePath(path);
+                }
+            }else{
+            
+                if(pathHead.equals("this")){
+                    path.popPathHead();
+                }
 
-            // check each port to see if it is a match
-            portReferenced = ports.get(portName);
-            path.resetPathHead();
+                String portName = path.getCurrentPathHead();
+
+                // check each port to see if it is a match
+                portReferenced = ports.get(portName);
+                path.resetPathHead();
+            }
 
         } else {
             // check the nested nodes
@@ -387,7 +443,7 @@ public class Node implements PortEventListener, Symbol, Scope {
                     path.popPathHead();
                     portReferenced = nestedNodeMatch.resolvePath(path);
                 }
-            } else { //CASE: no nested nodes to check
+            }else { //CASE: no nested nodes to check
 
                 // reset the path offset to allow future downward traversal
                 path.resetPathHead();

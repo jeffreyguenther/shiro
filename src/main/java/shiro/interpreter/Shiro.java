@@ -47,7 +47,7 @@ public class Shiro {
         // Get the node definitions
         Map<String, ParseTree> nodeDefinitions = defPass.getNodeDefinitions();
         Map<String, ParseTree> alternativeDefinitions = defPass.getAlternativeDefinitions();
-        ParseTree graph = defPass.getGraph();
+//        ParseTree graph = defPass.getGraphs();
 
         // Store the ASTs in the tree
         subjPSystem.addNodeASTDefinitions(nodeDefinitions);
@@ -60,7 +60,7 @@ public class Shiro {
          * Walk only the graph parse tree to prevent events from firing on the 
          * other parts of the parse tree
          */
-        walker.walk(new GraphBuilderListener(subjPSystem), graph);
+//        walker.walk(new GraphBuilderListener(subjPSystem), graph);
         
         System.out.println("Evaluate alternatives");
 

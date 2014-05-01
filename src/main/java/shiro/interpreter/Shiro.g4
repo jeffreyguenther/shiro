@@ -122,7 +122,7 @@ mfparams:	expr(',' expr)*
 expression: expr;
 
 // Path
-path 	:	(IDENT|THIS)('.' IDENT)* (LSQUARE pathIndex RSQUARE)?
+path 	:	(IDENT | THIS)('.' IDENT)* (LSQUARE pathIndex RSQUARE)?
 	;
 	
 pathIndex

@@ -235,7 +235,6 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
 //        
 //        return result;
 //    }
-
     @Override
     public Symbol find(Path p) throws PathNotFoundException, PathNotAccessibleException {
         Symbol matchedSymbol = null;
@@ -318,7 +317,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
             p.popPathHead();
             // attempt to find the path in the node
             matchedPort = matchedNode.resolvePath(p);
-        }else if (nodeDefs.get(p.getCurrentPathHead()) != null) {
+        } else if (nodeDefs.get(p.getCurrentPathHead()) != null) {
             // determine if desired path is a node not yet realized
             // create the new
             matchedNode = produceNodeFromName(p.getCurrentPathHead(), p.getCurrentPathHead());
@@ -407,8 +406,8 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
 
         //update the full name of all of the ports in the node
         for (Port p : producedNode.getPorts()) {
-            String newPath = producedNode.getFullName() + "." + p.getName();
-            p.setFullName(newPath);
+//            String newPath = producedNode.getFullName() + "." + p.getName();
+//            p.setFullName(newPath);
             // remove the null listeners created during duplication process
             p.clearListeners();
             p.addPortEventListener(producedNode);
@@ -447,7 +446,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
      * @return a reference to the node of the given name.
      */
     public Node getNode(String name) {
-       return nodes.get(name);
+        return nodes.get(name);
     }
 
     /**
@@ -473,7 +472,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
             p.popPathHead();
 
             // check if the path has any more
-            if (match.hasNestedNodes()&& !p.isEmpty() && !p.isPathToPortIndex()) {
+            if (match.hasNestedNodes() && !p.isEmpty() && !p.isPathToPortIndex()) {
 
                 for (Node nested : match.getNestedNodes()) {
                     Node nestedNode = (Node) nested;
@@ -564,8 +563,8 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
      * @param sNode the subjunctive node
      * @param activeNode the node to be set as active subjunct
      */
-    public void setActiveNode(Node sNode, Node activeNode){
-            sNode.setActiveOption(activeNode.getName());
+    public void setActiveNode(Node sNode, Node activeNode) {
+        sNode.setActiveOption(activeNode.getName());
     }
 
     /**
@@ -924,8 +923,8 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
 
         }
     }
-    
-    public void loadCode(String code){
+
+    public void loadCode(String code) {
         ParseTreeWalker walker = new ParseTreeWalker();
 
         // create a lexer
@@ -949,7 +948,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         // Get the node definitions
         Map<String, ParseTree> nodeDefinitions = defPass.getNodeDefinitions();
         Map<String, ParseTree> alternativeDefinitions = defPass.getAlternativeDefinitions();
-        ParseTree graph = defPass.getGraph();
+//        ParseTree graph = defPass.getGraphs();
 
         // Store the ASTs in the tree
         addNodeASTDefinitions(nodeDefinitions);
@@ -961,7 +960,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
          * other parts of the parse tree
          */
         GraphBuilderListener graphBuilder = new GraphBuilderListener(this);
-        walker.walk(graphBuilder, graph);
+//        walker.walk(graphBuilder, graph);
 
         GraphDefinition graphDef = graphBuilder.getGraphDef();
         graphDefs.remove("Default");
@@ -1011,7 +1010,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         // Get the node definitions
         Map<String, ParseTree> nodeDefinitions = defPass.getNodeDefinitions();
         Map<String, ParseTree> alternativeDefinitions = defPass.getAlternativeDefinitions();
-        ParseTree graph = defPass.getGraph();
+        Map<String, ParseTree> graphs = defPass.getGraphs();
 
         // Store the ASTs in the tree
         addNodeASTDefinitions(nodeDefinitions);
@@ -1022,13 +1021,15 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
          * Walk only the graph parse tree to prevent events from firing on the
          * other parts of the parse tree
          */
-        GraphBuilderListener graphBuilder = new GraphBuilderListener(this);
-        walker.walk(graphBuilder, graph);
+        for (ParseTree graph : graphs.values()) {
+            GraphBuilderListener graphBuilder = new GraphBuilderListener(this);
+            walker.walk(graphBuilder, graph);
 
-        GraphDefinition graphDef = graphBuilder.getGraphDef();
-        graphDefs.remove("Default");
-        graphDefs.put(graphDef.getName(), graphDef);
-        currentGraphDef = graphDef;
+            GraphDefinition graphDef = graphBuilder.getGraphDef();
+            graphDefs.remove("Default");
+            graphDefs.put(graphDef.getName(), graphDef);
+            currentGraphDef = graphDef;
+        }
 
         // deal with name auto generation
         for (String key : nodeDefs.keySet()) {

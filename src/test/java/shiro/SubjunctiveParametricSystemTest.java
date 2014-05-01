@@ -1,13 +1,8 @@
 package shiro;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import junit.framework.Assert;
@@ -18,27 +13,14 @@ import org.junit.Test;
 import static org.junit.matchers.JUnitMatchers.containsString;
 import shiro.expressions.Expression;
 import shiro.expressions.Path;
+import shiro.shared.CodeLoader;
 
 /**
  * Test the parametric system
  *
  * @author jeffreyguenther
  */
-public class SubjunctiveParametricSystemTest {
-
-    private SubjunctiveParametricSystem setupPSystem() {
-        SubjunctiveParametricSystem pSystem = new SubjunctiveParametricSystem();
-        pSystem.loadDefinitions();
-        return pSystem;
-    }
-
-    private SubjunctiveParametricSystem setupPSystemWithSubjuncts() throws IOException {
-        SubjunctiveParametricSystem pSystem = new SubjunctiveParametricSystem();
-        URL resource = this.getClass().getResource("SimpleSubjunctiveExample.sro");
-        pSystem.loadCode(new File(resource.getPath()));
-        return pSystem;
-    }
-
+public class SubjunctiveParametricSystemTest extends CodeLoader{
     @Test
     public void loadNodeDefinitions() {
         SubjunctiveParametricSystem pSystem = setupPSystem();
@@ -116,8 +98,10 @@ public class SubjunctiveParametricSystemTest {
             Symbol endPointStringPath = pSystem.find("EndPoints");
             Symbol endPointPath = pSystem.find(subjNodePath);
             Assert.assertSame("should be equal", endPointStringPath, endPointPath);
-            Assert.assertEquals("Should be a subjunctive node", SymbolType.SUBJ, endPointStringPath.getSymbolType());
-            Assert.assertEquals("Should be a subjunctive node", SymbolType.SUBJ, endPointPath.getSymbolType());
+            Assert.assertEquals("Should be a subjunctive node", SymbolType.NODE, endPointStringPath.getSymbolType());
+            Assert.assertEquals("Should be a subjunctive node", SymbolType.NODE, endPointPath.getSymbolType());
+            Node s = (Node) endPointPath;
+            Assert.assertTrue("Should have options", s.hasOptions());
 
         } catch (IOException | PathNotFoundException | PathNotAccessibleException ex) {
             Logger.getLogger(SubjunctiveParametricSystemTest.class.getName()).log(Level.SEVERE, null, ex);
@@ -155,8 +139,10 @@ public class SubjunctiveParametricSystemTest {
         Assert.assertNotNull(endPointsStringPath);
         Assert.assertNotNull(endPointsPath);
         Assert.assertSame("should be equal", endPointsStringPath, endPointsPath);
-        Assert.assertEquals("Should be a node", SymbolType.SUBJ, endPointsStringPath.getSymbolType());
-        Assert.assertEquals("Should be a node", SymbolType.SUBJ, endPointsPath.getSymbolType());
+        Assert.assertEquals("Should be a node", SymbolType.NODE, endPointsStringPath.getSymbolType());
+        Assert.assertEquals("Should be a node", SymbolType.NODE, endPointsPath.getSymbolType());
+        Node s = (Node) endPointsPath;
+            Assert.assertTrue("Should have options", s.hasOptions());
 
         Path p1 = new Path("endPoint", "P1");
         Symbol p1StringPath = pSystem.find("endPoint.P1");

@@ -5,7 +5,7 @@ node Point begin
 	output point Value ( update[0] )
 end
 
-node Line[update] begin
+node Line begin
 	input p1 Value
 	input p2 Value
 	eval update Line ( p1[0], p2[0] )

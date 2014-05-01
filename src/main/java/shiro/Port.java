@@ -79,10 +79,10 @@ public class Port implements Symbol{
         this.isLeaf = false;
         this.updated = false;
         this.active = true;
-        portsDependedOn = new LinkedHashSet<Port>();
+        portsDependedOn = new LinkedHashSet<>();
         
         // initialize listener lists
-        listeners = new HashSet<PortEventListener>();
+        listeners = new HashSet<>();
     }
     
     /**
@@ -99,7 +99,7 @@ public class Port implements Symbol{
     public void evaluate(){
         if(isActive()){
             // Create a list to store the result of the evaluated expressions
-            List<Value> args = new ArrayList<Value>();
+            List<Value> args = new ArrayList<>();
             
             // evaluate each of the expressions in the arguments list
             for(Expression exp: arguments){
@@ -238,6 +238,7 @@ public class Port implements Symbol{
     /***
      * Activate the port
      */
+    @Override
     public void activate(){
         active = true;
     }
@@ -245,6 +246,7 @@ public class Port implements Symbol{
     /**
      * Deactivate the port
      */
+    @Override
     public void deactivate(){
         active = false;
     }
@@ -358,6 +360,7 @@ public class Port implements Symbol{
      */
     public void setName(String name) {
         this.name = name;
+        this.fullName = Path.replaceNameInPath(fullName, name);
     }
 
     /**
@@ -451,6 +454,18 @@ public class Port implements Symbol{
      */
     public void setPortType(PortType type) {
         this.type = type;
+    }
+    
+    public boolean isEval(){
+        return type.equals(PortType.Evaluated);
+    }
+    
+    public boolean isInput(){
+        return type.equals(PortType.Input);
+    }
+    
+    public boolean isOutPut(){
+        return type.equals(PortType.Output);
     }
     
     /**

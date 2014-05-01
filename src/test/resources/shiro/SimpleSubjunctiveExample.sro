@@ -15,13 +15,13 @@ end
 
 node EndPoints[P1] begin
     option Point -> P1 begin
-        P1.x(400)
-        P1.y(400)
+        x(400)
+        this.y(400)
     end
 
     option Point -> P2 begin
-        P2.x(100)
-        P2.y(400)
+        this.x(100)
+        y(400)
     end
 end
 

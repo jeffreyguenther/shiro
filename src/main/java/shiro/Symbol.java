@@ -10,4 +10,8 @@ public interface Symbol {
     public SymbolType getSymbolType();
     public void activate();
     public void deactivate();
+    public void setFullName(String  fullName);
+    public String getFullName();
+    public void setName(String name);
+    public String getName();
 }
