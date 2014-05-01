@@ -65,7 +65,6 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
     private Map<String, MultiFunction> multiFunctions; // multifunction symbol table
     private DAGraph<Port> depGraph;                    // realized dependency graph
     private Map<String, ParseTree> nodeDefs;           // AST table
-    private Map<String, ParseTree> subjNodeDefs;       // AST table
     private Map<String, ParseTree> alternativeDefs;    // AST table
     private Map<String, GraphDefinition> graphDefs;    // AST Table
     private GraphDefinition currentGraphDef;
@@ -89,7 +88,6 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
 
         depGraph = new DAGraph<>();
         nodeDefs = new HashMap<>();
-        subjNodeDefs = new HashMap<>();
         alternativeDefs = new HashMap<>();
         graphDefs = new HashMap<>();
         currentGraphDef = null;
@@ -477,15 +475,6 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
     }
 
     /**
-     * Add a port to the dependency graph
-     *
-     * @param p port to be added
-     */
-    public void addPort(Port p) {
-        depGraph.addNode(new GraphNode<>(p, graphNodeAction));
-    }
-
-    /**
      * Add a dependency between two ports
      *
      * @param dependency dependency relation to be added to the graph
@@ -511,16 +500,6 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
     }
 
     /**
-     * Set the active node in a subjunctive node
-     *
-     * @param sNode the subjunctive node
-     * @param activeNode the node to be set as active subjunct
-     */
-    public void setActiveNode(Node sNode, Node activeNode) {
-        sNode.setActiveOption(activeNode.getName());
-    }
-
-    /**
      * Add the ASTs for each of the nodes. These trees are used to generate node
      * instances when the graph is being built.
      *
@@ -530,17 +509,6 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
     public Map<String, ParseTree> addNodeASTDefinitions(Map<String, ParseTree> map) {
         nodeDefs.putAll(map);
         return nodeDefs;
-    }
-
-    /**
-     * Add the parse trees for collection of subjunctive nodes
-     *
-     * @param map subjunctive node name to parse tree mappings
-     * @return the complete map subjunctive nodes
-     */
-    public Map<String, ParseTree> addSubjNodeASTDefinitions(Map<String, ParseTree> map) {
-        subjNodeDefs.putAll(map);
-        return subjNodeDefs;
     }
 
     public Map<String, ParseTree> addAlternativeASTDefinitions(Map<String, ParseTree> map) {
