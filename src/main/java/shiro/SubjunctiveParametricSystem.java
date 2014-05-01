@@ -123,6 +123,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
 
     /**
      * Clear all alternatives from the runtime
+     * Add default graph statement
      */
     public void reset() {
         clear();
