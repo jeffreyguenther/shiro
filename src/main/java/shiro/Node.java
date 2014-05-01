@@ -120,9 +120,28 @@ public class Node implements PortEventListener, Symbol, Scope {
         activeOption = activeItem;
     }
     
+    
+    /**
+     * Gets the node's active option
+     * @return Returns the symbol of the node's active option. If no option is
+     * active returns null.
+     */
+    public Symbol getActiveOption(){
+        return activeOption;
+    }
+    
+    /**
+     * Gets the node's active eval port.
+     * The method is a shortcut to determine if a node has an eval port
+     * as an option and it is currently the active option.
+     * @return the active eval port of the node. If the activeOption is anything
+     * else, it returns null.
+     */
     public Port getActiveEvalPort(){
-        if(activeOption.getSymbolType().equals(PortType.Evaluated)){
-            return (Port) activeOption;
+        if(activeOption.getSymbolType().isPort()){
+            Port p = (Port) activeOption;
+            if(p.isEval())
+            return p;
         }
         
         return null;
@@ -322,6 +341,10 @@ public class Node implements PortEventListener, Symbol, Scope {
         for(Node n: nestedNodes.values()){
             n.deactivate();
         }
+    }
+    
+    public boolean hasPorts(){
+        return !ports.isEmpty();
     }
 
     /**
