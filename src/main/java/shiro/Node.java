@@ -91,27 +91,44 @@ public class Node implements Symbol, Scope {
         this("", "", null);
     }
 
+    /**
+     * Adds a nested node.
+     * The node is stored in a map by its name.
+     * @param n node to nest
+     */
     public void addNestedNode(Node n) {
         nestedNodes.put(n.getName(), n);
     }
     
+    /**
+     * Gets whether the node has nested nodes
+     * @return true if there are nested nodes, otherwise false
+     */
     public boolean hasNestedNodes(){
         return !nestedNodes.isEmpty();
     }
     
+    /**
+     * Gets the nested nodes
+     * @return the set of nested nodes
+     */
     public Set<Node> getNestedNodes(){
         return new HashSet<>(nestedNodes.values());
     }
 
+    /**
+     * Sets the node's active option.
+     * Options are stored in a node in map by the options name.
+     * To set the active option use the symbol's name, not it's full name
+     * @param name name of symbol to set active
+     */
     public void setActiveOption(String name) {
         Symbol activeItem = options.get(name);
 
         Set<Symbol> inactive = new HashSet<>(options.values());
         inactive.remove(activeItem);
 
-        for (Symbol s : inactive) {
-            s.deactivate();
-        }
+        inactive.stream().forEach((s) -> s.deactivate());
 
         activeItem.activate();
         activeOption = activeItem;
