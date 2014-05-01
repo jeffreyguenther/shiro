@@ -94,9 +94,13 @@ public class Node implements Symbol, Scope {
     /**
      * Adds a nested node.
      * The node is stored in a map by its name.
+     * When a node is nested it's name is changed to reflect its
+     * position in the hierarchy
      * @param n node to nest
      */
     public void addNestedNode(Node n) {
+        n.setParentScope(this);
+        n.setFullName(Path.createFullName(fullName, n.getName()));
         nestedNodes.put(n.getName(), n);
     }
     
@@ -162,7 +166,7 @@ public class Node implements Symbol, Scope {
     }
     
     public void addOption(Symbol option){
-        if(option.getSymbolType().equals(SymbolType.NODE)){
+        if(option.getSymbolType().isNode()){
             option.setFullName(Path.createFullName(fullName, option.getName()));
             
             Node n = (Node) option;

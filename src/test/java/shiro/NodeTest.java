@@ -50,4 +50,23 @@ public class NodeTest {
         Assert.assertEquals("should have full name", expectedFullName, childNode.getFullName());
         Assert.assertEquals("should have type", childNodeType, childNode.getType());
     }
+    
+    @Test
+    public void addNestedNode(){
+        SubjunctiveParametricSystem ps = new SubjunctiveParametricSystem();
+        String type = "EndPoints";
+        String name = "endPoints";
+        Node n = new Node(type, name, ps);
+        
+        String childNodeType = "Point";
+        String childNodeName = "P1";
+        String expectedFullName = "endPoints.P1";
+        Node childNode = new Node(childNodeType, childNodeName, ps);
+        
+        n.addNestedNode(childNode);
+        Assert.assertEquals("should have full name", expectedFullName, childNode.getFullName());
+        Assert.assertEquals("should have name", childNodeName, childNode.getName());
+        Assert.assertEquals("should have new scope", n, childNode.getParentScope());
+        Assert.assertTrue("should have nested nodes", n.hasNestedNodes());
+    }
 }
