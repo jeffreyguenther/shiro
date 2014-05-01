@@ -208,7 +208,6 @@ public class ProjectAmoebaUI {
                 fileChooser.setTitle("Open Shiro File");
                 File file = fileChooser.showOpenDialog(stage);
                 
-                // TODO open the selected file
                 controller.handleOpen(file);
                 // IF project is already open prompt to save
             }
