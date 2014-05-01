@@ -125,8 +125,9 @@ public class Node implements Symbol, Scope {
      * Options are stored in a node in map by the options name.
      * To set the active option use the symbol's name, not it's full name
      * @param name name of symbol to set active
+     * @return the symbol set active, returns null if name is not found
      */
-    public void setActiveOption(String name) {
+    public Symbol setActiveOption(String name) {
         Symbol activeItem = options.get(name);
 
         Set<Symbol> inactive = new HashSet<>(options.values());
@@ -136,6 +137,7 @@ public class Node implements Symbol, Scope {
 
         activeItem.activate();
         activeOption = activeItem;
+        return activeOption;
     }
     
     
@@ -166,7 +168,7 @@ public class Node implements Symbol, Scope {
     }
     
     public void addOption(Symbol option){
-        if(option.getSymbolType().isNode()){
+        if(option.getSymbolType().equals(SymbolType.NODE)){
             option.setFullName(Path.createFullName(fullName, option.getName()));
             
             Node n = (Node) option;
@@ -190,21 +192,6 @@ public class Node implements Symbol, Scope {
 
             activeOption.activate();
         }
-    }
-
-    public Node getNode(Path p) {
-        Node match = null;
-
-        if (!nestedNodes.isEmpty() && !p.isPathToPortIndex()) {
-            match = nestedNodes.get(p.getCurrentPathHead());
-            if (match != null) {
-                match.getNode(p);
-            }
-        } else {
-            return match;
-        }
-
-        return match;
     }
 
     /**

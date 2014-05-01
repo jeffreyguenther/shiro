@@ -431,53 +431,15 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
     }
 
     /**
-     * Get a reference to a node by name
-     *
+     * Gets a reference to a node by name
+     * This method checks the collection of top level node 
+     * instances for a node with the given. It does not traverse
+     * the tree of nested nodes.
      * @param name of node to be returned
      * @return a reference to the node of the given name.
      */
     public Node getNode(String name) {
         return nodes.get(name);
-    }
-
-    /**
-     * Get a node for the path
-     *
-     * @param p path to lookup
-     * @return node referenced by path
-     */
-    public Node getNode(Path p) {
-        // check the realized nodes
-        Node match = nodes.get(p.getCurrentPathHead());
-
-        // check to see if path refers to an unrealized node
-        if (match == null) {
-            // If it does, build the node.
-            match = realizeNode(p.getCurrentPathHead());
-
-            // add to collection of realized nodes.
-            nodes.put(match.getName(), match);
-        }
-
-        if (match != null) {
-            p.popPathHead();
-
-            // check if the path has any more
-            if (match.hasNestedNodes() && !p.isEmpty() && !p.isPathToPortIndex()) {
-
-                for (Node nested : match.getNestedNodes()) {
-                    Node nestedNode = (Node) nested;
-                    Node match2 = nestedNode.getNode(p);
-                    if (match2 != null) {
-                        return match2.getNode(p);
-                    }
-                }
-            }
-
-            // RESET the path
-            p.resetPathHead();
-        }
-        return match;
     }
 
     /**
