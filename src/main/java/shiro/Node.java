@@ -107,17 +107,17 @@ public class Node implements PortEventListener, Symbol, Scope {
     }
 
     public void setActiveOption(String name) {
-        Symbol active = options.get(name);
+        Symbol activeItem = options.get(name);
 
         Set<Symbol> inactive = new HashSet<>(options.values());
-        inactive.remove(active);
+        inactive.remove(activeItem);
 
         for (Symbol s : inactive) {
             s.deactivate();
         }
 
-        active.activate();
-        activeOption = active;
+        activeItem.activate();
+        activeOption = activeItem;
     }
     
     public Port getActiveEvalPort(){
@@ -204,6 +204,7 @@ public class Node implements PortEventListener, Symbol, Scope {
      *
      * @param name of the node to be set
      */
+    @Override
     public void setName(String name) {
         this.name = name;
         this.fullName = Path.replaceNameInPath(fullName, name);
@@ -341,11 +342,7 @@ public class Node implements PortEventListener, Symbol, Scope {
      * @return true if remove was successful, otherwise false
      */
     public boolean removePort(Port p) {
-        if (ports.remove(p.getName()) != null) {
-            return true;
-        } else {
-            return false;
-        }
+        return ports.remove(p.getName()) != null;
     }
 
     /**
@@ -463,7 +460,7 @@ public class Node implements PortEventListener, Symbol, Scope {
 
     public Set<DependencyRelation<Port>> getDependencies() {
         // Store all dependency relations
-        Set<DependencyRelation<Port>> deps = new HashSet<DependencyRelation<Port>>();
+        Set<DependencyRelation<Port>> deps = new HashSet<>();
 
         // For each expression in the node's ports
         for (Port p : ports.values()) {
@@ -481,7 +478,7 @@ public class Node implements PortEventListener, Symbol, Scope {
                     if (!portsDependedOn.isEmpty()) {
                         // create the dependencies
                         for (Port dependedOn : portsDependedOn) {
-                            deps.add(new DependencyRelation<Port>(p, dependedOn));
+                            deps.add(new DependencyRelation<>(p, dependedOn));
                         }
                     }
                 } catch (PathNotFoundException ex) {
