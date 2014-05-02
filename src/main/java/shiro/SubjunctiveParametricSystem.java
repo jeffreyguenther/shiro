@@ -418,14 +418,15 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         nodes.put(n.getName(), n);
     }
 
-    public Set<shiro.Node> getNodesOfType(String type) {
-        Set<shiro.Node> matches = new HashSet<>();
+    public Set<Node> getNodesOfType(String type) {
+        Set<Node> matches = new HashSet<>();
         for (shiro.Node n : getNodes()) {
             if (n.getType().equals(type)) {
                 matches.add(n);
+               
             }
+            matches.addAll(n.getNodesOfType(type));
         }
-
         return matches;
     }
 

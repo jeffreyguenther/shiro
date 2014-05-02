@@ -253,6 +253,34 @@ public class SubjunctiveParametricSystemTest extends CodeLoader{
         Assert.assertEquals("should have one port", 1, ports.size());
         Assert.assertSame("should be the same port", found, ports.get(0));
     }
+    
+    @Test
+    public void getNodesOfType(){
+        SubjunctiveParametricSystem ps = new SubjunctiveParametricSystem();
+        
+        Node root = new Node("Point", "root", ps);
+        ps.addNode(root);
+        
+        Node root1 = new Node("Other", "root1", ps);
+        ps.addNode(root1);
+        
+        Node n1 = new Node("Point", "1", root);
+        root.addNestedNode(n1);
+        Node n11 = new Node("Point", "11", n1);
+        n1.addNestedNode(n11);
+        Node n12 = new Node("Other", "12", n1);
+        n1.addNestedNode(n12);
+        
+        Node n2 = new Node("Point", "2", root);
+        root.addNestedNode(n2);
+        Node n21 = new Node("Point", "21", root);
+        n2.addNestedNode(n21);
+        Node n22 = new Node("Other", "22", root);
+        n2.addNestedNode(n22);
+        
+        Assert.assertEquals(5, ps.getNodesOfType("Point").size());
+        Assert.assertEquals(3, ps.getNodesOfType("Other").size());
+    }
 
 //    @Test
 //    public void split() throws IOException, PathNotFoundException, PathNotAccessibleException {

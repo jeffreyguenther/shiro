@@ -269,6 +269,22 @@ public class Node implements Symbol, Scope {
     public String getType() {
         return type;
     }
+    
+    /**
+     * Gets references to all nodes of given type
+     * @param type type to match
+     * @return all nodes that match type in node and all of it's children
+     */
+    public Set<Node> getNodesOfType(String type){
+        Set<Node> matches = new HashSet<>();
+        for(Node n: nestedNodes.values()){
+            if(n.getType().equals(type)){
+                matches.add(n);
+            }
+            matches.addAll(n.getNodesOfType(type));
+        }
+        return matches;
+    }
 
     /**
      * Set the definition path of the node
