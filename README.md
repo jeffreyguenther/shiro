@@ -6,19 +6,22 @@ Shiro is a data flow programming language designed to be embedded into applicati
 Getting Started
 ===============
 
-Shiro is implemented in Java. [Gradle](http://www.gradle.org/) is used as the build system and dependency manager. The interpreter depends on [ANTLR 4.2](http://www.antlr.org/) to generate the parser, lexer and parse tree event listeners. `build.gradle` is setup to automatically generate the Java code at compile time. You can use gradle from the commandline or use Netbeans or Eclipse, as both IDE's support gradle projects.
+Shiro is implemented in Java. [Gradle](http://www.gradle.org/) is used as the build system and dependency manager. The interpreter depends on [ANTLR 4.2](http://www.antlr.org/) to generate the parser, lexer and parse tree event listeners. `build.gradle` is setup to automatically generate the Java code at compile time. You can use gradle from the commandline or use Netbeans or Eclipse, as both IDE's support gradle projects. With Netbeans, change the Build Script Evaluation Strategy to "IDEA plugin based."
 
-You can build the Shiro interpreter using this command within the shiro subdirectory
+You can run the Shiro interpreter using this command within the shiro subdirectory
 
-    $ gradle build
+    $ gradle run
 
-A helpful command is to remember if you just want to regenerate the parser, lexer, and listeners is:
+This will start the **Shiro Viewer** application that allows you to load and run Shiro code. Currently, you cannot run execute Shiro code from the commandline.
+
+To create an executable for your OS, use the javafx-gradle plugin:
+
+    $ gradle jfxdeploy
+The executable bundle will be found in `build/distributions/bundles`
+
+A helpful command to remember if you just want to regenerate the parser, lexer, and listeners is:
 
     $ gradle generateGrammarSource
-
-In the `example_code` folder, you'll find `example.sro`. It is a simple example of the language syntax. Currently, when the code is interpretted a large amount of debugging output is shown. It'll help you get a sense of what is actually going on inside the system. More examples are coming shortly. Pass example.sro as the first argument on the commandline to see the output.
-
-    $ gradle run -Pargs="example_code/example.sro"
 
 Questions can be sent to shiro-lang@googlegroups.com or [Jeff](mailto:jguenthe@sfu.ca). If you have taken the time to play with the language, please drop me a line and let me know what you think.
 

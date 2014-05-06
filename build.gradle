@@ -9,7 +9,7 @@ apply plugin: 'application'
 apply from: file('gradle/idea.gradle')
 apply from: 'gradle/javafx.plugin'
 
-//mainClassName = 'shiro.drawing.ProjectAmoeba'
+mainClassName = 'shiro.viewer.Viewer'
 gradle.projectsEvaluated {
     tasks.withType(Compile) {
         options.compilerArgs << "-Xlint:unchecked"
@@ -17,7 +17,7 @@ gradle.projectsEvaluated {
 }
 
 ext.versions = [
-    junit: "4.10"
+    junit: "4.11"
 ]
 
 ext.antlr = [
@@ -28,9 +28,9 @@ ext.antlr = [
 
 repositories {
     mavenCentral()
-    maven{
-        url "https://oss.sonatype.org/content/repositories/snapshots/"
-    }
+//    maven{
+//        url "https://oss.sonatype.org/content/repositories/snapshots/"
+//    }
 }
 
 configurations {
@@ -50,7 +50,7 @@ dependencies {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '1.10'
+    gradleVersion = '1.12'
 }
 
 tasks.withType(Compile) {
@@ -105,7 +105,7 @@ run {
 }
 
 javafx{
-    appID 'Shiro'
-    appName 'Shiro'
+    appID 'Shiro Viewer'
+    appName 'Shiro Viewer'
     mainClass mainClassName
 }

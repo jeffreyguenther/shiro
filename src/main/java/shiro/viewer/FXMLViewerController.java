@@ -128,7 +128,7 @@ public class FXMLViewerController {
         lightTable.getChildren().clear();
         snapshots.clear();
         layers.clear();
-        model.clear();
+        model.reset();
         console.setText("");
 
         model.loadCode(code.getText());
