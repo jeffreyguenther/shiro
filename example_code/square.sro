@@ -2,15 +2,15 @@ node Point begin
     input x Value
     input y Value
     eval update Point(x[0], y[0])
-    input point Value(update[0])
+    output point Value(update[0])
 end
 
 node Line begin
     input p1 Value
     input p2 Value
     eval update Line ( p1[0], p2[0] )
-    input length Value ( update["length"] )
-    input line Value ( update[0] )
+    output length Value ( update["length"] )
+    output line Value ( update[0] )
 end
 
 graph test begin

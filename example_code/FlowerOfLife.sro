@@ -1,0 +1,289 @@
+node Point begin
+    input x Value
+    input y Value
+    eval update Point(x[0], y[0])
+    output point Value(update[0])
+end
+
+
+node Arc begin
+    input center Value
+    input radius Value
+    input startAngle Value
+    input endAngle Value
+    input stroke Value("0, 0, 0")
+    input strokeWidth Value(4)
+    eval update Arc(center[0], radius[0], startAngle[0], endAngle[0], stroke[0], strokeWidth[0])
+    output arc Value(update[0])
+end
+
+
+node Circle begin
+    input center Value
+    input radius Value
+    input stroke Value("0, 10, 255")
+    input weight Value(1)
+    eval update Circle(center[0], radius[0], stroke[0], weight[0])
+    output circle Value(update[0])
+end
+
+node Petal1[outer] begin
+    option Point -> outer begin
+          x(0)
+          y(135)
+    end
+
+    option Point -> inner begin
+          x(180)
+          y(45)
+    end
+    option Point -> bigger begin
+          x(135)
+          y(180)
+    end
+    option Point -> bowtie begin
+          x(315)
+          y(45)
+    end
+end
+
+node Petal2[outer2] begin
+    option Point -> outer2 begin
+          x(315)
+          y(90)
+    end
+    option Point -> inner2 begin
+          x(135)
+          y(90)
+    end
+    option Point -> bigger2 begin
+          x(45)
+          y(0)
+    end
+    option Point -> bowtie2 begin
+          x(45)
+          y(270)
+    end
+end
+
+node Petal3[outer3] begin
+    option Point -> outer3 begin
+          x(225)
+          y(135)
+    end
+    option Point -> inner3 begin
+          x(135)
+          y(45)
+    end
+    option Point -> bigger3 begin
+          x(45)
+          y(180)
+    end
+    option Point -> bowtie3 begin
+          x(0)
+          y(45)
+    end
+end
+
+node Petal4[outer4] begin
+    option Point -> outer4 begin
+          x(180)
+          y(135)
+    end
+    option Point -> inner4 begin
+          x(0)
+          y(45)
+    end
+    option Point -> bigger4 begin
+          x(315)
+          y(180)
+    end
+    option Point -> bowtie4 begin
+          x(135)
+          y(45)
+    end
+end
+
+node Petal5[outer5] begin
+   option Point -> outer5 begin
+          x(135)
+          y(90)
+    end
+   option Point -> inner5 begin
+          x(315)
+          y(90)
+    end
+    option Point -> bigger5 begin
+          x(315)
+          y(0)
+    end
+    option Point -> bowtie5 begin
+          x(225)
+          y(270)
+    end
+end
+
+node Petal6[outer6] begin
+    option Point -> outer6 begin
+          x(45)
+          y(135)
+    end
+    option Point -> inner6 begin
+          x(315)
+          y(45)
+    end
+    option Point -> bigger6 begin
+          x(225)
+          y(180)
+    end
+    option Point -> bowtie6 begin
+          x(180)
+          y(45)
+    end
+end
+
+graph Patterns begin
+    // Define petal subjuntive nodes
+    Petal1 -> petal1
+    Petal2 -> petal2
+    Petal3 -> petal3
+    Petal4 -> petal4
+    Petal5 -> petal5
+    Petal6 -> petal6
+
+    // define center of flower
+    Point -> center
+    center.x(200)
+    center.y(200)
+
+    // draw outline
+    Circle -> outline
+    outline.center(center.point[0])
+    outline.radius(200)
+
+    Point -> p1
+    p1.x(270.7)
+    p1.y(129.3)
+
+    Circle -> c1
+    c1.center(p1.point[0])
+    c1.radius(100)
+
+    Arc -> a1
+    a1.startAngle(petal1.active.x[0])
+    a1.endAngle(petal1.active.y[0])
+    a1.radius(100)
+    a1.center(p1.point[0])
+
+    Point -> p2
+    p2.x(300)
+    p2.y(200)
+
+    Circle -> c2
+    c2.center(p2.point[0])
+    c2.radius(100)
+
+    Arc -> a2
+    a2.startAngle(petal2.active.x[0])
+    a2.endAngle(petal2.active.y[0])
+    a2.radius(100)
+    a2.center(p2.point[0])
+
+    Point -> p3
+    p3.x(270.7)
+    p3.y(270.7)
+
+    Circle -> c3
+    c3.center(p3.point[0])
+    c3.radius(100)
+
+    Arc -> a3
+    a3.startAngle(petal3.active.x[0])
+    a3.endAngle(petal3.active.y[0])
+    a3.radius(100)
+    a3.center(p3.point[0])
+
+    Point -> p4
+    p4.x(129.3)
+    p4.y(270.7)
+
+    Circle -> c4
+    c4.center(p4.point[0])
+    c4.radius(100)
+
+    Arc -> a4
+    a4.startAngle(petal4.active.x[0])
+    a4.endAngle(petal4.active.y[0])
+    a4.radius(100)
+    a4.center(p4.point[0])
+
+    Point -> p5
+    p5.x(100)
+    p5.y(200)
+
+    Circle -> c5
+    c5.center(p5.point[0])
+    c5.radius(100)
+
+    Arc -> a5
+    a5.startAngle(petal5.active.x[0])
+    a5.endAngle(petal5.active.y[0])
+    a5.radius(100)
+    a5.center(p5.point[0])
+
+    Point -> p6
+    p6.x(129.3)
+    p6.y(129.3)
+
+    Circle -> c6
+    c6.center(p6.point[0])
+    c6.radius(100)
+
+    Arc -> a6
+    a6.startAngle(petal6.active.x[0])
+    a6.endAngle(petal6.active.y[0])
+    a6.radius(100)
+    a6.center(p6.point[0])
+end
+
+
+state OutlinePetal begin
+    Graph Patterns
+    petal1[outer]
+    petal2[outer2]
+    petal3[outer3]
+    petal4[outer4]
+    petal5[outer5]
+    petal6[outer6]
+end
+
+state LittleCenter begin
+     Graph Patterns
+    petal1[inner]
+    petal2[inner2]
+    petal3[inner3]
+    petal4[inner4]
+    petal5[inner5]
+    petal6[inner6]
+end
+
+state BigCenter begin
+     Graph Patterns
+    petal1[bigger]
+    petal2[bigger2]
+    petal3[bigger3]
+    petal4[bigger4]
+    petal5[bigger5]
+    petal6[bigger6]
+end
+
+
+state Bowtie begin
+     Graph Patterns
+    petal1[bowtie]
+    petal2[bowtie2]
+    petal3[bowtie3]
+    petal4[bowtie4]
+    petal5[bowtie5]
+    petal6[bowtie6]
+end

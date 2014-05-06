@@ -1,0 +1,56 @@
+node Cost[mult] begin
+    input area Value
+    input costPerSqft Value
+    option eval mult Multiply(area[0], costPerSqft[0])
+    option eval withTax Multiply(area[0], costPerSqft[0], 1.12)
+    
+    output total Value(mult[0] | withTax[0])
+    // another way to write the line could be
+    // output total Value(active[0])
+end
+
+node Shape begin
+	option node Circle begin
+		input length Value
+        eval update CircleArea(r[0])
+        output area Value(update["area"])
+	end
+	option node Square begin
+        input length Value
+        eval update SquareArea(s[0])
+        output area Value(udpate["area"])
+    end
+end
+
+graph shapes begin
+    Shape -> s
+    Cost -> c
+
+    s.length(22)
+
+    c.area(s.area[0])
+    c.costPerSqft(0.34)
+end
+
+state ByCircleArea begin 
+    Graph shapes
+    s[Circle]
+end
+
+state BySquareArea begin
+    Graph shapes
+    s[Square]
+    // Because c has a default option picked, a subjunct selection is not needed. It's syntatical sugar
+end
+
+state ByCircleAreaWithTax begin
+    Graph shapes
+    s[Circle]
+    c[withTax]
+end
+
+state BySquareAreaWithTax begin
+    Graph shapes
+    s[Square]
+    c[withTax]
+end

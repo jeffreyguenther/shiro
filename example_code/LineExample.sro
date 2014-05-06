@@ -1,0 +1,36 @@
+node Line begin
+    port p1 Value
+    port p2 Value
+    eval update Line ( p1[0], p2[0] )
+    port length Value ( update["length"] )
+    port line Value ( update[0] )
+end
+
+node Point begin
+    port x Value
+    port y Value
+    eval update Point(x[0], y[0])
+    port point Value(update[0])
+end
+
+graph line begin
+    Point -> startPoint
+    EndPoints -> endPoint
+    Line -> l
+
+    l.p1(startPoint.point[0])
+    l.p2(endPoint.active.point[0])
+    startPoint.x(100)
+    startPoint.y(0)
+end
+
+state VerticalLine begin
+    Graph line
+    endPoint[P2]
+end
+
+state DiagonalLine begin
+    Graph line
+    endPoint[P1]
+end
+

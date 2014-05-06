@@ -1,0 +1,62 @@
+node Point begin
+    input x Value
+    input y Value
+    eval update Point(x[0], y[0])
+    output point Value(update[0])
+end
+
+node Line begin
+    input p1 Value
+    input p2 Value
+    eval update Line ( p1[0], p2[0] )
+    output length Value ( update["length"] )
+    output line Value ( update[0] )
+end
+
+node Rectangle begin
+    input origin Value
+    input width Value
+    input height Value
+    eval update Rectangle(origin[0], width[0], height[0])
+    output rect Value(update[0])
+end
+
+node EndPoints[P1] begin
+    option Point -> P1 begin
+        x(400)
+        y(400)
+    end
+
+    option Point -> P2 begin
+        x(100)
+        y(400)
+    end
+end
+
+graph line begin
+    Point -> startPoint
+    EndPoints -> endPoint
+    Line -> l
+    Rectangle -> r
+
+    r.width(100)
+    r.height(100)
+
+    startPoint.x(100)
+    startPoint.y(0)
+
+    l.p1(startPoint.point[0])
+    l.p2(endPoint.active.point[0])
+
+    r.origin(endPoint.active.point[0])
+end
+
+state DiagonalLine begin
+    Graph line
+    endPoint[P1]
+end
+
+state VerticalLine begin
+    Graph line
+    endPoint[P2]
+end
