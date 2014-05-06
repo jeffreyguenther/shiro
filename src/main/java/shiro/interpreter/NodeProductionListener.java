@@ -31,7 +31,7 @@ public class NodeProductionListener extends ShiroBasePassListener {
 
     @Override
     public void enterNodestmt(ShiroParser.NodestmtContext ctx) {
-        System.out.println("Enter Node Statement");
+//        System.out.println("Enter Node Statement");
         
         // if there is at least one node on the scope stack
         // stack will always be size 1 because of the parametric system
@@ -55,7 +55,7 @@ public class NodeProductionListener extends ShiroBasePassListener {
 
     @Override
     public void exitNodestmt(ShiroParser.NodestmtContext ctx) {
-        System.out.println("Exit Node Statement");
+//        System.out.println("Exit Node Statement");
 
         // Set the default options
         // This depends on nodeInternal adding ports and nodes before hand.

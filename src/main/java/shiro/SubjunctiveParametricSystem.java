@@ -1,6 +1,6 @@
 package shiro;
 
-import shiro.definitions.SystemState;
+import shiro.definitions.State;
 import shiro.definitions.GraphDefinition;
 import shiro.definitions.PortAssignment;
 import java.io.BufferedWriter;
@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import org.antlr.v4.runtime.ANTLRFileStream;
 import org.antlr.v4.runtime.ANTLRInputStream;
@@ -37,6 +38,7 @@ import shiro.functions.graphics.CircleMFunc;
 import shiro.functions.graphics.LineMFunc;
 import shiro.functions.graphics.PointMFunc;
 import shiro.functions.graphics.RectMFunc;
+import shiro.interpreter.DescriptiveErrorListener;
 import shiro.interpreter.EvaluateAlternativeListener;
 import shiro.interpreter.GraphBuilderListener;
 import shiro.interpreter.NodeDefinitionListener;
@@ -70,7 +72,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
     private GraphDefinition currentGraphDef;
 
     private Map<String, Node> nodes;                   // realized node table
-    private Map<String, SystemState> alternatives;     // alternative specs
+    private Map<String, State> alternatives;     // alternative specs
     private final NameManager names;                   // class for managing name generation
     private final PortAction graphNodeAction;          // action used in graph nodes
 
@@ -80,6 +82,8 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
     private Set<SubjParametricSystemEventListener> listeners; // Event listeners
 
     private SimpleStringProperty codeProperty;
+    private SimpleStringProperty errorMessagesProperty;
+    private SimpleBooleanProperty hasErrorsProperty;
 
     public SubjunctiveParametricSystem() {
         multiFunctions = new HashMap<>();
@@ -103,6 +107,8 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         createDefaultState();
 
         codeProperty = new SimpleStringProperty("");
+        errorMessagesProperty = new SimpleStringProperty("");
+        hasErrorsProperty = new SimpleBooleanProperty(false);
     }
 
     public SimpleStringProperty codeProperty() {
@@ -119,6 +125,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         names.clear();
         nodes.clear();
         graphDefs.clear();
+        clearErrorMessages();
     }
 
     /**
@@ -220,9 +227,9 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
 //        
 //        // add subjunctive node selection to all existing alternatives
 //        boolean first = true;
-//        for(SystemState s: getStates()){
+//        for(State s: getStates()){
 //            if(first){
-//                SystemState newState = new SystemState(currentGraphDef, names.getNextName("state"));
+//                State newState = new State(currentGraphDef, names.getNextName("state"));
 //                newState.setActiveNode(s.getSubjunctsMapping());
 //                newState.setActiveNode(result, n);
 //                addAlternative(newState);
@@ -401,8 +408,6 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
 
         // change the node's name
         producedNode.setFullName(newName);
-        addNode(producedNode);
-
         // set the enclosing scope of the new node to the current SPS reference
         producedNode.setParentScope(this);
 
@@ -537,7 +542,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         graphDefs.put(currentGraphDef.getName(), currentGraphDef);
 
         // add an alternative
-        addAlternative(new SystemState(currentGraphDef, "Default"));
+        addAlternative(new State(currentGraphDef, "Default"));
     }
 
     /**
@@ -554,13 +559,13 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         }
 
         //Evaluate each alternative
-        for (SystemState a : alternatives.values()) {
+        for (State a : alternatives.values()) {
             update(a);
         }
     }
 
-    public void update(SystemState alt) {
-        Map<Node, Node> subjunctTable = alt.getSubjunctsMapping();
+    public void update(State alt) {
+        Map<Node, Symbol> subjunctTable = alt.getSubjunctsMapping();
 
         for (Node s : subjunctTable.keySet()) {
             s.setActiveOption(subjunctTable.get(s).getName());
@@ -795,7 +800,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
      *
      * @param state
      */
-    public void addAlternative(SystemState state) {
+    public void addAlternative(State state) {
         alternatives.put(state.getName(), state);
     }
 
@@ -819,12 +824,38 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         });
 
         // print states
-        alternatives.values().stream().forEach((SystemState state) -> {
+        alternatives.values().stream().forEach((State state) -> {
             sb.append(state.toCode()).append("\n\n");
         });
 
         return sb.toString();
     }
+    
+    public void setHasSyntaxErrors(boolean value){
+        hasErrorsProperty.set(value);
+    }
+    
+    public boolean hasErrors(){
+        return hasErrorsProperty.get();
+    }
+    
+    public SimpleBooleanProperty getHasErrorsProperty(){
+        return hasErrorsProperty;
+    }
+    
+    public void appendErrorMessage(String msg){
+        errorMessagesProperty.set(msg);
+    }
+    
+    public void clearErrorMessages(){
+        errorMessagesProperty.set("");
+        setHasSyntaxErrors(false);
+    }
+    
+    public SimpleStringProperty errorMessagesProperty(){
+        return errorMessagesProperty;
+    }
+    
 
     /**
      * Write out the current state of the runtime as shiro code
@@ -846,84 +877,32 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
 
         }
     }
-
-    public void loadCode(String code) {
+    
+    private void load(ShiroLexer lexer){
         ParseTreeWalker walker = new ParseTreeWalker();
 
         // create a lexer
-        ShiroLexer lex = new ShiroLexer(new ANTLRInputStream(code));
-
-        // Get the token stream
-        tokens = new CommonTokenStream(lex);
-
-        // Parse the file
-        ShiroParser parser = new ShiroParser(tokens);
-        parser.setBuildParseTree(true);
-
-        // Create the parse tree object
-        ParseTree tree = parser.shiro();
-
-        // PASS 1: Add a node -> AST mapping in the parametric system
-        NodeDefinitionListener defPass = new NodeDefinitionListener();
-        // Walk the tree with the def pass listener
-        walker.walk(defPass, tree);
-
-        // Get the node definitions
-        Map<String, ParseTree> nodeDefinitions = defPass.getNodeDefinitions();
-        Map<String, ParseTree> alternativeDefinitions = defPass.getAlternativeDefinitions();
-//        ParseTree graph = defPass.getGraphs();
-
-        // Store the ASTs in the tree
-        addNodeASTDefinitions(nodeDefinitions);
-        addAlternativeASTDefinitions(alternativeDefinitions);
-
-        // PASS 2: Build the dependency graph
-        /**
-         * Walk only the graph parse tree to prevent events from firing on the
-         * other parts of the parse tree
-         */
-        GraphBuilderListener graphBuilder = new GraphBuilderListener(this);
-//        walker.walk(graphBuilder, graph);
-
-        GraphDefinition graphDef = graphBuilder.getGraphDef();
-        graphDefs.remove("Default");
-        graphDefs.put(graphDef.getName(), graphDef);
-        currentGraphDef = graphDef;
-
-        // deal with name auto generation
-        for (String key : nodeDefs.keySet()) {
-            names.setInstanceCount(key, getNodesOfType(key).size());
+        ShiroLexer lex = lexer;
+//        lex.removeErrorListeners();
+        lex.addErrorListener(new DescriptiveErrorListener(this));
+        if(hasErrors()){
+            return;
         }
-
-        alternatives.remove("Default");
-
-        // Evaluate parametric system
-        update();
-
-        codeProperty.setValue(toCode());
-    }
-
-    /**
-     * Load code from a file
-     *
-     * @param file to load code from
-     * @throws IOException
-     */
-    public void loadCode(File file) throws IOException {
-        ParseTreeWalker walker = new ParseTreeWalker();
-
-        // create a lexer
-        ShiroLexer lex = new ShiroLexer(new ANTLRFileStream(file.getAbsolutePath(), "UTF8"));
-
+        
         // Get the token stream
         tokens = new CommonTokenStream(lex);
 
         // Parse the file
         ShiroParser parser = new ShiroParser(tokens);
+//        parser.removeErrorListeners();
+        parser.addErrorListener(new DescriptiveErrorListener(this));
         parser.setBuildParseTree(true);
 
         // Create the parse tree object
         ParseTree tree = parser.shiro();
+        if(hasErrors()){
+            return;
+        }
 
         // PASS 1: Add a node -> AST mapping in the parametric system
         NodeDefinitionListener defPass = new NodeDefinitionListener();
@@ -955,8 +934,8 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         }
 
         // deal with name auto generation
-        for (String key : nodeDefs.keySet()) {
-            names.setInstanceCount(key, getNodesOfType(key).size());
+        for (String type : nodeDefs.keySet()) {
+            names.setInstanceCount(type, getNodesOfType(type).size());
         }
 
         alternatives.remove("Default");
@@ -967,15 +946,35 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         codeProperty.setValue(toCode());
     }
 
+    public void loadCode(String code) {
+        // create a lexer
+        ShiroLexer lex = new ShiroLexer(new ANTLRInputStream(code));
+        
+        load(lex);
+    }
+
+    /**
+     * Load code from a file
+     *
+     * @param file to load code from
+     * @throws IOException
+     */
+    public void loadCode(File file) throws IOException {
+        // create a lexer
+        ShiroLexer lex = new ShiroLexer(new ANTLRFileStream(file.getAbsolutePath(), "UTF8"));
+        
+        load(lex);
+    }
+
     public Collection<String> getStateNames() {
         return alternatives.keySet();
     }
 
-    public SystemState getState(String name) {
+    public State getState(String name) {
         return alternatives.get(name);
     }
 
-    public Set<SystemState> getStates() {
+    public Set<State> getStates() {
         return new HashSet<>(alternatives.values());
     }
 }

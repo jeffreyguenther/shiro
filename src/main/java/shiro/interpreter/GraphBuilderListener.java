@@ -47,10 +47,9 @@ public class GraphBuilderListener extends ShiroBasePassListener {
 
         // resolve the dependencies between ports as indicated by expressions
         // by adding dependencies between the two ports to the graph
-        System.out.println();
-        System.out.println("Dependencies");
+//        System.out.println();
+//        System.out.println("Dependencies");
         for (DependencyRelation<Port> d : deps) {
-            System.out.println(d.getDependent().getFullName() + " -> " + d.getDependedOn().getFullName());
             pSystem.addDependency(d);
         }
     }
@@ -70,6 +69,7 @@ public class GraphBuilderListener extends ShiroBasePassListener {
             // need to differentiate between creating nodes and subjunctive nodes
             Symbol producedSymbol = pSystem.produceSymbolFromName(leftHandSide.getPath(), nodeName);
             Node producedNode = (Node) producedSymbol;
+            pSystem.addNode(producedNode);
 
             if (ac.activeObject != null) {
                 String updatePort = ac.activeObject.getText();

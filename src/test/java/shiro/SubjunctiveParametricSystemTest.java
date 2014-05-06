@@ -2,7 +2,10 @@ package shiro;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import junit.framework.Assert;
@@ -11,6 +14,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import org.junit.Test;
 import static org.junit.matchers.JUnitMatchers.containsString;
+import shiro.dag.DependencyRelation;
 import shiro.expressions.Expression;
 import shiro.expressions.Path;
 import shiro.shared.CodeLoader;
@@ -280,6 +284,38 @@ public class SubjunctiveParametricSystemTest extends CodeLoader{
         
         Assert.assertEquals(5, ps.getNodesOfType("Point").size());
         Assert.assertEquals(3, ps.getNodesOfType("Other").size());
+    }
+    
+    @Test
+    public void loadCode() throws IOException{
+        SubjunctiveParametricSystem ps = setupPSystemWithSubjuncts();
+        
+        // check to see if types are correct
+        Assert.assertNotNull(ps.getNodeDef("Line"));
+        Assert.assertNotNull(ps.getNodeDef("Point"));
+        Assert.assertNotNull(ps.getNodeDef("EndPoints"));
+        Assert.assertEquals(2, ps.getStateNames().size());
+        
+        Set<DependencyRelation<Port>> total = new LinkedHashSet<>();
+        for(Node n: ps.getNodes()){
+            total.addAll(n.getDependencies());
+        }
+        
+        System.out.println(ps.printDependencyGraph());
+        
+//        Node startPoint = ps.getNode("startPoint");
+//        Set<DependencyRelation<Port>> dependencies = startPoint.getDependencies();
+//        
+//        Set<DependencyRelation<Port>> expected = new LinkedHashSet<>();
+//        
+//        Port x = startPoint.getPort("x");
+//        Port y = startPoint.getPort("x");
+//        Port update = startPoint.getPort("update");
+//        Port point = startPoint.getPort("point");
+//        
+//        expected.add(new DependencyRelation<>(update, x));
+//        expected.add(new DependencyRelation<>(update, y));
+//        expected.add(new DependencyRelation<>(point, update));
     }
 
 //    @Test

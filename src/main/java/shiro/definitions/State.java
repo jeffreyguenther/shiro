@@ -6,19 +6,20 @@ import java.util.Map;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import shiro.Node;
+import shiro.Symbol;
 
 /**
  * Definition of a system state.
  * @author jeffreyguenther
  */
-public class SystemState implements Definition{
+public class State implements Definition{
     private Instant timeStamp;
     private String comment;
-    private Map<Node, Node> subjunctsMapping;
+    private Map<Node, Symbol> subjunctsMapping;
     private String name;
     private GraphDefinition graphDef;
 
-    public SystemState(GraphDefinition gDef, String name, String comment, Map<Node, Node> subjunctsMapping) {
+    public State(GraphDefinition gDef, String name, String comment, Map<Node, Symbol> subjunctsMapping) {
         this.graphDef = gDef;
         this.name = name;
         this.comment = comment;
@@ -26,7 +27,7 @@ public class SystemState implements Definition{
         this.timeStamp = Instant.now();
     }
     
-    public SystemState(GraphDefinition gDef, String name) {
+    public State(GraphDefinition gDef, String name) {
         this(gDef, name, "", new HashMap<>());
     }
 
@@ -42,11 +43,11 @@ public class SystemState implements Definition{
         subjunctsMapping.put(sNode, activeNode);
     }
     
-    public void setActiveNode(Map<Node, Node> table){
+    public void setActiveNode(Map<Node, Symbol> table){
         subjunctsMapping.putAll(table);
     }
 
-    public Map<Node, Node> getSubjunctsMapping() {
+    public Map<Node, Symbol> getSubjunctsMapping() {
         return subjunctsMapping;
     }
 

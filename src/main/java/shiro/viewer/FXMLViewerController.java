@@ -5,6 +5,7 @@
  */
 package shiro.viewer;
 
+import com.sun.javafx.property.adapter.PropertyDescriptor;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -15,25 +16,26 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
@@ -46,7 +48,7 @@ import javafx.stage.FileChooser;
 import shiro.Port;
 import shiro.SubjunctiveParametricSystem;
 import shiro.Value;
-import shiro.definitions.SystemState;
+import shiro.definitions.State;
 import shiro.drawing.Canvas;
 import shiro.drawing.MoveContext;
 
@@ -73,14 +75,19 @@ public class FXMLViewerController {
     private FlowPane gallery;
     @FXML
     private ScrollPane lightTableScrollPane;
+    @FXML
+    private ToggleGroup layouts;
+    @FXML
+    private Label errorLabel;
 
     private SubjunctiveParametricSystem model;
-    private Map<SystemState, Canvas> layers;
+    private Map<State, Canvas> layers;
     private File currentFile;
-    private Map<SystemState, WritableImage> snapshots;
+    private Map<State, WritableImage> snapshots;
     private Group lightTable;
     private MoveContext moveContext;
     private ImageView selectedTile;
+    
 
     public void initialize() {
         model = new SubjunctiveParametricSystem();
@@ -92,7 +99,20 @@ public class FXMLViewerController {
         lightTable = new Group();
         moveContext = new MoveContext();
         selectedTile = null;
-        root.setBottom(null);
+        
+        
+        model.errorMessagesProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
+            appendToConsole(newValue + "\n");
+        });
+        
+        errorLabel.visibleProperty().bind(model.getHasErrorsProperty());
+        model.getHasErrorsProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
+            if(newValue){
+                code.setStyle("-fx-border-color:red;");
+            }else{
+                code.setStyle("-fx-border-color:null;");
+            }
+        });
         
         
     }
@@ -109,12 +129,13 @@ public class FXMLViewerController {
         snapshots.clear();
         layers.clear();
         model.clear();
+        console.setText("");
 
         model.loadCode(code.getText());
 
         altsList.getItems().addAll(model.getStateNames());
 
-        for (SystemState s : model.getStates()) {
+        for (State s : model.getStates()) {
             Canvas c = createCanvas();
             layers.put(s, c);
             renderState(s);
@@ -296,7 +317,7 @@ public class FXMLViewerController {
     }
 
     public void handleSingleSelectedAltChange(String altName) {
-        SystemState s = model.getState(altName);
+        State s = model.getState(altName);
 
         Canvas c = layers.get(s);
         ObservableList<Node> children = canvas.getChildren();
@@ -320,7 +341,7 @@ public class FXMLViewerController {
      * @param s
      * @return
      */
-    private Canvas renderState(SystemState s) {
+    private Canvas renderState(State s) {
         // evaluate the parametric system
         model.update(s);
 

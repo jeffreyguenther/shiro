@@ -12,7 +12,7 @@
 
 <BorderPane fx:id="root" prefHeight="600.0" prefWidth="800.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="shiro.viewer.FXMLViewerController">
   <bottom>
-    <TextArea fx:id="console" editable="false" minHeight="50.0" prefHeight="50.0" prefWidth="-1.0" wrapText="true" />
+    <TextArea fx:id="console" editable="false" minHeight="50.0" prefHeight="50.0" prefWidth="-1.0" visible="true" wrapText="true" />
   </bottom>
   <center>
     <SplitPane dividerPositions="0.5" focusTraversable="true" prefHeight="160.0" prefWidth="200.0">
@@ -22,6 +22,7 @@
             <AnchorPane id="AnchorPane" maxWidth="-1.0" minHeight="-1.0" prefHeight="-1.0">
               <children>
                 <Button fx:id="run" defaultButton="false" mnemonicParsing="false" onAction="#handleRun" text="Run" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="10.0" />
+                <Label fx:id="errorLabel" layoutX="58.0" layoutY="13.0" text="Has errors" textFill="#cc0000" />
               </children>
             </AnchorPane>
             <TextArea fx:id="code" prefHeight="-1.0" prefWidth="-1.0" promptText="Enter Shiro code" wrapText="true" VBox.vgrow="ALWAYS" />

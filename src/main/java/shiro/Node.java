@@ -3,6 +3,7 @@ package shiro;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
 import shiro.dag.DependencyRelation;
 import shiro.definitions.PortType;
@@ -138,6 +139,10 @@ public class Node implements Symbol, Scope {
         activeOption = activeItem;
         return activeOption;
     }
+    
+    public Symbol getOption(String name){
+        return options.get(name);
+    }
 
     /**
      * Gets the node's active option
@@ -158,10 +163,17 @@ public class Node implements Symbol, Scope {
      * else, it returns null.
      */
     public Port getActiveEvalPort() {
-        if (activeOption.getSymbolType().isPort()) {
+        // if the active option is an eval port
+        if (activeOption != null && activeOption.getSymbolType().isPort()) {
             Port p = (Port) activeOption;
             if (p.isEval()) {
                 return p;
+            }
+        }else{ // find an eval port in the collection of ports
+            // TODO remove this hack to handle eval ports more generically
+            List<Port> evals = ports.values().stream().filter((p) -> p.isEval()).collect(toList());
+            if(evals.size() == 1){
+                return evals.get(0);
             }
         }
 
@@ -475,6 +487,10 @@ public class Node implements Symbol, Scope {
     public Set<Port> getPorts() {
         return new LinkedHashSet<>(ports.values());
     }
+    
+    public Port getPort(String name){
+        return ports.get(name);
+    }
 
     @Override
     public Symbol find(Path p) throws PathNotFoundException, PathNotAccessibleException {
@@ -605,6 +621,12 @@ public class Node implements Symbol, Scope {
                 }
             }
         }
+        
+        for(Node nested: nestedNodes.values()){
+            deps.addAll(nested.getDependencies());
+        }
+        
+        
         return deps;
     }
 

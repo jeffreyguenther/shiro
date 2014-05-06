@@ -12,12 +12,13 @@ import java.util.Map;
 import junit.framework.Assert;
 import org.junit.Test;
 import shiro.Node;
+import shiro.Symbol;
 
 /**
  *
  * @author jeffreyguenther
  */
-public class SystemStateTest {
+public class StateTest {
     @Test
     public void toCode() throws IOException{
         String stateDef = Definitions.loadDef("state.sro", getClass());
@@ -26,10 +27,10 @@ public class SystemStateTest {
         Node n = new Node("Point", "P1", null);
         Node sn = new Node("EndPoint", "endPoint", null);
         
-        Map<Node, Node> subjuncts = new HashMap<>();
+        Map<Node, Symbol> subjuncts = new HashMap<>();
         subjuncts.put(sn, n);
         
-        SystemState state = new SystemState(g, "DiagonalLine", "", subjuncts);
+        State state = new State(g, "DiagonalLine", "", subjuncts);
         Assert.assertEquals("should match", stateDef, state.toCode());
     }
 }

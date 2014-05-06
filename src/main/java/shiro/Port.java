@@ -4,8 +4,6 @@ import shiro.definitions.PortType;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import shiro.events.PortEvent;
-import shiro.events.PortEventListener;
 import shiro.expressions.Expression;
 import shiro.expressions.Path;
 import shiro.functions.MultiFunction;

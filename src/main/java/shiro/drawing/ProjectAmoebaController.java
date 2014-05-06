@@ -30,7 +30,7 @@ import shiro.PathNotAccessibleException;
 import shiro.PathNotFoundException;
 import shiro.Port;
 import shiro.SubjunctiveParametricSystem;
-import shiro.definitions.SystemState;
+import shiro.definitions.State;
 import shiro.Value;
 import shiro.expressions.Expression;
 import shiro.expressions.Path;
@@ -58,7 +58,7 @@ public class ProjectAmoebaController {
 
     private boolean createLineSuccessful;
     private String startPointName;
-    private Map<SystemState, Canvas> layers;
+    private Map<State, Canvas> layers;
     private Canvas currentCanvas;
     private ObservableList<String> alternatives;
     private SimpleStringProperty codeProperty;
@@ -86,7 +86,7 @@ public class ProjectAmoebaController {
         model.loadDefinitions();
 
         // create a Canvas for the default system state
-        SystemState defaultState = model.getState("Default");
+        State defaultState = model.getState("Default");
         currentCanvas = createCanvas();
         layers.put(defaultState, currentCanvas);
         ui.getLayers().getChildren().add(currentCanvas);
@@ -400,7 +400,7 @@ public class ProjectAmoebaController {
     }
 
     public void handleSingleSelectedAltChange(String altName) {
-        SystemState s = model.getState(altName);
+        State s = model.getState(altName);
 
         Canvas c = renderState(s);
         ObservableList<Node> children = ui.getLayers().getChildren();
@@ -505,7 +505,7 @@ public class ProjectAmoebaController {
                 // Add all the state names to the list of alternatives
                 alternatives.addAll(model.getStateNames());
 
-                for (SystemState s : model.getStates()) {
+                for (State s : model.getStates()) {
                     layers.put(s, createCanvas());
                 }
 
@@ -524,7 +524,7 @@ public class ProjectAmoebaController {
      * @param s
      * @return
      */
-    private Canvas renderState(SystemState s) {
+    private Canvas renderState(State s) {
         // evaluate the parametric system
         model.update(s);
 
