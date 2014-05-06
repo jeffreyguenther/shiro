@@ -1,6 +1,7 @@
 package shiro.expressions;
 
-import static org.junit.Assert.*;
+
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import shiro.Value;
@@ -21,9 +22,9 @@ public class SStringTest {
     @Test
     public void testInitialization() {
         Value expressionValue = stringExpression.evaluate();
-        assertEquals("The value must have type as String", String.class,
+        Assert.assertEquals("The value must have type as String", String.class,
                 expressionValue.getType());
-        assertEquals(expressionValue.getValue(), "Hello World");
-        assertEquals(expressionValue.getValueAsString(), "Hello World");
+        Assert.assertEquals(expressionValue.getValue(), "Hello World");
+        Assert.assertEquals(expressionValue.getValueAsString(), "Hello World");
     }
 }

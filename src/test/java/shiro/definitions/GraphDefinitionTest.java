@@ -9,7 +9,7 @@ package shiro.definitions;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Test;
 import shiro.expressions.Path;
 

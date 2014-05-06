@@ -7,7 +7,7 @@
 package shiro.definitions;
 
 import java.util.ArrayList;
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Test;
 import shiro.expressions.Expression;
 

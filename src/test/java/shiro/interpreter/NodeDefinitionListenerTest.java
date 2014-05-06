@@ -8,9 +8,9 @@ package shiro.interpreter;
 
 import java.io.IOException;
 import java.util.Map;
-import junit.framework.Assert;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import shiro.shared.CodeLoader;

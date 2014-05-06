@@ -2,15 +2,14 @@ package shiro;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import junit.framework.Assert;
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.core.Is.is;
+import org.junit.Assert;
 import static org.junit.Assert.assertThat;
 import org.junit.Test;
 import static org.junit.matchers.JUnitMatchers.containsString;
