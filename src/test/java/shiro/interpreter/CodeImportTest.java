@@ -12,6 +12,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import org.antlr.v4.runtime.ANTLRFileStream;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -28,7 +29,7 @@ import shiro.dag.TopologicalSort;
  *
  * @author jeffreyguenther
  */
-public class CodeImportTest {
+public class CodeImportTest{
     @Test
     public void getFiles() throws IOException, URISyntaxException{
         URL resource = getClass().getClassLoader().getResource("shiro/interpreter/a.sro");
@@ -57,9 +58,14 @@ public class CodeImportTest {
             graph.addDependency(graph.getNodeForValue(dep.getDependent(), null), graph.getNodeForValue(dep.getDependedOn(), null));
         }
         
+        List<GraphNode<Path>> expectedOrder = new ArrayList<>();
+        expectedOrder.add(graph.getNodeForValue(libFolder.resolve("d.sro"), null));
+        expectedOrder.add(graph.getNodeForValue(libFolder.resolve("c.sro"), null));
+        expectedOrder.add(graph.getNodeForValue(rootFolder.resolve("b.sro"), null));
+        expectedOrder.add(graph.getNodeForValue(source, null));
+        
         TopologicalSort<Path> topoSort = new TopologicalSort<>(graph);
         List<GraphNode<Path>> topologicalOrdering = topoSort.getTopologicalOrdering();
-        topologicalOrdering.stream().forEach((GraphNode<Path> g) -> System.out.println(g.getValue()));
-        
+        Assert.assertEquals(expectedOrder, topologicalOrdering);
     }
 }
