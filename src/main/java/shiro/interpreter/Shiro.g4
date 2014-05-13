@@ -8,7 +8,7 @@ public static final int WHITESPACE = 1;
 public static final int COMMENTS = 2;
 }
 
-shiro : useStatement* statement+
+shiro : useStatement* statement*
       ;
 
 useStatement: USE STRING_LITERAL NEWLINE
