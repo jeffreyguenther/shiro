@@ -82,8 +82,12 @@ public class ProjectAmoebaController {
 
         selectedObject = null;
 
-        // load point and line definitions
-        model.loadDefinitions();
+        try {
+            // load point and line definitions
+            model.loadDefaultDefinitions();
+        } catch (IOException ex) {
+            Logger.getLogger(ProjectAmoebaController.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
         // create a Canvas for the default system state
         State defaultState = model.getState("Default");
@@ -239,13 +243,13 @@ public class ProjectAmoebaController {
         Expression p1Expr = model.parseExpression(p1, startPointName + ".point[0]");
         Expression p2Expr = model.parseExpression(p2, endPointName + ".point[0]");
 
-        try {
-            model.setPortExpression(pathX, p1Expr);
-            model.setPortExpression(pathY, p2Expr);
-
-        } catch (PathNotFoundException ex) {
-            Logger.getLogger(ProjectAmoebaController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+//        try {
+//            model.setPortExpression(pathX, p1Expr);
+//            model.setPortExpression(pathY, p2Expr);
+//
+//        } catch (PathNotFoundException ex) {
+//            Logger.getLogger(ProjectAmoebaController.class.getName()).log(Level.SEVERE, null, ex);
+//        }
 
         model.update();
 
@@ -271,7 +275,7 @@ public class ProjectAmoebaController {
     }
 
     public void clearCanvas() {
-        model.clear();
+        model.removeAllInstances();
     }
 
     public void clearAlternatives() {
@@ -372,7 +376,7 @@ public class ProjectAmoebaController {
 
     public void handleCanvasMouseReleased(MouseEvent e) {
         if (mode.equals(Mode.Move) && !splitStarted) {
-            // clear the selected object
+            // removeAllInstances the selected object
             selectedObject = null;
         }
 
@@ -476,13 +480,13 @@ public class ProjectAmoebaController {
         Expression xExpr = model.parseExpression(node, x + "");
         Expression yExpr = model.parseExpression(node, y + "");
 
-        try {
-            model.setPortExpression(pathX, xExpr);
-            model.setPortExpression(pathY, yExpr);
-
-        } catch (PathNotFoundException ex) {
-            Logger.getLogger(ProjectAmoebaController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+//        try {
+//            model.setPortExpression(pathX, xExpr);
+//            model.setPortExpression(pathY, yExpr);
+//
+//        } catch (PathNotFoundException ex) {
+//            Logger.getLogger(ProjectAmoebaController.class.getName()).log(Level.SEVERE, null, ex);
+//        }
 
         return node;
     }
@@ -500,7 +504,7 @@ public class ProjectAmoebaController {
     public void handleOpen(File f) {
         if (f != null) {
             try {
-                model.loadCode(f);
+                model.loadCode(f.toPath());
 
                 // Add all the state names to the list of alternatives
                 alternatives.addAll(model.getStateNames());

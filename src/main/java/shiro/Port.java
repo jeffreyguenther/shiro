@@ -9,7 +9,7 @@ import shiro.expressions.Path;
 import shiro.functions.MultiFunction;
 
 /**
- * Definition of a port (node) in a dependency graph
+ * Definition of a port (graph node) in a dependency graph
  * 
  * @author jeffreyguenther
  */
@@ -29,8 +29,9 @@ public class Port implements Symbol{
     private boolean updated;    // flag to indicate the status of the port
     private boolean active;     // flag to indicate if port is active or not
     
-    // set of all the ports this port has edges to
-    // A port knows who it depends upon.
+    // The set of all the ports this port has edges to.
+    // A port knows who it depends upon. Remember edges are direct and point to
+    // the ports depended on.
     private Set<Port> portsDependedOn;
 
     /**
@@ -393,33 +394,6 @@ public class Port implements Symbol{
     }
 
     /**
-     * Get the port's permissions
-     * Port permissions are used to generate connecting points in the UI.
-     * Computationally, there is no such thing as an input/output port.
-     * This is a flag for simplification in the UI.
-     * @return the port's read/write permissions
-     */
-    public Permissions getPermissions() {
-        Permissions p;
-        switch(type){
-            case Input:
-                p = Permissions.READWRITE;
-                break;
-            case Output:
-                p = Permissions.READ;
-                break;
-            case Evaluated:
-                p = Permissions.NONE;
-                break;
-            default:
-                p = Permissions.NONE;
-                break;
-                
-        }
-        return p;
-    }
-
-    /**
      * Get a port's type
      * @return the type of a port
      */
@@ -444,15 +418,27 @@ public class Port implements Symbol{
         this.type = type;
     }
     
+    /** 
+     * Determines if a port is an eval port
+     * @return true if the port is an eval port, otherwise it returns false
+     */
     public boolean isEval(){
         return type.equals(PortType.Evaluated);
     }
     
+    /**
+     * Determines if the port is an input port
+     * @return true if the port is an input port, otherwise it returns false
+     */
     public boolean isInput(){
         return type.equals(PortType.Input);
     }
     
-    public boolean isOutPut(){
+    /**
+     * Determines if the port is an output port
+     * @return true if the port is an output port, otherwise it returns false
+     */
+    public boolean isOutput(){
         return type.equals(PortType.Output);
     }
     

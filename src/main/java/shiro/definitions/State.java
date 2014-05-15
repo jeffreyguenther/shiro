@@ -17,9 +17,9 @@ public class State implements Definition{
     private String comment;
     private Map<Node, Symbol> subjunctsMapping;
     private String name;
-    private GraphDefinition graphDef;
+    private String graphDef;
 
-    public State(GraphDefinition gDef, String name, String comment, Map<Node, Symbol> subjunctsMapping) {
+    public State(String gDef, String name, String comment, Map<Node, Symbol> subjunctsMapping) {
         this.graphDef = gDef;
         this.name = name;
         this.comment = comment;
@@ -27,15 +27,15 @@ public class State implements Definition{
         this.timeStamp = Instant.now();
     }
     
-    public State(GraphDefinition gDef, String name) {
+    public State(String gDef, String name) {
         this(gDef, name, "", new HashMap<>());
     }
 
-    public GraphDefinition getGraphDef() {
+    public String getGraphDef() {
         return graphDef;
     }
 
-    public void setGraphDef(GraphDefinition graphDef) {
+    public void setGraphDef(String graphDef) {
         this.graphDef = graphDef;
     }
     

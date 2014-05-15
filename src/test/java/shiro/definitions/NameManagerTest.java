@@ -57,7 +57,7 @@ public class NameManagerTest {
         manager.getNextName("Line");
         manager.getNextName("Line");
         
-        manager.clear();
+        manager.reset();
         
         Assert.assertEquals("should be empty", 0, manager.getNumberOfInstances("Point"));
         Assert.assertEquals("should be empty", 0, manager.getNumberOfInstances("Line"));

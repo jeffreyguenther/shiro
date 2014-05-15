@@ -12,12 +12,11 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.antlr.v4.runtime.ANTLRFileStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
+import shiro.SubjunctiveParametricSystem;
 import shiro.dag.DependencyRelation;
-import shiro.dag.GraphNode;
 
 /**
  *
@@ -28,11 +27,13 @@ public class UseCodeListener extends ShiroBaseListener {
     private Set<DependencyRelation<Path>> sourceFiles;
     private Path parentDirectory;
     private Path sourceFile;
+    private SubjunctiveParametricSystem ps;
 
-    public UseCodeListener(Path source) {
+    public UseCodeListener(Path source, SubjunctiveParametricSystem ps) {
         sourceFiles = new HashSet<>();
         this.sourceFile = source;
         this.parentDirectory = source.getParent();
+        this.ps = ps;
     }
 
     public Set<DependencyRelation<Path>> getSourceFiles() {
@@ -60,16 +61,13 @@ public class UseCodeListener extends ShiroBaseListener {
     }
 
     private Set<DependencyRelation<Path>> getSourceDependencies(Path file) throws IOException {
-        ShiroLexer lexer = new ShiroLexer(new ANTLRFileStream(file.toString()));
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        ShiroParser parser = new ShiroParser(tokens);
-        parser.setBuildParseTree(true);
-        ParseTree tree = parser.shiro();
+        CommonTokenStream lex = ps.lex(file);
+        ParseTree tree = ps.parseFromRootRule(lex);
+        ps.saveParseResult(file, lex, tree);
         
         ParseTreeWalker walker = new ParseTreeWalker();
-        UseCodeListener listener = new UseCodeListener(file);
+        UseCodeListener listener = new UseCodeListener(file, ps);
         walker.walk(listener, tree);
         return listener.getSourceFiles();
     }
-
 }

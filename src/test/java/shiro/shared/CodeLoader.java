@@ -6,9 +6,10 @@
 
 package shiro.shared;
 
-import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.file.Paths;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import shiro.SubjunctiveParametricSystem;
@@ -20,16 +21,16 @@ import shiro.interpreter.ShiroParser;
  * @author jeffreyguenther
  */
 public class CodeLoader {
-    public SubjunctiveParametricSystem setupPSystem() {
+    public SubjunctiveParametricSystem setupPSystem() throws IOException {
         SubjunctiveParametricSystem pSystem = new SubjunctiveParametricSystem();
-        pSystem.loadDefinitions();
+        pSystem.loadDefaultDefinitions();
         return pSystem;
     }
 
-    public SubjunctiveParametricSystem setupPSystemWithSubjuncts() throws IOException {
+    public SubjunctiveParametricSystem setupPSystemWithSubjuncts() throws IOException, URISyntaxException {
         SubjunctiveParametricSystem pSystem = new SubjunctiveParametricSystem();
         URL resource = this.getClass().getResource("SimpleSubjunctiveExample.sro");
-        pSystem.loadCode(new File(resource.getPath()));
+        pSystem.loadCode(Paths.get(resource.toURI()));
         return pSystem;
     }
     

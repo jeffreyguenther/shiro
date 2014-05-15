@@ -87,7 +87,6 @@ public class FXMLViewerController {
     private Group lightTable;
     private MoveContext moveContext;
     private ImageView selectedTile;
-    
 
     public void initialize() {
         model = new SubjunctiveParametricSystem();
@@ -99,30 +98,28 @@ public class FXMLViewerController {
         lightTable = new Group();
         moveContext = new MoveContext();
         selectedTile = null;
-        
-        
+
         model.errorMessagesProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
             appendToConsole(newValue + "\n");
         });
-        
-        errorLabel.visibleProperty().bind(model.getHasErrorsProperty());
-        model.getHasErrorsProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
-            if(newValue){
+
+        errorLabel.visibleProperty().bind(model.hasErrorsProperty());
+        model.hasErrorsProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
+            if (newValue) {
                 code.setStyle("-fx-border-color:red;");
-            }else{
+            } else {
                 code.setStyle("-fx-border-color:null;");
             }
         });
-        
-        
+
     }
 
     @FXML
     private void handleRun(ActionEvent event) {
         run();
     }
-    
-    public void run(){
+
+    public void run() {
         altsList.getItems().clear();
         gallery.getChildren().clear();
         lightTable.getChildren().clear();
@@ -131,29 +128,44 @@ public class FXMLViewerController {
         model.reset();
         console.setText("");
 
-        model.loadCode(code.getText());
-
-        altsList.getItems().addAll(model.getStateNames());
-
-        for (State s : model.getStates()) {
-            Canvas c = createCanvas();
-            layers.put(s, c);
-            renderState(s);
-
-            canvas.getChildren().add(c);
-            // put all canvases on scenegraph
-            // capture image
-            // and build gallery
-            WritableImage snapshot = c.snapshot(null, null);
-            snapshots.put(s, snapshot);
-            gallery.getChildren().add(createImageTile(snapshot));
-
-            canvas.getChildren().clear();
+        if (currentFile == null) {
+            FileChooser save = new FileChooser();
+            save.setInitialFileName("Code.sro");
+            save.setTitle("Save as .sro");
+            currentFile = save.showSaveDialog(root.getScene().getWindow());
+            save();
         }
-
-        altsList.getSelectionModel().select(0);
-
-        appendToConsole("Executed: " + currentFile.toString() + "\n");
+        
+        
+        if (currentFile != null) {
+            try {
+                model.loadCode(currentFile.toPath());
+            } catch (IOException ex) {
+                Logger.getLogger(FXMLViewerController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            altsList.getItems().addAll(model.getStateNames());
+            
+            for (State s : model.getStates()) {
+                Canvas c = createCanvas();
+                layers.put(s, c);
+                renderState(s);
+                
+                canvas.getChildren().add(c);
+            // put all canvases on scenegraph
+                // capture image
+                // and build gallery
+                WritableImage snapshot = c.snapshot(null, null);
+                snapshots.put(s, snapshot);
+                gallery.getChildren().add(createImageTile(snapshot));
+                
+                canvas.getChildren().clear();
+            }
+            
+            altsList.getSelectionModel().select(0);
+            
+            appendToConsole("Executed: " + currentFile.toString() + "\n");
+        }
     }
 
     private void appendToConsole(String s) {
@@ -175,34 +187,33 @@ public class FXMLViewerController {
         v.setEffect(ds);
         return v;
     }
-    
-    private Group createLightTable(){
+
+    private Group createLightTable() {
         Group lightTable = new Group();
-        
+
         lightTable.setOnMousePressed(this::handleTilePressed);
         lightTable.setOnMouseDragged(this::handleTileDragged);
         lightTable.setOnMouseReleased(this::handleTileReleased);
-        
+
         double x = 0;
-        for(WritableImage img: snapshots.values()){
+        for (WritableImage img : snapshots.values()) {
             ImageView tile = createImageTile(img);
             tile.relocate(x, 0);
             tile.setOnMousePressed(this::handleTileSelected);
             lightTable.getChildren().add(tile);
-            
+
             x = x + 200 + 10;
         }
-        
-        
+
         return lightTable;
     }
-    
-    private void handleTileSelected(MouseEvent e){
+
+    private void handleTileSelected(MouseEvent e) {
         selectedTile = (ImageView) e.getSource();
     }
-    
-    private void handleTilePressed(MouseEvent e){
-        if(selectedTile != null){
+
+    private void handleTilePressed(MouseEvent e) {
+        if (selectedTile != null) {
             ImageView v = selectedTile;
             moveContext.setInitialTranslateX(v.layoutXProperty().get());
             moveContext.setInitialTranslateY(v.layoutYProperty().get());
@@ -211,21 +222,25 @@ public class FXMLViewerController {
             System.out.println("tile pressed");
         }
     }
-    
-    private void handleTileDragged(MouseEvent e){
-        if(selectedTile != null){
+
+    private void handleTileDragged(MouseEvent e) {
+        if (selectedTile != null) {
             ImageView v = selectedTile;
             v.setLayoutX(moveContext.getDragDestX(e.getX()));
             v.setLayoutY(moveContext.getDragDestY(e.getY()));
         }
     }
-    
-    private void handleTileReleased(MouseEvent e){
+
+    private void handleTileReleased(MouseEvent e) {
         System.out.println("tile released");
     }
 
     @FXML
     private void handleSave(ActionEvent event) {
+        save();
+    }
+
+    private void save() {
         if (currentFile != null) {
             try (FileWriter writer = new FileWriter(currentFile)) {
                 writer.write(code.getText());
@@ -287,20 +302,20 @@ public class FXMLViewerController {
             }
         }
     }
-    
+
     @FXML
     private void layoutAsGrid(ActionEvent event) {
         lightTableScrollPane.setContent(gallery);
-        
+
         gallery.getChildren().clear();
-        for(WritableImage img: snapshots.values()){
+        for (WritableImage img : snapshots.values()) {
             gallery.getChildren().add(createImageTile(img));
         }
     }
 
     @FXML
     private void handleFreeFormLayout(ActionEvent event) {
-        if(lightTable.getChildren().isEmpty()){
+        if (lightTable.getChildren().isEmpty()) {
             lightTable = createLightTable();
         }
         lightTableScrollPane.setContent(lightTable);
@@ -310,7 +325,7 @@ public class FXMLViewerController {
         altsList.getSelectionModel().getSelectedItems().addListener((ListChangeListener.Change<? extends String> c) -> {
             if (c.getList().size() > 1) {
                 handleMultipleSelectedAltChange(c.getList());
-            } else if (c.getList().size() == 1){
+            } else if (c.getList().size() == 1) {
                 handleSingleSelectedAltChange(c.getList().get(0));
             }
         });
@@ -389,8 +404,8 @@ public class FXMLViewerController {
             Circle c = getCircle(n);
             canvas.getChildren().add(c);
         }
-        
-        for(shiro.Node n: model.getNodesOfType("Arc")){
+
+        for (shiro.Node n : model.getNodesOfType("Arc")) {
             Arc ac = getArc(n);
             canvas.getChildren().add(ac);
         }
@@ -413,7 +428,6 @@ public class FXMLViewerController {
 //        p.setUserData(n.getFullName());
 //        return p;
 //    }
-    
     /**
      * Create a Line to
      *
@@ -469,7 +483,7 @@ public class FXMLViewerController {
 
         return c;
     }
-    
+
     public Arc getArc(shiro.Node n) {
         Port ePort = n.getActiveEvalPort();
         Value arc = ePort.getValueForIndex(0);

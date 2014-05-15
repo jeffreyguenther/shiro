@@ -161,7 +161,6 @@ public class ShiroBasePassListener extends ShiroBaseListener {
         // look up port based on the path
         try {
             Path path = (Path) getExpr(ctx.path());
-//            System.out.println("Path:" + path);
             // resolve path in current scope
             Port p = (Port) scope.peek().resolvePath(path);
 
@@ -173,9 +172,8 @@ public class ShiroBasePassListener extends ShiroBaseListener {
             }
             // set the port's expression
             p.setArguments(mfExpressions);
-//            System.out.println("Set port args: " + p);
         } catch (PathNotFoundException pnfe) {
-//            System.out.println(pnfe);
+            //TODO add better error notification
         }
     }
 }

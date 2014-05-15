@@ -31,8 +31,6 @@ public class NodeProductionListener extends ShiroBasePassListener {
 
     @Override
     public void enterNodestmt(ShiroParser.NodestmtContext ctx) {
-//        System.out.println("Enter Node Statement");
-        
         // if there is at least one node on the scope stack
         // stack will always be size 1 because of the parametric system
         if (scope.size() > 1) {
@@ -55,8 +53,6 @@ public class NodeProductionListener extends ShiroBasePassListener {
 
     @Override
     public void exitNodestmt(ShiroParser.NodestmtContext ctx) {
-//        System.out.println("Exit Node Statement");
-
         // Set the default options
         // This depends on nodeInternal adding ports and nodes before hand.
         if(ctx.activeSelector() != null){
@@ -108,7 +104,7 @@ public class NodeProductionListener extends ShiroBasePassListener {
         Port p = new Port();
 
         // create a new port
-        MultiFunction mf = pSystem.getFunction(mfName.getText());
+        MultiFunction mf = pSystem.getMultiFunction(mfName.getText());
 
         // detect if the multifunction exists
         if (mf != null) {
@@ -161,7 +157,7 @@ public class NodeProductionListener extends ShiroBasePassListener {
         Port p = new Port();
 
         // create a new port
-        MultiFunction mf = pSystem.getFunction(mfName.getText());
+        MultiFunction mf = pSystem.getMultiFunction(mfName.getText());
 
         // detect if the multifunction exists
         if (mf != null) {

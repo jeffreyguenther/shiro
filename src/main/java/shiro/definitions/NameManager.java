@@ -69,7 +69,7 @@ public class NameManager {
      * Clears all names and instance counts from the manager.
      * All instance counts are set to zero
      */
-    public void clear(){
+    public void reset(){
         instanceCount.clear();
     }
     

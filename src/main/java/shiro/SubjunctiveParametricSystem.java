@@ -7,15 +7,17 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URL;
+import java.nio.file.Paths;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Map.Entry;
+import static java.util.stream.Collectors.toList;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import org.antlr.v4.runtime.ANTLRFileStream;
 import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import shiro.dag.DAGraph;
@@ -23,10 +25,6 @@ import shiro.dag.DependencyRelation;
 import shiro.dag.GraphNode;
 import shiro.dag.TopologicalSort;
 import shiro.definitions.NameManager;
-import shiro.events.NodeEvent;
-import shiro.events.NodeEventListener;
-import shiro.events.SubjParametricSystemEvent;
-import shiro.events.SubjParametricSystemEventListener;
 import shiro.expressions.Expression;
 import shiro.expressions.Path;
 import shiro.functions.MultiFunction;
@@ -38,14 +36,17 @@ import shiro.functions.graphics.CircleMFunc;
 import shiro.functions.graphics.LineMFunc;
 import shiro.functions.graphics.PointMFunc;
 import shiro.functions.graphics.RectMFunc;
+import shiro.interpreter.DefinitionResult;
 import shiro.interpreter.DescriptiveErrorListener;
 import shiro.interpreter.EvaluateAlternativeListener;
 import shiro.interpreter.GraphBuilderListener;
 import shiro.interpreter.NodeDefinitionListener;
 import shiro.interpreter.NodeProductionListener;
+import shiro.interpreter.ParseResult;
 import shiro.interpreter.ShiroBasePassListener;
 import shiro.interpreter.ShiroLexer;
 import shiro.interpreter.ShiroParser;
+import shiro.interpreter.UseCodeListener;
 
 /**
  * This class defines the model of a subjunctive parametric system.
@@ -62,92 +63,250 @@ import shiro.interpreter.ShiroParser;
  *
  * @author jeffreyguenther
  */
-public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
-
+public class SubjunctiveParametricSystem implements Scope {
+    // cached results of parsed files
+    private Map<java.nio.file.Path, ParseResult> parseResults;
+    
     private Map<String, MultiFunction> multiFunctions; // multifunction symbol table
-    private DAGraph<Port> depGraph;                    // realized dependency graph
     private Map<String, ParseTree> nodeDefs;           // AST table
-    private Map<String, ParseTree> alternativeDefs;    // AST table
     private Map<String, GraphDefinition> graphDefs;    // AST Table
-    private GraphDefinition currentGraphDef;
+    private Map<String, ParseTree> graphTrees;         // temporary graph def table
+    private Map<String, ParseTree> alternativeDefs;    // AST table
 
     private Map<String, Node> nodes;                   // realized node table
-    private Map<String, State> alternatives;     // alternative specs
-    private final NameManager names;                   // class for managing name generation
+    private Map<String, DAGraph<Port>> graphs;          // realized graphs;
+    private Map<String, State> alternatives;           // alternative specs
+    private final NameManager nameManager;             // class to manage name generation
     private final PortAction graphNodeAction;          // action used in graph nodes
-
-    private CommonTokenStream tokens;                  // reference to the tokens
-    // to the last file loaded with loadCode()
-
-    private Set<SubjParametricSystemEventListener> listeners; // Event listeners
 
     private SimpleStringProperty codeProperty;
     private SimpleStringProperty errorMessagesProperty;
     private SimpleBooleanProperty hasErrorsProperty;
 
     public SubjunctiveParametricSystem() {
+        parseResults = new HashMap<>();
+        
         multiFunctions = new HashMap<>();
-        // load the multifunction map
         loadMultiFunctions(multiFunctions);
 
-        depGraph = new DAGraph<>();
         nodeDefs = new HashMap<>();
-        alternativeDefs = new HashMap<>();
         graphDefs = new HashMap<>();
-        currentGraphDef = null;
-
+        graphTrees = new HashMap<>();
+        alternativeDefs = new HashMap<>();
+        
         nodes = new HashMap<>();
+        graphs = new HashMap<>();
         alternatives = new HashMap<>();
-        names = new NameManager();
+        nameManager = new NameManager();
         graphNodeAction = new PortAction();
-
-        listeners = new HashSet<>();
-
-        // create default graph and system state
-        createDefaultState();
 
         codeProperty = new SimpleStringProperty("");
         errorMessagesProperty = new SimpleStringProperty("");
         hasErrorsProperty = new SimpleBooleanProperty(false);
     }
-
-    public SimpleStringProperty codeProperty() {
-        return codeProperty;
+    
+    //<editor-fold defaultstate="collapsed" desc="Parsing Methods">
+    public ShiroLexer getLexer(CharStream input){
+        ShiroLexer lexer = new ShiroLexer(input);
+        lexer.addErrorListener(new DescriptiveErrorListener(this));
+        return lexer;
     }
-
+    
+    public CommonTokenStream lex(String code){
+        return new CommonTokenStream(getLexer(new ANTLRInputStream(code)));
+    }
+    
+    public CommonTokenStream lex(java.nio.file.Path path) throws IOException{
+        return new CommonTokenStream(getLexer(new ANTLRFileStream(path.toRealPath().toString())));
+    }
+    
+    public ShiroParser getParser(CommonTokenStream tokens){
+        ShiroParser parser = new ShiroParser(tokens);
+        parser.addErrorListener(new DescriptiveErrorListener(this));
+        parser.setBuildParseTree(true);
+        return parser;
+    }
+    
+    public ParseTree parseFromRootRule(CommonTokenStream tokens){
+        return getParser(tokens).shiro();
+    }
+    
+    public ParseTree parseFromExpression(CommonTokenStream tokens) {
+        return getParser(tokens).expression();
+    }
+    
     /**
-     * Remove all instances from the runtime. This method does not affect node
-     * and subjunctive node definitions or alternatives. Note, this also removes
-     * all graph definitions as graphs define instances. The definition is
-     * erased. It is not emptied
+     * Parse an expression in the given scope
+     *
+     * @param scope of the new expression
+     * @param expr string
+     * @return the expression object representing the {@code expr}
      */
-    public void clear() {
-        names.clear();
-        nodes.clear();
-        graphDefs.clear();
-        clearErrorMessages();
-    }
+    public Expression parseExpression(Scope scope, String expr) {
+        ShiroParser.ExpressionContext expression; 
+        expression = (ShiroParser.ExpressionContext) parseFromExpression(lex(expr));
+        
+        ShiroBasePassListener ls = new ShiroBasePassListener(this, scope);
+        ParseTreeWalker walker = new ParseTreeWalker();
+        walker.walk(ls, expression);
 
+        return ls.getExpr(expression.expr());
+    }
+    
     /**
-     * Clear all alternatives from the runtime
-     * Add default graph statement
+     * Saves the result of a parse
+     * @param path path to file that was parsed
+     * @param tokens tokens representing the file
+     * @param tree the parse tree created by the parser
+     * @return The parse result that is stored
      */
-    public void reset() {
-        clear();
-        alternatives.clear();
-        createDefaultState();
+    public ParseResult saveParseResult(java.nio.file.Path path, CommonTokenStream tokens, ParseTree tree){
+        ParseResult parseResult = new ParseResult(tokens, tree);
+        parseResults.put(path, parseResult);
+        return parseResult;
     }
-
-    public GraphDefinition getGraphDef(String name) {
-        return graphDefs.get(name);
+    
+    public ParseTree getParseTree(java.nio.file.Path path){
+        ParseResult result = parseResults.get(path);
+        
+        if(result != null){
+            return result.getParseTree();
+        }
+        return null;
     }
-
-    public int getInstanceCountForNode(String type) {
-        return names.getNumberOfInstances(type);
+    
+    public CommonTokenStream getTokens(java.nio.file.Path path){
+        ParseResult result = parseResults.get(path);
+        
+        if(result != null){
+            return result.getTokens();
+        }
+        return null;
     }
+    //</editor-fold>
+    
+    //<editor-fold defaultstate="collapsed" desc="Modify Runtime">
+    private Map<String, ParseTree> getNodeDefinitions(java.nio.file.Path path){
+        ParseTree parseTree = getParseTree(path);
+        NodeDefinitionListener definitionWalker = new NodeDefinitionListener();
+        ParseTreeWalker walker = new ParseTreeWalker();
+        walker.walk(definitionWalker, parseTree);
+        return definitionWalker.getNodeDefinitions();
+    }
+    
+    private DefinitionResult getNodeStateGraphDefinitions(java.nio.file.Path path){
+        ParseTree parseTree = getParseTree(path);
+        NodeDefinitionListener defPass = new NodeDefinitionListener();
+        ParseTreeWalker walker = new ParseTreeWalker();
+        walker.walk(defPass, parseTree);
+        return new DefinitionResult(defPass.getNodeDefinitions(), defPass.getGraphs(), defPass.getAlternativeDefinitions());
+    }
+    
+    private Node realizeNode(ParseTree nodeDef) {
+        NodeProductionListener nodeBuilder = new NodeProductionListener(this);
+        ParseTreeWalker walker = new ParseTreeWalker();
+        walker.walk(nodeBuilder, nodeDef);
+        return nodeBuilder.getCreatedNode();
+    }
+    
+    private DAGraph<Port> realizeGraph(ParseTree graph){
+        GraphBuilderListener graphBuilder = new GraphBuilderListener(this);
+        ParseTreeWalker walker = new ParseTreeWalker();
+        walker.walk(graphBuilder, graph);
+        return graphBuilder.getGraph();
+    }
+    
+    private void realizeGraphs(){
+        for(Entry<String, ParseTree> e: graphTrees.entrySet()){
+           graphs.put(e.getKey(), realizeGraph(e.getValue()));
+        }
+    }
+    
+    private void addGraphParseTrees(Map<String, ParseTree> map){
+        graphTrees.putAll(map);
+    }
+    
+    private void realizeStates(){
+        alternativeDefs.values().forEach((ParseTree p) -> addAlternative(realizeState(p)));
+    }
+    
+    private State realizeState(ParseTree stateDef){
+        EvaluateAlternativeListener genAlts = new EvaluateAlternativeListener(this);
+        ParseTreeWalker walker = new ParseTreeWalker();
+        walker.walk(genAlts, stateDef);
+        return genAlts.getState();
+    }
+    //</editor-fold>
+    
+    //<editor-fold defaultstate="collapsed" desc="Load Code">
+    public void loadCode(String code) {
+        CommonTokenStream lex = lex(code);
+        java.nio.file.Path tempPath = Paths.get("temp.sro");
+        load(tempPath, lex);
+    }
+    
+    public void loadCode(java.nio.file.Path path) throws IOException {
+        CommonTokenStream lex = lex(path);
+        load(path, lex);
+    }
+    
+    private void loadDependency(java.nio.file.Path dep){
+        Map<String, ParseTree> nodeDefinitions = getNodeDefinitions(dep);
+        addNodeASTDefinitions(nodeDefinitions);
+        // TODO load graphs and states from dependents
+    }
+    
+    private void loadDependencies(List<java.nio.file.Path> deps){
+        for(java.nio.file.Path p: deps){
+            loadDependency(p);
+        }
+    }
+    
+    private void loadNodeStateGraphDefinitions(java.nio.file.Path path){
+        DefinitionResult defs = getNodeStateGraphDefinitions(path);
+        addNodeASTDefinitions(defs.getNodeDefinitions());
+        addAlternativeASTDefinitions(defs.getAlternativeDefinitions());
+        addGraphParseTrees(defs.getGraphDefinitions());
+    }
+    
+    private void load(java.nio.file.Path rootFile, CommonTokenStream tokens){
+        List<java.nio.file.Path> dependedOnFiles = resolveDependencies(rootFile, tokens);
+        loadDependencies(dependedOnFiles);
+        loadNodeStateGraphDefinitions(rootFile);
+        realizeGraphs();
+        realizeStates();
+        update();
+    }
+    
+    private List<java.nio.file.Path> resolveDependencies(java.nio.file.Path rootFile, CommonTokenStream tokens){
+        // lookup path in cache to see if it has already been parsed
+        ParseTree tree = getParseTree(rootFile);
+        if(tree == null){
+            tree = parseFromRootRule(tokens);
+            saveParseResult(rootFile, tokens, tree);
+        }
+        
+        UseCodeListener useCode = new UseCodeListener(rootFile, this);
+        ParseTreeWalker walker = new ParseTreeWalker();
+        walker.walk(useCode, tree);
 
+        DAGraph<java.nio.file.Path> graph = new DAGraph<>();
+        for (DependencyRelation<java.nio.file.Path> dep : useCode.getSourceFiles()) {
+            graph.addDependency(graph.getNodeForValue(dep.getDependent(), null), graph.getNodeForValue(dep.getDependedOn(), null));
+        }
+        
+        TopologicalSort<java.nio.file.Path> topoSort = new TopologicalSort<>(graph);
+        List<GraphNode<java.nio.file.Path>> topologicalOrdering = topoSort.getTopologicalOrdering();
+        List<java.nio.file.Path> sortedPaths = topologicalOrdering.stream().map(GraphNode<java.nio.file.Path>::getValue).collect(toList());
+        sortedPaths.remove(rootFile);
+        
+        return sortedPaths;
+    }
+    
+    //</editor-fold>
+    
+    //<editor-fold desc="Setup and Reset">
     /**
-     * *
      * Creates a single instance of all of the multi-functions the system knows
      * about. This creates the symbol table for looking up multi-function
      * objects This method will need to be changed if we load multi-functions at
@@ -177,7 +336,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
     public void loadMultiFunction(String name, MultiFunction mf) {
         multiFunctions.put(name, mf);
     }
-
+    
     /**
      * **
      * Looks up a multi-function object by name
@@ -185,8 +344,118 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
      * @param name of the multi-function
      * @return a multi-function
      */
-    public MultiFunction getFunction(String name) {
+    public MultiFunction getMultiFunction(String name) {
         return multiFunctions.get(name);
+    }
+    
+    /**
+     * Resets the runtime. All definitions and instances are cleared.
+     */
+    public void reset() {
+        removeAllDefinitions();
+        removeAllInstances();
+    }
+    
+    private void removeAllDefinitions(){
+        nodeDefs.clear();
+        graphDefs.clear();
+        alternativeDefs.clear();
+        parseResults.clear();
+    }
+    
+    /**
+     * Remove all instances from the runtime. This method does not affect node
+     * and subjunctive node definitions or alternatives. Note, this also removes
+     * all graph definitions as graphs define instances. The definition is
+     * erased. It is not emptied
+     */
+    public void removeAllInstances() {
+        nameManager.reset();
+        nodes.clear();
+        alternatives.clear();
+        clearErrorMessages();
+    }
+    
+    /**
+     * Method to create a default state to allow the graph to update
+     */
+    private void createDefaultState() {
+        // add a graph definition
+        GraphDefinition defaultGraph = new GraphDefinition("Default");
+        graphDefs.put(defaultGraph.getName(), defaultGraph);
+
+        // add an alternative
+        addAlternative(new State(defaultGraph.getName(), "Default"));
+    }
+    
+    /**
+     * Load node definitions This method is helpful to load node definitions for
+     * use by a GUI
+     *
+     * @param filePath file to be loaded
+     * @throws java.io.IOException
+     */
+    public void loadDefinitions(java.nio.file.Path filePath) throws IOException {
+        CommonTokenStream lex = lex(filePath);
+        ParseTree parseTree = parseFromRootRule(lex);
+        saveParseResult(filePath, lex, parseTree);
+        
+        this.addNodeASTDefinitions(getNodeDefinitions(filePath));
+    }
+    
+    
+    /**
+     * Load node definitions specified in the shiro/node_defs.sro package
+     * @throws java.io.IOException
+     */
+    public void loadDefaultDefinitions() throws IOException {
+        URL resource = getClass().getClassLoader().getResource("shiro/node_defs.sro");
+        loadDefinitions(Paths.get(resource.getPath()));
+    }
+    //</editor-fold>
+    
+    //<editor-fold defaultstate="collapsed" desc="Evaluation">
+    /**
+     * Update the parametric system
+     */
+    public void update() {
+       //TODO generate all alternatives automatically if there are none specified
+        // also handle the case where there is not subjunctive nodes.
+        // for each graph instance, evaluate
+        
+        alternatives.values().stream().forEach((a) -> {
+            update(a);
+        });
+    }
+
+    public void update(State alt) {
+        Map<Node, Symbol> subjunctTable = alt.getSubjunctsMapping();
+
+        for (Node s : subjunctTable.keySet()) {
+            s.setActiveOption(subjunctTable.get(s).getName());
+        }
+
+        List<DependencyRelation<Port>> deps = new ArrayList<>();
+
+        // look up the graph referenced by the state
+        DAGraph<Port> graphReferenced = graphs.get(alt.getGraphDef());
+
+        TopologicalSort<Port> sorter = new TopologicalSort<>(graphReferenced);
+        List<GraphNode<Port>> topologicalOrdering = sorter.getTopologicalOrdering();
+
+        // loop through all ports to update them.
+        for (GraphNode<Port> gn : topologicalOrdering) {
+            gn.doAction();
+        }
+    }
+    //</editor-fold>
+    
+    public GraphDefinition getGraphDef(String name) {
+        return graphDefs.get(name);
+    }
+    
+    public int getInstanceCountForNode(String type) {
+        return nameManager.getNumberOfInstances(type);
     }
 
 //    public SubjunctiveNode split(Node nodeToSplit, String name,
@@ -241,10 +510,11 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
 //        
 //        return result;
 //    }
+    //<editor-fold defaultstate="collapsed" desc="Look up">
     @Override
     public Symbol find(Path p) throws PathNotFoundException, PathNotAccessibleException {
         Symbol matchedSymbol = null;
-
+        
         // check proto instances
         // if the path matches a node type
         if (p.isAtEnd() && nodeDefs.containsKey(p.getCurrentPathHead())) {
@@ -255,7 +525,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
             }
         } else if (nodes.containsKey(p.getCurrentPathHead())) {
             Node n = nodes.get(p.getCurrentPathHead());
-
+            
             if (!p.isAtEnd()) {
                 p.popPathHead();
                 matchedSymbol = n.find(p);
@@ -265,15 +535,15 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         } else {
             throw new PathNotFoundException(p + " cannot be found.");
         }
-
+        
         return matchedSymbol;
     }
-
+    
     @Override
     public Symbol find(String s) throws PathNotFoundException, PathNotAccessibleException {
         return find(Path.createPath(s));
     }
-
+    
     public List<Port> findAll(Path p) {
         List<Port> found = new ArrayList<>();
         for (Node n : nodes.values()) {
@@ -286,10 +556,10 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
                 }
             }
         }
-
+        
         return found;
     }
-
+    
     public void replace(Port found, Path match, String s, boolean active) {
         for (Expression e : found.getArguments()) {
             if (e instanceof Path
@@ -304,7 +574,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
             }
         }
     }
-
+    
     /**
      * Resolve a symbol from a given path.
      *
@@ -315,7 +585,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
     @Override
     public Symbol resolvePath(Path p) throws PathNotFoundException {
         Symbol matchedPort = null;
-
+        
         // check if any realized node names match the start of the path
         Node matchedNode = nodes.get(p.getCurrentPathHead());
         if (matchedNode != null) {
@@ -333,20 +603,21 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
             // attempt to find the path in the node
             matchedPort = matchedNode.resolvePath(p);
         }
-
+        
         // IF after checking both the realized and unrealized nodes
         if (matchedPort == null) {
             //  ERROR
             throw new PathNotFoundException(p + " cannnot be resolved.");
         }
-
+        
         return matchedPort;
     }
-
+    
     @Override
     public Symbol resolvePath(String path) throws PathNotFoundException {
         return resolvePath(Path.createPath(path));
     }
+    //</editor-fold>
 
     /**
      * Produce a symbol from a type name
@@ -373,25 +644,12 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
      */
     public Node createNode(String type) {
         // generate a new name for the node
-        String name = names.getNextName(type);
+        String name = nameManager.getNextName(type);
 
         // produce the new node
         Node node = produceNodeFromName(type, name);
 
-        currentGraphDef.addProduction(type, name);
-
         return node;
-    }
-
-    /**
-     * Adds the ports in a node to the dependency graph
-     *
-     * @param node
-     */
-    public void addNodeToGraph(Node node) {
-        for (DependencyRelation<Port> d : node.getDependencies()) {
-            addDependency(d);
-        }
     }
 
     /**
@@ -403,8 +661,8 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
      * @return new node produced using path and newName.
      */
     public Node produceNodeFromName(String name, String newName) {
-
-        Node producedNode = realizeNode(name);
+        ParseTree nodeDef = nodeDefs.get(name);
+        Node producedNode = realizeNode(nodeDef);
 
         // change the node's name
         producedNode.setFullName(newName);
@@ -428,7 +686,7 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         for (shiro.Node n : getNodes()) {
             if (n.getType().equals(type)) {
                 matches.add(n);
-               
+
             }
             matches.addAll(n.getNodesOfType(type));
         }
@@ -436,10 +694,10 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
     }
 
     /**
-     * Gets a reference to a node by name
-     * This method checks the collection of top level node 
-     * instances for a node with the given. It does not traverse
+     * Gets a reference to a node by name This method checks the collection of
+     * top level node instances for a node with the given. It does not traverse
      * the tree of nested nodes.
+     *
      * @param name of node to be returned
      * @return a reference to the node of the given name.
      */
@@ -460,49 +718,53 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         return nodeDefs.get(path);
     }
 
-    public Port setPortExpression(Path pathToPort, Expression expr) throws PathNotFoundException {
-        return setPortExpression(pathToPort, expr, 0);
+    public Port setPortExpression(String graphName, Path pathToPort, Expression expr) throws PathNotFoundException {
+        return setPortExpression(graphName, pathToPort, expr, 0);
     }
 
-    public Port setPortExpression(Path pathToPort, Expression expr, int argPos) throws PathNotFoundException {
+    public Port setPortExpression(String graphName, Path pathToPort, Expression expr, int argPos) throws PathNotFoundException {
         Port port = (Port) resolvePath(pathToPort);
         port.setArgumentForPosition(argPos, expr);
 
-        currentGraphDef.addPortAssignment(new PortAssignment(pathToPort, expr));
+        GraphDefinition graph = graphDefs.get(graphName);
+        graph.addPortAssignment(new PortAssignment(pathToPort, expr));
         return port;
     }
 
-    public Port setPortExpression(PortAssignment assign) throws PathNotFoundException {
+    public Port setPortExpression(String graphName, PortAssignment assign) throws PathNotFoundException {
         Port port = (Port) resolvePath(assign.getPath());
 
         port.setArguments(assign.getArgs());
-
-        currentGraphDef.addPortAssignment(assign);
+        
+        GraphDefinition graph = graphDefs.get(graphName);
+        graph.addPortAssignment(assign);
         return port;
     }
 
     /**
      * Add a dependency between two ports
      *
+     * @param graph
      * @param dependency dependency relation to be added to the graph
      */
-    public void addDependency(DependencyRelation<Port> dependency) {
-        addDependency(dependency.getDependent(), dependency.getDependedOn());
+    public void addDependency(DAGraph<Port> graph, DependencyRelation<Port> dependency) {
+        addDependency(graph, dependency.getDependent(), dependency.getDependedOn());
     }
 
     /**
      * *
      * Add a dependency between two ports A - depends on -> B
-     *
+     * @param graph
      * @param a the depended on port reference
      * @param b the dependent port reference
      */
-    public void addDependency(Port a, Port b) {
+    public void addDependency(DAGraph<Port> graph, Port a, Port b) {
+        
         if (b == null) {
-            depGraph.addDependency(new GraphNode<Port>(a, graphNodeAction), null);
+            graph.addDependency(new GraphNode<>(a, graphNodeAction), null);
         } else {
-            depGraph.addDependency(depGraph.getNodeForValue(a, graphNodeAction),
-                    depGraph.getNodeForValue(b, graphNodeAction));
+            graph.addDependency(graph.getNodeForValue(a, graphNodeAction),
+                    graph.getNodeForValue(b, graphNodeAction));
         }
     }
 
@@ -533,96 +795,6 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         return sb.toString();
     }
 
-    /**
-     * Method to create a default state to allow the graph to update
-     */
-    private void createDefaultState() {
-        // add a graph definition
-        currentGraphDef = new GraphDefinition("Default");
-        graphDefs.put(currentGraphDef.getName(), currentGraphDef);
-
-        // add an alternative
-        addAlternative(new State(currentGraphDef, "Default"));
-    }
-
-    /**
-     * Update the parametric system
-     */
-    public void update() {
-
-        ParseTreeWalker walker = new ParseTreeWalker();
-        EvaluateAlternativeListener genAlts = new EvaluateAlternativeListener(this);
-
-        // Create system state objects from alternative def'ns
-        for (ParseTree altTree : alternativeDefs.values()) {
-            walker.walk(genAlts, altTree);
-        }
-
-        //Evaluate each alternative
-        for (State a : alternatives.values()) {
-            update(a);
-        }
-    }
-
-    public void update(State alt) {
-        Map<Node, Symbol> subjunctTable = alt.getSubjunctsMapping();
-
-        for (Node s : subjunctTable.keySet()) {
-            s.setActiveOption(subjunctTable.get(s).getName());
-        }
-
-        List<DependencyRelation<Port>> deps = new ArrayList<>();
-
-        // for each node generated in the graph generation process
-        for (Node n : getNodes()) {
-            // get all of the dependencies for each node
-            deps.addAll(n.getDependencies());
-        }
-
-        for (DependencyRelation<Port> d : deps) {
-            addDependency(d);
-        }
-
-        TopologicalSort<Port> sorter = new TopologicalSort<>(depGraph);
-        List<GraphNode<Port>> topologicalOrdering = sorter.getTopologicalOrdering();
-
-        // loop through all ports to update them.
-        for (GraphNode<Port> gn : topologicalOrdering) {
-            gn.doAction();
-        }
-        depGraph.removeAllDependencies();
-    }
-
-    /**
-     * *
-     * Register an object as a listener to the port's events
-     *
-     * @param l object to be registered
-     */
-    public synchronized void addPSystemEventListener(SubjParametricSystemEventListener l) {
-        listeners.add(l);
-    }
-
-    /**
-     * Unregister an object as a listener
-     *
-     * @param l object to be removed as a listener
-     */
-    public synchronized void removePSystemEventListener(SubjParametricSystemEventListener l) {
-        listeners.remove(l);
-    }
-
-    /*
-     * Fire the port event
-     * @param msg the message to be passed along with the event
-     */
-    protected synchronized void firePSystemEvent(String msg) {
-        SubjParametricSystemEvent event = new SubjParametricSystemEvent(this, msg);
-        for (SubjParametricSystemEventListener l : listeners) {
-            l.handlePortEvent(event);
-        }
-    }
-
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -631,11 +803,6 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
         }
 
         return sb.toString();
-    }
-
-    @Override
-    public void handleNodeEvent(NodeEvent ne) {
-//        System.out.println(ne.getMessage());
     }
 
     @Override
@@ -651,148 +818,6 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
     @Override
     public Path getPath() {
         return null;
-    }
-
-    /**
-     * Instantiates the node from the ParseTree. Looks up the ParseTree in the
-     * map and generates the node
-     *
-     * @param name of node to produce
-     * @return Node object
-     */
-    private Node realizeNode(String name) {
-        // look up the parse tree of the node to duplicate
-        ParseTree nodeAST = nodeDefs.get(name);
-        // walk the parse tree to realize the node
-        ParseTreeWalker walker = new ParseTreeWalker();
-        // createa node production listener
-        NodeProductionListener nodeBuilder = new NodeProductionListener(this);
-        // walk the parse tree and build the node
-        walker.walk(nodeBuilder, nodeAST);
-
-        return nodeBuilder.getCreatedNode();
-    }
-
-    /**
-     * Set the value of a port with an expression
-     *
-     * The value expression is parsed and any necessary dependencies are added
-     * Note: This will NOT cause the parametric system to update. You must call
-     * update() separately.
-     *
-     * @param portPath The path to the port to update. The path given must be
-     * the port's full name. For example, <code>Point.x</code>.
-     * @param value an expression giving the port's value.
-     */
-    public void setPortValue(String portPath, String value) {
-        // NOTE: the scope of the expression is the node
-
-        // Lex the expression
-        // Parse the expression to generate the parse tree
-        // Walk the parse tree to generate port dependencies
-        // Add the dependencies to the graph
-    }
-
-    /**
-     * Load node definitions specified in the shiro/node_defs.sro package
-     */
-    public void loadDefinitions() {
-        ANTLRInputStream is = null;
-        try {
-            is = new ANTLRInputStream(
-                    getClass().getClassLoader()
-                    .getResourceAsStream("shiro/node_defs.sro"));
-        } catch (IOException ex) {
-            Logger.getLogger(SubjunctiveParametricSystem.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        ShiroParser parser = parse(true, is);
-        this.addNodeASTDefinitions(generateNodeDefs(parser.shiro()));
-    }
-
-    /**
-     * Generate node AST's from the parse tree
-     *
-     * @param tree to generate AST frome
-     * @return map of node to parse tree object
-     */
-    public Map<String, ParseTree> generateNodeDefs(ParseTree tree) {
-        // Walk the parse tree to create the ndoe definitions
-        ParseTreeWalker walker = new ParseTreeWalker();
-        NodeDefinitionListener defPass = new NodeDefinitionListener();
-
-        // Walk the tree with the def pass listener
-        walker.walk(defPass, tree);
-
-        return defPass.getNodeDefinitions();
-    }
-
-    /**
-     * Load node definitions This method is helpful to load node definitions for
-     * use by a GUI
-     *
-     * @param filePath file to be loaded
-     */
-    public void loadDefinitions(String filePath) {
-        // Read in a file
-        ANTLRInputStream is = null;
-        try {
-            is = new ANTLRFileStream(filePath);
-        } catch (IOException ex) {
-            Logger.getLogger(SubjunctiveParametricSystem.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        // parse the input stream
-        ShiroParser parser = parse(true, is);
-        // generate the AST from the parse tree
-        this.addNodeASTDefinitions(generateNodeDefs(parser.shiro()));
-    }
-
-    /**
-     * Parse an expression in the given scope
-     *
-     * @param scope of the new expression
-     * @param expr string
-     * @return the expression object representing the {@code expr}
-     */
-    public Expression parseExpression(Scope scope, String expr) {
-        ShiroParser parser = parse(false, new ANTLRInputStream(expr));
-        ShiroParser.ExpressionContext expression = parser.expression();
-
-        ParseTreeWalker walker = new ParseTreeWalker();
-        ShiroBasePassListener ls = new ShiroBasePassListener(this, scope);
-        walker.walk(ls, expression);
-
-        return ls.getExpr(expression.expr());
-    }
-
-    /**
-     * Parse an input stream of shiro code
-     *
-     * @param saveTokens determines whether the token stream should be saved
-     * internally
-     * @param inputStream a stream of the shiro code to be parsed
-     * @return reference to parser
-     */
-    public ShiroParser parse(boolean saveTokens, ANTLRInputStream inputStream) {
-        // lex the stream
-        ShiroLexer lex = new ShiroLexer(inputStream);
-
-        ShiroParser parser;
-
-        if (saveTokens) {
-            tokens = new CommonTokenStream(lex);
-            parser = new ShiroParser(tokens);
-
-        } else {
-            CommonTokenStream ts = new CommonTokenStream(lex);
-            parser = new ShiroParser(ts);
-        }
-
-        // generate the parse tree during parsing
-        parser.setBuildParseTree(true);
-
-        return parser;
     }
 
     /**
@@ -815,7 +840,8 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
 
         // print node definitions
         nodeDefs.values().stream().forEach((ParseTree t) -> {
-            sb.append(tokens.getText((RuleContext) t)).append("\n\n");
+            // TODO fix code output
+//            sb.append(tokens.getText((RuleContext) t)).append("\n\n");
         });
 
         // print graphs
@@ -830,32 +856,31 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
 
         return sb.toString();
     }
-    
-    public void setHasSyntaxErrors(boolean value){
+
+    public void setHasSyntaxErrors(boolean value) {
         hasErrorsProperty.set(value);
     }
-    
-    public boolean hasErrors(){
+
+    public boolean hasErrors() {
         return hasErrorsProperty.get();
     }
-    
-    public SimpleBooleanProperty getHasErrorsProperty(){
+
+    public SimpleBooleanProperty hasErrorsProperty() {
         return hasErrorsProperty;
     }
-    
-    public void appendErrorMessage(String msg){
+
+    public void appendErrorMessage(String msg) {
         errorMessagesProperty.set(msg);
     }
-    
-    public void clearErrorMessages(){
+
+    public void clearErrorMessages() {
         errorMessagesProperty.set("");
         setHasSyntaxErrors(false);
     }
-    
-    public SimpleStringProperty errorMessagesProperty(){
+
+    public SimpleStringProperty errorMessagesProperty() {
         return errorMessagesProperty;
     }
-    
 
     /**
      * Write out the current state of the runtime as shiro code
@@ -877,94 +902,6 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
 
         }
     }
-    
-    private void load(ShiroLexer lexer){
-        ParseTreeWalker walker = new ParseTreeWalker();
-
-        // create a lexer
-        ShiroLexer lex = lexer;
-//        lex.removeErrorListeners();
-        lex.addErrorListener(new DescriptiveErrorListener(this));
-        if(hasErrors()){
-            return;
-        }
-        
-        // Get the token stream
-        tokens = new CommonTokenStream(lex);
-
-        // Parse the file
-        ShiroParser parser = new ShiroParser(tokens);
-//        parser.removeErrorListeners();
-        parser.addErrorListener(new DescriptiveErrorListener(this));
-        parser.setBuildParseTree(true);
-
-        // Create the parse tree object
-        ParseTree tree = parser.shiro();
-        if(hasErrors()){
-            return;
-        }
-
-        // PASS 1: Add a node -> AST mapping in the parametric system
-        NodeDefinitionListener defPass = new NodeDefinitionListener();
-        // Walk the tree with the def pass listener
-        walker.walk(defPass, tree);
-
-        // Get the node definitions
-        Map<String, ParseTree> nodeDefinitions = defPass.getNodeDefinitions();
-        Map<String, ParseTree> alternativeDefinitions = defPass.getAlternativeDefinitions();
-        Map<String, ParseTree> graphs = defPass.getGraphs();
-
-        // Store the ASTs in the tree
-        addNodeASTDefinitions(nodeDefinitions);
-        addAlternativeASTDefinitions(alternativeDefinitions);
-
-        // PASS 2: Build the dependency graph
-        /**
-         * Walk only the graph parse tree to prevent events from firing on the
-         * other parts of the parse tree
-         */
-        for (ParseTree graph : graphs.values()) {
-            GraphBuilderListener graphBuilder = new GraphBuilderListener(this);
-            walker.walk(graphBuilder, graph);
-
-            GraphDefinition graphDef = graphBuilder.getGraphDef();
-            graphDefs.remove("Default");
-            graphDefs.put(graphDef.getName(), graphDef);
-            currentGraphDef = graphDef;
-        }
-
-        // deal with name auto generation
-        for (String type : nodeDefs.keySet()) {
-            names.setInstanceCount(type, getNodesOfType(type).size());
-        }
-
-        alternatives.remove("Default");
-
-        // Evaluate parametric system
-        update();
-
-        codeProperty.setValue(toCode());
-    }
-
-    public void loadCode(String code) {
-        // create a lexer
-        ShiroLexer lex = new ShiroLexer(new ANTLRInputStream(code));
-        
-        load(lex);
-    }
-
-    /**
-     * Load code from a file
-     *
-     * @param file to load code from
-     * @throws IOException
-     */
-    public void loadCode(File file) throws IOException {
-        // create a lexer
-        ShiroLexer lex = new ShiroLexer(new ANTLRFileStream(file.getAbsolutePath(), "UTF8"));
-        
-        load(lex);
-    }
 
     public Collection<String> getStateNames() {
         return alternatives.keySet();
@@ -976,5 +913,9 @@ public class SubjunctiveParametricSystem implements NodeEventListener, Scope {
 
     public Set<State> getStates() {
         return new HashSet<>(alternatives.values());
+    }
+    
+    public SimpleStringProperty codeProperty() {
+        return codeProperty;
     }
 }

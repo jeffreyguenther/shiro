@@ -2,6 +2,7 @@ package shiro.expressions;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -90,17 +91,9 @@ public class GenerateCode {
     }
     
     @Test
-    public void loadWriteGenerateCode() throws IOException{
+    public void intializeEditGenerateCode() throws IOException{
         SubjunctiveParametricSystem pSystem = new SubjunctiveParametricSystem();
-        pSystem.loadCode(new File("/Users/jeffreyguenther/Development/shiro/example_code/square.sro"));
-        pSystem.writeCode(new File("/Users/jeffreyguenther/Desktop/loadWriteGenerateCode.sro"));
-        System.out.println("Check to see code is the same by hand. Spacing will be different");
-    }
-    
-    @Test
-    public void intializeEditGenerateCode(){
-        SubjunctiveParametricSystem pSystem = new SubjunctiveParametricSystem();
-        pSystem.loadDefinitions();
+        pSystem.loadDefaultDefinitions();
         Node p1 = createPoint(pSystem, 100, 50);
         Node p2 = createPoint(pSystem, 200, 50);
         createLine(pSystem, p1, p2);
@@ -117,13 +110,13 @@ public class GenerateCode {
         Expression xExpr = model.parseExpression(node, x + "");
         Expression yExpr = model.parseExpression(node, y + "");
 
-        try {
-            model.setPortExpression(pathX, xExpr);
-            model.setPortExpression(pathY, yExpr);
-
-        } catch (PathNotFoundException ex) {
-            Logger.getLogger(ProjectAmoebaController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+//        try {
+//            model.setPortExpression(pathX, xExpr);
+//            model.setPortExpression(pathY, yExpr);
+//
+//        } catch (PathNotFoundException ex) {
+//            Logger.getLogger(ProjectAmoebaController.class.getName()).log(Level.SEVERE, null, ex);
+//        }
         
         return node;
     }
@@ -137,13 +130,13 @@ public class GenerateCode {
         Expression p1Expr = model.parseExpression(p1, p1.getName() + ".point[0]");
         Expression p2Expr = model.parseExpression(p2, p2.getName() + ".point[0]");
 
-        try {
-            model.setPortExpression(pathX, p1Expr);
-            model.setPortExpression(pathY, p2Expr);
-
-        } catch (PathNotFoundException ex) {
-            Logger.getLogger(ProjectAmoebaController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+//        try {
+//            model.setPortExpression(pathX, p1Expr);
+//            model.setPortExpression(pathY, p2Expr);
+//
+//        } catch (PathNotFoundException ex) {
+//            Logger.getLogger(ProjectAmoebaController.class.getName()).log(Level.SEVERE, null, ex);
+//        }
         
         return node;
     }

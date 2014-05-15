@@ -9,7 +9,7 @@ package shiro.definitions;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import junit.framework.Assert;
+import org.junit.Assert;
 import org.junit.Test;
 import shiro.Node;
 import shiro.Symbol;
@@ -30,7 +30,7 @@ public class StateTest {
         Map<Node, Symbol> subjuncts = new HashMap<>();
         subjuncts.put(sn, n);
         
-        State state = new State(g, "DiagonalLine", "", subjuncts);
+        State state = new State("line", "DiagonalLine", "", subjuncts);
         Assert.assertEquals("should match", stateDef, state.toCode());
     }
 }

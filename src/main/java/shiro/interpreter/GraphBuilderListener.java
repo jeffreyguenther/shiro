@@ -8,6 +8,7 @@ import shiro.Node;
 import shiro.Port;
 import shiro.SubjunctiveParametricSystem;
 import shiro.Symbol;
+import shiro.dag.DAGraph;
 import shiro.dag.DependencyRelation;
 import shiro.expressions.Path;
 
@@ -18,13 +19,19 @@ import shiro.expressions.Path;
  */
 public class GraphBuilderListener extends ShiroBasePassListener {
     private GraphDefinition graphDef;
+    private DAGraph<Port> graph;
 
     public GraphBuilderListener(SubjunctiveParametricSystem ps) {
         super(ps);
+        graph = new DAGraph<>();
     }
 
     public GraphDefinition getGraphDef() {
         return graphDef;
+    }
+    
+    public DAGraph<Port> getGraph(){
+        return graph;
     }
 
     @Override
@@ -47,10 +54,8 @@ public class GraphBuilderListener extends ShiroBasePassListener {
 
         // resolve the dependencies between ports as indicated by expressions
         // by adding dependencies between the two ports to the graph
-//        System.out.println();
-//        System.out.println("Dependencies");
         for (DependencyRelation<Port> d : deps) {
-            pSystem.addDependency(d);
+            pSystem.addDependency(graph, d);
         }
     }
 
@@ -81,4 +86,12 @@ public class GraphBuilderListener extends ShiroBasePassListener {
             }
         }
     }
+
+    @Override
+    public void exitPortAssignment(ShiroParser.PortAssignmentContext ctx) {
+        super.exitPortAssignment(ctx);
+        // TODO store the port assignment in the graph definition
+    }
+    
+    
 }
