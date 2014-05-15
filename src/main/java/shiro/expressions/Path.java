@@ -1,5 +1,8 @@
 package shiro.expressions;
 
+import shiro.exceptions.PortIndexNotFoundException;
+import shiro.exceptions.PortNotActiveException;
+import shiro.exceptions.PathNotFoundException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;

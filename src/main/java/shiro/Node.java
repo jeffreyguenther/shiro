@@ -1,5 +1,7 @@
 package shiro;
 
+import shiro.exceptions.PathNotFoundException;
+import shiro.exceptions.PathNotAccessibleException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;

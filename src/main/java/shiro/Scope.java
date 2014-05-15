@@ -1,5 +1,7 @@
 package shiro;
 
+import shiro.exceptions.PathNotFoundException;
+import shiro.exceptions.PathNotAccessibleException;
 import shiro.expressions.Path;
 
 /**

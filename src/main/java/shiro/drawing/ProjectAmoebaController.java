@@ -26,8 +26,8 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.LineBuilder;
 
 import javax.imageio.ImageIO;
-import shiro.PathNotAccessibleException;
-import shiro.PathNotFoundException;
+import shiro.exceptions.PathNotAccessibleException;
+import shiro.exceptions.PathNotFoundException;
 import shiro.Port;
 import shiro.SubjunctiveParametricSystem;
 import shiro.definitions.State;

@@ -64,7 +64,6 @@ public class CodeImportTest{
         expectedOrder.add(graph.getNodeForValue(libFolder.resolve("d.sro"), null));
         expectedOrder.add(graph.getNodeForValue(libFolder.resolve("c.sro"), null));
         expectedOrder.add(graph.getNodeForValue(rootFolder.resolve("b.sro"), null));
-        expectedOrder.add(graph.getNodeForValue(source, null));
         
         TopologicalSort<Path> topoSort = new TopologicalSort<>(graph);
         List<GraphNode<Path>> topologicalOrdering = topoSort.getTopologicalOrdering();

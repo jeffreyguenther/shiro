@@ -12,7 +12,7 @@ import org.antlr.v4.runtime.Recognizer;
 import shiro.SubjunctiveParametricSystem;
 
 /**
- *
+ * An ANTLR error listener that reroutes the ANTLR error messages 
  * @author jeffreyguenther
  */
 public class DescriptiveErrorListener extends BaseErrorListener{
@@ -27,5 +27,4 @@ public class DescriptiveErrorListener extends BaseErrorListener{
         ps.setHasSyntaxErrors(true);
         ps.appendErrorMessage(String.format("%d:%d: %s", line, charPositionInLine, msg));
     }
-
 }

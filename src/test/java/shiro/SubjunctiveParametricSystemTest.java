@@ -1,5 +1,7 @@
 package shiro;
 
+import shiro.exceptions.PathNotAccessibleException;
+import shiro.exceptions.PathNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;

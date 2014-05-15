@@ -1,5 +1,7 @@
 package shiro;
 
+import shiro.exceptions.PortIndexNotFoundException;
+import shiro.exceptions.PortNotActiveException;
 import shiro.definitions.PortType;
 import java.util.*;
 import java.util.logging.Level;

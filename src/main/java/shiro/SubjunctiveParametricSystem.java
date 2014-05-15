@@ -1,5 +1,7 @@
 package shiro;
 
+import shiro.exceptions.PathNotFoundException;
+import shiro.exceptions.PathNotAccessibleException;
 import shiro.definitions.State;
 import shiro.definitions.GraphDefinition;
 import shiro.definitions.PortAssignment;

@@ -1,4 +1,4 @@
-package shiro;
+package shiro.exceptions;
 
 /**
  *

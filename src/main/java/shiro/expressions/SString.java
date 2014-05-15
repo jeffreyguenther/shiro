@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-import shiro.PathNotFoundException;
+import shiro.exceptions.PathNotFoundException;
 import shiro.Port;
 import shiro.Value;
 

@@ -8,14 +8,14 @@ import java.util.*;
  * @author jeffreyguenther
  */
 public class TopologicalSort<T> {
-    private DAGraph<T> graph;
-    private List<GraphNode<T>> topoList;
-    private Map<GraphNode<T>, Boolean> visited;
+    private final DAGraph<T> graph;
+    private final List<GraphNode<T>> topoList;
+    private final Map<GraphNode<T>, Boolean> visited;
 
     public TopologicalSort(DAGraph<T> graph) {
         this.graph = graph;
-        this.topoList = new ArrayList<GraphNode<T>>();
-        this.visited = new HashMap<GraphNode<T>, Boolean>();
+        this.topoList = new ArrayList<>();
+        this.visited = new HashMap<>();
         
         // initialize the visited map to false;
         for(GraphNode<T> n: graph.getNodes()){

@@ -1,6 +1,5 @@
 package shiro.dag;
 
-import shiro.DepGraph;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -52,10 +51,11 @@ public class ParallelDAGEvaluator<T> implements DAGEvaluator {
             }
 
             for (int i = 0; i < threads.size(); i++) {
+               
                 try {
                     threads.get(i).join();
                 } catch (InterruptedException ex) {
-                    Logger.getLogger(DepGraph.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(ParallelDAGEvaluator.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         }

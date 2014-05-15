@@ -4,8 +4,8 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
- * Defines a graph node used in the generic graph node system.
- * @param <T> 
+ * Defines a graph node used in the generic directed acyclic graph
+ * @param <T> the type of the graph node
  * @author jeffreyguenther
  */
 public class GraphNode<T> {
@@ -18,7 +18,7 @@ public class GraphNode<T> {
     protected Set<GraphNode<T>> nodesDependedOn;
 
     /**
-     * Create a graph node
+     * Creates a graph node
      * @param value value of the graph node
      * @param action action to executed at the node
      */
@@ -29,11 +29,11 @@ public class GraphNode<T> {
         this.isLeaf = false;
         this.updated = false;
         this.active = true;
-        this.nodesDependedOn = new LinkedHashSet<GraphNode<T>>();
+        this.nodesDependedOn = new LinkedHashSet<>();
     }
 
     /**
-     * Create a graph node.
+     * Creates a graph node.
      * This creates a graph node without an action
      * @param value 
      */
@@ -42,14 +42,17 @@ public class GraphNode<T> {
     }
 
     /**
-     * Get the value of the graph node
+     * Gets the value of the graph node
      * @return the value of the graph node
      */
     public T getValue() {
         return value;
     }
 
-    
+    /**
+     * Sets the value of the graph node
+     * @param value to be stored
+     */
     public void setValue(T value) {
         this.value = value;
     }
@@ -65,7 +68,7 @@ public class GraphNode<T> {
     }
     
     /**
-     * Get the node's action.
+     * Gets the node's action.
      * @return 
      */
     public NodeAction getAction(){
@@ -73,7 +76,7 @@ public class GraphNode<T> {
     }
     
     /**
-     * Add a dependency on the graph node passed
+     * Adds a dependency on the graph node passed
      * @param node graph node to be depended upon
      * @return true if the dependency was successfully added, otherwise false
      */
@@ -82,7 +85,7 @@ public class GraphNode<T> {
     }
 
     /**
-     * Remove the node's dependency on the node passed
+     * Removes the node's dependency on the node passed
      * @param node graph node to no longer be depended upon
      * @return true if the dependency was successfully remove, or didn't exist,
      * otherwise false
@@ -92,7 +95,7 @@ public class GraphNode<T> {
     }
     
     /**
-     * Determine if node has an edge between it and node
+     * Determines if node has an edge between it and node
      * @param node
      * @return whether there is a dependency between the node and the passed node
      */
@@ -101,7 +104,7 @@ public class GraphNode<T> {
     }
 
     /**
-     * Check if the node has dependencies
+     * Checks if the node has dependencies
      * @return boolean whether node has dependencies
      */
     public boolean hasDependencies(){
@@ -109,7 +112,7 @@ public class GraphNode<T> {
     }
 
     /***
-     * Get the graph nodes depended upon
+     * Gets the graph nodes depended upon
      * @return set of graph nodes depended upon
      */
     public Set<GraphNode<T>> getNodesDependedOn() {
@@ -117,7 +120,7 @@ public class GraphNode<T> {
     }
 
     /***
-     * Set the nodes depended upon
+     * Sets the nodes depended upon
      * @param nodesDependedOn set of nodes to be depended upon
      */
     public void setNodesDependedOn(Set<GraphNode<T>> nodesDependedOn) {
@@ -133,7 +136,7 @@ public class GraphNode<T> {
     }
     
     /***
-     * Activate the port
+     * Activates the port
      */
     public void activate(){
         active = true;
@@ -162,14 +165,14 @@ public class GraphNode<T> {
     }
     
     /**
-     * Unset the port as a leaf
+     * Unsets the port as a leaf
      */
     public void unSetLeaf(){
         isLeaf = false;
     }
 
     /***
-     * Determine if the port is a leaf
+     * Determines if the port is a leaf
      * @return if the port is a leaf
      */
     public boolean isLeaf() {
@@ -177,7 +180,7 @@ public class GraphNode<T> {
     }
 
     /**
-     * Set the updated flag
+     * Sets the updated flag
      * @param update value of flag
      */
     public void setUpdated(boolean update) {
@@ -188,6 +191,4 @@ public class GraphNode<T> {
     public String toString() {
         return "GraphNode{" + "value=" + value + ", isLeaf=" + isLeaf + ", updated=" + updated + ", active=" + active + ", action=" + action + ", nodesDependedOn=" + nodesDependedOn + '}';
     }
-    
-    
 }

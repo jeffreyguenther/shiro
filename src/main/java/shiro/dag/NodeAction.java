@@ -13,7 +13,8 @@ import java.util.Set;
 public interface NodeAction<T> {
     /**
      * Specifies what the node can do when it is visited.
+     * @param node a reference to the node the action is being done to
      * @param deps the set of graph node to be used in the action
      */
-    public void doAction(T t, Set<GraphNode<T>> deps );
+    public void doAction(T node, Set<GraphNode<T>> deps );
 }

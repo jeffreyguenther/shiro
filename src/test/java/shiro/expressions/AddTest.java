@@ -5,7 +5,7 @@ import java.util.logging.Logger;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import shiro.PortNotActiveException;
+import shiro.exceptions.PortNotActiveException;
 import shiro.Value;
 
 /**

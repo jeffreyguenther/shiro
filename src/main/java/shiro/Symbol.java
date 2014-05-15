@@ -1,7 +1,7 @@
 package shiro;
 
 /**
- * A tag for marking symbols
+ * Defines a symbol in Shiro
  * Allows a node, a port, or a subjunctive node to be handled as a common type
  * of object.
  * @author jeffreyguenther

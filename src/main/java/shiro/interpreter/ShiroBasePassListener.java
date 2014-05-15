@@ -6,7 +6,7 @@ import java.util.Stack;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
 import org.antlr.v4.runtime.tree.TerminalNode;
-import shiro.PathNotFoundException;
+import shiro.exceptions.PathNotFoundException;
 import shiro.Port;
 import shiro.Scope;
 import shiro.SubjunctiveParametricSystem;

@@ -159,8 +159,6 @@ public class ResultTuple{
         return hash;
     }
     
-    
-    
     @Override
     public String toString(){
         String output = values.toString().substring(1, values.toString().length() - 1);

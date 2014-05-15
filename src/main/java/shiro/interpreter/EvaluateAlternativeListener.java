@@ -40,8 +40,6 @@ public class EvaluateAlternativeListener extends ShiroBasePassListener{
         graphName = ctx.IDENT().getText();
     }
     
-    
-
     @Override
     public void enterActivation(ShiroParser.ActivationContext ctx) {
        String nodeName = ctx.nodeName.getText();

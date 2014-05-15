@@ -2,9 +2,9 @@ package shiro.expressions;
 
 import java.util.Arrays;
 import java.util.Set;
-import shiro.PathNotFoundException;
+import shiro.exceptions.PathNotFoundException;
 import shiro.Port;
-import shiro.PortNotActiveException;
+import shiro.exceptions.PortNotActiveException;
 import shiro.Value;
 import shiro.definitions.Definition;
 

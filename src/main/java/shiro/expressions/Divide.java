@@ -4,14 +4,14 @@
  */
 package shiro.expressions;
 
-import shiro.PathNotFoundException;
+import shiro.exceptions.PathNotFoundException;
 import shiro.Port;
 import shiro.Value;
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-import shiro.PortNotActiveException;
+import shiro.exceptions.PortNotActiveException;
 
 /**
  *
