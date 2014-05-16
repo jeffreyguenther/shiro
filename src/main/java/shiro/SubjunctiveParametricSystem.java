@@ -438,9 +438,24 @@ public class SubjunctiveParametricSystem implements Scope {
         }
 
         List<DependencyRelation<Port>> deps = new ArrayList<>();
+        
+        //TODO modify this to only include nodes in the graph
+        // In the case of multiple graphs, not all the node instances will
+        // be used in a graph
+
+        // for each node generated in the graph generation process
+        for (Node n : getNodes()) {
+            // get all of the dependencies for each node
+            deps.addAll(n.getDependencies());
+        }
 
         // look up the graph referenced by the state
         DAGraph<Port> graphReferenced = graphs.get(alt.getGraphDef());
+        graphReferenced.removeAllDependencies();
+        
+        for (DependencyRelation<Port> d : deps) {
+            addDependency(graphReferenced, d);
+        }
 
         TopologicalSort<Port> sorter = new TopologicalSort<>(graphReferenced);
         List<GraphNode<Port>> topologicalOrdering = sorter.getTopologicalOrdering();
@@ -477,7 +492,7 @@ public class SubjunctiveParametricSystem implements Scope {
 //        // lookup type
 //        String type = nodeToSplit.getType();
 //        // create instance of node
-//        Node n = produceNodeFromName(type, nameOfSubjunct);
+//        Node n = produceNodeWithName(type, nameOfSubjunct);
 //
 //        // set the arguments of the instance
 //        for (Path p : newValues.keySet()) {
@@ -523,7 +538,8 @@ public class SubjunctiveParametricSystem implements Scope {
             if (nodes.containsKey(p.getCurrentPathHead())) {
                 matchedSymbol = nodes.get(p.getCurrentPathHead());
             } else {
-                matchedSymbol = produceNodeFromName(p.getCurrentPathHead(), p.getCurrentPathHead());
+                matchedSymbol = produceNodeWithName(p.getCurrentPathHead(), p.getCurrentPathHead());
+                addNode((Node)matchedSymbol);
             }
         } else if (nodes.containsKey(p.getCurrentPathHead())) {
             Node n = nodes.get(p.getCurrentPathHead());
@@ -598,7 +614,7 @@ public class SubjunctiveParametricSystem implements Scope {
         } else if (nodeDefs.get(p.getCurrentPathHead()) != null) {
             // determine if desired path is a node not yet realized
             // create the new
-            matchedNode = produceNodeFromName(p.getCurrentPathHead(), p.getCurrentPathHead());
+            matchedNode = produceNodeWithName(p.getCurrentPathHead(), p.getCurrentPathHead());
             // attempt to find the port in the realized node
             // pop the path head
             p.popPathHead();
@@ -631,7 +647,7 @@ public class SubjunctiveParametricSystem implements Scope {
     public Symbol produceSymbolFromName(String type, String name) {
         // check to see if the name is a node
         if (nodeDefs.containsKey(type)) {
-            return produceNodeFromName(type, name);
+            return produceNodeWithName(type, name);
             // check if name is subjunctive node
         }
 
@@ -649,7 +665,7 @@ public class SubjunctiveParametricSystem implements Scope {
         String name = nameManager.getNextName(type);
 
         // produce the new node
-        Node node = produceNodeFromName(type, name);
+        Node node = produceNodeWithName(type, name);
 
         return node;
     }
@@ -658,16 +674,16 @@ public class SubjunctiveParametricSystem implements Scope {
      * *
      * Duplicate a node and change its name.
      *
-     * @param name of node to duplicate
-     * @param newName of node
+     * @param type type of node to duplicate
+     * @param name new name for the node
      * @return new node produced using path and newName.
      */
-    public Node produceNodeFromName(String name, String newName) {
-        ParseTree nodeDef = nodeDefs.get(name);
+    public Node produceNodeWithName(String type, String name) {
+        ParseTree nodeDef = nodeDefs.get(type);
         Node producedNode = realizeNode(nodeDef);
 
         // change the node's name
-        producedNode.setFullName(newName);
+        producedNode.setFullName(name);
         // set the enclosing scope of the new node to the current SPS reference
         producedNode.setParentScope(this);
 
