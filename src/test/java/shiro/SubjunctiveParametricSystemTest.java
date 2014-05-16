@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -17,9 +16,7 @@ import static org.hamcrest.core.Is.is;
 import org.junit.Assert;
 import static org.junit.Assert.assertThat;
 import org.junit.Test;
-import static org.junit.matchers.JUnitMatchers.containsString;
 import shiro.dag.DependencyRelation;
-import shiro.expressions.Expression;
 import shiro.expressions.Path;
 import shiro.shared.CodeLoader;
 
@@ -59,7 +56,8 @@ public class SubjunctiveParametricSystemTest extends CodeLoader{
         SubjunctiveParametricSystem pSystem = setupPSystem();
         Assert.assertNotNull("Should have one node def \"Point\"", pSystem.getNodeDef("Point"));
 
-        pSystem.createNode("Point");
+        Node createNode = pSystem.createNode("Point");
+        pSystem.addNode(createNode);
         Node node = pSystem.getNode("point1");
         Assert.assertEquals("Should have one instance \"Point\"", 1, pSystem.getNodes().size());
         Assert.assertEquals(1, pSystem.getInstanceCountForNode("Point"));

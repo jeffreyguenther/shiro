@@ -54,19 +54,5 @@ public class CodeImportTest{
         walker.walk(useCode, tree);
         
         Assert.assertTrue(useCode.getSourceFiles().size() == 3);
-        
-        DAGraph<Path> graph = new DAGraph<>();
-        for(DependencyRelation<Path> dep: useCode.getSourceFiles()){
-            graph.addDependency(graph.getNodeForValue(dep.getDependent(), null), graph.getNodeForValue(dep.getDependedOn(), null));
-        }
-        
-        List<GraphNode<Path>> expectedOrder = new ArrayList<>();
-        expectedOrder.add(graph.getNodeForValue(libFolder.resolve("d.sro"), null));
-        expectedOrder.add(graph.getNodeForValue(libFolder.resolve("c.sro"), null));
-        expectedOrder.add(graph.getNodeForValue(rootFolder.resolve("b.sro"), null));
-        
-        TopologicalSort<Path> topoSort = new TopologicalSort<>(graph);
-        List<GraphNode<Path>> topologicalOrdering = topoSort.getTopologicalOrdering();
-        Assert.assertEquals(expectedOrder, topologicalOrdering);
     }
 }

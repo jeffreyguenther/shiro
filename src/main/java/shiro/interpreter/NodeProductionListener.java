@@ -76,7 +76,7 @@ public class NodeProductionListener extends ShiroBasePassListener {
         String newName = ctx.instanceName.getText();
 
         // store the current node
-        createdNode = pSystem.produceNodeFromName(name, newName);
+        createdNode = pSystem.produceNodeWithName(name, newName);
         createdNode.setParentScope(scope.peek());
        
         // add the created node to subjunctive node, so the scope tree is preserved

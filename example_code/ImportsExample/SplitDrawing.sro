@@ -1,0 +1,41 @@
+use "geom.sro"
+
+node EndPoints[P1] begin
+    option Point -> P1 begin
+        x(400)
+        y(400)
+    end
+
+    option Point -> P2 begin
+        x(100)
+        y(400)
+    end
+end
+
+graph line begin
+    Point -> startPoint
+    EndPoints -> endPoint
+    Line -> l
+    Rectangle -> r
+
+    r.width(100)
+    r.height(100)
+
+    startPoint.x(100)
+    startPoint.y(0)
+
+    l.p1(startPoint.point[0])
+    l.p2(endPoint.active.point[0])
+
+    r.origin(endPoint.active.point[0])
+end
+
+state DiagonalLine begin
+    Graph line
+    endPoint[P1]
+end
+
+state VerticalLine begin
+    Graph line
+    endPoint[P2]
+end
