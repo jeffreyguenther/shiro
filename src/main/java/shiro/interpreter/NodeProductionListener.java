@@ -6,8 +6,10 @@ import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import shiro.Node;
 import shiro.Port;
+import shiro.Scope;
 import shiro.definitions.PortType;
 import shiro.SubjunctiveParametricSystem;
+import shiro.Symbol;
 import shiro.expressions.Expression;
 import shiro.expressions.Path;
 import shiro.functions.MultiFunction;
@@ -90,6 +92,40 @@ public class NodeProductionListener extends ShiroBasePassListener {
     public void exitSubjunctDeclNodeProd(ShiroParser.SubjunctDeclNodeProdContext ctx) {
         scope.pop();
     }
+
+    @Override
+    public void exitNodeProduction(ShiroParser.NodeProductionContext ctx) {
+        // get the path of LHS of production operator
+        Path leftHandSide = (Path) getExpr(ctx.path());
+
+        // for each activation
+        for (ShiroParser.ActivationContext ac : ctx.activation()) {
+            String nodeName = ac.nodeName.getText();
+
+            // need to differentiate between creating nodes and subjunctive nodes
+            Symbol producedSymbol = pSystem.produceSymbolFromName(leftHandSide.getPath(), nodeName);
+            Node producedNode = (Node) producedSymbol;
+            
+            Scope currentScope = scope.peek();
+            if(!currentScope.isRoot()){
+               Node inNode = (Node) currentScope;
+               inNode.addNestedNode(producedNode);
+            }
+            
+            producedNode.setParentScope(currentScope);
+            pSystem.addNode(producedNode);
+            
+            //TODO types of errors to handle
+            // leftside is not found. do a lower case check to inform the user
+
+            if (ac.activeObject != null) {
+                String updatePort = ac.activeObject.getText();
+                producedNode.setActiveOption(updatePort);
+            }
+        }
+    }
+    
+    
     
     @Override
     public void exitPortDeclInit(ShiroParser.PortDeclInitContext ctx) {

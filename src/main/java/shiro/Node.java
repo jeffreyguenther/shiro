@@ -678,4 +678,8 @@ public class Node implements Symbol, Scope {
 
         return sb.toString();
     }
+    
+    public boolean isRoot(){
+        return false;
+    }
 }

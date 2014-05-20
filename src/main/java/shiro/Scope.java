@@ -16,4 +16,5 @@ public interface Scope {
     public String getName();
     public String getFullName();
     public Path getPath();
+    public boolean isRoot();
 }

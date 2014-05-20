@@ -409,6 +409,11 @@ public class FXMLViewerController {
             Arc ac = getArc(n);
             canvas.getChildren().add(ac);
         }
+        
+        for (shiro.Node n : model.getNodesOfType("Group")) {
+            Group g = getGroup(n);
+            canvas.getChildren().add(g);
+        }
 
 //        // for each point in the model
 //        for (shiro.Node n : model.getNodesOfType("Point")) {
@@ -503,5 +508,14 @@ public class FXMLViewerController {
         c.setType(cTemp.getType());
 
         return c;
+    }
+    
+    public Group getGroup(shiro.Node n){
+        Port ePort = n.getActiveEvalPort();
+        Value rawGroup = ePort.getValueForIndex(0);
+        
+        Group g = (Group) rawGroup.getValue();
+        
+        return g;
     }
 }

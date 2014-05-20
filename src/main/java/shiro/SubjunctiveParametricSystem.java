@@ -29,12 +29,15 @@ import shiro.dag.TopologicalSort;
 import shiro.definitions.NameManager;
 import shiro.expressions.Expression;
 import shiro.expressions.Path;
+import shiro.functions.ArrayMFunc;
 import shiro.functions.MultiFunction;
 import shiro.functions.MultiplyMFunc;
 import shiro.functions.SumMFunc;
 import shiro.functions.ValueMFunc;
 import shiro.functions.graphics.ArcMFunc;
 import shiro.functions.graphics.CircleMFunc;
+import shiro.functions.graphics.GrayscaleMFunc;
+import shiro.functions.graphics.GroupMFunc;
 import shiro.functions.graphics.LineMFunc;
 import shiro.functions.graphics.PointMFunc;
 import shiro.functions.graphics.RectMFunc;
@@ -320,6 +323,7 @@ public class SubjunctiveParametricSystem implements Scope {
         funcMap.put("Value", new ValueMFunc());
         funcMap.put("Multiply", new MultiplyMFunc());
         funcMap.put("Sum", new SumMFunc());
+        funcMap.put("Array", new ArrayMFunc());
 
         // add graphics MFs
         funcMap.put("Point", new PointMFunc());
@@ -327,6 +331,8 @@ public class SubjunctiveParametricSystem implements Scope {
         funcMap.put("Circle", new CircleMFunc());
         funcMap.put("Arc", new ArcMFunc());
         funcMap.put("Rectangle", new RectMFunc());
+        funcMap.put("Grayscale", new GrayscaleMFunc());
+        funcMap.put("Group", new GroupMFunc());
     }
 
     /**
@@ -935,5 +941,9 @@ public class SubjunctiveParametricSystem implements Scope {
     
     public SimpleStringProperty codeProperty() {
         return codeProperty;
+    }
+    
+    public boolean isRoot(){
+        return true;
     }
 }

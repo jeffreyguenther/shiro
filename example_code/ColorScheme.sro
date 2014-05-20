@@ -1,0 +1,105 @@
+use "shapes.sro"
+
+node Colors begin
+	input value1 Value
+	input value2 Value
+	input value3 Value
+	input value4 Value
+end
+
+node BlackAndWhite begin
+	input color Value
+	eval corrector Grayscale(color[0])
+	output bw Value(corrector[0])
+end
+
+node Palette begin
+	input sideLength Value(50)
+	input position Value
+	input color1 Value
+	input color2 Value
+	input color3 Value
+	input color4 Value
+	
+	Point -> p1
+	p1.x(0)
+	p1.y(0)
+	Rectangle -> r1
+	r1.origin(p1.point[0])
+	r1.width(sideLength[0])
+	r1.height(sideLength[0])
+	r1.color(color1[0])
+
+	Point -> p2
+	p2.x(50)
+	p2.y(0)
+	Rectangle -> r2
+	r2.origin(p2.point[0])
+	r2.width(sideLength[0])
+	r2.height(sideLength[0])
+	r2.color(color2[0])
+
+	Point -> p3
+	p3.x(100)
+	p3.y(0)
+	Rectangle -> r3
+	r3.origin(p3.point[0])
+	r3.width(sideLength[0])
+	r3.height(sideLength[0])
+	r3.color(color3[0])
+
+	Point -> p4
+	p4.x(150)
+	p4.y(0)
+	Rectangle -> r4
+	r4.origin(p4.point[0])
+	r4.width(sideLength[0])
+	r4.height(sideLength[0])
+	r4.color(color4[0])
+
+	Group -> g
+	g.position(position[0])
+	g.children(r1.rect[0], r2.rect[0], r3.rect[0], r4.rect[0])
+end
+
+graph colors begin
+	Colors -> colors
+	BlackAndWhite -> bw1
+	BlackAndWhite -> bw2
+	BlackAndWhite -> bw3
+	BlackAndWhite -> bw4
+	Palette -> colorPalette
+	Palette -> bwPalette
+
+	colors.value1("22, 0, 0")
+	colors.value2("100, 0, 0")
+	colors.value3("150, 0, 0")
+	colors.value4("200, 0, 0")
+
+	Point -> p
+	p.x(0)
+	p.y(0)
+	colorPalette.position(p.point[0])
+	colorPalette.color1(colors.value1[0])
+	colorPalette.color2(colors.value2[0])
+	colorPalette.color3(colors.value3[0])
+	colorPalette.color4(colors.value4[0])
+
+	bw1.color(colors.value1[0])
+	bw2.color(colors.value2[0])
+	bw3.color(colors.value3[0])
+	bw4.color(colors.value4[0])
+
+	Point -> p2
+	p2.x(0)
+	p2.y(50)
+	bwPalette.position(p2.point[0])
+	bwPalette.color1(bw1.bw[0])
+	bwPalette.color2(bw2.bw[0])
+	bwPalette.color3(bw3.bw[0])
+	bwPalette.color4(bw4.bw[0])
+end
+
+state palette1 begin
+	Graph colors
+end

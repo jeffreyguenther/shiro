@@ -53,6 +53,8 @@ nodeInternal
     :   ( portstmt
         | subjunctDeclNodeProd
         | OPTION? nodestmt
+        | nodeProduction
+        | portAssignment
         | NEWLINE)+
     ;
 	

@@ -9,7 +9,6 @@ package shiro.functions.graphics;
 import java.util.List;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import shiro.ResultTuple;
 import shiro.Value;
