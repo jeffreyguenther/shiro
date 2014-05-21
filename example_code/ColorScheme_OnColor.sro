@@ -7,6 +7,29 @@ node Colors begin
 	input value4 Value
 end
 
+/* I can create alternates a couple different ways */
+// I can vary the whole palette
+
+node Value1 begin
+	option output red Value("22, 0, 0")
+	option output green Value("0, 100, 0")
+end
+
+node Value2 begin
+	option output red Value("100, 0, 0")
+	option output green Value("0, 100, 0")
+end
+
+node Value3 begin
+	option output red Value("150, 0, 0")
+	option output green Value("0, 150, 0")
+end
+
+node Value4 begin
+	option output red Value("200, 0, 0")
+	option output green Value("0, 200, 0")
+end
+
 node BlackAndWhite begin
 	input color Value
 	eval corrector Grayscale(color[0])
@@ -63,32 +86,30 @@ node Palette begin
 end
 
 graph colors begin
-	Colors -> colors
 	BlackAndWhite -> bw1
 	BlackAndWhite -> bw2
 	BlackAndWhite -> bw3
 	BlackAndWhite -> bw4
 	Palette -> colorPalette
 	Palette -> bwPalette
-
-	colors.value1("22, 0, 0")
-	colors.value2("100, 0, 0")
-	colors.value3("150, 0, 0")
-	colors.value4("200, 0, 0")
+	Value1 -> value1
+	Value2 -> value2
+	Value3 -> value3
+	Value4 -> value4
 
 	Point -> p
 	p.x(0)
 	p.y(0)
 	colorPalette.position(p.point[0])
-	colorPalette.color1(colors.value1[0])
-	colorPalette.color2(colors.value2[0])
-	colorPalette.color3(colors.value3[0])
-	colorPalette.color4(colors.value4[0])
+	colorPalette.color1(value1.active[0])
+	colorPalette.color2(value2.active[0])
+	colorPalette.color3(value3.active[0])
+	colorPalette.color4(value4.active[0])
 
-	bw1.color(colors.value1[0])
-	bw2.color(colors.value2[0])
-	bw3.color(colors.value3[0])
-	bw4.color(colors.value4[0])
+	bw1.color(value1.active[0])
+	bw2.color(value2.active[0])
+	bw3.color(value3.active[0])
+	bw4.color(value4.active[0])
 
 	Point -> p2
 	p2.x(0)
@@ -100,6 +121,26 @@ graph colors begin
 	bwPalette.color4(bw4.bw[0])
 end
 
-state palette1 begin
+state redPalette begin
 	Graph colors
+	value1[red]
+	value2[red]
+	value3[red]
+	value4[red]
+end
+
+state greenPalette begin
+	Graph colors
+	value1[green]
+	value2[green]
+	value3[green]
+	value4[green]
+end
+
+state christmas begin
+	Graph colors
+	value1[green]
+	value2[red]
+	value3[green]
+	value4[red]
 end

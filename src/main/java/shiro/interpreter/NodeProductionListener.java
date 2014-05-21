@@ -162,7 +162,13 @@ public class NodeProductionListener extends ShiroBasePassListener {
 
         setPortType(portType, p);
         
-        createdNode.addPort(p);
+        if(ctx.OPTION() == null){
+            createdNode.addPort(p);
+        }else{
+            createdNode.addOption(p);
+        }
+        
+        
     }
     
     /**
@@ -207,6 +213,10 @@ public class NodeProductionListener extends ShiroBasePassListener {
 
         setPortType(portType, p);
 
-        createdNode.addPort(p);
+        if(ctx.OPTION() == null){
+            createdNode.addPort(p);
+        }else{
+            createdNode.addOption(p);
+        }
     }
 }

@@ -545,9 +545,11 @@ public class Node implements Symbol, Scope {
         if (pathHead.equals("active")
                 || pathHead.equals("this") || path.isAtEnd()) {
             if (pathHead.equals("active")) {
-                path.popPathHead();
-                // TODO deal with different cases of active
-                if (activeOption.getSymbolType().equals(SymbolType.NODE)) {
+                if(path.isAtEnd() && activeOption.getSymbolType().isPort()){
+                    portReferenced = activeOption;
+                    path.resetPathHead();
+                }else{
+                    path.popPathHead();
                     Node subjunct = (Node) activeOption;
                     portReferenced = subjunct.resolvePath(path);
                 }

@@ -44,19 +44,19 @@ public class GraphBuilderListener extends ShiroBasePassListener {
         // Once all of the nodes have been produced an assignments made,
         // build the dependency graph.
         
-        List<DependencyRelation<Port>> deps = new ArrayList<>();
-
-        // for each node generated in the graph generation process
-        for (Node n : pSystem.getNodes()) {
-            // get all of the dependencies for each node
-            deps.addAll(n.getDependencies());
-        }
-
-        // resolve the dependencies between ports as indicated by expressions
-        // by adding dependencies between the two ports to the graph
-        for (DependencyRelation<Port> d : deps) {
-            pSystem.addDependency(graph, d);
-        }
+//        List<DependencyRelation<Port>> deps = new ArrayList<>();
+//
+//        // for each node generated in the graph generation process
+//        for (Node n : pSystem.getNodes()) {
+//            // get all of the dependencies for each node
+//            deps.addAll(n.getDependencies());
+//        }
+//
+//        // resolve the dependencies between ports as indicated by expressions
+//        // by adding dependencies between the two ports to the graph
+//        for (DependencyRelation<Port> d : deps) {
+//            pSystem.addDependency(graph, d);
+//        }
     }
 
     @Override
