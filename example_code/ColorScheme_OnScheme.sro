@@ -74,6 +74,12 @@ node Palette begin
 	g.children(r1.rect[0], r2.rect[0], r3.rect[0], r4.rect[0])
 end
 
+node BlackAndWhite begin
+	input color Value
+	eval corrector Grayscale(color[0])
+	output bw Value(corrector[0])
+end
+
 graph colors begin
 	BlackAndWhite -> bw1
 	BlackAndWhite -> bw2
