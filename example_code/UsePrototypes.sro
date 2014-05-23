@@ -1,0 +1,34 @@
+node Line begin
+    input p1 Value
+    input p2 Value
+    input color Value("255, 0, 0")
+    input strokeWidth Value(10)
+    eval update Line ( p1[0], p2[0], color[0], strokeWidth[0] )
+    output length Value ( update["length"] )
+    output line Value ( update[0] )
+end
+
+node Point begin
+    input x Value
+    input y Value
+    eval update Point(x[0], y[0])
+    output point Value(update[0])
+end
+
+graph test begin
+	Point -> start
+	start.x(100)
+	start.y(100)
+
+	Point -> endP
+	endP.x(400)
+	endP.y(400)
+
+	Line.p1(start.point[0])
+	Line.p2(endP.point[0])
+
+end
+
+state testing begin
+	Graph test
+end

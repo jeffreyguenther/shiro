@@ -625,6 +625,7 @@ public class SubjunctiveParametricSystem implements Scope {
             // determine if desired path is a node not yet realized
             // create the new
             matchedNode = produceNodeWithName(p.getCurrentPathHead(), p.getCurrentPathHead());
+            addNode(matchedNode);
             // attempt to find the port in the realized node
             // pop the path head
             p.popPathHead();
