@@ -1,0 +1,50 @@
+node Image begin
+	input path Value
+	eval update Image(path[0])
+	output img Value(update[0])
+end
+
+node Layer begin
+	input layers Array
+	eval update Layer(layers[0])
+end
+
+node Dresses begin
+	option Image -> flowers begin
+		path("/Users/jeffreyguenther/Projects/Thesis/shiro/example_code/PebbleAndBammBamm/pebbles_flowerdress.png")
+	end
+	option Image -> feathers begin
+		path("/Users/jeffreyguenther/Projects/Thesis/shiro/example_code/PebbleAndBammBamm/pebbles_bluedress.png")
+	end
+end
+
+node Hats begin
+	option Image -> flowers begin
+		path("/Users/jeffreyguenther/Projects/Thesis/shiro/example_code/PebbleAndBammBamm/pebbles_flowerhat.png")
+	end
+	option Image -> feathers begin
+		path("/Users/jeffreyguenther/Projects/Thesis/shiro/example_code/PebbleAndBammBamm/pebbles_bluehat.png")
+	end
+end
+
+graph DressingPebbles begin
+	Image -> pebbles
+	pebbles.path("/Users/jeffreyguenther/Projects/Thesis/shiro/example_code/PebbleAndBammBamm/pebbles.png")
+
+	Hats -> h
+	Dresses -> d
+	Layer -> l
+	l.layers(pebbles.img[0], h.active.img[0], d.active.img[0])
+end
+
+state Flowers begin
+	Graph DressingPebbles
+	h[flowers]
+	d[flowers]
+end
+
+state Feathers begin
+	Graph DressingPebbles
+	h[feathers]
+	d[feathers]
+end

@@ -38,6 +38,8 @@ import shiro.functions.graphics.ArcMFunc;
 import shiro.functions.graphics.CircleMFunc;
 import shiro.functions.graphics.GrayscaleMFunc;
 import shiro.functions.graphics.GroupMFunc;
+import shiro.functions.graphics.ImageMFunc;
+import shiro.functions.graphics.LayerMFunc;
 import shiro.functions.graphics.LineMFunc;
 import shiro.functions.graphics.PointMFunc;
 import shiro.functions.graphics.RectMFunc;
@@ -333,6 +335,8 @@ public class SubjunctiveParametricSystem implements Scope {
         funcMap.put("Rectangle", new RectMFunc());
         funcMap.put("Grayscale", new GrayscaleMFunc());
         funcMap.put("Group", new GroupMFunc());
+        funcMap.put("Image", new ImageMFunc());
+        funcMap.put("Layer", new LayerMFunc());
     }
 
     /**
@@ -943,6 +947,7 @@ public class SubjunctiveParametricSystem implements Scope {
         return codeProperty;
     }
     
+    @Override
     public boolean isRoot(){
         return true;
     }

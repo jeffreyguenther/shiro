@@ -7,9 +7,6 @@ node Colors begin
 	input value4 Value
 end
 
-/* I can create alternates a couple different ways */
-// I can vary the whole palette
-
 node Value1 begin
 	option output red Value("22, 0, 0")
 	option output green Value("0, 100, 0")

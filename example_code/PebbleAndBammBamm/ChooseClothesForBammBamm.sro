@@ -1,0 +1,38 @@
+node Image begin
+	input path Value
+	eval update Image(path[0])
+	output img Value(update[0])
+end
+
+node Layer begin
+	input layers Array
+	eval update Layer(layers[0])
+end
+
+node Shirts begin
+	option Image -> blue begin
+		path("/Users/jeffreyguenther/Projects/Thesis/shiro/example_code/PebbleAndBammBamm/bammbamm_blueshirt.png")
+	end
+	option Image -> wool begin
+		path("/Users/jeffreyguenther/Projects/Thesis/shiro/example_code/PebbleAndBammBamm/bammbamm_woolshirt.png")
+	end
+end
+
+graph DressingBammBamm begin
+	Image -> bammbamm
+	bammbamm.path("/Users/jeffreyguenther/Projects/Thesis/shiro/example_code/PebbleAndBammBamm/bammbamm.png")
+
+	Shirts -> s
+	Layer -> l
+	l.layers(bammbamm.img[0], s.active.img[0])
+end
+
+state Blue begin
+	Graph DressingBammBamm
+	s[blue]
+end
+
+state Wool begin
+	Graph DressingBammBamm
+	s[wool]
+end

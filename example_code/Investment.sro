@@ -1,0 +1,16 @@
+node Investment begin
+	input interestRate Value
+	input principle Value
+	input startAge
+	input endAge
+	eval update Investment(endAge[0] - startAge[0], interestRate[0], principle[0])
+	output valueOfInvestment Value(update[0])
+end
+
+graph Money begin
+	Investment -> savings
+	savings.interestRate(2.5)
+	savings.principle(1000)
+	savings.startAge(25)
+	savings.endAge(75)
+end

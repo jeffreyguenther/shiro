@@ -7,9 +7,6 @@ node Colors begin
 	input value4 Value
 end
 
-/* I can create alternates a couple different ways */
-// I can vary the whole palette
-
 node ColorSchemes begin
 	option Colors -> red begin
 		value1("22, 0, 0")

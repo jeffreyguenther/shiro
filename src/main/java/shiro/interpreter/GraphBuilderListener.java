@@ -1,7 +1,5 @@
 package shiro.interpreter;
 
-import java.util.ArrayList;
-import java.util.List;
 import shiro.interpreter.ShiroParser.ActivationContext;
 import shiro.definitions.GraphDefinition;
 import shiro.Node;
@@ -9,7 +7,6 @@ import shiro.Port;
 import shiro.SubjunctiveParametricSystem;
 import shiro.Symbol;
 import shiro.dag.DAGraph;
-import shiro.dag.DependencyRelation;
 import shiro.expressions.Path;
 
 /**
@@ -40,26 +37,6 @@ public class GraphBuilderListener extends ShiroBasePassListener {
     }
 
     @Override
-    public void exitGraphDecl(ShiroParser.GraphDeclContext ctx) {
-        // Once all of the nodes have been produced an assignments made,
-        // build the dependency graph.
-        
-//        List<DependencyRelation<Port>> deps = new ArrayList<>();
-//
-//        // for each node generated in the graph generation process
-//        for (Node n : pSystem.getNodes()) {
-//            // get all of the dependencies for each node
-//            deps.addAll(n.getDependencies());
-//        }
-//
-//        // resolve the dependencies between ports as indicated by expressions
-//        // by adding dependencies between the two ports to the graph
-//        for (DependencyRelation<Port> d : deps) {
-//            pSystem.addDependency(graph, d);
-//        }
-    }
-
-    @Override
     public void exitNodeProduction(ShiroParser.NodeProductionContext ctx) {
         // get the path of LHS of production operator
         Path leftHandSide = (Path) getExpr(ctx.path());
@@ -79,10 +56,6 @@ public class GraphBuilderListener extends ShiroBasePassListener {
             if (ac.activeObject != null) {
                 String updatePort = ac.activeObject.getText();
                 producedNode.setActiveOption(updatePort);
-
-                System.out.println("Node produced: "
-                        + producedNode.getFullName() + " with active update ");
-                System.out.println();
             }
         }
     }

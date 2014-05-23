@@ -5,7 +5,6 @@
  */
 package shiro.viewer;
 
-import com.sun.javafx.property.adapter.PropertyDescriptor;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -16,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -29,13 +27,14 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.control.Slider;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
@@ -79,6 +78,12 @@ public class FXMLViewerController {
     private ToggleGroup layouts;
     @FXML
     private Label errorLabel;
+    @FXML
+    private Slider tileSizes;
+    @FXML
+    private ToggleButton btnGrid;
+    @FXML
+    private ToggleButton btnFreeForm;
 
     private SubjunctiveParametricSystem model;
     private Map<State, Canvas> layers;
@@ -87,6 +92,8 @@ public class FXMLViewerController {
     private Group lightTable;
     private MoveContext moveContext;
     private ImageView selectedTile;
+   
+    
 
     public void initialize() {
         model = new SubjunctiveParametricSystem();
@@ -109,6 +116,19 @@ public class FXMLViewerController {
                 code.setStyle("-fx-border-color:red;");
             } else {
                 code.setStyle("-fx-border-color:null;");
+            }
+        });
+        
+        tileSizes.valueProperty().addListener( (ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
+            if(btnGrid.isSelected()){
+                gallery.getChildren().clear();
+                
+                for(WritableImage img: snapshots.values()){
+                    gallery.getChildren().add(createImageTile(img, newValue.doubleValue()));
+                }
+            }else{
+                lightTable = createLightTable(tileSizes.getValue());
+                lightTableScrollPane.setContent(lightTable);
             }
         });
 
@@ -152,12 +172,12 @@ public class FXMLViewerController {
                 renderState(s);
                 
                 canvas.getChildren().add(c);
-            // put all canvases on scenegraph
+                // put all canvases on scenegraph
                 // capture image
                 // and build gallery
                 WritableImage snapshot = c.snapshot(null, null);
                 snapshots.put(s, snapshot);
-                gallery.getChildren().add(createImageTile(snapshot));
+                gallery.getChildren().add(createImageTile(snapshot, tileSizes.getValue()));
                 
                 canvas.getChildren().clear();
             }
@@ -174,38 +194,38 @@ public class FXMLViewerController {
         console.setText(concat);
     }
 
-    private ImageView createImageTile(WritableImage image) {
+    private ImageView createImageTile(WritableImage image, double size) {
         DropShadow ds = new DropShadow();
         ds.setOffsetY(3.0);
         ds.setOffsetX(3.0);
         ds.setColor(Color.GRAY);
 
         ImageView v = new ImageView(image);
-        v.setFitHeight(200);
+        v.setFitWidth(size);
         v.setPreserveRatio(true);
         v.setSmooth(true);
         v.setEffect(ds);
         return v;
     }
 
-    private Group createLightTable() {
-        Group lightTable = new Group();
+    private Group createLightTable(double size) {
+        Group g = new Group();
 
-        lightTable.setOnMousePressed(this::handleTilePressed);
-        lightTable.setOnMouseDragged(this::handleTileDragged);
-        lightTable.setOnMouseReleased(this::handleTileReleased);
+        g.setOnMousePressed(this::handleTilePressed);
+        g.setOnMouseDragged(this::handleTileDragged);
+        g.setOnMouseReleased(this::handleTileReleased);
 
         double x = 0;
         for (WritableImage img : snapshots.values()) {
-            ImageView tile = createImageTile(img);
+            ImageView tile = createImageTile(img, size);
             tile.relocate(x, 0);
             tile.setOnMousePressed(this::handleTileSelected);
-            lightTable.getChildren().add(tile);
+            g.getChildren().add(tile);
 
-            x = x + 200 + 10;
+            x = x + size + 10;
         }
 
-        return lightTable;
+        return g;
     }
 
     private void handleTileSelected(MouseEvent e) {
@@ -309,14 +329,14 @@ public class FXMLViewerController {
 
         gallery.getChildren().clear();
         for (WritableImage img : snapshots.values()) {
-            gallery.getChildren().add(createImageTile(img));
+            gallery.getChildren().add(createImageTile(img, tileSizes.getValue()));
         }
     }
 
     @FXML
     private void handleFreeFormLayout(ActionEvent event) {
         if (lightTable.getChildren().isEmpty()) {
-            lightTable = createLightTable();
+            lightTable = createLightTable(tileSizes.getValue());
         }
         lightTableScrollPane.setContent(lightTable);
     }
@@ -412,6 +432,16 @@ public class FXMLViewerController {
         
         for (shiro.Node n : model.getNodesOfType("Group")) {
             Group g = getGroup(n);
+            canvas.getChildren().add(g);
+        }
+        
+//        for (shiro.Node n : model.getNodesOfType("Image")) {
+//            ImageView image = getImage(n);
+//            canvas.getChildren().add(image);
+//        }
+        
+        for (shiro.Node n : model.getNodesOfType("Layer")) {
+            Group g = getLayer(n);
             canvas.getChildren().add(g);
         }
 
@@ -511,6 +541,22 @@ public class FXMLViewerController {
     }
     
     public Group getGroup(shiro.Node n){
+        Port ePort = n.getActiveEvalPort();
+        Value rawGroup = ePort.getValueForIndex(0);
+        
+        Group g = (Group) rawGroup.getValue();
+        
+        return g;
+    }
+    
+    public ImageView getImage(shiro.Node n){
+        Port ePort = n.getActiveEvalPort();
+        Value rawImage = ePort.getValueForIndex(0);
+        
+        return (ImageView) rawImage.getValue();
+    }
+    
+    public Group getLayer(shiro.Node n){
         Port ePort = n.getActiveEvalPort();
         Value rawGroup = ePort.getValueForIndex(0);
         
