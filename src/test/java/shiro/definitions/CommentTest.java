@@ -40,8 +40,8 @@ public class CommentTest {
     
     @Test
     public void factoryMethods(){
-        Comment inlineFactory = Comment.inline(INLINE_COMMENT);
-        Comment blockFactory = Comment.block(BLOCK_COMMENT);
+        Comment inlineFactory = Comment.INLINE(INLINE_COMMENT);
+        Comment blockFactory = Comment.BLOCK(BLOCK_COMMENT);
         Assert.assertEquals("should match", inline, inlineFactory);
         Assert.assertEquals("should match", block, blockFactory);
     }

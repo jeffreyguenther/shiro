@@ -85,11 +85,11 @@ public class Comment implements Definition{
     
    
     
-    public static Comment inline(String content){
+    public static Comment INLINE(String content){
         return new Comment(Type.INLINE, content);
     }
     
-    public static Comment block(String content){
+    public static Comment BLOCK(String content){
         return new Comment(Type.BLOCK, content);
     }
 }

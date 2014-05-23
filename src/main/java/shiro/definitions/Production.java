@@ -18,8 +18,8 @@ import org.stringtemplate.v4.STGroupFile;
  *      Point -> p
  * and
  *      Point -> p // this creates a point.
- * 
- * It encapsulates the inline comment.
+ 
+ It encapsulates the INLINE comment.
  * 
  * @author jeffreyguenther
  */
@@ -43,15 +43,15 @@ public class Production implements Definition{
      * Create a production
      * @param type type of the node to create
      * @param instanceName name of the instance
-     * @param inlineComment the content of an inline comment. Do not add "//."
-     * This is handled automatically by the comment object created in the constructor.
+     * @param inlineComment the content of an INLINE comment. Do not add "//."
+ This is handled automatically by the comment object created in the constructor.
      */
     public Production(String type, String instanceName, String inlineComment) {
         this.type = type;
         this.instanceName = instanceName;
         
         if(inlineComment != null){
-            this.inlineComment = Comment.inline(inlineComment);
+            this.inlineComment = Comment.INLINE(inlineComment);
         }else{
             this.inlineComment = null;
         }
@@ -90,20 +90,20 @@ public class Production implements Definition{
     }
 
     /**
-     * Gets the inline comment
-     * @return the inline comment for the production
+     * Gets the INLINE comment
+     * @return the INLINE comment for the production
      */
     public Comment getInlineComment() {
         return inlineComment;
     }
 
     /**
-     * Sets the inline comment
+     * Sets the INLINE comment
      * @param comment the content of the comment. Leave off the "//". For example,
      * for the comment "// make node", you would pass "make node".
      */
     public void setInlineComment(String comment ) {
-        this.inlineComment = Comment.inline(comment);
+        this.inlineComment = Comment.INLINE(comment);
     }
 
     /**
