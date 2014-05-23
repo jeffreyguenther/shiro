@@ -1,0 +1,14 @@
+DONE - Task: Create a color scheme that works in both BW and color.
+DUPLICATE - Task: Choose a haircut
+DUPLICATE - Task: Compare the nutritional value (calories, sugars, or fat) of different toppings like: berries, whipped cream, and sugar
+DUPLICATE - Task: Choose paint colors
+DUPLICATE: Compare out comes of investment products
+
+Task: Organize furniture in a room
+Task: Buy a car
+Task: Determine the amounts saved after a number of years, based on the amount saved per month, and the starting age.
+Task: Choose the right script for a set of data files. Subjunts are algorithms
+Task: Vast 2008 cell phone challenge
+Task: Given a graph, show me several graph visualizations
+Task: Radically different CSS for the same HTML
+Task: Logo design
