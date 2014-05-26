@@ -4,7 +4,7 @@ import shiro.interpreter.ShiroParser.ActivationContext;
 import shiro.definitions.GraphDefinition;
 import shiro.Node;
 import shiro.Port;
-import shiro.SubjunctiveParametricSystem;
+import shiro.Runtime;
 import shiro.Symbol;
 import shiro.dag.DAGraph;
 import shiro.expressions.Path;
@@ -18,7 +18,7 @@ public class GraphBuilderListener extends ShiroBasePassListener {
     private GraphDefinition graphDef;
     private DAGraph<Port> graph;
 
-    public GraphBuilderListener(SubjunctiveParametricSystem ps) {
+    public GraphBuilderListener(Runtime ps) {
         super(ps);
         graph = new DAGraph<>();
     }
@@ -33,6 +33,8 @@ public class GraphBuilderListener extends ShiroBasePassListener {
 
     @Override
     public void enterGraphDecl(ShiroParser.GraphDeclContext ctx) {
+        
+        
         graphDef = new GraphDefinition(ctx.IDENT().getText());
     }
 

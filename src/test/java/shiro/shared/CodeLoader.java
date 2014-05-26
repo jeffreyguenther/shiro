@@ -12,7 +12,7 @@ import java.net.URL;
 import java.nio.file.Paths;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
-import shiro.SubjunctiveParametricSystem;
+import shiro.Runtime;
 import shiro.interpreter.ShiroLexer;
 import shiro.interpreter.ShiroParser;
 
@@ -21,14 +21,14 @@ import shiro.interpreter.ShiroParser;
  * @author jeffreyguenther
  */
 public class CodeLoader {
-    public SubjunctiveParametricSystem setupPSystem() throws IOException {
-        SubjunctiveParametricSystem pSystem = new SubjunctiveParametricSystem();
+    public Runtime setupPSystem() throws IOException {
+        Runtime pSystem = new Runtime();
         pSystem.loadDefaultDefinitions();
         return pSystem;
     }
 
-    public SubjunctiveParametricSystem setupPSystemWithSubjuncts() throws IOException, URISyntaxException {
-        SubjunctiveParametricSystem pSystem = new SubjunctiveParametricSystem();
+    public Runtime setupPSystemWithSubjuncts() throws IOException, URISyntaxException {
+        Runtime pSystem = new Runtime();
         URL resource = this.getClass().getResource("SimpleSubjunctiveExample.sro");
         pSystem.loadCode(Paths.get(resource.toURI()));
         return pSystem;

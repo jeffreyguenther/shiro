@@ -12,14 +12,14 @@ import shiro.Symbol;
  * Definition of a system state.
  * @author jeffreyguenther
  */
-public class State implements Definition{
+public class StateDefinition implements Definition{
     private Instant timeStamp;
     private String comment;
     private Map<Node, Symbol> subjunctsMapping;
     private String name;
     private String graphDef;
 
-    public State(String gDef, String name, String comment, Map<Node, Symbol> subjunctsMapping) {
+    public StateDefinition(String gDef, String name, String comment, Map<Node, Symbol> subjunctsMapping) {
         this.graphDef = gDef;
         this.name = name;
         this.comment = comment;
@@ -27,7 +27,7 @@ public class State implements Definition{
         this.timeStamp = Instant.now();
     }
     
-    public State(String gDef, String name) {
+    public StateDefinition(String gDef, String name) {
         this(gDef, name, "", new HashMap<>());
     }
 

@@ -17,7 +17,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import shiro.Node;
 import shiro.Port;
-import shiro.SubjunctiveParametricSystem;
+import shiro.Runtime;
 import shiro.definitions.PortType;
 import shiro.shared.CodeLoader;
 
@@ -35,7 +35,7 @@ public class NodeProductionListenerTest extends CodeLoader{
         walker.walk(defs, parser.shiro());
         
         Map<String, ParseTree> nodeDefinitions = defs.getNodeDefinitions();
-        SubjunctiveParametricSystem ps = new SubjunctiveParametricSystem();
+        Runtime ps = new Runtime();
         ps.addNodeASTDefinitions(nodeDefinitions);
         
         NodeProductionListener nodeProducer = new NodeProductionListener(ps);

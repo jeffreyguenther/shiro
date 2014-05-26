@@ -9,7 +9,7 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import shiro.exceptions.PathNotFoundException;
 import shiro.Port;
 import shiro.Scope;
-import shiro.SubjunctiveParametricSystem;
+import shiro.Runtime;
 import shiro.expressions.Add;
 import shiro.expressions.Divide;
 import shiro.expressions.Expression;
@@ -25,15 +25,15 @@ import shiro.expressions.Subtract;
  * @author jeffreyguenther
  */
 public class ShiroBasePassListener extends ShiroBaseListener {
-    protected SubjunctiveParametricSystem pSystem;
+    protected Runtime pSystem;
     protected Stack<Scope> scope;
     protected ParseTreeProperty<Expression> expressions;
 
-    public ShiroBasePassListener(SubjunctiveParametricSystem pSystem) {
+    public ShiroBasePassListener(Runtime pSystem) {
         this(pSystem, pSystem);
     }
     
-    public ShiroBasePassListener(SubjunctiveParametricSystem pSystem, Scope scope){
+    public ShiroBasePassListener(Runtime pSystem, Scope scope){
         this.pSystem = pSystem;
         this.expressions = new ParseTreeProperty<>();
         this.scope = new Stack<>();

@@ -12,3 +12,4 @@ Task: Vast 2008 cell phone challenge
 Task: Given a graph, show me several graph visualizations
 Task: Radically different CSS for the same HTML
 Task: Logo design
+Task: Recursive tree - look for fun stuff

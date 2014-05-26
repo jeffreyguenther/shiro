@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
-import shiro.SubjunctiveParametricSystem;
+import shiro.Runtime;
 import shiro.dag.DependencyRelation;
 
 /**
@@ -27,9 +27,9 @@ public class UseCodeListener extends ShiroBaseListener {
     private Set<DependencyRelation<Path>> sourceFiles;
     private Path parentDirectory;
     private Path sourceFile;
-    private SubjunctiveParametricSystem ps;
+    private Runtime ps;
 
-    public UseCodeListener(Path source, SubjunctiveParametricSystem ps) {
+    public UseCodeListener(Path source, Runtime ps) {
         sourceFiles = new HashSet<>();
         this.sourceFile = source;
         this.parentDirectory = source.getParent();

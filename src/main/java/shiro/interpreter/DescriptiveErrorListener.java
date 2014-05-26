@@ -9,16 +9,16 @@ package shiro.interpreter;
 import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Recognizer;
-import shiro.SubjunctiveParametricSystem;
+import shiro.Runtime;
 
 /**
  * An ANTLR error listener that reroutes the ANTLR error messages 
  * @author jeffreyguenther
  */
 public class DescriptiveErrorListener extends BaseErrorListener{
-    SubjunctiveParametricSystem ps;
+    Runtime ps;
 
-    public DescriptiveErrorListener(SubjunctiveParametricSystem ps) {
+    public DescriptiveErrorListener(Runtime ps) {
         this.ps = ps;
     }
     

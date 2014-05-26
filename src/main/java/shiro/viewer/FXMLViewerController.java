@@ -45,9 +45,9 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
 import shiro.Port;
-import shiro.SubjunctiveParametricSystem;
+import shiro.Runtime;
 import shiro.Value;
-import shiro.definitions.State;
+import shiro.definitions.StateDefinition;
 import shiro.drawing.Canvas;
 import shiro.drawing.MoveContext;
 
@@ -85,10 +85,10 @@ public class FXMLViewerController {
     @FXML
     private ToggleButton btnFreeForm;
 
-    private SubjunctiveParametricSystem model;
-    private Map<State, Canvas> layers;
+    private Runtime model;
+    private Map<StateDefinition, Canvas> layers;
     private File currentFile;
-    private Map<State, WritableImage> snapshots;
+    private Map<StateDefinition, WritableImage> snapshots;
     private Group lightTable;
     private MoveContext moveContext;
     private ImageView selectedTile;
@@ -96,7 +96,7 @@ public class FXMLViewerController {
     
 
     public void initialize() {
-        model = new SubjunctiveParametricSystem();
+        model = new Runtime();
         layers = new HashMap<>();
         addEventHandlersToList();
         altsList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
@@ -166,7 +166,7 @@ public class FXMLViewerController {
             
             altsList.getItems().addAll(model.getStateNames());
             
-            for (State s : model.getStates()) {
+            for (StateDefinition s : model.getStates()) {
                 Canvas c = createCanvas();
                 layers.put(s, c);
                 renderState(s);
@@ -352,7 +352,7 @@ public class FXMLViewerController {
     }
 
     public void handleSingleSelectedAltChange(String altName) {
-        State s = model.getState(altName);
+        StateDefinition s = model.getState(altName);
 
         Canvas c = layers.get(s);
         ObservableList<Node> children = canvas.getChildren();
@@ -376,7 +376,7 @@ public class FXMLViewerController {
      * @param s
      * @return
      */
-    private Canvas renderState(State s) {
+    private Canvas renderState(StateDefinition s) {
         // evaluate the parametric system
         model.update(s);
 

@@ -2,7 +2,7 @@ package shiro;
 
 import shiro.exceptions.PathNotFoundException;
 import shiro.exceptions.PathNotAccessibleException;
-import shiro.definitions.State;
+import shiro.definitions.StateDefinition;
 import shiro.definitions.GraphDefinition;
 import shiro.definitions.PortAssignment;
 import java.io.BufferedWriter;
@@ -70,7 +70,7 @@ import shiro.interpreter.UseCodeListener;
  *
  * @author jeffreyguenther
  */
-public class SubjunctiveParametricSystem implements Scope {
+public class Runtime implements Scope {
     private int maxStates = 1000;
     private boolean overrideStateLimit;
     
@@ -85,7 +85,7 @@ public class SubjunctiveParametricSystem implements Scope {
 
     private Map<String, Node> nodes;                   // realized node table
     private Map<String, DAGraph<Port>> graphs;          // realized graphs;
-    private Map<String, State> alternatives;           // alternative specs
+    private Map<String, StateDefinition> alternatives;           // alternative specs
     private final NameManager nameManager;             // class to manage name generation
     private final PortAction graphNodeAction;          // action used in graph nodes
 
@@ -93,7 +93,7 @@ public class SubjunctiveParametricSystem implements Scope {
     private final SimpleStringProperty errorMessagesProperty;
     private final SimpleBooleanProperty hasErrorsProperty;
 
-    public SubjunctiveParametricSystem() {
+    public Runtime() {
         overrideStateLimit = false;
         parseResults = new HashMap<>();
         
@@ -241,7 +241,7 @@ public class SubjunctiveParametricSystem implements Scope {
         alternativeDefs.values().forEach((ParseTree p) -> addAlternative(realizeState(p)));
     }
     
-    private State realizeState(ParseTree stateDef){
+    private StateDefinition realizeState(ParseTree stateDef){
         EvaluateAlternativeListener genAlts = new EvaluateAlternativeListener(this);
         ParseTreeWalker walker = new ParseTreeWalker();
         walker.walk(genAlts, stateDef);
@@ -327,7 +327,7 @@ public class SubjunctiveParametricSystem implements Scope {
         return total;
     }
     
-    /**
+    /** 
      * Generates the combinatorial space of all alternatives.
      */
     private void generateAllStates(/*Graph*/){
@@ -424,7 +424,7 @@ public class SubjunctiveParametricSystem implements Scope {
         graphDefs.put(defaultGraph.getName(), defaultGraph);
 
         // add an alternative
-        addAlternative(new State(defaultGraph.getName(), "Default"));
+        addAlternative(new StateDefinition(defaultGraph.getName(), "Default"));
     }
     
     /**
@@ -467,7 +467,7 @@ public class SubjunctiveParametricSystem implements Scope {
         });
     }
 
-    public void update(State alt) {
+    public void update(StateDefinition alt) {
         Map<Node, Symbol> subjunctTable = alt.getSubjunctsMapping();
 
         for (Node s : subjunctTable.keySet()) {
@@ -550,9 +550,9 @@ public class SubjunctiveParametricSystem implements Scope {
 //        
 //        // add subjunctive node selection to all existing alternatives
 //        boolean first = true;
-//        for(State s: getStates()){
+//        for(StateDefinition s: getStates()){
 //            if(first){
-//                State newState = new State(currentGraphDef, names.getNextName("state"));
+//                StateDefinition newState = new StateDefinition(currentGraphDef, names.getNextName("state"));
 //                newState.setActiveNode(s.getSubjunctsMapping());
 //                newState.setActiveNode(result, n);
 //                addAlternative(newState);
@@ -881,7 +881,7 @@ public class SubjunctiveParametricSystem implements Scope {
      *
      * @param state
      */
-    public void addAlternative(State state) {
+    public void addAlternative(StateDefinition state) {
         alternatives.put(state.getName(), state);
     }
 
@@ -906,7 +906,7 @@ public class SubjunctiveParametricSystem implements Scope {
         });
 
         // print states
-        alternatives.values().stream().forEach((State state) -> {
+        alternatives.values().stream().forEach((StateDefinition state) -> {
             sb.append(state.toCode()).append("\n\n");
         });
 
@@ -963,11 +963,11 @@ public class SubjunctiveParametricSystem implements Scope {
         return alternatives.keySet();
     }
 
-    public State getState(String name) {
+    public StateDefinition getState(String name) {
         return alternatives.get(name);
     }
 
-    public Set<State> getStates() {
+    public Set<StateDefinition> getStates() {
         return new HashSet<>(alternatives.values());
     }
     

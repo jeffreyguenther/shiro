@@ -28,14 +28,14 @@ import shiro.shared.CodeLoader;
 public class SubjunctiveParametricSystemTest extends CodeLoader{
     @Test
     public void loadNodeDefinitions() throws IOException {
-        SubjunctiveParametricSystem pSystem = setupPSystem();
+        Runtime pSystem = setupPSystem();
         Assert.assertNotNull(pSystem.getNodeDef("Point"));
         Assert.assertNotNull(pSystem.getNodeDef("Line"));
     }
 
     @Test
     public void loadNodeDefinitionsFromURL() throws URISyntaxException, IOException{
-        SubjunctiveParametricSystem pSystem = new SubjunctiveParametricSystem();
+        Runtime pSystem = new Runtime();
         URL resource = getClass().getClassLoader().getResource("shiro/SimpleSubjunctiveExample.sro");
         pSystem.loadDefinitions(Paths.get(resource.toURI()));
         Assert.assertNotNull("Should have one node def \"Point\"", pSystem.getNodeDef("Point"));
@@ -44,7 +44,7 @@ public class SubjunctiveParametricSystemTest extends CodeLoader{
 
     @Test
     public void getInstanceCount() throws IOException {
-        SubjunctiveParametricSystem pSystem = setupPSystem();
+        Runtime pSystem = setupPSystem();
         Assert.assertEquals(0, pSystem.getInstanceCountForNode("Line"));
         Assert.assertEquals(0, pSystem.getInstanceCountForNode("Point"));
         Assert.assertEquals(0, pSystem.getInstanceCountForNode("Georgeo"));
@@ -53,7 +53,7 @@ public class SubjunctiveParametricSystemTest extends CodeLoader{
 
     @Test
     public void createNode() throws IOException {
-        SubjunctiveParametricSystem pSystem = setupPSystem();
+        Runtime pSystem = setupPSystem();
         Assert.assertNotNull("Should have one node def \"Point\"", pSystem.getNodeDef("Point"));
 
         Node createNode = pSystem.createNode("Point");
@@ -68,7 +68,7 @@ public class SubjunctiveParametricSystemTest extends CodeLoader{
 //    public void setPortExpression() throws PathNotFoundException {
 //
 //        // Load the basic parametric system with Point and Line
-//        SubjunctiveParametricSystem pSystem = setupPSystem();
+//        Runtime pSystem = setupPSystem();
 //
 //        // Create a node
 //        Node node = pSystem.createNode("Point");
@@ -92,7 +92,7 @@ public class SubjunctiveParametricSystemTest extends CodeLoader{
     @Test
     public void resolvePrototypePath() throws URISyntaxException {
         try {
-            SubjunctiveParametricSystem pSystem = setupPSystemWithSubjuncts();
+            Runtime pSystem = setupPSystemWithSubjuncts();
 
             Path nodePath = new Path("Point");
             Symbol pointStringPath = pSystem.find("Point");
@@ -118,7 +118,7 @@ public class SubjunctiveParametricSystemTest extends CodeLoader{
     @Test(expected = PathNotFoundException.class)
     public void invalidPath() throws PathNotFoundException, IOException, PathNotAccessibleException, URISyntaxException {
 
-        SubjunctiveParametricSystem pSystem = setupPSystemWithSubjuncts();
+        Runtime pSystem = setupPSystemWithSubjuncts();
 
         Path error = new Path("startP4ints");
         pSystem.find("startP4ints");
@@ -128,7 +128,7 @@ public class SubjunctiveParametricSystemTest extends CodeLoader{
     @Test
     public void resolveInstancePath() throws IOException,
             PathNotAccessibleException, PathNotFoundException, URISyntaxException {
-        SubjunctiveParametricSystem pSystem = setupPSystemWithSubjuncts();
+        Runtime pSystem = setupPSystemWithSubjuncts();
         Path instance = new Path("startPoint");
         Symbol startPointStringPath = pSystem.find("startPoint");
         Symbol startPointPath = pSystem.find(instance);
@@ -177,7 +177,7 @@ public class SubjunctiveParametricSystemTest extends CodeLoader{
 
     @Test(expected = PathNotAccessibleException.class)
     public void inaccessiblePort() throws IOException, PathNotAccessibleException, PathNotFoundException, URISyntaxException {
-        SubjunctiveParametricSystem pSystem = setupPSystemWithSubjuncts();
+        Runtime pSystem = setupPSystemWithSubjuncts();
         pSystem.find("Point"); // need to create prototype
 
         Path update = new Path("Point", "update");
@@ -190,7 +190,7 @@ public class SubjunctiveParametricSystemTest extends CodeLoader{
 
     @Test
     public void resolvePorts() throws PathNotAccessibleException, IOException, PathNotFoundException, URISyntaxException {
-        SubjunctiveParametricSystem pSystem = setupPSystemWithSubjuncts();
+        Runtime pSystem = setupPSystemWithSubjuncts();
         pSystem.find("Point"); // needed to create the Point prototype
 
         Path x = new Path("Point", "x");
@@ -247,7 +247,7 @@ public class SubjunctiveParametricSystemTest extends CodeLoader{
 
     @Test
     public void findAndReplace() throws IOException, URISyntaxException {
-        SubjunctiveParametricSystem pSystem = setupPSystemWithSubjuncts();
+        Runtime pSystem = setupPSystemWithSubjuncts();
         Path p = Path.createPath("startPoint");
         List<Port> ports = pSystem.findAll(p);
         Assert.assertEquals("should have one port", 1, ports.size());
@@ -263,7 +263,7 @@ public class SubjunctiveParametricSystemTest extends CodeLoader{
     
     @Test
     public void getNodesOfType(){
-        SubjunctiveParametricSystem ps = new SubjunctiveParametricSystem();
+        Runtime ps = new Runtime();
         
         Node root = new Node("Point", "root", ps);
         ps.addNode(root);
@@ -291,7 +291,7 @@ public class SubjunctiveParametricSystemTest extends CodeLoader{
     
     @Test
     public void loadCode() throws IOException, URISyntaxException{
-        SubjunctiveParametricSystem ps = setupPSystemWithSubjuncts();
+        Runtime ps = setupPSystemWithSubjuncts();
         
         // check to see if types are correct
         Assert.assertNotNull(ps.getNodeDef("Line"));
@@ -323,7 +323,7 @@ public class SubjunctiveParametricSystemTest extends CodeLoader{
 
 //    @Test
 //    public void split() throws IOException, PathNotFoundException, PathNotAccessibleException {
-//        SubjunctiveParametricSystem pSystem = setupPSystemWithSubjuncts();
+//        Runtime pSystem = setupPSystemWithSubjuncts();
 //        
 //        Map<Path, List<Expression>> newValues = new HashMap<>();
 //        newValues.put(Path.createPath("x"), Arrays.asList(new shiro.expressions.Number(200d)));

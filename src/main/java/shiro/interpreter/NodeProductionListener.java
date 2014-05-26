@@ -8,7 +8,7 @@ import shiro.Node;
 import shiro.Port;
 import shiro.Scope;
 import shiro.definitions.PortType;
-import shiro.SubjunctiveParametricSystem;
+import shiro.Runtime;
 import shiro.Symbol;
 import shiro.expressions.Expression;
 import shiro.expressions.Path;
@@ -22,7 +22,7 @@ import shiro.functions.MultiFunction;
 public class NodeProductionListener extends ShiroBasePassListener {
     private Node createdNode;
 
-    public NodeProductionListener(SubjunctiveParametricSystem ps) {
+    public NodeProductionListener(Runtime ps) {
         super(ps);
         createdNode = null;
     }

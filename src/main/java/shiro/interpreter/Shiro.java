@@ -5,7 +5,7 @@ import org.antlr.v4.runtime.ANTLRFileStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
-import shiro.SubjunctiveParametricSystem;
+import shiro.Runtime;
 
 /**
  * Shiro Runtime
@@ -15,7 +15,7 @@ import shiro.SubjunctiveParametricSystem;
 public class Shiro {
 
     public static void main(String args[]) throws Exception {
-        SubjunctiveParametricSystem subjPSystem = new SubjunctiveParametricSystem();
+        Runtime subjPSystem = new Runtime();
         ParseTreeWalker walker = new ParseTreeWalker();
 
         System.out.println("Starting Shiro Interpreter");

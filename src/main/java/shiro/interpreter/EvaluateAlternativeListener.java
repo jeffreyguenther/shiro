@@ -3,9 +3,9 @@ package shiro.interpreter;
 import java.util.HashMap;
 import java.util.Map;
 import shiro.Node;
-import shiro.SubjunctiveParametricSystem;
+import shiro.Runtime;
 import shiro.Symbol;
-import shiro.definitions.State;
+import shiro.definitions.StateDefinition;
 
 /**
  * Walk the parse tree of an alternative to evaluate it.
@@ -14,15 +14,15 @@ import shiro.definitions.State;
 public class EvaluateAlternativeListener extends ShiroBasePassListener{
     private Map<Node, Symbol> subjunctTable;
     private String graphName = "<empty>";
-    private State createdState;
+    private StateDefinition createdState;
 
-    public EvaluateAlternativeListener(SubjunctiveParametricSystem pSystem) {
+    public EvaluateAlternativeListener(Runtime pSystem) {
         super(pSystem);
         subjunctTable = new HashMap<>();
         createdState = null;
     }
     
-    public State getState(){
+    public StateDefinition getState(){
         return createdState;
     }
 
@@ -30,7 +30,7 @@ public class EvaluateAlternativeListener extends ShiroBasePassListener{
     public void exitStatestmt(ShiroParser.StatestmtContext ctx) {
         String stateName  = ctx.stateName().getText();
         
-        State state = new State(graphName, stateName);
+        StateDefinition state = new StateDefinition(graphName, stateName);
         state.setActiveNode(subjunctTable);
         createdState = state;
     }

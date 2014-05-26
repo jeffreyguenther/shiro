@@ -29,8 +29,8 @@ import javax.imageio.ImageIO;
 import shiro.exceptions.PathNotAccessibleException;
 import shiro.exceptions.PathNotFoundException;
 import shiro.Port;
-import shiro.SubjunctiveParametricSystem;
-import shiro.definitions.State;
+import shiro.Runtime;
+import shiro.definitions.StateDefinition;
 import shiro.Value;
 import shiro.expressions.Expression;
 import shiro.expressions.Path;
@@ -43,7 +43,7 @@ import shiro.expressions.Path;
 public class ProjectAmoebaController {
 
     private final ProjectAmoebaUI ui;
-    private SubjunctiveParametricSystem model;
+    private Runtime model;
 
     private Mode mode;
     private int imageCounter;
@@ -58,7 +58,7 @@ public class ProjectAmoebaController {
 
     private boolean createLineSuccessful;
     private String startPointName;
-    private Map<State, Canvas> layers;
+    private Map<StateDefinition, Canvas> layers;
     private Canvas currentCanvas;
     private ObservableList<String> alternatives;
     private SimpleStringProperty codeProperty;
@@ -67,7 +67,7 @@ public class ProjectAmoebaController {
 
     public ProjectAmoebaController(ProjectAmoebaUI ui) {
         this.ui = ui;
-        model = new SubjunctiveParametricSystem();
+        model = new Runtime();
 
         mode = Mode.Waiting;
         imageCounter = 0;
@@ -90,7 +90,7 @@ public class ProjectAmoebaController {
         }
 
         // create a Canvas for the default system state
-        State defaultState = model.getState("Default");
+        StateDefinition defaultState = model.getState("Default");
         currentCanvas = createCanvas();
         layers.put(defaultState, currentCanvas);
         ui.getLayers().getChildren().add(currentCanvas);
@@ -404,7 +404,7 @@ public class ProjectAmoebaController {
     }
 
     public void handleSingleSelectedAltChange(String altName) {
-        State s = model.getState(altName);
+        StateDefinition s = model.getState(altName);
 
         Canvas c = renderState(s);
         ObservableList<Node> children = ui.getLayers().getChildren();
@@ -509,7 +509,7 @@ public class ProjectAmoebaController {
                 // Add all the state names to the list of alternatives
                 alternatives.addAll(model.getStateNames());
 
-                for (State s : model.getStates()) {
+                for (StateDefinition s : model.getStates()) {
                     layers.put(s, createCanvas());
                 }
 
@@ -528,7 +528,7 @@ public class ProjectAmoebaController {
      * @param s
      * @return
      */
-    private Canvas renderState(State s) {
+    private Canvas renderState(StateDefinition s) {
         // evaluate the parametric system
         model.update(s);
 

@@ -28,7 +28,7 @@ public class NodeTest {
     
     @Test
     public void threeArgConstructor(){
-        SubjunctiveParametricSystem ps = new SubjunctiveParametricSystem();
+        Runtime ps = new Runtime();
         String type = "EndPoints";
         String name = "endPoints";
         
@@ -53,7 +53,7 @@ public class NodeTest {
     
     @Test
     public void addNestedNode(){
-        SubjunctiveParametricSystem ps = new SubjunctiveParametricSystem();
+        Runtime ps = new Runtime();
         String type = "EndPoints";
         String name = "endPoints";
         Node n = new Node(type, name, ps);
@@ -72,7 +72,7 @@ public class NodeTest {
     
     @Test
     public void setNameAndFullName(){
-        SubjunctiveParametricSystem ps = new SubjunctiveParametricSystem();
+        Runtime ps = new Runtime();
         String type = "EndPoints";
         String name = "endPoints";
         Node n = new Node(type, name, ps);

@@ -13,7 +13,7 @@ import shiro.Node;
 import shiro.exceptions.PathNotFoundException;
 import shiro.Port;
 import shiro.definitions.PortType;
-import shiro.SubjunctiveParametricSystem;
+import shiro.Runtime;
 import shiro.drawing.ProjectAmoebaController;
 import shiro.functions.ValueMFunc;
 
@@ -92,7 +92,7 @@ public class GenerateCode {
     
     @Test
     public void intializeEditGenerateCode() throws IOException{
-        SubjunctiveParametricSystem pSystem = new SubjunctiveParametricSystem();
+        Runtime pSystem = new Runtime();
         pSystem.loadDefaultDefinitions();
         Node p1 = createPoint(pSystem, 100, 50);
         Node p2 = createPoint(pSystem, 200, 50);
@@ -101,7 +101,7 @@ public class GenerateCode {
         pSystem.writeCode(new File("/Users/jeffreyguenther/Desktop/intializeEdit.sro"));
     }
     
-    private Node createPoint(SubjunctiveParametricSystem model, double x, double y){
+    private Node createPoint(Runtime model, double x, double y){
         shiro.Node node = model.createNode("Point");
         Path pathX = Path.createPathForPort(node, "x");
         Path pathY = Path.createPathForPort(node, "y");
@@ -121,7 +121,7 @@ public class GenerateCode {
         return node;
     }
     
-    private Node createLine(SubjunctiveParametricSystem model, Node p1, Node p2){
+    private Node createLine(Runtime model, Node p1, Node p2){
         shiro.Node node = model.createNode("Line");
         Path pathX = Path.createPathForPort(node, "p1");
         Path pathY = Path.createPathForPort(node, "p2");
