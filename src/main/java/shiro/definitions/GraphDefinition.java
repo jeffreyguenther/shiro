@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
+import shiro.Node;
 import shiro.expressions.Path;
 
 /**
@@ -19,12 +20,14 @@ public class GraphDefinition implements Definition{
     private List<Definition> lines;
     private List<Production> productions; 
     private Map<Path, PortAssignment> portAssignments;
+    private Map<String, Node> nodes;
     private String name;
 
     public GraphDefinition(String name) {
         lines = new ArrayList<>();
         productions = new ArrayList<>();
         portAssignments = new HashMap<>();
+        nodes = new HashMap<>();
         this.name = name;
     }
 
@@ -94,6 +97,14 @@ public class GraphDefinition implements Definition{
     
     public void addComment(Comment c){
         lines.add(c);
+    }
+
+    public Map<String, Node> getNodes() {
+        return nodes;
+    }
+    
+    public void addNode(Node n){
+        nodes.put(n.getName(), n);
     }
     
     @Override

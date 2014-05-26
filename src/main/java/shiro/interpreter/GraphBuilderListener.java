@@ -52,6 +52,7 @@ public class GraphBuilderListener extends ShiroBasePassListener {
             Symbol producedSymbol = pSystem.produceSymbolFromName(leftHandSide.getPath(), nodeName);
             Node producedNode = (Node) producedSymbol;
             pSystem.addNode(producedNode);
+            graphDef.addNode(producedNode);
 
             if (ac.activeObject != null) {
                 String updatePort = ac.activeObject.getText();

@@ -71,6 +71,9 @@ import shiro.interpreter.UseCodeListener;
  * @author jeffreyguenther
  */
 public class SubjunctiveParametricSystem implements Scope {
+    private int maxStates = 1000;
+    private boolean overrideStateLimit;
+    
     // cached results of parsed files
     private Map<java.nio.file.Path, ParseResult> parseResults;
     
@@ -86,11 +89,12 @@ public class SubjunctiveParametricSystem implements Scope {
     private final NameManager nameManager;             // class to manage name generation
     private final PortAction graphNodeAction;          // action used in graph nodes
 
-    private SimpleStringProperty codeProperty;
-    private SimpleStringProperty errorMessagesProperty;
-    private SimpleBooleanProperty hasErrorsProperty;
+    private final SimpleStringProperty codeProperty;
+    private final SimpleStringProperty errorMessagesProperty;
+    private final SimpleBooleanProperty hasErrorsProperty;
 
     public SubjunctiveParametricSystem() {
+        overrideStateLimit = false;
         parseResults = new HashMap<>();
         
         multiFunctions = new HashMap<>();
@@ -308,6 +312,29 @@ public class SubjunctiveParametricSystem implements Scope {
         sortedPaths.remove(rootFile);
         
         return sortedPaths;
+    }
+    
+    /**
+     * Calculates the total number of possible states for all the defined
+     * nodes
+     * @return 
+     */
+    public int calculateNumberOfStates(){
+        int total = 1;
+        // for each graph, get all the nodes with options
+            // multiply the number of options in each node
+        
+        return total;
+    }
+    
+    /**
+     * Generates the combinatorial space of all alternatives.
+     */
+    private void generateAllStates(/*Graph*/){
+        // for each graph
+            // get all the nodes with options in a given graph
+            // build all possible subjunct tables
+            // create a state 
     }
     
     //</editor-fold>
@@ -951,5 +978,21 @@ public class SubjunctiveParametricSystem implements Scope {
     @Override
     public boolean isRoot(){
         return true;
+    }
+
+    public int getMaxStates() {
+        return maxStates;
+    }
+
+    public void setMaxStates(int maxAlternatives) {
+        this.maxStates = maxAlternatives;
+    }
+
+    public boolean isOverrideStateLimit() {
+        return overrideStateLimit;
+    }
+
+    public void setOverrideStateLimit(boolean overrideStateLimit) {
+        this.overrideStateLimit = overrideStateLimit;
     }
 }
