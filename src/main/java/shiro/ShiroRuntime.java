@@ -14,7 +14,6 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.Map.Entry;
 import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toSet;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.util.Pair;
@@ -830,5 +829,25 @@ public class ShiroRuntime {
 
     public void setOverrideStateLimit(boolean overrideStateLimit) {
         this.overrideStateLimit = overrideStateLimit;
+    }
+    
+    /**
+     * Gets a new graph instance with the given name.
+     * The graph is added to the runtime.
+     * @param name name of the graph
+     * @return the create graph instance
+     */
+    public Graph getNewGraph(String name){
+        Graph g = new Graph(this, name);
+        graphs.put(name, g);
+        return g;
+    }
+    
+    public Graph createGraph(){
+        return new Graph(this);
+    }
+    
+    public Graph createGraph(String name){
+        return new Graph(this, name);
     }
 }

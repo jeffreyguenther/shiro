@@ -11,7 +11,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 import static java.util.stream.Collectors.toSet;
 import shiro.dag.DAGraph;
 import shiro.dag.DependencyRelation;
@@ -83,6 +82,10 @@ public class Graph implements Scope {
 
     public Set<Node> getNodes() {
         return new HashSet<>(nodes.values());
+    }
+    
+    public Node getNode(String name){
+        return nodes.get(name);
     }
     
     public Set<Node> getNodesWithOptions(){

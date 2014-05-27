@@ -53,15 +53,16 @@ public class ShiroRuntimeTest extends CodeLoader{
 
     @Test
     public void createNode() throws IOException {
-//        ShiroRuntime pSystem = setupPSystem();
-//        Assert.assertNotNull("Should have one node def \"Point\"", pSystem.getNodeDef("Point"));
-//
-//        Node createNode = pSystem.createNode("Point");
-//        pSystem.addNode(createNode);
-//        Node node = pSystem.getNode("point1");
-//        Assert.assertEquals("Should have one instance \"Point\"", 1, pSystem.getNodes().size());
-//        Assert.assertEquals(1, pSystem.getInstanceCountForNode("Point"));
-//        Assert.assertEquals("Should have name", "point1", node.getFullName());
+        ShiroRuntime rt = setupPSystem();
+        Graph graph = rt.getNewGraph("TestGraph");
+        Assert.assertNotNull("Should have one node def \"Point\"", rt.getNodeDef("Point"));
+
+        Node createNode = rt.createNode(graph, "Point");
+        graph.addNode( createNode);
+        Node node = graph.getNode("point1");
+        Assert.assertEquals("Should have one instance \"Point\"", 1, graph.getNodes().size());
+        Assert.assertEquals(1, rt.getInstanceCountForNode("Point"));
+        Assert.assertEquals("Should have name", "point1", node.getFullName());
     }
 
 //    @Test
@@ -263,30 +264,31 @@ public class ShiroRuntimeTest extends CodeLoader{
     
     @Test
     public void getNodesOfType(){
-//        ShiroRuntime ps = new ShiroRuntime();
-//        
-//        Node root = new Node("Point", "root", ps);
-//        ps.addNode(root);
-//        
-//        Node root1 = new Node("Other", "root1", ps);
-//        ps.addNode(root1);
-//        
-//        Node n1 = new Node("Point", "1", root);
-//        root.addNestedNode(n1);
-//        Node n11 = new Node("Point", "11", n1);
-//        n1.addNestedNode(n11);
-//        Node n12 = new Node("Other", "12", n1);
-//        n1.addNestedNode(n12);
-//        
-//        Node n2 = new Node("Point", "2", root);
-//        root.addNestedNode(n2);
-//        Node n21 = new Node("Point", "21", root);
-//        n2.addNestedNode(n21);
-//        Node n22 = new Node("Other", "22", root);
-//        n2.addNestedNode(n22);
-//        
-//        Assert.assertEquals(5, ps.getNodesOfType("Point").size());
-//        Assert.assertEquals(3, ps.getNodesOfType("Other").size());
+        ShiroRuntime rt = new ShiroRuntime();
+        Graph g = rt.getNewGraph("testGraph");
+        
+        Node root = new Node("Point", "root", g);
+        g.addNode(root);
+        
+        Node root1 = new Node("Other", "root1", g);
+        g.addNode(root1);
+        
+        Node n1 = new Node("Point", "1", root);
+        root.addNestedNode(n1);
+        Node n11 = new Node("Point", "11", n1);
+        n1.addNestedNode(n11);
+        Node n12 = new Node("Other", "12", n1);
+        n1.addNestedNode(n12);
+        
+        Node n2 = new Node("Point", "2", root);
+        root.addNestedNode(n2);
+        Node n21 = new Node("Point", "21", root);
+        n2.addNestedNode(n21);
+        Node n22 = new Node("Other", "22", root);
+        n2.addNestedNode(n22);
+        
+        Assert.assertEquals(5, rt.getNodesOfType(g, "Point").size());
+        Assert.assertEquals(3, rt.getNodesOfType(g, "Other").size());
     }
     
     @Test
