@@ -40,6 +40,12 @@ public class Graph implements Scope {
         graph = new DAGraph<>();
         nodes = new HashMap<>();
         runtime = rt;
+        this.name = "";
+    }
+    
+    public Graph(ShiroRuntime rt, String name){
+        this(rt);
+        this.name = name;
     }
 
     public void clear() {
