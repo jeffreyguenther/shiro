@@ -4,11 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
+import shiro.Graph;
 import shiro.Node;
 import shiro.Port;
 import shiro.Scope;
 import shiro.definitions.PortType;
-import shiro.Runtime;
+import shiro.ShiroRuntime;
 import shiro.Symbol;
 import shiro.expressions.Expression;
 import shiro.expressions.Path;
@@ -21,9 +22,13 @@ import shiro.functions.MultiFunction;
  */
 public class NodeProductionListener extends ShiroBasePassListener {
     private Node createdNode;
+    private ShiroRuntime runtime;
+    private Graph graph;
 
-    public NodeProductionListener(Runtime ps) {
-        super(ps);
+    public NodeProductionListener(ShiroRuntime rt, Graph graph) {
+        super(graph);
+        runtime = rt;
+        this.graph = graph;
         createdNode = null;
     }
 
@@ -78,7 +83,7 @@ public class NodeProductionListener extends ShiroBasePassListener {
         String newName = ctx.instanceName.getText();
 
         // store the current node
-        createdNode = pSystem.produceNodeWithName(name, newName);
+        createdNode = runtime.produceNodeWithName(graph, name, newName);
         createdNode.setParentScope(scope.peek());
        
         // add the created node to subjunctive node, so the scope tree is preserved
@@ -103,7 +108,7 @@ public class NodeProductionListener extends ShiroBasePassListener {
             String nodeName = ac.nodeName.getText();
 
             // need to differentiate between creating nodes and subjunctive nodes
-            Symbol producedSymbol = pSystem.produceSymbolFromName(leftHandSide.getPath(), nodeName);
+            Symbol producedSymbol = runtime.produceSymbolFromName(graph, leftHandSide.getPath(), nodeName);
             Node producedNode = (Node) producedSymbol;
             
             Scope currentScope = scope.peek();
@@ -113,7 +118,7 @@ public class NodeProductionListener extends ShiroBasePassListener {
             }
             
             producedNode.setParentScope(currentScope);
-            pSystem.addNode(producedNode);
+            graph.addNode(producedNode);
             
             //TODO types of errors to handle
             // leftside is not found. do a lower case check to inform the user
@@ -140,7 +145,7 @@ public class NodeProductionListener extends ShiroBasePassListener {
         Port p = new Port();
 
         // create a new port
-        MultiFunction mf = pSystem.getMultiFunction(mfName.getText());
+        MultiFunction mf = runtime.getMultiFunction(mfName.getText());
 
         // detect if the multifunction exists
         if (mf != null) {
@@ -199,7 +204,8 @@ public class NodeProductionListener extends ShiroBasePassListener {
         Port p = new Port();
 
         // create a new port
-        MultiFunction mf = pSystem.getMultiFunction(mfName.getText());
+        // TODO and multifunction not found error
+        MultiFunction mf = runtime.getMultiFunction(mfName.getText());
 
         // detect if the multifunction exists
         if (mf != null) {

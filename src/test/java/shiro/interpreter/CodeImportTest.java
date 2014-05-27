@@ -20,7 +20,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.junit.Assert;
 import org.junit.Test;
-import shiro.Runtime;
+import shiro.ShiroRuntime;
 import shiro.dag.DAGraph;
 import shiro.dag.DependencyRelation;
 import shiro.dag.GraphNode;
@@ -48,7 +48,7 @@ public class CodeImportTest{
         parser.setBuildParseTree(true);
         ParseTree tree = parser.shiro();
         
-        Runtime ps = new Runtime();
+        ShiroRuntime ps = new ShiroRuntime();
         ParseTreeWalker walker = new ParseTreeWalker();
         UseCodeListener useCode = new UseCodeListener(source, ps);
         walker.walk(useCode, tree);

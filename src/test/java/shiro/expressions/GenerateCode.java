@@ -2,19 +2,14 @@ package shiro.expressions;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.junit.Assert;
 import org.junit.Test;
 import shiro.Node;
-import shiro.exceptions.PathNotFoundException;
 import shiro.Port;
 import shiro.definitions.PortType;
-import shiro.Runtime;
-import shiro.drawing.ProjectAmoebaController;
+import shiro.ShiroRuntime;
 import shiro.functions.ValueMFunc;
 
 /**
@@ -90,25 +85,25 @@ public class GenerateCode {
         Assert.assertEquals("should match", "eval update Value(12.3 * 235.3)", p3.toCode());
     }
     
-    @Test
-    public void intializeEditGenerateCode() throws IOException{
-        Runtime pSystem = new Runtime();
-        pSystem.loadDefaultDefinitions();
-        Node p1 = createPoint(pSystem, 100, 50);
-        Node p2 = createPoint(pSystem, 200, 50);
-        createLine(pSystem, p1, p2);
-        
-        pSystem.writeCode(new File("/Users/jeffreyguenther/Desktop/intializeEdit.sro"));
-    }
+//    @Test
+//    public void intializeEditGenerateCode() throws IOException{
+//        ShiroRuntime pSystem = new ShiroRuntime();
+//        pSystem.loadDefaultDefinitions();
+//        Node p1 = createPoint(pSystem, 100, 50);
+//        Node p2 = createPoint(pSystem, 200, 50);
+//        createLine(pSystem, p1, p2);
+//        
+//        pSystem.writeCode(new File("/Users/jeffreyguenther/Desktop/intializeEdit.sro"));
+//    }
     
-    private Node createPoint(Runtime model, double x, double y){
-        shiro.Node node = model.createNode("Point");
-        Path pathX = Path.createPathForPort(node, "x");
-        Path pathY = Path.createPathForPort(node, "y");
-
-        // Parse the expression into an Expression object
-        Expression xExpr = model.parseExpression(node, x + "");
-        Expression yExpr = model.parseExpression(node, y + "");
+//    private Node createPoint(ShiroRuntime model, double x, double y){
+//        shiro.Node node = model.createNode("Point");
+//        Path pathX = Path.createPathForPort(node, "x");
+//        Path pathY = Path.createPathForPort(node, "y");
+//
+//        // Parse the expression into an Expression object
+//        Expression xExpr = model.parseExpression(node, x + "");
+//        Expression yExpr = model.parseExpression(node, y + "");
 
 //        try {
 //            model.setPortExpression(pathX, xExpr);
@@ -118,26 +113,26 @@ public class GenerateCode {
 //            Logger.getLogger(ProjectAmoebaController.class.getName()).log(Level.SEVERE, null, ex);
 //        }
         
-        return node;
-    }
-    
-    private Node createLine(Runtime model, Node p1, Node p2){
-        shiro.Node node = model.createNode("Line");
-        Path pathX = Path.createPathForPort(node, "p1");
-        Path pathY = Path.createPathForPort(node, "p2");
-        
-        // Parse the expression into an Expression object
-        Expression p1Expr = model.parseExpression(p1, p1.getName() + ".point[0]");
-        Expression p2Expr = model.parseExpression(p2, p2.getName() + ".point[0]");
-
-//        try {
-//            model.setPortExpression(pathX, p1Expr);
-//            model.setPortExpression(pathY, p2Expr);
+//        return node;
+//    }
+//    
+//    private Node createLine(ShiroRuntime model, Node p1, Node p2){
+//        shiro.Node node = model.createNode("Line");
+//        Path pathX = Path.createPathForPort(node, "p1");
+//        Path pathY = Path.createPathForPort(node, "p2");
+//        
+//        // Parse the expression into an Expression object
+//        Expression p1Expr = model.parseExpression(p1, p1.getName() + ".point[0]");
+//        Expression p2Expr = model.parseExpression(p2, p2.getName() + ".point[0]");
 //
-//        } catch (PathNotFoundException ex) {
-//            Logger.getLogger(ProjectAmoebaController.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-        
-        return node;
-    }
+////        try {
+////            model.setPortExpression(pathX, p1Expr);
+////            model.setPortExpression(pathY, p2Expr);
+////
+////        } catch (PathNotFoundException ex) {
+////            Logger.getLogger(ProjectAmoebaController.class.getName()).log(Level.SEVERE, null, ex);
+////        }
+//        
+//        return node;
+//    }
 }

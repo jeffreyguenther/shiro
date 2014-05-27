@@ -1,7 +1,7 @@
 package shiro;
 
+import com.google.common.collect.Sets;
 import shiro.exceptions.PathNotFoundException;
-import shiro.exceptions.PathNotAccessibleException;
 import shiro.definitions.StateDefinition;
 import shiro.definitions.GraphDefinition;
 import shiro.definitions.PortAssignment;
@@ -14,8 +14,10 @@ import java.nio.file.Paths;
 import java.util.*;
 import java.util.Map.Entry;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.util.Pair;
 import org.antlr.v4.runtime.ANTLRFileStream;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CharStream;
@@ -70,7 +72,7 @@ import shiro.interpreter.UseCodeListener;
  *
  * @author jeffreyguenther
  */
-public class Runtime implements Scope {
+public class ShiroRuntime {
     private int maxStates = 1000;
     private boolean overrideStateLimit;
     
@@ -81,11 +83,10 @@ public class Runtime implements Scope {
     private Map<String, ParseTree> nodeDefs;           // AST table
     private Map<String, GraphDefinition> graphDefs;    // AST Table
     private Map<String, ParseTree> graphTrees;         // temporary graph def table
-    private Map<String, ParseTree> alternativeDefs;    // AST table
+    private Map<String, ParseTree> alternativeDefs;    // git sAST table
 
-    private Map<String, Node> nodes;                   // realized node table
-    private Map<String, DAGraph<Port>> graphs;          // realized graphs;
-    private Map<String, StateDefinition> alternatives;           // alternative specs
+    private Map<String, Graph> graphs;         // realized graphs;
+    private Map<String, StateDefinition> alternatives; // alternative specs
     private final NameManager nameManager;             // class to manage name generation
     private final PortAction graphNodeAction;          // action used in graph nodes
 
@@ -93,7 +94,7 @@ public class Runtime implements Scope {
     private final SimpleStringProperty errorMessagesProperty;
     private final SimpleBooleanProperty hasErrorsProperty;
 
-    public Runtime() {
+    public ShiroRuntime() {
         overrideStateLimit = false;
         parseResults = new HashMap<>();
         
@@ -105,7 +106,6 @@ public class Runtime implements Scope {
         graphTrees = new HashMap<>();
         alternativeDefs = new HashMap<>();
         
-        nodes = new HashMap<>();
         graphs = new HashMap<>();
         alternatives = new HashMap<>();
         nameManager = new NameManager();
@@ -157,7 +157,7 @@ public class Runtime implements Scope {
         ShiroParser.ExpressionContext expression; 
         expression = (ShiroParser.ExpressionContext) parseFromExpression(lex(expr));
         
-        ShiroBasePassListener ls = new ShiroBasePassListener(this, scope);
+        ShiroBasePassListener ls = new ShiroBasePassListener(scope);
         ParseTreeWalker walker = new ParseTreeWalker();
         walker.walk(ls, expression);
 
@@ -194,9 +194,13 @@ public class Runtime implements Scope {
         }
         return null;
     }
+    
+    public Map<String, ParseTree> getNodeDefs(){
+        return nodeDefs;
+    }
     //</editor-fold>
     
-    //<editor-fold defaultstate="collapsed" desc="Modify Runtime">
+    //<editor-fold defaultstate="collapsed" desc="Modify ShiroRuntime">
     private Map<String, ParseTree> getNodeDefinitions(java.nio.file.Path path){
         ParseTree parseTree = getParseTree(path);
         NodeDefinitionListener definitionWalker = new NodeDefinitionListener();
@@ -213,18 +217,23 @@ public class Runtime implements Scope {
         return new DefinitionResult(defPass.getNodeDefinitions(), defPass.getGraphs(), defPass.getAlternativeDefinitions());
     }
     
-    private Node realizeNode(ParseTree nodeDef) {
-        NodeProductionListener nodeBuilder = new NodeProductionListener(this);
+    private Node realizeNode(Graph g, ParseTree nodeDef) {
+        NodeProductionListener nodeBuilder = new NodeProductionListener(this, g);
         ParseTreeWalker walker = new ParseTreeWalker();
         walker.walk(nodeBuilder, nodeDef);
         return nodeBuilder.getCreatedNode();
     }
     
-    private DAGraph<Port> realizeGraph(ParseTree graph){
-        GraphBuilderListener graphBuilder = new GraphBuilderListener(this);
+    private Graph realizeGraph(ParseTree graph){
+        Graph g = new Graph(this);
+        GraphBuilderListener graphBuilder = new GraphBuilderListener(this, g);
         ParseTreeWalker walker = new ParseTreeWalker();
         walker.walk(graphBuilder, graph);
-        return graphBuilder.getGraph();
+        
+        // FUTURE - When implementing code gen., this method should return
+        // an instance of GraphDefinition, which will then be process to realize
+        // the graph
+        return g;
     }
     
     private void realizeGraphs(){
@@ -242,7 +251,7 @@ public class Runtime implements Scope {
     }
     
     private StateDefinition realizeState(ParseTree stateDef){
-        EvaluateAlternativeListener genAlts = new EvaluateAlternativeListener(this);
+        EvaluateAlternativeListener genAlts = new EvaluateAlternativeListener();
         ParseTreeWalker walker = new ParseTreeWalker();
         walker.walk(genAlts, stateDef);
         return genAlts.getState();
@@ -252,7 +261,7 @@ public class Runtime implements Scope {
     //<editor-fold defaultstate="collapsed" desc="Load Code">
     public void loadCode(String code) {
         CommonTokenStream lex = lex(code);
-        java.nio.file.Path tempPath = Paths.get("temp.sro");
+        java.nio.file.Path tempPath = Paths.get("root.sro");
         load(tempPath, lex);
     }
     
@@ -264,7 +273,6 @@ public class Runtime implements Scope {
     private void loadDependency(java.nio.file.Path dep){
         Map<String, ParseTree> nodeDefinitions = getNodeDefinitions(dep);
         addNodeASTDefinitions(nodeDefinitions);
-        // TODO load graphs and states from dependents
     }
     
     private void loadDependencies(List<java.nio.file.Path> deps){
@@ -330,11 +338,29 @@ public class Runtime implements Scope {
     /** 
      * Generates the combinatorial space of all alternatives.
      */
-    private void generateAllStates(/*Graph*/){
+    private Set<StateDefinition> generateAllStates(Set<Graph> graphs){
+        Set<StateDefinition> states = new HashSet<>();
+        
         // for each graph
+        for(Graph g: graphs){
             // get all the nodes with options in a given graph
+           Set<Node> nodesWithOptions = g.getNodesWithOptions();
+            
+           List<Set<Pair<String, String>>> rawOptions = nodesWithOptions.stream()
+                    .map(Node::getOptionPairs).collect(toList());
+            
+            // Calculate the cartesian product
+            Set<List<Pair<String, String>>> cartesianProduct = Sets.cartesianProduct(rawOptions);
             // build all possible subjunct tables
-            // create a state 
+            for(List<Pair<String, String>> table: cartesianProduct){
+                // create a state
+                StateDefinition state = new StateDefinition(g.getName(), nameManager.getNextName("state"));
+                for(Pair<String, String> entry: table){
+                    state.addActiveNode(entry.getKey(), entry.getValue());
+                }
+            }
+        }
+        return states;
     }
     
     //</editor-fold>
@@ -410,7 +436,7 @@ public class Runtime implements Scope {
      */
     public void removeAllInstances() {
         nameManager.reset();
-        nodes.clear();
+        graphs.values().stream().forEach(Graph::clear);
         alternatives.clear();
         clearErrorMessages();
     }
@@ -455,52 +481,31 @@ public class Runtime implements Scope {
     
     //<editor-fold defaultstate="collapsed" desc="Evaluation">
     /**
-     * Update the parametric system
+     * Update the runtime
+     * If there are no alternatives defined in the runtime, all possible
+     * alternatives are generated.
      */
     public void update() {
-       //TODO generate all alternatives automatically if there are none specified
-        // also handle the case where there is not subjunctive nodes.
-        // for each graph instance, evaluate
+       Set<StateDefinition> alts = new HashSet<>();
         
-        alternatives.values().stream().forEach((a) -> {
-            update(a);
-        });
+       // if no alternatives are defined
+       if(alternatives.isEmpty()){
+           // generate them all!
+           alts.addAll(generateAllStates(new HashSet<>(graphs.values())));
+       }else{
+           alts.addAll(alternatives.values());
+       }
+       
+       alts.stream().forEach((a) -> {
+                update(a);
+       });
     }
 
     public void update(StateDefinition alt) {
-        Map<Node, Symbol> subjunctTable = alt.getSubjunctsMapping();
-
-        for (Node s : subjunctTable.keySet()) {
-            s.setActiveOption(subjunctTable.get(s).getName());
-        }
-
-        List<DependencyRelation<Port>> deps = new ArrayList<>();
-        
-        //TODO modify this to only include nodes in the graph
-        // In the case of multiple graphs, not all the node instances will
-        // be used in a graph
-
-        // for each node generated in the graph generation process
-        for (Node n : getNodes()) {
-            // get all of the dependencies for each node
-            deps.addAll(n.getDependencies());
-        }
-
-        // look up the graph referenced by the state
-        DAGraph<Port> graphReferenced = graphs.get(alt.getGraphDef());
-        graphReferenced.removeAllDependencies();
-        
-        for (DependencyRelation<Port> d : deps) {
-            addDependency(graphReferenced, d);
-        }
-
-        TopologicalSort<Port> sorter = new TopologicalSort<>(graphReferenced);
-        List<GraphNode<Port>> topologicalOrdering = sorter.getTopologicalOrdering();
-
-        // loop through all ports to update them.
-        for (GraphNode<Port> gn : topologicalOrdering) {
-            gn.doAction();
-        }
+        // get the graph referenced by the definition
+        Graph graph = graphs.get(alt.getGraphDef());
+        // evaluate the graph with subjunct table
+        graph.evaluate(alt.getSubjunctsMapping());
     }
     //</editor-fold>
     
@@ -553,68 +558,18 @@ public class Runtime implements Scope {
 //        for(StateDefinition s: getStates()){
 //            if(first){
 //                StateDefinition newState = new StateDefinition(currentGraphDef, names.getNextName("state"));
-//                newState.setActiveNode(s.getSubjunctsMapping());
-//                newState.setActiveNode(result, n);
+//                newState.addActiveNode(s.getSubjunctsMapping());
+//                newState.addActiveNode(result, n);
 //                addAlternative(newState);
 //                
 //                first = false;
 //            }
-//            s.setActiveNode(result, nodeToSplit);
+//            s.addActiveNode(result, nodeToSplit);
 //        }
 //        
 //        return result;
 //    }
     //<editor-fold defaultstate="collapsed" desc="Look up">
-    @Override
-    public Symbol find(Path p) throws PathNotFoundException, PathNotAccessibleException {
-        Symbol matchedSymbol = null;
-        
-        // check proto instances
-        // if the path matches a node type
-        if (p.isAtEnd() && nodeDefs.containsKey(p.getCurrentPathHead())) {
-            if (nodes.containsKey(p.getCurrentPathHead())) {
-                matchedSymbol = nodes.get(p.getCurrentPathHead());
-            } else {
-                matchedSymbol = produceNodeWithName(p.getCurrentPathHead(), p.getCurrentPathHead());
-                addNode((Node)matchedSymbol);
-            }
-        } else if (nodes.containsKey(p.getCurrentPathHead())) {
-            Node n = nodes.get(p.getCurrentPathHead());
-            
-            if (!p.isAtEnd()) {
-                p.popPathHead();
-                matchedSymbol = n.find(p);
-            } else {
-                matchedSymbol = n;
-            }
-        } else {
-            throw new PathNotFoundException(p + " cannot be found.");
-        }
-        
-        return matchedSymbol;
-    }
-    
-    @Override
-    public Symbol find(String s) throws PathNotFoundException, PathNotAccessibleException {
-        return find(Path.createPath(s));
-    }
-    
-    public List<Port> findAll(Path p) {
-        List<Port> found = new ArrayList<>();
-        for (Node n : nodes.values()) {
-            for (Port port : n.getPorts()) {
-                for (Expression e : port.getArguments()) {
-                    if (e instanceof Path
-                            && ((Path) e).getPath().startsWith(p.getPath())) {
-                        found.add(port);
-                    }
-                }
-            }
-        }
-        
-        return found;
-    }
-    
     public void replace(Port found, Path match, String s, boolean active) {
         for (Expression e : found.getArguments()) {
             if (e instanceof Path
@@ -629,50 +584,6 @@ public class Runtime implements Scope {
             }
         }
     }
-    
-    /**
-     * Resolve a symbol from a given path.
-     *
-     * @param p path to the resolved
-     * @return a node or port that the path corresponds to.
-     * @throws PathNotFoundException
-     */
-    @Override
-    public Symbol resolvePath(Path p) throws PathNotFoundException {
-        Symbol matchedPort = null;
-        
-        // check if any realized node names match the start of the path
-        Node matchedNode = nodes.get(p.getCurrentPathHead());
-        if (matchedNode != null) {
-            // pop the path head
-            p.popPathHead();
-            // attempt to find the path in the node
-            matchedPort = matchedNode.resolvePath(p);
-        } else if (nodeDefs.get(p.getCurrentPathHead()) != null) {
-            // determine if desired path is a node not yet realized
-            // create the new
-            matchedNode = produceNodeWithName(p.getCurrentPathHead(), p.getCurrentPathHead());
-            addNode(matchedNode);
-            // attempt to find the port in the realized node
-            // pop the path head
-            p.popPathHead();
-            // attempt to find the path in the node
-            matchedPort = matchedNode.resolvePath(p);
-        }
-        
-        // IF after checking both the realized and unrealized nodes
-        if (matchedPort == null) {
-            //  ERROR
-            throw new PathNotFoundException(p + " cannnot be resolved.");
-        }
-        
-        return matchedPort;
-    }
-    
-    @Override
-    public Symbol resolvePath(String path) throws PathNotFoundException {
-        return resolvePath(Path.createPath(path));
-    }
     //</editor-fold>
 
     /**
@@ -682,10 +593,10 @@ public class Runtime implements Scope {
      * @param name of the instance
      * @return the symbol instantiated. Returns null if the type is not found
      */
-    public Symbol produceSymbolFromName(String type, String name) {
+    public Symbol produceSymbolFromName(Graph g, String type, String name) {
         // check to see if the name is a node
         if (nodeDefs.containsKey(type)) {
-            return produceNodeWithName(type, name);
+            return produceNodeWithName(g,type, name);
             // check if name is subjunctive node
         }
 
@@ -695,15 +606,16 @@ public class Runtime implements Scope {
     /**
      * Creates an instance of a node
      *
+     * @param g
      * @param type of node to create
      * @return a reference to created node
      */
-    public Node createNode(String type) {
+    public Node createNode(Graph g, String type) {
         // generate a new name for the node
         String name = nameManager.getNextName(type);
 
         // produce the new node
-        Node node = produceNodeWithName(type, name);
+        Node node = produceNodeWithName(g, type, name);
 
         return node;
     }
@@ -716,59 +628,35 @@ public class Runtime implements Scope {
      * @param name new name for the node
      * @return new node produced using path and newName.
      */
-    public Node produceNodeWithName(String type, String name) {
+    public Node produceNodeWithName(Graph g, String type, String name) {
         ParseTree nodeDef = nodeDefs.get(type);
-        Node producedNode = realizeNode(nodeDef);
+        Node producedNode = realizeNode(g, nodeDef);
 
         // change the node's name
         producedNode.setFullName(name);
-        // set the enclosing scope of the new node to the current SPS reference
-        producedNode.setParentScope(this);
+        // set the enclosing scope of the new node to the current runtime reference
+        producedNode.setParentScope(g);
 
         return producedNode;
     }
 
-    /**
-     * Add a node to the system
-     *
-     * @param n
-     */
-    public void addNode(Node n) {
-        nodes.put(n.getName(), n);
-    }
-
-    public Set<Node> getNodesOfType(String type) {
+    public Set<Node> getNodesOfType(Graph g, String type) {
         Set<Node> matches = new HashSet<>();
-        for (shiro.Node n : getNodes()) {
+
+        for (shiro.Node n : g.getNodes()) {
             if (n.getType().equals(type)) {
                 matches.add(n);
 
             }
             matches.addAll(n.getNodesOfType(type));
         }
+
         return matches;
     }
-
-    /**
-     * Gets a reference to a node by name This method checks the collection of
-     * top level node instances for a node with the given. It does not traverse
-     * the tree of nested nodes.
-     *
-     * @param name of node to be returned
-     * @return a reference to the node of the given name.
-     */
-    public Node getNode(String name) {
-        return nodes.get(name);
-    }
-
-    /**
-     * Get all of the nodes in the system.
-     *
-     * @return a set of all of the nodes in the system
-     */
-    public Set<Node> getNodes() {
-        return new HashSet<>(nodes.values());
-    }
+    
+   public Graph getGraph(String name){
+       return graphs.get(name);
+   }
 
     public ParseTree getNodeDef(String path) {
         return nodeDefs.get(path);
@@ -779,7 +667,8 @@ public class Runtime implements Scope {
     }
 
     public Port setPortExpression(String graphName, Path pathToPort, Expression expr, int argPos) throws PathNotFoundException {
-        Port port = (Port) resolvePath(pathToPort);
+        Graph g = graphs.get(graphName);
+        Port port = (Port) g.resolvePath(pathToPort);
         port.setArgumentForPosition(argPos, expr);
 
         GraphDefinition graph = graphDefs.get(graphName);
@@ -788,40 +677,13 @@ public class Runtime implements Scope {
     }
 
     public Port setPortExpression(String graphName, PortAssignment assign) throws PathNotFoundException {
-        Port port = (Port) resolvePath(assign.getPath());
-
+        Graph g = graphs.get(graphName);
+        Port port = (Port) g.resolvePath(assign.getPath());
         port.setArguments(assign.getArgs());
         
         GraphDefinition graph = graphDefs.get(graphName);
         graph.addPortAssignment(assign);
         return port;
-    }
-
-    /**
-     * Add a dependency between two ports
-     *
-     * @param graph
-     * @param dependency dependency relation to be added to the graph
-     */
-    public void addDependency(DAGraph<Port> graph, DependencyRelation<Port> dependency) {
-        addDependency(graph, dependency.getDependent(), dependency.getDependedOn());
-    }
-
-    /**
-     * *
-     * Add a dependency between two ports A - depends on -> B
-     * @param graph
-     * @param a the depended on port reference
-     * @param b the dependent port reference
-     */
-    public void addDependency(DAGraph<Port> graph, Port a, Port b) {
-        
-        if (b == null) {
-            graph.addDependency(new GraphNode<>(a, graphNodeAction), null);
-        } else {
-            graph.addDependency(graph.getNodeForValue(a, graphNodeAction),
-                    graph.getNodeForValue(b, graphNodeAction));
-        }
     }
 
     /**
@@ -841,39 +703,18 @@ public class Runtime implements Scope {
         return alternativeDefs;
     }
 
-    public String printDependencyGraph() {
-        StringBuilder sb = new StringBuilder();
-        for (Node n : nodes.values()) {
-            sb.append(n);
-            sb.append("\n");
-        }
-
-        return sb.toString();
-    }
-
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for (Node n : nodes.values()) {
-            sb.append(n.toString());
+        for(Graph g: graphs.values()){
+            sb.append("Graph: ").append(g.getName()).append("\n");
+                  
+            for (Node n : g.getNodes()) {
+                sb.append(n.toString());
+            }   
         }
 
         return sb.toString();
-    }
-
-    @Override
-    public String getName() {
-        return "";
-    }
-
-    @Override
-    public String getFullName() {
-        return "";
-    }
-
-    @Override
-    public Path getPath() {
-        return null;
     }
 
     /**
@@ -973,11 +814,6 @@ public class Runtime implements Scope {
     
     public SimpleStringProperty codeProperty() {
         return codeProperty;
-    }
-    
-    @Override
-    public boolean isRoot(){
-        return true;
     }
 
     public int getMaxStates() {

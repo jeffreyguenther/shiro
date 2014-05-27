@@ -29,7 +29,7 @@ import javax.imageio.ImageIO;
 import shiro.exceptions.PathNotAccessibleException;
 import shiro.exceptions.PathNotFoundException;
 import shiro.Port;
-import shiro.Runtime;
+import shiro.ShiroRuntime;
 import shiro.definitions.StateDefinition;
 import shiro.Value;
 import shiro.expressions.Expression;
@@ -43,7 +43,7 @@ import shiro.expressions.Path;
 public class ProjectAmoebaController {
 
     private final ProjectAmoebaUI ui;
-    private Runtime model;
+    private ShiroRuntime model;
 
     private Mode mode;
     private int imageCounter;
@@ -67,7 +67,7 @@ public class ProjectAmoebaController {
 
     public ProjectAmoebaController(ProjectAmoebaUI ui) {
         this.ui = ui;
-        model = new Runtime();
+        model = new ShiroRuntime();
 
         mode = Mode.Waiting;
         imageCounter = 0;
@@ -227,21 +227,21 @@ public class ProjectAmoebaController {
         activeLine.endXProperty().set(x);
         activeLine.endYProperty().set(y);
 
-        // create a line in the model
-        shiro.Node node = model.createNode("Line");
+//        // create a line in the model
+//        shiro.Node node = model.createNode("Line");
+//
+//        // get the nane of the end point
+//        String endPointName = (String) selectedObject.getUserData();
+//        shiro.Node p1 = model.getNode(startPointName);
+//        shiro.Node p2 = model.getNode(endPointName);
 
-        // get the nane of the end point
-        String endPointName = (String) selectedObject.getUserData();
-        shiro.Node p1 = model.getNode(startPointName);
-        shiro.Node p2 = model.getNode(endPointName);
-
-        // set the line's start/end port
-        Path pathX = Path.createPathForPort(node, "p1");
-        Path pathY = Path.createPathForPort(node, "p2");
-
-        // Parse the expression into an Expression object
-        Expression p1Expr = model.parseExpression(p1, startPointName + ".point[0]");
-        Expression p2Expr = model.parseExpression(p2, endPointName + ".point[0]");
+//        // set the line's start/end port
+//        Path pathX = Path.createPathForPort(node, "p1");
+//        Path pathY = Path.createPathForPort(node, "p2");
+//
+//        // Parse the expression into an Expression object
+//        Expression p1Expr = model.parseExpression(p1, startPointName + ".point[0]");
+//        Expression p2Expr = model.parseExpression(p2, endPointName + ".point[0]");
 
 //        try {
 //            model.setPortExpression(pathX, p1Expr);
@@ -307,14 +307,14 @@ public class ProjectAmoebaController {
                 Group p = ui.createPoint(x, y, Color.BLACK);
                 addToCanvas(p);
 
-                // create the point in the model
-                shiro.Node node = model.createNode("Point");
-
-                // store the instance name in the group
-                p.setUserData(node.getFullName());
-
-                // update the created node
-                updatePointNode(node, x, y);
+//                // create the point in the model
+//                shiro.Node node = model.createNode("Point");
+//
+//                // store the instance name in the group
+//                p.setUserData(node.getFullName());
+//
+//                // update the created node
+//                updatePointNode(node, x, y);
 
                 System.out.println("Point created at: [" + x + "," + y + "]");
 
@@ -335,20 +335,20 @@ public class ProjectAmoebaController {
 
                 // get the node name from the onscreen element
                 String nodeName = (String) selectedObject.getUserData();
-                try {
-                   shiro.Node node = (shiro.Node) model.find(Path.createPath(nodeName));
+//                try {
+//                   shiro.Node node = (shiro.Node) model.find(Path.createPath(nodeName));
 
                     // update the node with drag location
-                    updatePointNode(node, moveContext.getDragDestX(e.getX()), moveContext.getDragDestY(e.getY()));
+//                    updatePointNode(node, moveContext.getDragDestX(e.getX()), moveContext.getDragDestY(e.getY()));
 
                     // Get the selected states' names
                     for (String s : ui.getAltsList().getSelectionModel().getSelectedItems()) {
-                        renderState(model.getState(s));
+//                        renderState(model.getState(s));
                     }
 
-                } catch (PathNotFoundException | PathNotAccessibleException ex) {
-                    Logger.getLogger(ProjectAmoebaController.class.getName()).log(Level.SEVERE, null, ex);
-                }
+//                } catch (PathNotFoundException | PathNotAccessibleException ex) {
+//                    Logger.getLogger(ProjectAmoebaController.class.getName()).log(Level.SEVERE, null, ex);
+//                }
             }
         }
 
@@ -551,19 +551,19 @@ public class ProjectAmoebaController {
         canvas.getChildren().clear();
 
         // for each line in the model
-        for (shiro.Node n : model.getNodesOfType("Line")) {
-            // create a line object and render
-            Line l = getLine(n);
-            canvas.getChildren().add(l);
-        }
-
-        // for each point in the model
-        for (shiro.Node n : model.getNodesOfType("Point")) {
-            // if the node active, render it
-            if (n.isActive()) {
-                canvas.getChildren().add(getPoint(n));
-            }
-        }
+//        for (shiro.Node n : model.getNodesOfType("Line")) {
+//            // create a line object and render
+//            Line l = getLine(n);
+//            canvas.getChildren().add(l);
+//        }
+//
+//        // for each point in the model
+//        for (shiro.Node n : model.getNodesOfType("Point")) {
+//            // if the node active, render it
+//            if (n.isActive()) {
+//                canvas.getChildren().add(getPoint(n));
+//            }
+//        }
     }
 
     public Group getPoint(shiro.Node n) {

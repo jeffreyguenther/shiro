@@ -1,12 +1,9 @@
 package shiro.interpreter;
 
+import shiro.Graph;
 import shiro.interpreter.ShiroParser.ActivationContext;
-import shiro.definitions.GraphDefinition;
 import shiro.Node;
-import shiro.Port;
-import shiro.Runtime;
 import shiro.Symbol;
-import shiro.dag.DAGraph;
 import shiro.expressions.Path;
 
 /**
@@ -15,27 +12,13 @@ import shiro.expressions.Path;
  * @author jeffreyguenther
  */
 public class GraphBuilderListener extends ShiroBasePassListener {
-    private GraphDefinition graphDef;
-    private DAGraph<Port> graph;
+    private Graph graph;
+    private shiro.ShiroRuntime runtime;
 
-    public GraphBuilderListener(Runtime ps) {
-        super(ps);
-        graph = new DAGraph<>();
-    }
-
-    public GraphDefinition getGraphDef() {
-        return graphDef;
-    }
-    
-    public DAGraph<Port> getGraph(){
-        return graph;
-    }
-
-    @Override
-    public void enterGraphDecl(ShiroParser.GraphDeclContext ctx) {
-        
-        
-        graphDef = new GraphDefinition(ctx.IDENT().getText());
+    public GraphBuilderListener(shiro.ShiroRuntime rt, Graph g) {
+        super(g);
+        graph = g;
+        runtime = rt;
     }
 
     @Override
@@ -46,15 +29,11 @@ public class GraphBuilderListener extends ShiroBasePassListener {
         // for each activation
         for (ActivationContext ac : ctx.activation()) {
             String nodeName = ac.nodeName.getText();
-
-            //TODO this might not work in the long run with long path names
-            graphDef.addProduction(leftHandSide.getCurrentPathHead(), nodeName);
-
-            // need to differentiate between creating nodes and subjunctive nodes
-            Symbol producedSymbol = pSystem.produceSymbolFromName(leftHandSide.getPath(), nodeName);
+            
+            Symbol producedSymbol = runtime.produceSymbolFromName(graph, leftHandSide.getPath(), nodeName);
             Node producedNode = (Node) producedSymbol;
-            pSystem.addNode(producedNode);
-            graphDef.addNode(producedNode);
+            
+            graph.addNode(producedNode);
 
             if (ac.activeObject != null) {
                 String updatePort = ac.activeObject.getText();

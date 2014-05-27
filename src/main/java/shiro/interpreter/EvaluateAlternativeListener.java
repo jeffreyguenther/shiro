@@ -2,22 +2,19 @@ package shiro.interpreter;
 
 import java.util.HashMap;
 import java.util.Map;
-import shiro.Node;
-import shiro.Runtime;
-import shiro.Symbol;
+import shiro.ShiroRuntime;
 import shiro.definitions.StateDefinition;
 
 /**
  * Walk the parse tree of an alternative to evaluate it.
  * @author jeffreyguenther
  */
-public class EvaluateAlternativeListener extends ShiroBasePassListener{
-    private Map<Node, Symbol> subjunctTable;
+public class EvaluateAlternativeListener extends ShiroBaseListener{
+    private Map<String, String> subjunctTable;
     private String graphName = "<empty>";
     private StateDefinition createdState;
 
-    public EvaluateAlternativeListener(Runtime pSystem) {
-        super(pSystem);
+    public EvaluateAlternativeListener() {
         subjunctTable = new HashMap<>();
         createdState = null;
     }
@@ -31,7 +28,7 @@ public class EvaluateAlternativeListener extends ShiroBasePassListener{
         String stateName  = ctx.stateName().getText();
         
         StateDefinition state = new StateDefinition(graphName, stateName);
-        state.setActiveNode(subjunctTable);
+        state.setActiveNodes(subjunctTable);
         createdState = state;
     }
 
@@ -45,9 +42,6 @@ public class EvaluateAlternativeListener extends ShiroBasePassListener{
        String nodeName = ctx.nodeName.getText();
        String activeObject = ctx.activeObject.getText();
        
-       Node node = pSystem.getNode(nodeName);
-       Symbol subjunct = node.getOption(activeObject);
-       
-       subjunctTable.put(node, subjunct);
+       subjunctTable.put(nodeName, activeObject);
     }
 }

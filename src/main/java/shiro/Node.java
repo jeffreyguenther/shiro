@@ -7,6 +7,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toSet;
+import javafx.util.Pair;
 import shiro.dag.DependencyRelation;
 import shiro.definitions.PortType;
 import shiro.events.NodeEventListener;
@@ -683,5 +684,13 @@ public class Node implements Symbol, Scope {
     
     public boolean isRoot(){
         return false;
+    }
+    
+    public Set<Pair<String, String>> getOptionPairs(){
+        Set<Pair<String, String>> pairs = new HashSet<>();
+        for(Symbol s: getOptions()){
+            pairs.add(new Pair<>(name, s.getName()));
+        }
+        return pairs;
     }
 }

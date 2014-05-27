@@ -5,17 +5,17 @@ import org.antlr.v4.runtime.ANTLRFileStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
-import shiro.Runtime;
+import shiro.ShiroRuntime;
 
 /**
- * Shiro Runtime
- * Reads a .sro file and prints the output to the console
+ * Shiro ShiroRuntime
+ Reads a .sro file and prints the output to the console
  * @author jeffreyguenther
  */
 public class Shiro {
 
     public static void main(String args[]) throws Exception {
-        Runtime subjPSystem = new Runtime();
+        ShiroRuntime subjPSystem = new ShiroRuntime();
         ParseTreeWalker walker = new ParseTreeWalker();
 
         System.out.println("Starting Shiro Interpreter");

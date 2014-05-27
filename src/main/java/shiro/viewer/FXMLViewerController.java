@@ -44,8 +44,9 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
+import shiro.Graph;
 import shiro.Port;
-import shiro.Runtime;
+import shiro.ShiroRuntime;
 import shiro.Value;
 import shiro.definitions.StateDefinition;
 import shiro.drawing.Canvas;
@@ -85,7 +86,7 @@ public class FXMLViewerController {
     @FXML
     private ToggleButton btnFreeForm;
 
-    private Runtime model;
+    private ShiroRuntime model;
     private Map<StateDefinition, Canvas> layers;
     private File currentFile;
     private Map<StateDefinition, WritableImage> snapshots;
@@ -96,7 +97,7 @@ public class FXMLViewerController {
     
 
     public void initialize() {
-        model = new Runtime();
+        model = new ShiroRuntime();
         layers = new HashMap<>();
         addEventHandlersToList();
         altsList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
@@ -379,12 +380,13 @@ public class FXMLViewerController {
     private Canvas renderState(StateDefinition s) {
         // evaluate the parametric system
         model.update(s);
+        Graph g = model.getGraph(s.getGraphDef());
 
         // look up the state's Canvas
         Canvas c = layers.get(s);
 
         // draw the geometry on the canvas
-        updateCanvas(c.getDrawing());
+        updateCanvas(g, c.getDrawing());
 
         return c;
     }
@@ -404,33 +406,33 @@ public class FXMLViewerController {
      *
      * @param canvas Group to add geometry to
      */
-    public void updateCanvas(Group canvas) {
+    public void updateCanvas(Graph graph, Group canvas) {
         // get geometry from parametric system
         canvas.getChildren().clear();
 
         // for each line in the model
-        for (shiro.Node n : model.getNodesOfType("Line")) {
+        for (shiro.Node n : model.getNodesOfType(graph, "Line")) {
             // create a line object and render
             Line l = getLine(n);
             canvas.getChildren().add(l);
         }
 
-        for (shiro.Node n : model.getNodesOfType("Rectangle")) {
+        for (shiro.Node n : model.getNodesOfType(graph, "Rectangle")) {
             Rectangle r = getRect(n);
             canvas.getChildren().add(r);
         }
 
-        for (shiro.Node n : model.getNodesOfType("Circle")) {
+        for (shiro.Node n : model.getNodesOfType(graph, "Circle")) {
             Circle c = getCircle(n);
             canvas.getChildren().add(c);
         }
 
-        for (shiro.Node n : model.getNodesOfType("Arc")) {
+        for (shiro.Node n : model.getNodesOfType(graph,"Arc")) {
             Arc ac = getArc(n);
             canvas.getChildren().add(ac);
         }
         
-        for (shiro.Node n : model.getNodesOfType("Group")) {
+        for (shiro.Node n : model.getNodesOfType(graph, "Group")) {
             Group g = getGroup(n);
             canvas.getChildren().add(g);
         }
@@ -440,7 +442,7 @@ public class FXMLViewerController {
 //            canvas.getChildren().add(image);
 //        }
         
-        for (shiro.Node n : model.getNodesOfType("Layer")) {
+        for (shiro.Node n : model.getNodesOfType(graph, "Layer")) {
             Group g = getLayer(n);
             canvas.getChildren().add(g);
         }

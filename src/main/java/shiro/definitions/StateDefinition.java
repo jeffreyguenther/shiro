@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
-import shiro.Node;
-import shiro.Symbol;
 
 /**
  * Definition of a system state.
@@ -15,11 +13,11 @@ import shiro.Symbol;
 public class StateDefinition implements Definition{
     private Instant timeStamp;
     private String comment;
-    private Map<Node, Symbol> subjunctsMapping;
+    private Map<String, String> subjunctsMapping;
     private String name;
     private String graphDef;
 
-    public StateDefinition(String gDef, String name, String comment, Map<Node, Symbol> subjunctsMapping) {
+    public StateDefinition(String gDef, String name, String comment, Map<String, String> subjunctsMapping) {
         this.graphDef = gDef;
         this.name = name;
         this.comment = comment;
@@ -39,15 +37,15 @@ public class StateDefinition implements Definition{
         this.graphDef = graphDef;
     }
     
-    public void setActiveNode(Node sNode, Node activeNode){
-        subjunctsMapping.put(sNode, activeNode);
+    public void addActiveNode(String node, String activeOption){
+        subjunctsMapping.put(node, activeOption);
     }
     
-    public void setActiveNode(Map<Node, Symbol> table){
+    public void setActiveNodes(Map<String, String> table){
         subjunctsMapping.putAll(table);
     }
 
-    public Map<Node, Symbol> getSubjunctsMapping() {
+    public Map<String, String> getSubjunctsMapping() {
         return subjunctsMapping;
     }
 
@@ -75,9 +73,9 @@ public class StateDefinition implements Definition{
     public String toString() {
         StringBuilder sb = new StringBuilder();
         // print the subjunct table
-        for(Node subNodes: subjunctsMapping.keySet()){
-            String tableRow = String.format("%16s|%16s%n", subNodes.getName(), 
-                    subjunctsMapping.get(subNodes).getName());
+        for(String subNodes: subjunctsMapping.keySet()){
+            String tableRow = String.format("%16s|%16s%n", subNodes, 
+                    subjunctsMapping.get(subNodes));
             sb.append(tableRow);
         }
         return sb.toString();
