@@ -18,7 +18,7 @@ import shiro.Value;
  */
 public class CSV2TableMFuncTest {
 
-    String filePath = "D:\\Code\\Jeff\\Shiro\\src\\test\\resources\\shiro\\functions\\data\\TestCSV.csv";
+    String filePath = getClass().getResource("/shiro/functions/data/TestCSV.csv").getPath();
     CSV2TableMFunc csvMFunc = new CSV2TableMFunc();
 
     public CSV2TableMFuncTest() {
@@ -34,6 +34,7 @@ public class CSV2TableMFuncTest {
 
     @Test
     public void read_csv_test() {
+        
         List<Value> inputList = new ArrayList<>();
         inputList.add(new Value(filePath, String.class));
         ResultTuple rt = csvMFunc.evaluate(inputList);

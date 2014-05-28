@@ -20,3 +20,5 @@ scenicView.properties
 .classpath
 .settings
 .project
+
+src/generated-sources/**
