@@ -15,3 +15,8 @@ build/*
 
 .nb-gradle*
 scenicView.properties
+/build
+/bin
+.classpath
+.settings
+.project

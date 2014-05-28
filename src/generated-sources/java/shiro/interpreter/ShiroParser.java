@@ -1,4 +1,4 @@
-// Generated from /Users/jeffreyguenther/Projects/Thesis/shiro/src/main/java/shiro/interpreter/Shiro.g4 by ANTLR 4.2.2
+// Generated from D:\Code\Jeff\Shiro\src\main\java\shiro\interpreter\Shiro.g4 by ANTLR 4.2.2
 package shiro.interpreter;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
