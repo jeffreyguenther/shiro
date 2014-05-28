@@ -18,12 +18,12 @@ import javafx.scene.control.TableView;
  *
  * @author jeffreyguenther
  */
-public class ListViewMFunc implements MultiFunction {
-    private static final String NAME = "ListView";
+public class TableViewMFunc implements MultiFunction {
+    private static final String NAME = "TableView";
     private static final int TABLE = 0;
     private static final int TABLE_NAME = 1;
     
-    public ListViewMFunc() {
+    public TableViewMFunc() {
     }
     
     @Override

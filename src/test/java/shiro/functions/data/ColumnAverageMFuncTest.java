@@ -1,10 +1,8 @@
 package shiro.functions.data;
 
-import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,12 +14,15 @@ import au.com.bytecode.opencsv.CSVReader;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import static org.junit.Assert.assertEquals;
 
 public class ColumnAverageMFuncTest {
-    String filePath = "D:\\Code\\Jeff\\Shiro\\src\\test\\resources\\shiro\\functions\\data\\TestCSV.csv";
+    String filePath = getClass().getResource("/shiro/functions/data/TestCSV.csv").getPath();
 
     @Test
-    public void test_average() {
+    public void test_average() throws FileNotFoundException, IOException {
         ColumnAverageMFunc averageMFunc = new ColumnAverageMFunc();
         Table<Integer, String, Object> table = HashBasedTable
                 .<Integer, String, Object> create();
@@ -30,7 +31,7 @@ public class ColumnAverageMFuncTest {
         String[] nextLine;
         boolean firstLine = true;
         String[] columnNames = null;
-        try (CSVReader csvReader = new CSVReader(new FileReader(f))) {
+        CSVReader csvReader = new CSVReader(new FileReader(f));
             while ((nextLine = csvReader.readNext()) != null) {
                 if (!firstLine) {
                     int i = 0;
@@ -44,11 +45,9 @@ public class ColumnAverageMFuncTest {
                     firstLine = !firstLine;
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        
 
-        List<Value> inputList = new ArrayList<Value>();
+        List<Value> inputList = new ArrayList<>();
         inputList.add(0, new Value(table, Table.class));
         inputList.add(1, new Value("Measure", String.class));
         ResultTuple rt = averageMFunc.evaluate(inputList);

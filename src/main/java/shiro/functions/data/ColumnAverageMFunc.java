@@ -18,12 +18,13 @@ import shiro.functions.MultiFunction;
  *
  */
 public class ColumnAverageMFunc implements MultiFunction {
+    private static final String NAME = "ColumnAverage";
     private static final int TABLE = 0;
     private static final int COLUMN = 1;
 
     @Override
     public String getName() {
-        return "ColumnAverage";
+        return NAME;
     }
 
     @Override

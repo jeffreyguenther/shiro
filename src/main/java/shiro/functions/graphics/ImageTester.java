@@ -36,7 +36,7 @@ public class ImageTester extends Application{
         List<Value> args = new ArrayList<>();
         args.add(new Value(table, Table.class));
         
-        ListViewMFunc mf = new ListViewMFunc();
+        TableViewMFunc mf = new TableViewMFunc();
         ResultTuple result = mf.evaluate(args);
         
         Value valueForIndex = result.getValueForIndex(0);

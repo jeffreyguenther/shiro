@@ -18,7 +18,7 @@ import javafx.scene.control.TableView;
 import javafx.stage.Stage;
 import shiro.ResultTuple;
 import shiro.Value;
-import shiro.functions.graphics.ListViewMFunc;
+import shiro.functions.graphics.TableViewMFunc;
 
 /**
  *
@@ -37,7 +37,7 @@ public class TableViewMFTestViewer extends Application{
         List<Value> args = new ArrayList<>();
         args.add(new Value(table, Table.class));
         
-        ListViewMFunc mf = new ListViewMFunc();
+        TableViewMFunc mf = new TableViewMFunc();
         ResultTuple result = mf.evaluate(args);
         
         Value valueForIndex = result.getValueForIndex(0);

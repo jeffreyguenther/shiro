@@ -21,15 +21,17 @@ import com.google.common.collect.Table;
  * @author Ankit Gupta
  */
 public class CSV2TableMFunc implements MultiFunction {
-
+     private static final String NAME = "CSV2Table";
+    private static final int PATH = 0;
+    
     @Override
     public String getName() {
-        return "CSV2Table";
+        return NAME;
     }
 
     @Override
     public ResultTuple evaluate(List<Value> arguments) {
-        String filePath = arguments.get(0).getValueAsString();
+        String filePath = arguments.get(PATH).getValueAsString();
         
         Table<Integer, String, Object> table = HashBasedTable
                 .<Integer, String, Object> create();
