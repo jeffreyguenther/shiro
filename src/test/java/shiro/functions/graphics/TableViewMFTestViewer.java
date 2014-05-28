@@ -18,12 +18,13 @@ import javafx.scene.control.TableView;
 import javafx.stage.Stage;
 import shiro.ResultTuple;
 import shiro.Value;
+import shiro.functions.graphics.ListViewMFunc;
 
 /**
  *
  * @author jeffreyguenther
  */
-public class ImageTester extends Application{
+public class TableViewMFTestViewer extends Application{
 
     @Override
     public void start(Stage stage) throws Exception {

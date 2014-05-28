@@ -30,10 +30,12 @@ public class CSV2TableMFunc implements MultiFunction {
     @Override
     public ResultTuple evaluate(List<Value> arguments) {
         String filePath = arguments.get(0).getValueAsString();
+        
         Table<Integer, String, Object> table = HashBasedTable
                 .<Integer, String, Object> create();
         int rowCount = 0;
         File f = new File(filePath);
+        
         String[] nextLine;
         boolean firstLine = true;
         String[] columnNames = null;

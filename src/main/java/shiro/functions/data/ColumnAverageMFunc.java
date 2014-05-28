@@ -18,6 +18,8 @@ import shiro.functions.MultiFunction;
  *
  */
 public class ColumnAverageMFunc implements MultiFunction {
+    private static final int TABLE = 0;
+    private static final int COLUMN = 1;
 
     @Override
     public String getName() {
@@ -26,8 +28,8 @@ public class ColumnAverageMFunc implements MultiFunction {
 
     @Override
     public ResultTuple evaluate(List<Value> arguments) {
-        Value tableValue = arguments.get(0);
-        Value columnValue = arguments.get(1);
+        Value tableValue = arguments.get(TABLE);
+        Value columnValue = arguments.get(COLUMN);
         
         Table<Integer, String, Object> table = (Table<Integer, String, Object>) tableValue.getValue();
         String columnKey = columnValue.getValueAsString();
