@@ -45,6 +45,7 @@ dependencies {
     antlr4 group: "org.antlr", name: "antlr4", version: "4.2.2"
     
     compile 'com.google.guava:guava:12.0'
+    compile 'net.sf.opencsv:opencsv:2.3'
     
     testCompile group: "junit", name: "junit", version: versions.junit
 }
