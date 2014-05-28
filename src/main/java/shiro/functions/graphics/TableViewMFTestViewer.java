@@ -10,11 +10,11 @@ import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import javafx.application.Application;
+import javafx.geometry.Point2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.control.TableView;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import shiro.ResultTuple;
 import shiro.Value;
@@ -36,12 +36,14 @@ public class TableViewMFTestViewer extends Application{
         
         List<Value> args = new ArrayList<>();
         args.add(new Value(table, Table.class));
+        args.add(new Value("Testing a Big table", String.class));
+        args.add(new Value(new Point2D(100, 100), Point2D.class));
         
         TableViewMFunc mf = new TableViewMFunc();
         ResultTuple result = mf.evaluate(args);
         
         Value valueForIndex = result.getValueForIndex(0);
-        TableView<Map<String, Object>> viewer = (TableView<Map<String, Object>>) valueForIndex.getValue();
+        BorderPane viewer = (BorderPane) valueForIndex.getValue();
         
         stage.setScene(new Scene(new Group(viewer)));
         stage.show();
