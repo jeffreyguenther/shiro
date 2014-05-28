@@ -35,6 +35,9 @@ import shiro.functions.MultiFunction;
 import shiro.functions.MultiplyMFunc;
 import shiro.functions.SumMFunc;
 import shiro.functions.ValueMFunc;
+import shiro.functions.data.CSV2TableMFunc;
+import shiro.functions.data.ColumnAverageMFunc;
+import shiro.functions.data.IntersectMFunc;
 import shiro.functions.graphics.ArcMFunc;
 import shiro.functions.graphics.CircleMFunc;
 import shiro.functions.graphics.GrayscaleMFunc;
@@ -44,6 +47,7 @@ import shiro.functions.graphics.LayerMFunc;
 import shiro.functions.graphics.LineMFunc;
 import shiro.functions.graphics.PointMFunc;
 import shiro.functions.graphics.RectMFunc;
+import shiro.functions.graphics.TableViewMFunc;
 import shiro.interpreter.DefinitionResult;
 import shiro.interpreter.DescriptiveErrorListener;
 import shiro.interpreter.EvaluateAlternativeListener;
@@ -378,6 +382,11 @@ public class ShiroRuntime {
         funcMap.put("Multiply", new MultiplyMFunc());
         funcMap.put("Sum", new SumMFunc());
         funcMap.put("Array", new ArrayMFunc());
+        
+        // Add data processing MFs
+        funcMap.put("CSV2Table", new CSV2TableMFunc());
+        funcMap.put("Intersect", new IntersectMFunc());
+        funcMap.put("ColumnAverage", new ColumnAverageMFunc());
 
         // add graphics MFs
         funcMap.put("Point", new PointMFunc());
@@ -389,6 +398,9 @@ public class ShiroRuntime {
         funcMap.put("Group", new GroupMFunc());
         funcMap.put("Image", new ImageMFunc());
         funcMap.put("Layer", new LayerMFunc());
+        
+        // add view MFs
+        funcMap.put("TableView", new TableViewMFunc());
     }
 
     /**
