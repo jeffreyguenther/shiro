@@ -18,7 +18,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import shiro.ResultTuple;
 import shiro.Value;
-import shiro.functions.graphics.TableViewMFunc;
 
 /**
  *
