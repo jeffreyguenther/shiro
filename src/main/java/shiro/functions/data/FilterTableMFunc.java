@@ -3,7 +3,6 @@ package shiro.functions.data;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.table.TableModel;
 
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
