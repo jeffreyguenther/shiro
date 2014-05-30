@@ -31,7 +31,7 @@ public class FilterTableMFunc implements MultiFunction {
     public ResultTuple evaluate(List<Value> arguments) {
         
         
-        Table<Integer, String, Object> table = (Table<Integer, String, Object>) arguments
+        Table<Integer, String, Comparable> table = (Table<Integer, String, Comparable>) arguments
                 .get(0).getValue();
         String columnToFilterOn = arguments.get(1).getValueAsString();
         String operator = arguments.get(2).getValueAsString();
@@ -44,23 +44,22 @@ public class FilterTableMFunc implements MultiFunction {
             stringMode = false;
         }
         
-        Map<Integer, Map<String, Object>> rowMap = table.rowMap();
+        Map<Integer, Map<String, Comparable>> rowMap = table.rowMap();
 
-        Table<Integer, String, Object> tableMatches = HashBasedTable
-                .<Integer, String, Object> create();
-        Table<Integer, String, Object> tableNotMatches = HashBasedTable
-                .<Integer, String, Object> create();
+        Table<Integer, String, Comparable> tableMatches = HashBasedTable
+                .<Integer, String, Comparable> create();
+        Table<Integer, String, Comparable> tableNotMatches = HashBasedTable
+                .<Integer, String, Comparable> create();
 
         for (Integer rowKey : rowMap.keySet()) {
-            Map<String, Object> row = rowMap.get(rowKey);
-            
+            Map<String, Comparable> row = rowMap.get(rowKey);
             
             if (!stringMode) {
                 
                 Double valueToCompare = toCompare.getValueAsDouble();
                 Double valuetoCompareWith;
                 
-                Object get = row.get(columnToFilterOn);
+                Comparable get = row.get(columnToFilterOn);
                 if(get instanceof Double){
                     valuetoCompareWith = (Double) get;
                 }else{
@@ -92,8 +91,8 @@ public class FilterTableMFunc implements MultiFunction {
         return rt;
     }
 
-    private void putRowInTable(Table<Integer, String, Object> table,
-            Integer rowKey, Map<String, Object> row) {
+    private void putRowInTable(Table<Integer, String, Comparable> table,
+            Integer rowKey, Map<String, Comparable> row) {
         for (String key : row.keySet()) {
             table.put(rowKey, key, row.get(key));
         }

@@ -25,22 +25,22 @@ public class IntersectMFunc implements MultiFunction {
     @Override
     public ResultTuple evaluate(List<Value> arguments) {
         Value tableAValue = arguments.get(TABLE_A);
-        Table<Integer, String, Object> tableA = (Table<Integer, String, Object>) tableAValue.getValue();
+        Table<Integer, String, Comparable> tableA = (Table<Integer, String, Comparable>) tableAValue.getValue();
         
         Value tableBValue = arguments.get(TABLE_B);
-        Table<Integer, String, Object> tableB = (Table<Integer, String, Object>) tableBValue.getValue();
+        Table<Integer, String, Comparable> tableB = (Table<Integer, String, Comparable>) tableBValue.getValue();
         
-        Table<Integer, String, Object> resultTable = HashBasedTable.create();
+        Table<Integer, String, Comparable> resultTable = HashBasedTable.create();
         // check to see if the tables 
         if(tableA.columnKeySet().equals(tableB.columnKeySet())){
             // for each row in table A, check to see if there is a corresponding 
             // row in table B. If there is, add the row to the result
-            MapDifference<Integer, Map<String, Object>> difference = Maps.difference(tableA.rowMap(), tableB.rowMap());
-            Map<Integer, Map<String, Object>> entriesInCommon = difference.entriesInCommon();
+            MapDifference<Integer, Map<String, Comparable>> difference = Maps.difference(tableA.rowMap(), tableB.rowMap());
+            Map<Integer, Map<String, Comparable>> entriesInCommon = difference.entriesInCommon();
             
             
             for(Integer rowKey: entriesInCommon.keySet()){
-                Map<String, Object> rowValues = entriesInCommon.get(rowKey);
+                Map<String, Comparable> rowValues = entriesInCommon.get(rowKey);
                 for(String colKey: rowValues.keySet()){
                     resultTable.put(rowKey, colKey, rowValues.get(colKey));
                 }

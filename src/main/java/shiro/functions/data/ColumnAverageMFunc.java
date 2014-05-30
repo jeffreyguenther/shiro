@@ -32,9 +32,9 @@ public class ColumnAverageMFunc implements MultiFunction {
         Value tableValue = arguments.get(TABLE);
         Value columnValue = arguments.get(COLUMN);
         
-        Table<Integer, String, Object> table = (Table<Integer, String, Object>) tableValue.getValue();
+        Table<Integer, String, Comparable> table = (Table<Integer, String, Comparable>) tableValue.getValue();
         String columnKey = columnValue.getValueAsString();
-        Map<Integer, Object> column = table.column(columnKey);
+        Map<Integer, Comparable> column = table.column(columnKey);
         Integer sum = 0;
         DoubleSummaryStatistics stats = column.values().stream().mapToDouble((x) -> Double.valueOf(x.toString())).summaryStatistics();
         return new ResultTuple(0, new Value(stats.getAverage(), Double.class));

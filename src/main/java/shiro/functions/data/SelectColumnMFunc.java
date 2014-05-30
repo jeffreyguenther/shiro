@@ -25,14 +25,14 @@ public class SelectColumnMFunc implements MultiFunction {
 
     @Override
     public ResultTuple evaluate(List<Value> arguments) {
-        Table<Integer, String, Object> table = (Table<Integer, String, Object>) arguments
+        Table<Integer, String, Comparable> table = (Table<Integer, String, Comparable>) arguments
                 .get(0).getValue();
         String columnSelected = arguments.get(1).getValueAsString();
         
-        Table<Integer, String, Object> tableMatches = HashBasedTable
-                .<Integer, String, Object> create();
+        Table<Integer, String, Comparable> tableMatches = HashBasedTable
+                .<Integer, String, Comparable> create();
         
-        Map<Integer, Object> column = table.column(columnSelected);
+        Map<Integer, Comparable> column = table.column(columnSelected);
         
         for(Integer i: column.keySet()){
             tableMatches.put(i, columnSelected, column.get(i));

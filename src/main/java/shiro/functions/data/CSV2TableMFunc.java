@@ -33,8 +33,8 @@ public class CSV2TableMFunc implements MultiFunction {
     public ResultTuple evaluate(List<Value> arguments) {
         String filePath = arguments.get(PATH).getValueAsString();
         
-        Table<Integer, String, Object> table = HashBasedTable
-                .<Integer, String, Object> create();
+        Table<Integer, String, Comparable> table = HashBasedTable
+                .<Integer, String, Comparable> create();
         int rowCount = 0;
         File f = new File(filePath);
         
