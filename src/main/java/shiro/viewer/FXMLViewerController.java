@@ -446,6 +446,11 @@ public class FXMLViewerController {
             Group g = getLayer(n);
             canvas.getChildren().add(g);
         }
+        
+        for(shiro.Node n: model.getNodesOfType(graph, "TableView")){
+            BorderPane bp = getTableView(n);
+            canvas.getChildren().add(bp);
+        }
 
 //        // for each point in the model
 //        for (shiro.Node n : model.getNodesOfType("Point")) {
@@ -563,6 +568,15 @@ public class FXMLViewerController {
         Value rawGroup = ePort.getValueForIndex(0);
         
         Group g = (Group) rawGroup.getValue();
+        
+        return g;
+    }
+    
+    public BorderPane getTableView(shiro.Node n){
+        Port ePort = n.getActiveEvalPort();
+        Value rawTableGroup = ePort.getValueForIndex(0);
+        
+        BorderPane g = (BorderPane) rawTableGroup.getValue();
         
         return g;
     }

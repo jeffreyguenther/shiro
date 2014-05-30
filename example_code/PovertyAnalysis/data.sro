@@ -1,0 +1,50 @@
+node ReadCSV begin
+	input path Value
+	eval update CSV2Table(path[0])
+	output table Value(update[0])
+end
+
+node Union begin
+	input tableA Value
+	input tableB Value
+	eval update Union(tableA[0], tableB[0])
+	output resultTable Value(update[0])
+end
+
+node Intersect begin
+	input tableA Value
+	input tableB Value
+	eval update Intersect(tableA[0], tableB[0])
+	output resultTable Value(update[0])
+end
+
+node FilterTable begin
+	input table Value
+	input column Value
+	input operator Value
+	input toMatch Value
+	eval update FilterTable(table[0], column[0], operator[0], toMatch[0])
+	output matches Value(update[0])
+	output didNotMatch Value(update[1])
+end
+
+node SelectColumn begin
+	input table Value
+	input column Value
+	eval update SelectColumn(table[0], column[0])
+	output table Value(update[0])
+end
+
+node Average begin
+	input table Value
+	input column Value
+	eval update ColumnAverage(table[0], column[0])
+	output average Value(update[0])
+end
+
+node TableView begin
+	input table Value
+	input tableName Value
+	input origin Value
+	eval update TableView(table[0], tableName[0], origin[0])
+end

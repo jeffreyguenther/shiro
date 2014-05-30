@@ -1,0 +1,57 @@
+use "shapes.sro"
+use "data.sro"
+
+node GetAboveAveragePoverty begin
+	input table Value
+
+	Average -> a
+	a.table(table[0])
+	a.column("Percentage")
+
+	FilterTable -> aboveAverage
+	aboveAverage.table(table[0])
+	aboveAverage.column("Percentage")
+	aboveAverage.operator(">")
+	aboveAverage.toMatch(a.average[0])
+
+	SelectColumn -> sc
+	sc.table(aboveAverage.matches[0])
+	sc.column("Country")
+
+	output countriesAboveAverage Value(sc.table[0])
+end
+
+
+graph poverty begin
+	ReadCSV -> read
+	read.path("/Users/jeffreyguenther/Projects/Thesis/shiro/example_code/PovertyAnalysis/Poverty.csv")
+
+	FilterTable -> filter1960
+	filter1960.table(read.table[0])
+	filter1960.column("Date")
+	filter1960.operator("==")
+	filter1960.toMatch("1960")
+
+	FilterTable -> filter1990
+	filter1990.table(filter1960.didNotMatch[0])
+	filter1990.column("Date")
+	filter1990.operator("==")
+	filter1990.toMatch("1990")
+
+	GetAboveAveragePoverty -> aboveAveragein1960
+	aboveAveragein1960.table(filter1960.matches[0])
+	
+	Point -> origin
+	origin.x(100)
+	origin.y(100)
+
+	TableView -> viewer
+	viewer.table(aboveAveragein1960.countriesAboveAverage[0])
+	viewer.tableName("Countries Above Average Poverty in 1960")
+	viewer.origin(origin.point[0])
+
+end
+
+state test begin
+	Graph poverty
+end

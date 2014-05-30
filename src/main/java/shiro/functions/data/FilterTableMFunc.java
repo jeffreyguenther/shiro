@@ -20,7 +20,8 @@ import shiro.functions.MultiFunction;
  *
  */
 public class FilterTableMFunc implements MultiFunction {
-
+    private boolean stringMode = false;
+    
     @Override
     public String getName() {
         return "FilterTable";
@@ -28,11 +29,21 @@ public class FilterTableMFunc implements MultiFunction {
 
     @Override
     public ResultTuple evaluate(List<Value> arguments) {
+        
+        
         Table<Integer, String, Object> table = (Table<Integer, String, Object>) arguments
                 .get(0).getValue();
         String columnToFilterOn = arguments.get(1).getValueAsString();
         String operator = arguments.get(2).getValueAsString();
-        Double valueToCompare = arguments.get(3).getValueAsDouble();
+        
+        Value toCompare = arguments.get(3);
+        
+        if( toCompare.getType().equals(String.class)){
+            stringMode = true;
+        }else if ( toCompare.getType().equals(Double.class)){
+            stringMode = false;
+        }
+        
         Map<Integer, Map<String, Object>> rowMap = table.rowMap();
 
         Table<Integer, String, Object> tableMatches = HashBasedTable
@@ -42,14 +53,39 @@ public class FilterTableMFunc implements MultiFunction {
 
         for (Integer rowKey : rowMap.keySet()) {
             Map<String, Object> row = rowMap.get(rowKey);
-            if (compare(operator, (double) row.get(columnToFilterOn),
-                    valueToCompare)) {
-                putRowInTable(tableMatches, rowKey, row);
-            } else {
-                putRowInTable(tableNotMatches, rowKey, row);
+            
+            
+            if (!stringMode) {
+                
+                Double valueToCompare = toCompare.getValueAsDouble();
+                Double valuetoCompareWith;
+                
+                Object get = row.get(columnToFilterOn);
+                if(get instanceof Double){
+                    valuetoCompareWith = (Double) get;
+                }else{
+                    valuetoCompareWith = Double.parseDouble((String)get);
+                }
+                
+                if (doubleCompare(operator, valuetoCompareWith,
+                        valueToCompare)) {
+                    putRowInTable(tableMatches, rowKey, row);
+                } else {
+                    putRowInTable(tableNotMatches, rowKey, row);
+                }
+            }else{
+                System.out.println(row);
+                System.out.println(toCompare);
+                
+                String valueToCompare = toCompare.getValueAsString();
+                if (stringCompare(operator, (String) row.get(columnToFilterOn), valueToCompare)) {
+                    putRowInTable(tableMatches, rowKey, row);
+                } else {
+                    putRowInTable(tableNotMatches, rowKey, row);
+                }
             }
         }
-
+        
         ResultTuple rt = new ResultTuple();
         rt.setValueForIndex(0, new Value(tableMatches, Table.class));
         rt.setValueForIndex(1, new Value(tableNotMatches, Table.class));
@@ -63,7 +99,7 @@ public class FilterTableMFunc implements MultiFunction {
         }
     }
 
-    private boolean compare(String operator, Double valueToCompare,
+    private boolean doubleCompare(String operator, Double valueToCompare,
             Double valueToCompareWith) {
         switch (operator) {
         case "==":
@@ -77,6 +113,19 @@ public class FilterTableMFunc implements MultiFunction {
         case "<=":
             return valueToCompare <= valueToCompareWith;
         }
+        return false;
+    }
+    
+    private boolean stringCompare(String operator, String valueToCompare, String valueToCompareWith){
+        switch(operator){
+            case "==":
+                return 0 == valueToCompare.compareTo(valueToCompareWith);
+            case ">":
+                return valueToCompare.compareTo(valueToCompareWith) > 0;
+            case "<":
+                return valueToCompare.compareTo(valueToCompareWith) < 0;
+        }
+        
         return false;
     }
 
