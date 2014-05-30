@@ -40,6 +40,7 @@ import shiro.functions.data.ColumnAverageMFunc;
 import shiro.functions.data.FilterTableMFunc;
 import shiro.functions.data.IntersectMFunc;
 import shiro.functions.data.SelectColumnMFunc;
+import shiro.functions.data.SortTableMFunc;
 import shiro.functions.data.UnionMFunc;
 import shiro.functions.graphics.ArcMFunc;
 import shiro.functions.graphics.CircleMFunc;
@@ -393,6 +394,7 @@ public class ShiroRuntime {
         funcMap.put("FilterTable", new FilterTableMFunc());
         funcMap.put("ColumnAverage", new ColumnAverageMFunc());
         funcMap.put("SelectColumn", new SelectColumnMFunc());
+        funcMap.put("SortTable", new SortTableMFunc());
 
         // add graphics MFs
         funcMap.put("Point", new PointMFunc());
