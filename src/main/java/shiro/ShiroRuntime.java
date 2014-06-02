@@ -41,9 +41,11 @@ import shiro.functions.data.FilterTableMFunc;
 import shiro.functions.data.IntersectMFunc;
 import shiro.functions.data.SelectColumnMFunc;
 import shiro.functions.data.SortTableMFunc;
+import shiro.functions.data.UndirectedGraphMFunc;
 import shiro.functions.data.UnionMFunc;
 import shiro.functions.graphics.ArcMFunc;
 import shiro.functions.graphics.CircleMFunc;
+import shiro.functions.graphics.GraphViewMFunc;
 import shiro.functions.graphics.GrayscaleMFunc;
 import shiro.functions.graphics.GroupMFunc;
 import shiro.functions.graphics.ImageMFunc;
@@ -395,6 +397,9 @@ public class ShiroRuntime {
         funcMap.put("ColumnAverage", new ColumnAverageMFunc());
         funcMap.put("SelectColumn", new SelectColumnMFunc());
         funcMap.put("SortTable", new SortTableMFunc());
+        
+        // Graph MFs
+        funcMap.put("UndirectedGraph", new UndirectedGraphMFunc());
 
         // add graphics MFs
         funcMap.put("Point", new PointMFunc());
@@ -409,6 +414,7 @@ public class ShiroRuntime {
         
         // add view MFs
         funcMap.put("TableView", new TableViewMFunc());
+        funcMap.put("GraphView", new GraphViewMFunc());
     }
 
     /**

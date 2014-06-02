@@ -51,6 +51,7 @@ import shiro.Value;
 import shiro.definitions.StateDefinition;
 import shiro.drawing.Canvas;
 import shiro.drawing.MoveContext;
+import shiro.functions.graphics.GraphViz;
 
 /**
  * FXML Controller class
@@ -451,6 +452,12 @@ public class FXMLViewerController {
             BorderPane bp = getTableView(n);
             canvas.getChildren().add(bp);
         }
+        
+        for(shiro.Node n: model.getNodesOfType(graph, "GraphView")){
+           Group graphView = getGraphView(n);
+            canvas.getChildren().add(graphView);
+        }
+        
 
 //        // for each point in the model
 //        for (shiro.Node n : model.getNodesOfType("Point")) {
@@ -577,6 +584,15 @@ public class FXMLViewerController {
         Value rawTableGroup = ePort.getValueForIndex(0);
         
         BorderPane g = (BorderPane) rawTableGroup.getValue();
+        
+        return g;
+    }
+    
+    public Group getGraphView(shiro.Node n){
+        Port ePort = n.getActiveEvalPort();
+        Value rawGraphView = ePort.getValueForIndex(0);
+        
+        Group g = (Group) rawGraphView.getValue();
         
         return g;
     }
