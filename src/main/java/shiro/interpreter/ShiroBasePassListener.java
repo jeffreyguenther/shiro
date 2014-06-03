@@ -24,15 +24,16 @@ import shiro.expressions.Subtract;
  * @author jeffreyguenther
  */
 public class ShiroBasePassListener extends ShiroBaseListener {
+
     protected Stack<Scope> scope;
     protected ParseTreeProperty<Expression> expressions;
-    
-    public ShiroBasePassListener(Scope rootScope){
+
+    public ShiroBasePassListener(Scope rootScope) {
         this.expressions = new ParseTreeProperty<>();
         this.scope = new Stack<>();
         this.scope.push(rootScope);
     }
-    
+
     /**
      * Get an expression for a parse tree node
      *
@@ -49,7 +50,7 @@ public class ShiroBasePassListener extends ShiroBaseListener {
     protected void setExpr(ParseTree node, Expression expr) {
         expressions.put(node, expr);
     }
-    
+
     @Override
     public void exitOrExp(ShiroParser.OrExpContext ctx) {
         Expression op1 = getExpr(ctx.expr(0));
@@ -105,11 +106,11 @@ public class ShiroBasePassListener extends ShiroBaseListener {
     @Override
     public void exitStringExp(ShiroParser.StringExpContext ctx) {
         String literal = ctx.STRING_LITERAL().getText();
-        SString s = new SString(literal.substring(1, literal.length() -1));
+        SString s = new SString(literal.substring(1, literal.length() - 1));
         setExpr(ctx, s);
     }
-    
-    protected Path createPath(Scope currentScope, ShiroParser.PathContext ctx){
+
+    protected Path createPath(Scope currentScope, ShiroParser.PathContext ctx) {
         // Declare a list to store the path's parts
         List<String> parts = new ArrayList<>();
 
@@ -119,9 +120,9 @@ public class ShiroBasePassListener extends ShiroBaseListener {
         for (TerminalNode t : ctx.IDENT()) {
             parts.add(t.getText());
         }
-        
+
         // prepend this, when used
-        if(ctx.THIS() != null){
+        if (ctx.THIS() != null) {
             parts.add(0, "this");
         }
 
@@ -139,34 +140,42 @@ public class ShiroBasePassListener extends ShiroBaseListener {
         } else {
             p = new Path(currentScope, parts);
         }
-        
+
         return p;
     }
-    
+
     @Override
     public void enterPath(ShiroParser.PathContext ctx) {
         // save the path for later
         setExpr(ctx, createPath(scope.peek(), ctx));
     }
-    
+
     @Override
-    public void exitPortAssignment(ShiroParser.PortAssignmentContext ctx){
+    public void exitPortAssignment(ShiroParser.PortAssignmentContext ctx) {
         // look up port based on the path
         try {
             Path path = (Path) getExpr(ctx.path());
             // resolve path in current scope
             Port p = (Port) scope.peek().resolvePath(path);
 
-            List<Expression> mfExpressions = new ArrayList<>();
+            // prevent eval and output ports in the graph from being set
+            if (p.isInput()) {
 
-            for (ParseTree pt : ctx.mfparams().expr()) {
-                Expression exp = getExpr(pt);
-                mfExpressions.add(exp);
+                List<Expression> mfExpressions = new ArrayList<>();
+
+                for (ParseTree pt : ctx.mfparams().expr()) {
+                    Expression exp = getExpr(pt);
+                    mfExpressions.add(exp);
+                }
+                // set the port's expression
+                p.setArguments(mfExpressions);
+            }else{
+                // notify the user of the error
+                System.out.println("Tried to assign to an output port" + p + " in " + scope.peek());
             }
-            // set the port's expression
-            p.setArguments(mfExpressions);
+
         } catch (PathNotFoundException pnfe) {
-            //TODO add better error notification
+
         }
     }
 }

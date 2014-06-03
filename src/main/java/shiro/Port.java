@@ -471,6 +471,8 @@ public class Port implements Symbol{
         sb.append("[")
           .append("Port: ")
           .append(fullName)
+          .append(" type:")
+          .append(type)
           .append(", ")
           .append("Value: ")
           .append(valueTuple)
