@@ -6,7 +6,6 @@
 
 package shiro.functions.data;
 
-import edu.uci.ics.jung.algorithms.filters.VertexPredicateFilter;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.UndirectedGraph;
 import java.util.ArrayList;
@@ -20,6 +19,7 @@ import shiro.functions.MultiFunction;
  * 
  * @author jeffreyguenther
  */
+@SuppressWarnings("unchecked")
 public class VertexFilterMFunc implements MultiFunction{
     private static final String NAME = "VertexFilter";
     private static final int GRAPH = 0;

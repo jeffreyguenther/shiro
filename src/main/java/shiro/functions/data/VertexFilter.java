@@ -17,6 +17,7 @@ import java.util.Collection;
  * @param <V> type of vertex
  * @param <E> type of edge
  */
+@SuppressWarnings("unchecked")
 public class VertexFilter<V, E> implements Filter<V, E>{
     
     private Collection<V> vertsToKeep;

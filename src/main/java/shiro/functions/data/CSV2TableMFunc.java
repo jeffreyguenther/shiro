@@ -20,6 +20,7 @@ import com.google.common.collect.Table;
  * 
  * @author Ankit Gupta
  */
+@SuppressWarnings("unchecked")
 public class CSV2TableMFunc implements MultiFunction {
      private static final String NAME = "CSV2Table";
     private static final int PATH = 0;

@@ -20,6 +20,7 @@ import shiro.functions.MultiFunction;
  * 
  * @author jeffreyguenther
  */
+@SuppressWarnings("unchecked")
 public class UndirectedGraphMFunc implements MultiFunction{
     private static final String NAME = "UndirectedGraph";
     private static final int TABLE = 0;

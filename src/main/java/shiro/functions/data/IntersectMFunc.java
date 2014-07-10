@@ -14,6 +14,7 @@ import java.util.Map;
  * Calculates the intersection of two tables.
  * @author jeffreyguenther
  */
+@SuppressWarnings("unchecked")
 public class IntersectMFunc implements MultiFunction {
     private static final String NAME = "Intersect";
     private static final int TABLE_A = 0;

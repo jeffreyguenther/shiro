@@ -19,6 +19,7 @@ import shiro.functions.MultiFunction;
  * @author Ankit Gupta
  *
  */
+@SuppressWarnings("unchecked")
 public class FilterTableMFunc implements MultiFunction {
     private boolean stringMode = false;
     

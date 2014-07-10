@@ -17,6 +17,7 @@ import shiro.functions.MultiFunction;
  * @author Ankit Gupta
  *
  */
+@SuppressWarnings("unchecked")
 public class ColumnAverageMFunc implements MultiFunction {
     private static final String NAME = "ColumnAverage";
     private static final int TABLE = 0;

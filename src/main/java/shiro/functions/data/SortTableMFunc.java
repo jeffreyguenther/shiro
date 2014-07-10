@@ -19,6 +19,7 @@ import shiro.functions.MultiFunction;
  * 
  * @author jeffreyguenther
  */
+@SuppressWarnings("unchecked")
 public class SortTableMFunc implements MultiFunction {
     private static final String NAME = "SortTable";
     private static final int TABLE  = 0;

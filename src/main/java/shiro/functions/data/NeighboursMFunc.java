@@ -18,6 +18,8 @@ import shiro.functions.MultiFunction;
  * 
  * @author jeffreyguenther
  */
+
+@SuppressWarnings("unchecked")
 public class NeighboursMFunc implements MultiFunction{
     private static final String NAME = "Neighbours";
     private static final int GRAPH = 0;

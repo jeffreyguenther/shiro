@@ -16,6 +16,7 @@ import shiro.functions.MultiFunction;
  * @author Jeffrey Guenther
  *
  */
+@SuppressWarnings("unchecked")
 public class SelectColumnMFunc implements MultiFunction {
 
     @Override

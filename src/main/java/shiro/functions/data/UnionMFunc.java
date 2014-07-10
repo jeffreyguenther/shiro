@@ -1,19 +1,17 @@
 package shiro.functions.data;
 
 import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.MapDifference;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Table;
 import shiro.functions.*;
 import shiro.ResultTuple;
 import shiro.Value;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Calculates the intersection of two tables.
  * @author jeffreyguenther
  */
+@SuppressWarnings("unchecked")
 public class UnionMFunc implements MultiFunction {
     private static final String NAME = "Union";
     private static final int TABLE_A = 0;

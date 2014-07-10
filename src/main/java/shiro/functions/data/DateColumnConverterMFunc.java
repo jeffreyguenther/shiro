@@ -17,6 +17,7 @@ import shiro.functions.MultiFunction;
  * 
  * @author jeffreyguenther
  */
+@SuppressWarnings("unchecked")
 public class DateColumnConverterMFunc implements MultiFunction {
     private static final String NAME = "DateColumnConverter";
     private static final int TABLE = 0;

@@ -14,7 +14,9 @@ import java.util.ArrayList;
  * This multifunction converts and array to a table
  * 
  * @author Jeffrey Guenther
- */
+ 
+ */ 
+@SuppressWarnings("unchecked")
 public class Array2TableMFunc implements MultiFunction {
     private static final String NAME = "Array2Table";
     private static final int ARRAY = 0;
