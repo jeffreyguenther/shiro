@@ -1,4 +1,4 @@
-node Point begin
+wirnode Point begin
     input x Value
     input y Value
     eval update Point(x[0], y[0])
@@ -16,7 +16,6 @@ node Arc begin
     eval update Arc(center[0], radius[0], startAngle[0], endAngle[0], stroke[0], strokeWidth[0])
     output arc Value(update[0])
 end
-
 
 node Circle begin
     input center Value

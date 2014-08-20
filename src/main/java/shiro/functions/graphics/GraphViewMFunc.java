@@ -7,10 +7,11 @@
 package shiro.functions.graphics;
 
 import edu.uci.ics.jung.algorithms.layout.CircleLayout;
-import edu.uci.ics.jung.algorithms.layout.FRLayout;
+import edu.uci.ics.jung.algorithms.layout.FRLayout2;
 import edu.uci.ics.jung.algorithms.layout.KKLayout;
 import edu.uci.ics.jung.algorithms.layout.Layout;
 import edu.uci.ics.jung.graph.Graph;
+import edu.uci.ics.jung.graph.util.EdgeType;
 import java.awt.Dimension;
 import java.util.List;
 import javafx.geometry.Point2D;
@@ -41,6 +42,7 @@ public class GraphViewMFunc implements MultiFunction{
         Value widthValue = arguments.get(WIDTH);
         
         Graph<Object, Object> graph = (Graph<Object, Object>) graphValue.getValue();
+//        System.out.println(graph.getEdgeCount(EdgeType.UNDIRECTED) + " " + graph.getVertexCount());
         Layout<Object, Object> layout = createLayout(graph, layoutValue.getValueAsString());
         
         Point2D point = (Point2D) originValue.getValue();
@@ -62,7 +64,9 @@ public class GraphViewMFunc implements MultiFunction{
             case "Circle":
                 return new CircleLayout<>(graph);
             case "FR":
-                return new FRLayout<>(graph);
+                FRLayout2<Object, Object> l = new FRLayout2<>(graph);
+                l.setMaxIterations(100);
+                return l;
             case "KK":
                 return new KKLayout<>(graph);
         }

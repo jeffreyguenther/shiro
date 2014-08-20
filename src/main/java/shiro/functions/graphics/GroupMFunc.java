@@ -13,6 +13,7 @@ import javafx.scene.Node;
  *
  * @author jeffreyguenther
  */
+@SuppressWarnings("unchecked")
 public class GroupMFunc implements MultiFunction {
     private static final String NAME = "Group";
     private static final int ORIGIN = 0;

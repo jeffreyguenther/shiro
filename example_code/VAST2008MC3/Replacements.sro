@@ -1,0 +1,50 @@
+use "data.sro"
+use "shapes.sro"
+
+node Contact begin
+  option input one Value("1")
+  option input two Value("2")
+  option input three Value("3")
+  option input five Value("5")
+end
+
+graph ReplacementPhone begin
+  ReadCSV -> csv
+  csv.path("/Users/jeffreyguenther/Projects/Thesis/shiro/example_code/VAST2008MC3/CellPhoneCallRecords.csv")
+
+  // convert table into graph
+  UndirectedGraph -> network
+  network.table(csv.table[0])
+  network.columnA("To")
+  network.columnB("From")
+
+  Contact -> c
+
+  VertexFilter -> contacts
+  contacts.graf(network.g[0])
+  contacts.vertices(c.active[0])
+
+  Neighbours -> neighbours
+  neighbours.graf(network.g[0])
+  neighbours.vertex(c.active[0])
+
+  VertexFilterSet -> contactsOfContact
+  contactsOfContact.graf(network.g[0])
+  contactsOfContact.vertices(neighbours.neighbours[0])
+
+  Point -> origin
+  origin.x(0)
+  origin.y(0)
+
+  GraphView -> contactsContacts
+  contactsContacts.g(contactsOfContact.g[0])
+  contactsContacts.layout("Circle")
+  contactsContacts.origin(origin.point[0])
+  contactsContacts.width(800)
+  contactsContacts.height(800)
+end
+
+state Phone1 begin
+  Graph ReplacementPhone
+  c[one]
+end

@@ -13,7 +13,9 @@ import edu.uci.ics.jung.graph.Graph;
 import java.awt.Dimension;
 import java.util.HashMap;
 import java.util.Map;
+import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.CircleBuilder;
 import javafx.scene.shape.Line;
@@ -46,7 +48,7 @@ public class GraphViz<V, E> extends Region {
         layout.setSize(new Dimension((int) width, (int) height));
         layout.reset();
         render();
-        
+
     }
 
     @Override
@@ -56,9 +58,9 @@ public class GraphViz<V, E> extends Region {
         render();
     }
 
-    
-    private void render(){
+    private void render() {
         // relax the layout
+
         if (relaxer != null) {
             relaxer.stop();
             relaxer = null;
@@ -73,29 +75,6 @@ public class GraphViz<V, E> extends Region {
         }
 
         Graph<V, E> graph = layout.getGraph();
-
-        // draw the vertices in the graph
-        for (V v : graph.getVertices()) {
-            // Get the position of the vertex
-            java.awt.geom.Point2D p = layout.transform(v);
-
-            if (notRendered) {
-
-                // draw the vertex as a circle
-                Circle circle = CircleBuilder.create()
-                        .centerX(p.getX())
-                        .centerY(p.getY())
-                        .radius(CIRCLE_SIZE)
-                        .build();
-                vertices.put(v, circle);
-                // add it to the group, so it is shown on screen
-                this.getChildren().add(circle);
-            } else {
-                Circle c = vertices.get(v);
-                c.setCenterX(p.getX());
-                c.setCenterY(p.getY());
-            }
-        }
 
         // draw the edges
         for (E e : graph.getEdges()) {
@@ -124,6 +103,37 @@ public class GraphViz<V, E> extends Region {
                 l.setStartY(pStart.getY());
                 l.setEndX(pEnd.getX());
                 l.setEndY(pEnd.getY());
+            }
+        }
+
+        // draw the vertices in the graph
+        for (V v : graph.getVertices()) {
+            // Get the position of the vertex
+            java.awt.geom.Point2D p = layout.transform(v);
+
+            if (notRendered) {
+
+                // draw the vertex as a circle
+                Circle circle = CircleBuilder.create()
+                        .centerX(p.getX())
+                        .centerY(p.getY())
+                        .radius(CIRCLE_SIZE)
+                        .build();
+                vertices.put(v, circle);
+                // add it to the group, so it is shown on screen
+                this.getChildren().add(circle);
+
+                // add labels
+                Label t = new Label(v.toString());
+                t.setTextFill(Color.WHITE);
+                this.getChildren().add(t);
+                t.layoutXProperty().bind(circle.centerXProperty().subtract(t.widthProperty().divide(2)));
+                t.layoutYProperty().bind(circle.centerYProperty().subtract(t.widthProperty().divide(2)));
+
+            } else {
+                Circle c = vertices.get(v);
+                c.setCenterX(p.getX());
+                c.setCenterY(p.getY());
             }
         }
         notRendered = false;

@@ -13,7 +13,7 @@ import javafx.scene.transform.Affine;
 import javafx.scene.transform.Transform;
 
 /**
- *
+ * Renders recursive forms based on a motif
  * @author jeffreyguenther
  */
 public class RecursiveFormRenderer {

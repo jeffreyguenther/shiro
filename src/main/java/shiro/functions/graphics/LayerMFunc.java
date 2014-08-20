@@ -12,6 +12,7 @@ import javafx.scene.Node;
  *
  * @author jeffreyguenther
  */
+@SuppressWarnings("unchecked")
 public class LayerMFunc implements MultiFunction {
     private static final String NAME = "Layer";
     private static final int CHILDREN = 0;

@@ -23,7 +23,8 @@ import shiro.Value;
  *
  * @author jeffreyguenther
  */
-public class ImageTester extends Application{
+@SuppressWarnings("unchecked")
+class ImageTester extends Application{
 
     @Override
     public void start(Stage stage) throws Exception {

@@ -47,7 +47,14 @@ node TableView begin
 	input tableName Value
 	input origin Value
 	eval update TableView(table[0], tableName[0], origin[0])
-end 
+end
+
+node ConvertListToTable begin
+	input columnName Value
+	input list Value
+	eval update Array2Table(list[0], columnName[0])
+	output table Value(update[0])
+end
 
 node UndirectedGraph begin
 	input table Value
@@ -55,6 +62,31 @@ node UndirectedGraph begin
 	input columnB Value
 	eval update UndirectedGraph(table[0], columnA[0], columnB[0])
 	output g Value(update[0])
+end
+
+node VertexFilter begin
+	input graf Value
+	input vertices Array
+	eval update VertexFilter(graf[0], vertices[0])
+	output g Value(update[0])
+end
+
+node CreateArray begin
+	input values Array
+end
+
+node VertexFilterSet begin
+	input graf Value
+	input vertices Value
+	eval update VertexFilter(graf[0], vertices[0])
+	output g Value(update[0])
+end
+
+node Neighbours begin
+	input graf Value
+	input vertex Value
+	eval update Neighbours(graf[0], vertex[0])
+	output neighbours Value(update[0])
 end
 
 node GraphView begin
