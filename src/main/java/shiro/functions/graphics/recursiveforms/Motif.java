@@ -11,7 +11,7 @@ import java.util.List;
 import javafx.scene.transform.Transform;
 
 /**
- *
+ * Provides a base class for the development of motifs.
  * @author jeffreyguenther
  */
 public abstract class Motif {

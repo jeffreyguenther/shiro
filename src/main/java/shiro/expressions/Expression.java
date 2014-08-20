@@ -17,7 +17,7 @@ public interface Expression extends Definition{
     public Set<Port> getPortsDependedOn()throws PathNotFoundException;
     
     static Expression number(double d){
-        return new Number(d);
+        return new SNumber(d);
     }
     
     static Expression string(String s){

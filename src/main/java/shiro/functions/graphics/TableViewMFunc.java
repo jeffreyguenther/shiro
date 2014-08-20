@@ -26,6 +26,7 @@ import javafx.scene.layout.BorderPane;
  *
  * @author jeffreyguenther
  */
+@SuppressWarnings("unchecked")
 public class TableViewMFunc implements MultiFunction {
 
     private static final String NAME = "TableView";

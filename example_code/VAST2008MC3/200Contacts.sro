@@ -1,0 +1,53 @@
+use "data.sro"
+use "shapes.sro"
+
+graph SocialNetwork begin
+	ReadCSV -> csv
+	csv.path("/Users/jeffreyguenther/Projects/Thesis/shiro/example_code/VAST2008MC3/CellPhoneCallRecords.csv")
+
+	// convert table into graph
+	UndirectedGraph -> network
+	network.table(csv.table[0])
+	network.columnA("To")
+	network.columnB("From")
+
+
+	// filter graph to only contain contacts of 200
+	VertexFilter -> 200filter
+	200filter.graf(network.g[0])
+	200filter.vertices("200")
+
+	Point -> contactsPos
+	contactsPos.x(400)
+	contactsPos.y(0)
+
+	GraphView -> contacts
+	contacts.g(200filter.g[0])
+	contacts.origin(contactsPos.point[0])
+	contacts.width(400)
+	contacts.height(400)
+
+	// draw the graph
+	// get the list of contacts of 200
+	Neighbours -> neighbours
+	neighbours.graf(network.g[0])
+	neighbours.vertex("200")
+
+	// display the list of contacts in a table
+	ConvertListToTable -> toTable
+	toTable.columnName("Contact")
+	toTable.list(neighbours.neighbours[0])
+
+	Point -> origin
+	origin.x(0)
+	origin.y(0)
+
+	TableView -> tv
+	tv.origin(origin.point[0])
+	tv.table(toTable.table[0])
+	tv.tableName("200s Contacts")
+end
+
+state testing begin
+	Graph SocialNetwork
+end

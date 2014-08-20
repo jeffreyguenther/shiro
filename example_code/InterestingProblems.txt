@@ -1,8 +1,10 @@
-DONE - Task: Create a color scheme that works in both BW and color.
 DUPLICATE - Task: Choose a haircut
 DUPLICATE - Task: Compare the nutritional value (calories, sugars, or fat) of different toppings like: berries, whipped cream, and sugar
 DUPLICATE - Task: Choose paint colors
 DUPLICATE: Compare out comes of investment products
+
+DONE - Task: Create a color scheme that works in both BW and color.
+DONE - Task: Compare "dolls" with different clothes
 
 Task: Organize furniture in a room
 Task: Buy a car

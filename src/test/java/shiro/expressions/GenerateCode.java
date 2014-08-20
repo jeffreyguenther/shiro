@@ -19,7 +19,7 @@ import shiro.functions.ValueMFunc;
 public class GenerateCode {
     @Test
     public void outputNumber(){
-       Number n = new Number(12.3);
+       SNumber n = new SNumber(12.3);
        Assert.assertEquals("should match", "12.3", n.toCode());
     }
     
@@ -36,32 +36,32 @@ public class GenerateCode {
     
     @Test
     public void outputSimpleAdd(){
-        Number n = new Number(12.3);
-        Number n2 = new Number (235.3);
+        SNumber n = new SNumber(12.3);
+        SNumber n2 = new SNumber (235.3);
         Add add = new Add(n, n2);
         Assert.assertEquals("both args should match", "12.3 + 235.3", add.toCode());
     }
     
     @Test
     public void outputSimpleSubtract(){
-        Number n = new Number(12.3);
-        Number n2 = new Number (235.3);
+        SNumber n = new SNumber(12.3);
+        SNumber n2 = new SNumber (235.3);
         Subtract sub = new Subtract(n, n2);
         Assert.assertEquals("both args should match", "12.3 - 235.3", sub.toCode());
     }
     
     @Test
     public void outputSimpleDivide(){
-        Number n = new Number(12.3);
-        Number n2 = new Number (235.3);
+        SNumber n = new SNumber(12.3);
+        SNumber n2 = new SNumber (235.3);
         Divide div = new Divide(n, n2);
         Assert.assertEquals("both args should match", "12.3 / 235.3", div.toCode());
     }
     
     @Test
     public void outputSimpleMultiply(){
-        Number n = new Number(12.3);
-        Number n2 = new Number (235.3);
+        SNumber n = new SNumber(12.3);
+        SNumber n2 = new SNumber (235.3);
         Multiply mult = new Multiply(n, n2);
         Assert.assertEquals("should match", "12.3 * 235.3", mult.toCode());
     }
@@ -71,8 +71,8 @@ public class GenerateCode {
         Port p = new Port("Point.x", new ValueMFunc());
         Assert.assertEquals("should match", "port x Value", p.toCode());
         
-        Number n = new Number(12.3);
-        Number n2 = new Number (235.3);
+        SNumber n = new SNumber(12.3);
+        SNumber n2 = new SNumber (235.3);
         Multiply mult = new Multiply(n, n2);
         List<Expression> exps = new ArrayList<>();
         exps.add(mult);

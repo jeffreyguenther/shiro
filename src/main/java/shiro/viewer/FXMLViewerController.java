@@ -458,6 +458,11 @@ public class FXMLViewerController {
             canvas.getChildren().add(graphView);
         }
         
+        for(shiro.Node n: model.getNodesOfType(graph, "RecursiveForm")){
+            Group form = getRecursiveForm(n);
+            canvas.getChildren().add(form);
+        }
+        
 
 //        // for each point in the model
 //        for (shiro.Node n : model.getNodesOfType("Point")) {
@@ -589,6 +594,15 @@ public class FXMLViewerController {
     }
     
     public Group getGraphView(shiro.Node n){
+        Port ePort = n.getActiveEvalPort();
+        Value rawGraphView = ePort.getValueForIndex(0);
+        
+        Group g = (Group) rawGraphView.getValue();
+        
+        return g;
+    }
+    
+    public Group getRecursiveForm(shiro.Node n){
         Port ePort = n.getActiveEvalPort();
         Value rawGraphView = ePort.getValueForIndex(0);
         

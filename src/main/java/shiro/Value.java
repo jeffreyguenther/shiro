@@ -111,12 +111,21 @@ public class Value{
     }
     
     /***
-     * Create <code>Value</code> object from an <code>float</code>
-     * @param value is the float to be turned into a <code>Value</code> object
+     * Create <code>Value</code> object from an <code>double</code>
+     * @param value is the double to be turned into a <code>Value</code> object
      * @return the wrapped <code>float</code>
      */
     public static Value createDouble(double value){
         return new Value(value, Double.class);
+    }
+    
+    /***
+     * Create <code>Value</code> object from an <code>boolean</code>
+     * @param value is the boolean to be turned into a <code>Value</code> object
+     * @return the wrapped <code>float</code>
+     */
+    public static Value createBoolean(boolean value){
+        return new Value(value, Boolean.class);
     }
     
     /**
@@ -145,10 +154,18 @@ public class Value{
     
     /**
      * Get the object as an <code>String</code>
-     * @return the object value as an <code>String</code>
+     * @return the object value as a <code>String</code>
      */
     public String getValueAsString(){
         return (String) value;
+    }
+    
+    /**
+     * Gets the object as a <code>Boolean</code>
+     * @return the object value as a <code>Boolean</code>
+     */
+    public Boolean getValueAsBoolean(){
+        return (Boolean) value;
     }
 
     @Override

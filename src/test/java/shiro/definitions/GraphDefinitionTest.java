@@ -27,8 +27,8 @@ public class GraphDefinitionTest {
         graphDef.addProduction("Point", "startPoint");
         graphDef.addProduction("EndPoints", "endPoint");
         graphDef.addProduction("Line", "l");
-        graphDef.addPortAssignment(new PortAssignment(Path.createPath("startPoint.x"), new shiro.expressions.Number(100d)));
-        graphDef.addPortAssignment(new PortAssignment(Path.createPath("startPoint.y"), new shiro.expressions.Number(0d)));
+        graphDef.addPortAssignment(new PortAssignment(Path.createPath("startPoint.x"), new shiro.expressions.SNumber(100d)));
+        graphDef.addPortAssignment(new PortAssignment(Path.createPath("startPoint.y"), new shiro.expressions.SNumber(0d)));
         
         Assert.assertEquals("should match", expectedDef, graphDef.toCode());    
     }
@@ -39,7 +39,7 @@ public class GraphDefinitionTest {
         GraphDefinition graphDef = new GraphDefinition("line");
         
         // Add a port assignemtn
-        PortAssignment pa1 = new PortAssignment(Path.createPath("startPoint.x"), new shiro.expressions.Number(100d));
+        PortAssignment pa1 = new PortAssignment(Path.createPath("startPoint.x"), new shiro.expressions.SNumber(100d));
         graphDef.addPortAssignment(pa1);
         
         // Create list of expected elements
@@ -51,7 +51,7 @@ public class GraphDefinitionTest {
         Assert.assertEquals("should have the same port assignments", expected, result);
         
         // Add another port assignment, but this time for the same path
-        PortAssignment pa2 = new PortAssignment(Path.createPath("startPoint.x"), new shiro.expressions.Number(400d));
+        PortAssignment pa2 = new PortAssignment(Path.createPath("startPoint.x"), new shiro.expressions.SNumber(400d));
         graphDef.addPortAssignment(pa2);
         
         // Test to ensure the port assignment for the path was updated

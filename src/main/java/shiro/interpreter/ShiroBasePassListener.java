@@ -16,6 +16,8 @@ import shiro.expressions.Mod;
 import shiro.expressions.Multiply;
 import shiro.expressions.Or;
 import shiro.expressions.Path;
+import shiro.expressions.SBoolean;
+import shiro.expressions.SNumber;
 import shiro.expressions.SString;
 import shiro.expressions.Subtract;
 
@@ -96,11 +98,18 @@ public class ShiroBasePassListener extends ShiroBaseListener {
 
     @Override
     public void exitNumberExp(ShiroParser.NumberExpContext ctx) {
-        shiro.expressions.Number n = new shiro.expressions.Number(
+        SNumber n = new SNumber(
                 Double.parseDouble(ctx.NUMBER().getText()));
 
         // save the result for later
         setExpr(ctx, n);
+    }
+
+    @Override
+    public void exitBooleanExp(ShiroParser.BooleanExpContext ctx) {
+        SBoolean b = new SBoolean(Boolean.parseBoolean(ctx.BOOLEAN_LITERAL().getText()));
+        
+        setExpr(ctx, b);
     }
 
     @Override

@@ -35,14 +35,17 @@ import shiro.functions.MultiFunction;
 import shiro.functions.MultiplyMFunc;
 import shiro.functions.SumMFunc;
 import shiro.functions.ValueMFunc;
+import shiro.functions.data.Array2TableMFunc;
 import shiro.functions.data.CSV2TableMFunc;
 import shiro.functions.data.ColumnAverageMFunc;
 import shiro.functions.data.FilterTableMFunc;
 import shiro.functions.data.IntersectMFunc;
+import shiro.functions.data.NeighboursMFunc;
 import shiro.functions.data.SelectColumnMFunc;
 import shiro.functions.data.SortTableMFunc;
 import shiro.functions.data.UndirectedGraphMFunc;
 import shiro.functions.data.UnionMFunc;
+import shiro.functions.data.VertexFilterMFunc;
 import shiro.functions.graphics.ArcMFunc;
 import shiro.functions.graphics.CircleMFunc;
 import shiro.functions.graphics.GraphViewMFunc;
@@ -388,6 +391,7 @@ public class ShiroRuntime {
         funcMap.put("Multiply", new MultiplyMFunc());
         funcMap.put("Sum", new SumMFunc());
         funcMap.put("Array", new ArrayMFunc());
+        funcMap.put("Array2Table", new Array2TableMFunc());
         
         // Add data processing MFs
         funcMap.put("CSV2Table", new CSV2TableMFunc());
@@ -400,6 +404,8 @@ public class ShiroRuntime {
         
         // Graph MFs
         funcMap.put("UndirectedGraph", new UndirectedGraphMFunc());
+        funcMap.put("VertexFilter", new VertexFilterMFunc());
+        funcMap.put("Neighbours", new NeighboursMFunc());
 
         // add graphics MFs
         funcMap.put("Point", new PointMFunc());

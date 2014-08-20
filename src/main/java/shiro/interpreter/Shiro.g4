@@ -138,6 +138,7 @@ expr
         |       expr ( PLUS_OP | MINUS_OP ) expr        # AddExp
         |       path                                    # PathExp
 	|	NUMBER                                  # NumberExp
+        |       BOOLEAN_LITERAL                         # BooleanExp
         |       STRING_LITERAL                          # StringExp
     //    |	'(' expr ')'                            # BracketsExp
 	;
@@ -188,6 +189,10 @@ DIV_OP  : '/';
 MOD_OP : '%';
 LSQUARE: '[';
 RSQUARE: ']';
+
+BOOLEAN_LITERAL
+    : 'true' | 'false'
+    ;
 
 STRING_LITERAL
     :	'"' .*?'"'

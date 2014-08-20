@@ -14,7 +14,7 @@ import javafx.scene.shape.StrokeLineCap;
 import javafx.scene.shape.StrokeLineJoin;
 
 /**
- *
+ * Encapsulates a method to create shape
  * @author jeffreyguenther
  */
 public interface ShapeFactory {

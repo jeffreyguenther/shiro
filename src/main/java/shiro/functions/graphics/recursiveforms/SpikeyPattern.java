@@ -12,7 +12,7 @@ import javafx.scene.transform.Transform;
 import javafx.scene.transform.Translate;
 
 /**
- *
+ * Defines a spikey space filling motif
  * @author jeffreyguenther
  */
 public class SpikeyPattern extends Motif{

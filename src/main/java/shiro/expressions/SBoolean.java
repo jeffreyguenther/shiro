@@ -14,20 +14,20 @@ import shiro.Port;
 import shiro.Value;
 
 /**
- *
- * @author ankit
+ * Represents a boolean expression in Shiro.
+ * @author jeffreyguenther
  */
 @SuppressWarnings("serial")
-public class SString implements Expression, Serializable{
-    private final String string;
+public class SBoolean implements Expression, Serializable{
+    private final Boolean booolean;
 
-    public SString(String string) {
-        this.string = string;
+    public SBoolean(Boolean bool) {
+        this.booolean = bool;
     }
     
     @Override
     public Value evaluate() {
-           return Value.createString(string);
+           return Value.createBoolean(booolean);
         
     }
 
@@ -39,7 +39,7 @@ public class SString implements Expression, Serializable{
     
     @Override
     public String toString() {
-        return "(" + string + ')';
+        return "(" + booolean + ')';
     }
 
     @Override
@@ -49,8 +49,8 @@ public class SString implements Expression, Serializable{
 
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 97 * hash + Objects.hashCode(this.string);
+        int hash = 5;
+        hash = 79 * hash + Objects.hashCode(this.booolean);
         return hash;
     }
 
@@ -62,12 +62,10 @@ public class SString implements Expression, Serializable{
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final SString other = (SString) obj;
-        if (!Objects.equals(this.string, other.string)) {
+        final SBoolean other = (SBoolean) obj;
+        if (!Objects.equals(this.booolean, other.booolean)) {
             return false;
         }
         return true;
     }
-    
-    
 }

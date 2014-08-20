@@ -12,10 +12,10 @@ import shiro.Value;
  * This class represents a number in the shiro lang
  * @author jeffreyguenther
  */
-public class Number implements Expression{
+public class SNumber implements Expression{
     private final Double number;
 
-    public Number(Double number) {
+    public SNumber(Double number) {
         this.number = number;
     }
     
@@ -60,7 +60,7 @@ public class Number implements Expression{
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final Number other = (Number) obj;
+        final SNumber other = (SNumber) obj;
         if (!Objects.equals(this.number, other.number)) {
             return false;
         }

@@ -1,21 +1,12 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package shiro.functions.graphics.recursiveforms;
 
-import java.util.List;
 import javafx.application.Application;
 import javafx.scene.Group;
 import javafx.scene.Scene;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.transform.Transform;
 import javafx.stage.Stage;
 
 /**
- *
+ * JavaFX application to test recursive form renderer
  * @author jeffreyguenther
  */
 public class RecursiveTreeTester extends Application {
