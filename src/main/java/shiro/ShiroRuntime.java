@@ -95,7 +95,7 @@ public class ShiroRuntime {
     private Map<String, ParseTree> nodeDefs;           // AST table
     private Map<String, GraphDefinition> graphDefs;    // AST Table
     private Map<String, ParseTree> graphTrees;         // temporary graph def table
-    private Map<String, ParseTree> alternativeDefs;    // git sAST table
+    private Map<String, ParseTree> alternativeDefs;    // AST table
 
     private Map<String, Graph> graphs;         // realized graphs;
     private Map<String, StateDefinition> alternatives; // alternative specs

@@ -9,7 +9,7 @@ apply plugin: 'application'
 apply from: file('gradle/idea.gradle')
 apply from: 'gradle/javafx.plugin'
 
-mainClassName = 'shiro.viewer.Viewer'
+//mainClassName = 'shiro.viewer.Viewer'
 gradle.projectsEvaluated {
     tasks.withType(Compile) {
         options.compilerArgs << "-Xlint:unchecked"
