@@ -36,6 +36,6 @@ public class SBoolean extends SValue<Boolean>{
    
     @Override
     public String getType() {
-        return "Boolean";
+        return BOOLEAN;
     }
 }

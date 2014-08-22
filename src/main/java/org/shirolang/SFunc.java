@@ -42,4 +42,5 @@ public interface SFunc {
     boolean isInteger();
     boolean isLiteral();
     boolean isString();
+    boolean isBoolean();
 }

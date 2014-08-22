@@ -16,6 +16,15 @@ public abstract class SFuncBase implements SFunc {
     public static final String DOUBLE = "Double";
     public static final String STRING = "String";
     public static final String BOOLEAN = "Boolean";
+    public static final String GREATERTHAN = "GreaterThan";
+    public static final String GREATERTHAN_OR_EQUAL = "GreaterThanOrEqual";
+    public static final String LESSTHAN = "LessThan";
+    public static final String LESSTHAN_OR_EQUAL = "LessThanOrEqual";
+    public static final String EQUAL = "Equal";
+    public static final String AND = "And";
+    public static final String OR = "Or";
+    public static final String NOT = "Not";
+            
     
     protected SIndexedMap<SFunc> args;
     protected SIndexedMap<SFunc> result; 
@@ -79,5 +88,10 @@ public abstract class SFuncBase implements SFunc {
     @Override
     public boolean isString(){
         return isType(STRING);
+    }
+    
+    @Override
+    public boolean isBoolean(){
+        return isType(BOOLEAN);
     }
 }
