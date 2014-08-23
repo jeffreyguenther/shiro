@@ -22,45 +22,22 @@
  * THE SOFTWARE.
  */
 
-package org.shirolang.values;
+package org.shirolang;
 
-import org.shirolang.SFuncBase;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.shirolang.functions.math.MathSuite;
 
 /**
- * A base class to  help speed writing functional representations of values.
- * This base class is used to represent both constants and variables.
- * When acting as a constant such as literal string "hello" or a double 14.322,
- * these functions simply pass through the value. To add support for 
- * additional types to Shiro, extend this class and register it as a type with
- * runtime.
+ *
  * @author jeffreyguenther
- * @param <T>
  */
-public abstract class SValue<T> extends SFuncBase{
-    private final T v;
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+    ShiroRuntimeTest.class,
+    SIndexedMapTest.class,
+    MathSuite.class
+})
+public class RuntimeSuite {
     
-    public SValue(T f) {
-        super();
-        this.v = f;
-    }
-
-    @Override
-    public void evaluate() {
-       result.set(this);
-    }
-    
-    public T getValue(){
-        if(result.size() < 1){
-            throw new RuntimeException("Cannot return value. "
-                    + "Multifunction has not been evaluated. "
-                    + "Call evaluate() before getting value.");
-        }
-        
-        return v;
-    }
-
-    @Override
-    public String toString() {
-       return "" + v;
-    }
 }

@@ -53,7 +53,7 @@ public class MultiplyTest {
         b.evaluate();
         product.evaluate();
         
-        SDouble r = (SDouble) product.get();
+        SDouble r = (SDouble) product.getArg();
         assertTrue(r.isDouble());
         assertEquals(-1.69, r.getValue(), 1e-16);
     }
@@ -69,8 +69,8 @@ public class MultiplyTest {
         b.evaluate();
         product.evaluate();
         
-        SInteger r = (SInteger) product.get();
-        assertTrue(product.get().isInteger());
+        SInteger r = (SInteger) product.getArg();
+        assertTrue(product.getArg().isInteger());
         assertEquals(-13, (int)r.getValue());
     }
     

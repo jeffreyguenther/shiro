@@ -54,7 +54,7 @@ public class GreaterThanTest {
         b.evaluate();
         result.evaluate();
         
-        SBoolean r = (SBoolean) result.get();
+        SBoolean r = (SBoolean) result.getArg();
         assertTrue(r.isBoolean());
         assertTrue(r.getValue());
     }
@@ -70,7 +70,7 @@ public class GreaterThanTest {
         b.evaluate();
         sum.evaluate();
         
-        SBoolean r = (SBoolean) sum.get();
+        SBoolean r = (SBoolean) sum.getArg();
         assertTrue(r.isBoolean());
         assertFalse(r.getValue());
     }
@@ -86,7 +86,7 @@ public class GreaterThanTest {
         b.evaluate();
         result.evaluate();
         
-        SBoolean r = (SBoolean) result.get();
+        SBoolean r = (SBoolean) result.getArg();
         assertTrue(r.isBoolean());
         assertTrue(r.getValue());
     }
@@ -102,7 +102,7 @@ public class GreaterThanTest {
         b.evaluate();
         sum.evaluate();
         
-        SBoolean r = (SBoolean) sum.get();
+        SBoolean r = (SBoolean) sum.getArg();
         assertTrue(r.isBoolean());
         assertFalse(r.getValue());
     }

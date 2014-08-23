@@ -36,6 +36,7 @@ public class SIdent extends SFuncBase{
     private final String value;
     
     public SIdent(Scope scope, String s) {
+        super();
         this.scope = scope;
         value = s;
     }

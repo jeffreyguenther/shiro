@@ -34,7 +34,7 @@ public class SMap extends SFuncBase{
             func.setArg(1, v);
             func.evaluate();
             
-            SFunc r = func.get();
+            SFunc r = func.getArg();
             rs.add(r);
         }
         

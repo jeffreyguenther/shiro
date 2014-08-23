@@ -24,19 +24,21 @@
 
 package org.shirolang.functions.math;
 
+import java.util.Objects;
 import org.shirolang.SFunc;
 import org.shirolang.SFuncBase;
 import org.shirolang.values.SBoolean;
 import org.shirolang.values.SDouble;
 import org.shirolang.values.SInteger;
+import org.shirolang.values.SString;
 
 /**
  *
  * @author jeffreyguenther
  */
-public class SGreaterThanOrEqual extends SFuncBase{
+public class SNotEqual extends SFuncBase{
 
-    public SGreaterThanOrEqual() {
+    public SNotEqual() {
         super();
         // setup args
         args.setKeyForIndex("a", 0);
@@ -45,7 +47,7 @@ public class SGreaterThanOrEqual extends SFuncBase{
         result.set(null);
     }
     
-    public SGreaterThanOrEqual(SFunc a, SFunc b){
+    public SNotEqual(SFunc a, SFunc b){
         this();
         args.set(a);
         args.set(b);
@@ -60,7 +62,7 @@ public class SGreaterThanOrEqual extends SFuncBase{
         if(lhs.isDouble() && rhs.isDouble()){
             Double l = ((SDouble) lhs).getValue();
             Double r = ((SDouble) rhs).getValue();
-            Boolean gt = l >= r;
+            Boolean gt = !l.equals(r);
             
             SBoolean s = new SBoolean(gt);
             s.evaluate();
@@ -69,7 +71,16 @@ public class SGreaterThanOrEqual extends SFuncBase{
         }else if(lhs.isInteger() && lhs.isInteger()){
             Integer l = ((SInteger) lhs).getValue();
             Integer r = ((SInteger) rhs).getValue();
-            Boolean gt = l >= r;
+            Boolean gt = !Objects.equals(l, r);
+            
+            SBoolean s = new SBoolean(gt);
+            s.evaluate();
+            
+            result.set(s, 0);
+        }else if(lhs.isString() && rhs.isString()){
+            String l = ((SString) lhs).getValue();
+            String r = ((SString) rhs).getValue();
+            Boolean gt = !l.equals(r);
             
             SBoolean s = new SBoolean(gt);
             s.evaluate();
@@ -77,12 +88,12 @@ public class SGreaterThanOrEqual extends SFuncBase{
             result.set(s, 0);
         }else{
             // identify which argument is not a double
-            throw new RuntimeException("Only Doubles and Integers can be compared.");
+            throw new RuntimeException("Only Doubles, Integers, and Strings can be compared.");
         }
     }
 
     @Override
     public String getType() {
-        return GREATERTHAN_OR_EQUAL;
+        return NOT_EQUAL;
     }
 }

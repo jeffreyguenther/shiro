@@ -7,6 +7,8 @@
 package org.shirolang.values;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 /**
@@ -33,5 +35,17 @@ public class DoubleTest {
         SDouble d = new SDouble(15.0);
         d.evaluate();
         assertEquals(15.0, d.getValue(), DELTA);
+    }
+    
+     @Test
+    public void getArgs(){
+        SDouble s = new SDouble(2.0);
+        assertTrue(s.getArgs().isEmpty());
+    }
+    
+    @Test
+    public void hasArgs(){
+        SDouble s = new SDouble(-1.1);
+        assertFalse(s.hasArgs());
     }
 }

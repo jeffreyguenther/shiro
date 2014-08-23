@@ -7,6 +7,8 @@
 package org.shirolang.values;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 /**
@@ -35,5 +37,17 @@ public class BooleanTest {
         SBoolean f = new SBoolean(false);
         f.evaluate();
         assertEquals(false, f.getValue());
+    }
+    
+     @Test
+    public void getArgs(){
+        SBoolean s = new SBoolean(true);
+        assertTrue(s.getArgs().isEmpty());
+    }
+    
+    @Test
+    public void hasArgs(){
+        SBoolean s = new SBoolean(false);
+        assertFalse(s.hasArgs());
     }
 }

@@ -52,8 +52,8 @@ public class SAdd extends SFuncBase{
 
     @Override
     public void evaluate() {
-        SFunc lhs = args.get(0).get();
-        SFunc rhs = args.get(1).get();
+        SFunc lhs = args.get(0).getArg();
+        SFunc rhs = args.get(1).getArg();
         
         // Only allow doubles to be added     
         if(lhs.isDouble() && rhs.isDouble()){

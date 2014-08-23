@@ -75,7 +75,7 @@ public class ShiroTypes {
         aId.evaluate();
         b2.evaluate();
         sum2.evaluate();
-        System.out.println(sum2.get());
+        System.out.println(sum2.getArg());
         
         
         

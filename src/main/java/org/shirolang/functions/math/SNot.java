@@ -49,11 +49,11 @@ public class SNot extends SFuncBase{
 
     @Override
     public void evaluate() {
-        SFunc lhs = args.get(0).get();
+        SFunc lhs = args.get(0).getArg();
         
         // Only allow doubles to be added     
         if(lhs.isBoolean()){
-            Boolean l = ((SBoolean) lhs.get()).getValue();
+            Boolean l = ((SBoolean) lhs.getArg()).getValue();
             Boolean bool = !l;
             
             SBoolean s = new SBoolean(bool);

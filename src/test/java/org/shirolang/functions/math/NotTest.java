@@ -51,7 +51,7 @@ public class NotTest {
         a.evaluate();
         result.evaluate();
         
-        SBoolean r = (SBoolean) result.get();
+        SBoolean r = (SBoolean) result.getArg();
         assertTrue(r.isBoolean());
         assertFalse(r.getValue());
         
@@ -62,7 +62,7 @@ public class NotTest {
         b.evaluate();
         result2.evaluate();
         
-        SBoolean r2 = (SBoolean) result2.get();
+        SBoolean r2 = (SBoolean) result2.getArg();
         assertTrue(r2.isBoolean());
         assertTrue(r2.getValue());
     }
@@ -75,5 +75,14 @@ public class NotTest {
         
         a.evaluate();
         sum.evaluate();
+    }
+    
+    @Test
+    public void args(){
+        SBoolean a = new SBoolean(true);
+        SNot result = new SNot(a);
+        
+        assertTrue(result.hasArgs());
+        assertTrue(result.getArgs().contains(a));
     }
 }

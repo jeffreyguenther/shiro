@@ -38,7 +38,16 @@ import org.junit.runners.Suite;
     MultiplyTest.class,
     ModuloTest.class,
     DivideTest.class,
-    PowerTest.class
+    PowerTest.class,
+    EqualTest.class,
+    NotEqualTest.class,
+    GreaterThanOrEqualTest.class,
+    GreaterThanTest.class,
+    LessThanOrEqualTest.class,
+    LessThanTest.class,
+    NotTest.class,
+    OrTest.class,
+    AndTest.class
 })
 public class MathSuite {
     

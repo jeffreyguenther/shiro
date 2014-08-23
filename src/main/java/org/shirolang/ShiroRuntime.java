@@ -26,6 +26,13 @@ package org.shirolang;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
+import org.shirolang.interpreter.ShiroExpressionListener;
+import org.shirolang.interpreter.ShiroLexer;
+import org.shirolang.interpreter.ShiroParser;
 
 /**
  *
@@ -45,5 +52,17 @@ public class ShiroRuntime implements Scope{
     @Override
     public SFuncBase resolvePath(String s) {
         return symbols.get(s);
+    }
+
+    public SFunc executedExpr(String expr) {
+        ShiroLexer lex = new ShiroLexer(new ANTLRInputStream(expr));
+        ShiroParser parser = new ShiroParser(new CommonTokenStream(lex));
+        ParseTree tree = parser.expr();
+        
+        ParseTreeWalker walker = new ParseTreeWalker();
+        ShiroExpressionListener expression = new ShiroExpressionListener();
+        walker.walk(expression, tree);
+        
+        return expression.getExpr(tree);
     }
 }

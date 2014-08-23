@@ -24,11 +24,14 @@
 
 package org.shirolang;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
+import org.shirolang.values.SBoolean;
 import org.shirolang.values.SDouble;
 import org.shirolang.values.SIdent;
+import org.shirolang.values.SInteger;
 
 /**
  *
@@ -45,7 +48,39 @@ public class ShiroRuntimeTest {
         assertSame(a1, rt.resolvePath("a"));
         
         aId.evaluate();
-        assertSame(a1, aId.get());
+        assertSame(a1, aId.getArg());
         assertTrue(a1.isDouble());
+    }
+    
+    @Test
+    public void parseInt(){
+        ShiroRuntime rt = new ShiroRuntime();
+        SFunc result = rt.executedExpr("20");
+        assertTrue(result.isInteger());
+        
+        SInteger i = (SInteger) result;
+        result.evaluate();
+        assertEquals(20, (int) i.getValue());
+    }
+    
+    @Test
+    public void parseDouble(){
+        ShiroRuntime rt = new ShiroRuntime();
+        SFunc result = rt.executedExpr("2110.032");
+        assertTrue(result.isDouble());
+        
+        SDouble i = (SDouble) result;
+        result.evaluate();
+        assertEquals(2110.032, i.getValue(), 1e-16);
+    }
+    
+    @Test
+    public void parseEquals(){
+        ShiroRuntime rt = new ShiroRuntime();
+        SFunc result = rt.executedExpr("1 == 1");
+        
+        assertTrue(result.isBoolean());
+        SBoolean b = (SBoolean) result;
+        assertTrue(b.getValue());
     }
 }

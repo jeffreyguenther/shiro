@@ -1,8 +1,10 @@
 package org.shirolang.functions.math;
 
+import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
+import org.shirolang.SFunc;
 import org.shirolang.values.SDouble;
 import org.shirolang.values.SInteger;
 import org.shirolang.values.SString;
@@ -46,14 +48,14 @@ public class PowerTest {
     public void powerDoubles(){
         SDouble a = new SDouble(13.0);
         SDouble b = new SDouble(2.0);
-        SPower sum = new SPower(a, b);
+        SPower product = new SPower(a, b);
         
         // simulate evaluation order
         a.evaluate();
         b.evaluate();
-        sum.evaluate();
+        product.evaluate();
         
-        SDouble r = (SDouble) sum.get();
+        SDouble r = (SDouble) product.getArg();
         assertTrue(r.isDouble());
         assertEquals(169, r.getValue(), 1e-16);
     }
@@ -62,15 +64,15 @@ public class PowerTest {
     public void powerInts(){
         SInteger a = new SInteger(13);
         SInteger b = new SInteger(3);
-        SPower sum = new SPower(a, b);
+        SPower product = new SPower(a, b);
         
         // simulate evaluation order
         a.evaluate();
         b.evaluate();
-        sum.evaluate();
+        product.evaluate();
         
-        SInteger r = (SInteger) sum.get();
-        assertTrue(sum.get().isInteger());
+        SInteger r = (SInteger) product.getArg();
+        assertTrue(product.getArg().isInteger());
         assertEquals(2197, (int)r.getValue());
     }
     
@@ -78,21 +80,33 @@ public class PowerTest {
     public void powerDoubleString(){
         SDouble a = new SDouble(25.9);
         SString s = new SString("5");
-        SAdd sum = new SAdd(a, s);
+        SAdd product = new SAdd(a, s);
         
         a.evaluate();
         s.evaluate();
-        sum.evaluate();
+        product.evaluate();
     }
     
     @Test(expected= RuntimeException.class)
     public void powerStringInt(){
         SInteger a = new SInteger(25);
         SString s = new SString("5");
-        SAdd sum = new SAdd(s, a);
+        SAdd product = new SAdd(s, a);
         
         a.evaluate();
         s.evaluate();
-        sum.evaluate();
+        product.evaluate();
+    }
+    
+    @Test
+    public void args(){
+        SInteger a = new SInteger(13);
+        SInteger b = new SInteger(3);
+        SPower product = new SPower(a, b);
+        
+        assertTrue(product.hasArgs());
+        List<SFunc> args = product.getArgs();
+        assertTrue(args.contains(a));
+        assertTrue(args.contains(b));
     }
 }

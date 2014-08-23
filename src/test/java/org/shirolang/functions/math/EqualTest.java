@@ -55,7 +55,7 @@ public class EqualTest {
         b.evaluate();
         result.evaluate();
         
-        SBoolean r = (SBoolean) result.get();
+        SBoolean r = (SBoolean) result.getArg();
         assertTrue(r.isBoolean());
         assertFalse(r.getValue());
     }
@@ -71,7 +71,7 @@ public class EqualTest {
         b.evaluate();
         result.evaluate();
         
-        SBoolean r = (SBoolean) result.get();
+        SBoolean r = (SBoolean) result.getArg();
         assertTrue(r.isBoolean());
         assertFalse(r.getValue());
     }
@@ -87,7 +87,7 @@ public class EqualTest {
         b.evaluate();
         result.evaluate();
         
-        SBoolean r = (SBoolean) result.get();
+        SBoolean r = (SBoolean) result.getArg();
         assertTrue(r.isBoolean());
         assertTrue(r.getValue());
     }
@@ -103,7 +103,7 @@ public class EqualTest {
         b.evaluate();
         result.evaluate();
         
-        SBoolean r = (SBoolean) result.get();
+        SBoolean r = (SBoolean) result.getArg();
         assertTrue(r.isBoolean());
         assertFalse(r.getValue());
     }
@@ -119,7 +119,7 @@ public class EqualTest {
         b.evaluate();
         result.evaluate();
         
-        SBoolean r = (SBoolean) result.get();
+        SBoolean r = (SBoolean) result.getArg();
         assertTrue(r.isBoolean());
         assertFalse(r.getValue());
     }
@@ -135,7 +135,7 @@ public class EqualTest {
         b.evaluate();
         result.evaluate();
         
-        SBoolean r = (SBoolean) result.get();
+        SBoolean r = (SBoolean) result.getArg();
         assertTrue(r.isBoolean());
         assertTrue(r.getValue());
     }
@@ -151,7 +151,7 @@ public class EqualTest {
         b.evaluate();
         result.evaluate();
         
-        SBoolean r = (SBoolean) result.get();
+        SBoolean r = (SBoolean) result.getArg();
         assertTrue(r.isBoolean());
         assertTrue(r.getValue());
     }
@@ -167,7 +167,7 @@ public class EqualTest {
         b.evaluate();
         result.evaluate();
         
-        SBoolean r = (SBoolean) result.get();
+        SBoolean r = (SBoolean) result.getArg();
         assertTrue(r.isBoolean());
         assertFalse(r.getValue());
     }

@@ -24,10 +24,12 @@
 
 package org.shirolang.functions.math;
 
+import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
+import org.shirolang.SFunc;
 import org.shirolang.values.SBoolean;
 import org.shirolang.values.SDouble;
 import org.shirolang.values.SString;
@@ -54,8 +56,8 @@ public class OrTest {
         b.evaluate();
         truetrue.evaluate();
         
-        SBoolean r = (SBoolean) truetrue.get();
-        assertTrue(truetrue.get().isBoolean());
+        SBoolean r = (SBoolean) truetrue.getArg();
+        assertTrue(truetrue.getArg().isBoolean());
         assertTrue(r.getValue());
         
         SBoolean a1 = new SBoolean(false);
@@ -67,8 +69,8 @@ public class OrTest {
         b1.evaluate();
         falsefalse.evaluate();
         
-        SBoolean r1 = (SBoolean) falsefalse.get();
-        assertTrue(falsefalse.get().isBoolean());
+        SBoolean r1 = (SBoolean) falsefalse.getArg();
+        assertTrue(falsefalse.getArg().isBoolean());
         assertFalse(r1.getValue());
         
         SBoolean a2 = new SBoolean(true);
@@ -80,8 +82,8 @@ public class OrTest {
         b2.evaluate();
         truefalse.evaluate();
         
-        SBoolean r2 = (SBoolean) truefalse.get();
-        assertTrue(truefalse.get().isBoolean());
+        SBoolean r2 = (SBoolean) truefalse.getArg();
+        assertTrue(truefalse.getArg().isBoolean());
         assertTrue(r2.getValue());
     }
     
@@ -94,5 +96,17 @@ public class OrTest {
         a.evaluate();
         s.evaluate();
         sum.evaluate();
+    }
+    
+    @Test
+    public void args(){
+        SBoolean a = new SBoolean(true);
+        SBoolean b = new SBoolean(true);
+        SOr truetrue = new SOr(a, b);
+        
+        assertTrue(truetrue.hasArgs());
+        List<SFunc> args = truetrue.getArgs();
+        assertTrue(args.contains(a));
+        assertTrue(args.contains(b));
     }
 }

@@ -6,6 +6,8 @@
 
 package org.shirolang;
 
+import java.util.List;
+
 /**
  * A base class to handle the common requirements
  * of implementing multi-functions.
@@ -21,6 +23,7 @@ public abstract class SFuncBase implements SFunc {
     public static final String LESSTHAN = "LessThan";
     public static final String LESSTHAN_OR_EQUAL = "LessThanOrEqual";
     public static final String EQUAL = "Equal";
+    public static final String NOT_EQUAL = "NotEqual";
     public static final String AND = "And";
     public static final String OR = "Or";
     public static final String NOT = "Not";
@@ -37,18 +40,28 @@ public abstract class SFuncBase implements SFunc {
     }
     
     @Override
-    public SFunc get() {
+    public SFunc getArg() {
         return result.get(0);
     }
 
     @Override
-    public SFunc get(String s) {
+    public SFunc getArg(String s) {
         return result.get(s);
     }
 
     @Override
-    public SFunc get(Integer i) {
+    public SFunc getArg(Integer i) {
         return result.get(i);
+    }
+
+    @Override
+    public List<SFunc> getArgs() {
+        return args.getAll();
+    }
+
+    @Override
+    public boolean hasArgs() {
+        return !args.isEmpty();
     }
     
     @Override

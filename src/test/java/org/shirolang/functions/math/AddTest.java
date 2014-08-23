@@ -53,7 +53,7 @@ public class AddTest {
         b.evaluate();
         sum.evaluate();
         
-        SDouble r = (SDouble) sum.get();
+        SDouble r = (SDouble) sum.getArg();
         assertTrue(r.isDouble());
         assertEquals(12.87, r.getValue(), 1e-16);
     }
@@ -69,8 +69,8 @@ public class AddTest {
         b.evaluate();
         sum.evaluate();
         
-        SInteger r = (SInteger) sum.get();
-        assertTrue(sum.get().isInteger());
+        SInteger r = (SInteger) sum.getArg();
+        assertTrue(sum.getArg().isInteger());
         assertEquals(12, (int)r.getValue());
     }
     

@@ -38,6 +38,14 @@ public class SIndexedMap<T> {
     }
     
     /**
+     * Get all of the values stored in the map
+     * @return the list of values stored in the map by index order
+     */
+    public List<T> getAll(){
+        return values;
+    }
+    
+    /**
      * Adds the value to the arg list.
      * Calls List.add
      * @param v 
@@ -56,5 +64,9 @@ public class SIndexedMap<T> {
 
     public int size() {
         return values.size();
+    }
+
+    public boolean isEmpty() {
+        return indexToKeyMap.isEmpty();
     }
 }

@@ -25,7 +25,9 @@
 package org.shirolang.values;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.shirolang.ShiroRuntime;
 
@@ -49,6 +51,28 @@ public class IdentTest {
         SIdent id = new SIdent(rt, "d");
         id.evaluate();
         
-        assertSame("Should return the stored function", d, id.get());
+        assertSame("Should return the stored function", d, id.getArg());
     }
+    
+    @Test
+    public void getArgs(){
+        ShiroRuntime rt = new ShiroRuntime();
+        SDouble d = new SDouble(0.12);
+        rt.addSymbol("d", d);
+        
+        SIdent id = new SIdent(rt, "d");
+        
+        assertEquals(0, id.getArgs().size());
+    }
+    
+    @Test
+    public void hasArgs(){
+        ShiroRuntime rt = new ShiroRuntime();
+        SDouble d = new SDouble(0.12);
+        rt.addSymbol("d", d);
+        
+        SIdent id = new SIdent(rt, "d");
+        assertFalse(id.hasArgs());
+    }
+    
 }

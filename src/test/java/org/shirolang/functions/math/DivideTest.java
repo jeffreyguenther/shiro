@@ -53,7 +53,7 @@ public class DivideTest {
         b.evaluate();
         quotient.evaluate();
         
-        SDouble r = (SDouble) quotient.get();
+        SDouble r = (SDouble) quotient.getArg();
         assertTrue(r.isDouble());
         assertEquals(0.0, r.getValue(), 1e-16);
     }
@@ -69,7 +69,7 @@ public class DivideTest {
         b.evaluate();
         quotient.evaluate();
         
-        SDouble r = (SDouble) quotient.get();
+        SDouble r = (SDouble) quotient.getArg();
         assertTrue(r.isDouble());
         assertEquals(-38.23529411764706, r.getValue(), 1e-16);
     }
@@ -85,8 +85,8 @@ public class DivideTest {
         b.evaluate();
         quotient.evaluate();
         
-        SInteger r = (SInteger) quotient.get();
-        assertTrue(quotient.get().isInteger());
+        SInteger r = (SInteger) quotient.getArg();
+        assertTrue(quotient.getArg().isInteger());
         assertEquals(-13, (int)r.getValue());
     }
     

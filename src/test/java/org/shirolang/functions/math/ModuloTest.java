@@ -1,12 +1,3 @@
-package org.shirolang.functions.math;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import org.junit.Test;
-import org.shirolang.values.SDouble;
-import org.shirolang.values.SInteger;
-import org.shirolang.values.SString;
-
 /*
  * The MIT License
  *
@@ -31,6 +22,15 @@ import org.shirolang.values.SString;
  * THE SOFTWARE.
  */
 
+package org.shirolang.functions.math;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.junit.Test;
+import org.shirolang.values.SDouble;
+import org.shirolang.values.SInteger;
+import org.shirolang.values.SString;
+
 /**
  *
  * @author jeffreyguenther
@@ -53,7 +53,7 @@ public class ModuloTest {
         b.evaluate();
         remainder.evaluate();
         
-        SDouble r = (SDouble) remainder.get();
+        SDouble r = (SDouble) remainder.getArg();
         assertTrue(r.isDouble());
         assertEquals(0.5, r.getValue(), 1e-16);
     }
@@ -69,8 +69,8 @@ public class ModuloTest {
         b.evaluate();
         remainder.evaluate();
         
-        SInteger r = (SInteger) remainder.get();
-        assertTrue(remainder.get().isInteger());
+        SInteger r = (SInteger) remainder.getArg();
+        assertTrue(remainder.getArg().isInteger());
         assertEquals(0, (int)r.getValue());
     }
     
@@ -94,5 +94,18 @@ public class ModuloTest {
         a.evaluate();
         s.evaluate();
         product.evaluate();
+    }
+    
+    @Test
+    public void args(){
+        SInteger a = new SInteger(25);
+        SString s = new SString("5");
+        SModulo product = new SModulo(s, a);
+        
+        System.out.println(product.hasArgs());
+        System.out.println(product.getArgs());
+        assertTrue(product.hasArgs());
+        assertTrue(product.getArgs().contains(a));
+        assertTrue(product.getArgs().contains(s));
     }
 }

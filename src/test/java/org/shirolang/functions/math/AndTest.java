@@ -54,8 +54,8 @@ public class AndTest {
         b.evaluate();
         truetrue.evaluate();
         
-        SBoolean r = (SBoolean) truetrue.get();
-        assertTrue(truetrue.get().isBoolean());
+        SBoolean r = (SBoolean) truetrue.getArg();
+        assertTrue(truetrue.getArg().isBoolean());
         assertTrue(r.getValue());
         
         SBoolean a1 = new SBoolean(false);
@@ -67,8 +67,8 @@ public class AndTest {
         b1.evaluate();
         falsefalse.evaluate();
         
-        SBoolean r1 = (SBoolean) falsefalse.get();
-        assertTrue(falsefalse.get().isBoolean());
+        SBoolean r1 = (SBoolean) falsefalse.getArg();
+        assertTrue(falsefalse.getArg().isBoolean());
         assertFalse(r1.getValue());
         
         SBoolean a2 = new SBoolean(true);
@@ -80,8 +80,8 @@ public class AndTest {
         b2.evaluate();
         truefalse.evaluate();
         
-        SBoolean r2 = (SBoolean) truefalse.get();
-        assertTrue(truefalse.get().isBoolean());
+        SBoolean r2 = (SBoolean) truefalse.getArg();
+        assertTrue(truefalse.getArg().isBoolean());
         assertFalse(r2.getValue());
     }
     

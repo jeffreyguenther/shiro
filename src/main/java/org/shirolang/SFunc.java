@@ -24,19 +24,25 @@
 
 package org.shirolang;
 
+import java.util.List;
+
 /**
  *
  * @author jeffreyguenther
  */
 public interface SFunc {
     void evaluate();
-    SFunc get();
-    SFunc get(String s);
-    SFunc get(Integer i);
-    String getType();
+    SFunc getArg();
+    SFunc getArg(String s);
+    SFunc getArg(Integer i);
+    List<SFunc> getArgs();
     void setArg(String s, SFunc v);
     void setArg(Integer i, SFunc v);
     void setArg(SFunc v);
+    boolean hasArgs();
+    
+    
+    String getType();
     
     boolean isDouble();
     boolean isInteger();

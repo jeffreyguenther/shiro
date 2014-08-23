@@ -24,7 +24,9 @@
 
 package org.shirolang;
 
+import java.util.List;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 /**
@@ -37,5 +39,25 @@ public class SIndexedMapTest {
         SIndexedMap<Integer> ints = new SIndexedMap<>();
         ints.set(1);
         assertEquals(1, ints.size());
+    }
+    
+    @Test
+    public void getAll(){
+        SIndexedMap<Integer> ints = new SIndexedMap<>();
+        ints.set(1);
+        ints.set(3);
+        ints.set(5);
+        
+        List<Integer> values = ints.getAll();
+        assertEquals(3, values.size());
+        assertTrue(values.contains(1));
+        assertTrue(values.contains(3));
+        assertTrue(values.contains(5));
+    }
+    
+    @Test
+    public void isEmpty(){
+        SIndexedMap<Integer> ints = new SIndexedMap<>();
+        assertTrue(ints.isEmpty());
     }
 }
