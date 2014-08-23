@@ -138,6 +138,32 @@ public class EqualTest {
         SBoolean r = (SBoolean) result.getArg();
         assertTrue(r.isBoolean());
         assertTrue(r.getValue());
+        
+        SInteger a1 = new SInteger(-1);
+        SInteger b1 = new SInteger(1);
+        SEqual result2 = new SEqual(a1, b1);
+        
+        // simulate evaluation order
+        a1.evaluate();
+        b1.evaluate();
+        result2.evaluate();
+        
+        SBoolean r2 = (SBoolean) result2.getArg();
+        assertTrue(r2.isBoolean());
+        assertFalse(r2.getValue());
+        
+        SInteger a3 = new SInteger(2);
+        SInteger b3 = new SInteger(1);
+        SEqual result3 = new SEqual(a3, b3);
+        
+        // simulate evaluation order
+        a3.evaluate();
+        b3.evaluate();
+        result3.evaluate();
+        
+        SBoolean r3 = (SBoolean) result3.getArg();
+        assertTrue(r3.isBoolean());
+        assertFalse(r3.getValue());
     }
     
     @Test

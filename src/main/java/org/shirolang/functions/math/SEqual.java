@@ -71,7 +71,7 @@ public class SEqual extends SFuncBase{
         }else if(lhs.isInteger() && lhs.isInteger()){
             Integer l = ((SInteger) lhs).getValue();
             Integer r = ((SInteger) rhs).getValue();
-            Boolean gt = Objects.equals(l, r);
+            Boolean gt = l.equals(r);
             
             SBoolean s = new SBoolean(gt);
             s.evaluate();
@@ -95,5 +95,10 @@ public class SEqual extends SFuncBase{
     @Override
     public String getType() {
         return EQUAL;
+    }
+
+    @Override
+    public String toString() {
+        return "==";
     }
 }

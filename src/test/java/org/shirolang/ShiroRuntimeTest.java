@@ -25,6 +25,7 @@
 package org.shirolang;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
@@ -79,8 +80,41 @@ public class ShiroRuntimeTest {
         ShiroRuntime rt = new ShiroRuntime();
         SFunc result = rt.executedExpr("1 == 1");
         
-        assertTrue(result.isBoolean());
-        SBoolean b = (SBoolean) result;
+        SBoolean b = (SBoolean) result.getArg();
+        assertTrue(b.isBoolean());
         assertTrue(b.getValue());
+        
+        SFunc result2 = rt.executedExpr("2 == 1");
+        
+        SBoolean b2 = (SBoolean) result2.getArg();
+        assertTrue(b2.isBoolean());
+        assertFalse(b2.getValue());
+        
+        SFunc result3 = rt.executedExpr("1 == 2");
+        
+        SBoolean r3 = (SBoolean) result3.getArg();
+        System.out.println(r3);
+        assertTrue(r3.isBoolean());
+        assertFalse(r3.getValue());
+    }
+    
+    @Test
+    public void parseNotEquals(){
+        ShiroRuntime rt = new ShiroRuntime();
+        
+        SFunc result = rt.executedExpr("1 != 1");
+        SBoolean b = (SBoolean) result.getArg();
+        assertTrue(b.isBoolean());
+        assertFalse(b.getValue());
+        
+        SFunc result2 = rt.executedExpr("2 != 1");
+        SBoolean b2 = (SBoolean) result2.getArg();
+        assertTrue(b2.isBoolean());
+        assertTrue(b2.getValue());
+        
+        SFunc result3 = rt.executedExpr("1 != 2");
+        SBoolean b3 = (SBoolean) result3.getArg();
+        assertTrue(b3.isBoolean());
+        assertTrue(b3.getValue());
     }
 }

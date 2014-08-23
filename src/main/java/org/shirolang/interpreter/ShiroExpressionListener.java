@@ -24,6 +24,8 @@
 
 package org.shirolang.interpreter;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
 import org.shirolang.SFunc;
@@ -38,9 +40,11 @@ import org.shirolang.values.SInteger;
  */
 public class ShiroExpressionListener extends ShiroBaseListener{
     protected ParseTreeProperty<SFunc> expressions;
+    private final List<SFunc> exprs;
 
     public ShiroExpressionListener() {
         this.expressions = new ParseTreeProperty<>();
+        exprs = new ArrayList<>();
     }
     
     /**
@@ -62,7 +66,16 @@ public class ShiroExpressionListener extends ShiroBaseListener{
      */
     protected void setExpr(ParseTree node, SFunc expr){
         expressions.put(node, expr);
-    }    
+        exprs.add(expr);
+    }
+    
+    public SFunc getRoot(){
+        return exprs.get(exprs.size() - 1);
+    }
+    
+    public List<SFunc> getExprs(){
+        return exprs;
+    }
 
     @Override
     public void exitNumExpr(ShiroParser.NumExprContext ctx) {
@@ -81,13 +94,13 @@ public class ShiroExpressionListener extends ShiroBaseListener{
 
     @Override
     public void exitEqualityExpr(ShiroParser.EqualityExprContext ctx) {
-        String operator = ctx.getChild(0).getText();
+        String operator = ctx.getChild(1).getText();
         SFunc op1 = getExpr(ctx.expr(0));
         SFunc op2 = getExpr(ctx.expr(1));
         
         switch(operator){
             case "==":
-                SEqual eq = new SEqual(op2, op2);
+                SEqual eq = new SEqual(op1, op2);
                 setExpr(ctx, eq);
                 break;
             case "!=":
@@ -96,6 +109,4 @@ public class ShiroExpressionListener extends ShiroBaseListener{
                 break;
         }
     }
-    
-    
 }

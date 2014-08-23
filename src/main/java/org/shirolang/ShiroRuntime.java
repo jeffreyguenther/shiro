@@ -25,11 +25,16 @@
 package org.shirolang;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
+import org.shirolang.dag.DAGraph;
+import org.shirolang.dag.DependencyRelation;
+import org.shirolang.dag.GraphNode;
+import org.shirolang.dag.TopologicalSort;
 import org.shirolang.interpreter.ShiroExpressionListener;
 import org.shirolang.interpreter.ShiroLexer;
 import org.shirolang.interpreter.ShiroParser;
@@ -40,6 +45,8 @@ import org.shirolang.interpreter.ShiroParser;
  */
 public class ShiroRuntime implements Scope{
     private Map<String, SFuncBase> symbols;
+    private DAGraph<SFunc> graph = new DAGraph<>();
+    private SFuncAction graphNodeAction = new SFuncAction();
 
     public ShiroRuntime() {
         symbols = new HashMap<>();
@@ -55,6 +62,7 @@ public class ShiroRuntime implements Scope{
     }
 
     public SFunc executedExpr(String expr) {
+        graph.removeAllDependencies();
         ShiroLexer lex = new ShiroLexer(new ANTLRInputStream(expr));
         ShiroParser parser = new ShiroParser(new CommonTokenStream(lex));
         ParseTree tree = parser.expr();
@@ -62,7 +70,51 @@ public class ShiroRuntime implements Scope{
         ParseTreeWalker walker = new ParseTreeWalker();
         ShiroExpressionListener expression = new ShiroExpressionListener();
         walker.walk(expression, tree);
+        List<SFunc> exprs = expression.getExprs();
         
-        return expression.getExpr(tree);
+        for(SFunc f: exprs){
+            for(SFunc arg: f.getArgs()){
+                addDependency(f, arg);
+            }
+        }
+        
+        TopologicalSort<SFunc> sorter = new TopologicalSort<>(graph);
+        List<GraphNode<SFunc>> topologicalOrdering = sorter.getTopologicalOrdering();
+
+        // loop through all ports to update them.
+        for (GraphNode<SFunc> gn : topologicalOrdering) {
+            gn.doAction();
+        }
+        
+//        System.out.println(graph.getLeafNodes());
+        return expression.getRoot();
+    }
+    
+    /**
+     * Add a dependency between two SFuncs
+     *
+     * @param graph
+     * @param dependency dependency relation to be added to the graph
+     */
+    private void addDependency(DependencyRelation<SFunc> dependency) {
+        addDependency(dependency.getDependent(), dependency.getDependedOn());
+    }
+    
+    /**
+     * *
+     * Add a dependency between two SFuncs A - depends on -> B
+     *
+     * @param graph
+     * @param a the depended on SFunc reference
+     * @param b the dependent SFunc reference
+     */
+    private void addDependency(SFunc a, SFunc b) {
+
+        if (b == null) {
+            graph.addDependency(new GraphNode<>(a, graphNodeAction), null);
+        } else {
+            graph.addDependency(graph.getNodeForValue(a, graphNodeAction),
+                    graph.getNodeForValue(b, graphNodeAction));
+        }
     }
 }

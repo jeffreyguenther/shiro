@@ -96,4 +96,9 @@ public class SNotEqual extends SFuncBase{
     public String getType() {
         return NOT_EQUAL;
     }
+
+    @Override
+    public String toString() {
+        return "!=";
+    }
 }
