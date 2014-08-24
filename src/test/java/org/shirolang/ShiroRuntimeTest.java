@@ -60,7 +60,6 @@ public class ShiroRuntimeTest {
         assertTrue(result.isInteger());
         
         SInteger i = (SInteger) result;
-        result.evaluate();
         assertEquals(20, (int) i.getValue());
     }
     
@@ -71,7 +70,6 @@ public class ShiroRuntimeTest {
         assertTrue(result.isDouble());
         
         SDouble i = (SDouble) result;
-        result.evaluate();
         assertEquals(2110.032, i.getValue(), 1e-16);
     }
     
@@ -116,5 +114,260 @@ public class ShiroRuntimeTest {
         SBoolean b3 = (SBoolean) result3.getArg();
         assertTrue(b3.isBoolean());
         assertTrue(b3.getValue());
+    }
+    
+    @Test
+    public void lessThan(){
+        ShiroRuntime rt = new ShiroRuntime();
+        
+        SFunc result = rt.executedExpr("1 < 2");
+        SBoolean a = (SBoolean) result.getArg();
+        assertTrue(a.isBoolean());
+        assertTrue(a.getValue());
+        
+        SFunc r2 = rt.executedExpr("2 < 1");
+        SBoolean b = (SBoolean) r2.getArg();
+        assertTrue(b.isBoolean());
+        assertFalse(b.getValue());
+    }
+    
+    @Test
+    public void lessThanEqual(){
+        ShiroRuntime rt = new ShiroRuntime();
+        
+        SFunc result = rt.executedExpr("1 <= 2");
+        SBoolean a = (SBoolean) result.getArg();
+        assertTrue(a.isBoolean());
+        assertTrue(a.getValue());
+        
+        SFunc r2 = rt.executedExpr("2 <= 1");
+        SBoolean b = (SBoolean) r2.getArg();
+        assertTrue(b.isBoolean());
+        assertFalse(b.getValue());
+        
+        SFunc r3 = rt.executedExpr("2 <= 2");
+        SBoolean c = (SBoolean) r3.getArg();
+        assertTrue(c.isBoolean());
+        assertTrue(c.getValue());
+    }
+    
+    @Test
+    public void greaterThan(){
+        ShiroRuntime rt = new ShiroRuntime();
+        
+        SFunc result = rt.executedExpr("1 > 2");
+        SBoolean a = (SBoolean) result.getArg();
+        assertTrue(a.isBoolean());
+        assertFalse(a.getValue());
+        
+        SFunc r2 = rt.executedExpr("2 > 1");
+        SBoolean b = (SBoolean) r2.getArg();
+        assertTrue(b.isBoolean());
+        assertTrue(b.getValue());
+    }
+    
+    @Test
+    public void greaterThanEqual(){
+        ShiroRuntime rt = new ShiroRuntime();
+        
+        SFunc result = rt.executedExpr("1 >= 2");
+        SBoolean a = (SBoolean) result.getArg();
+        assertTrue(a.isBoolean());
+        assertFalse(a.getValue());
+        
+        SFunc r2 = rt.executedExpr("2.5 >= 1.0");
+        SBoolean b = (SBoolean) r2.getArg();
+        assertTrue(b.isBoolean());
+        assertTrue(b.getValue());
+        
+        SFunc r3 = rt.executedExpr("2 >= 2");
+        SBoolean c = (SBoolean) r3.getArg();
+        assertTrue(c.isBoolean());
+        assertTrue(c.getValue());
+    }
+    
+    @Test
+    public void add(){
+        ShiroRuntime rt = new ShiroRuntime();
+        
+        SFunc result = rt.executedExpr("1 + 2");
+        SInteger a = (SInteger) result.getArg();
+        assertTrue(a.isInteger());
+        assertEquals(3, (int) a.getValue());
+        
+        SFunc result2 = rt.executedExpr("5.3 + 2.23");
+        SDouble b = (SDouble) result2.getArg();
+        assertTrue(b.isDouble());
+        assertEquals(7.53, b.getValue(), 1e-14);
+    }
+    
+    @Test
+    public void subtract(){
+        ShiroRuntime rt = new ShiroRuntime();
+        
+        SFunc result = rt.executedExpr("1 - 2");
+        SInteger a = (SInteger) result.getArg();
+        assertTrue(a.isInteger());
+        assertEquals(-1, (int) a.getValue());
+        
+        SFunc result2 = rt.executedExpr("5.3 - 2.23");
+        SDouble b = (SDouble) result2.getArg();
+        assertTrue(b.isDouble());
+        assertEquals(3.07, b.getValue(), 1e-14);
+    }
+    
+    @Test
+    public void multiply(){
+        ShiroRuntime rt = new ShiroRuntime();
+        
+        SFunc result = rt.executedExpr("1 * 2");
+        SInteger a = (SInteger) result.getArg();
+        assertTrue(a.isInteger());
+        assertEquals(2, (int) a.getValue());
+        
+        SFunc result2 = rt.executedExpr("0.5 * 2.0");
+        SDouble b = (SDouble) result2.getArg();
+        assertTrue(b.isDouble());
+        assertEquals(1.0, b.getValue(), 1e-14);
+    }
+    
+    @Test
+    public void divide(){
+        ShiroRuntime rt = new ShiroRuntime();
+        
+        SFunc result = rt.executedExpr("4 / 2");
+        SInteger a = (SInteger) result.getArg();
+        assertTrue(a.isInteger());
+        assertEquals(2, (int) a.getValue());
+        
+        SFunc result2 = rt.executedExpr("0.5 / 2.0");
+        SDouble b = (SDouble) result2.getArg();
+        assertTrue(b.isDouble());
+        assertEquals(0.25, b.getValue(), 1e-14);
+    }
+    
+    @Test
+    public void mod(){
+        ShiroRuntime rt = new ShiroRuntime();
+        
+        SFunc result = rt.executedExpr("4 % 2");
+        SInteger a = (SInteger) result.getArg();
+        assertTrue(a.isInteger());
+        assertEquals(0, (int) a.getValue());
+        
+        SFunc result2 = rt.executedExpr("3.2 % 0.5");
+        SDouble b = (SDouble) result2.getArg();
+        assertTrue(b.isDouble());
+        assertEquals(0.2, b.getValue(), 1e-14);
+    }
+    
+    @Test
+    public void and(){
+        ShiroRuntime rt = new ShiroRuntime();
+        
+        SFunc result = rt.executedExpr("true &&  false");
+        SBoolean a = (SBoolean) result.getArg();
+        assertTrue(a.isBoolean());
+        assertFalse(a.getValue());
+        
+        SFunc result2 = rt.executedExpr("false && false");
+        SBoolean b = (SBoolean) result2.getArg();
+        assertTrue(b.isBoolean());
+        assertFalse(b.getValue());
+        
+        SFunc result3 = rt.executedExpr("false && true");
+        SBoolean c = (SBoolean) result3.getArg();
+        assertTrue(c.isBoolean());
+        assertFalse(c.getValue());
+        
+        SFunc result4 = rt.executedExpr("true && true");
+        SBoolean d = (SBoolean) result4.getArg();
+        assertTrue(d.isBoolean());
+        assertTrue(d.getValue());
+    }
+    
+    @Test
+    public void parseBooleans(){
+        ShiroRuntime rt = new ShiroRuntime();
+        
+        SFunc result = rt.executedExpr("false");
+        assertTrue(result.isBoolean());
+        SBoolean b = (SBoolean) result;
+        assertFalse(b.getValue());
+        
+        SFunc result2 = rt.executedExpr("true");
+        assertTrue(result2.isBoolean());
+        SBoolean b2 = (SBoolean) result2;
+        assertTrue(b2.getValue());
+    }
+    
+     @Test
+    public void or(){
+        ShiroRuntime rt = new ShiroRuntime();
+        
+        SFunc result = rt.executedExpr("true ||  false");
+        SBoolean a = (SBoolean) result.getArg();
+        assertTrue(a.isBoolean());
+        assertTrue(a.getValue());
+        
+        SFunc result2 = rt.executedExpr("false || false");
+        SBoolean b = (SBoolean) result2.getArg();
+        assertTrue(b.isBoolean());
+        assertFalse(b.getValue());
+        
+        SFunc result3 = rt.executedExpr("false || true");
+        SBoolean c = (SBoolean) result3.getArg();
+        assertTrue(c.isBoolean());
+        assertTrue(c.getValue());
+        
+        SFunc result4 = rt.executedExpr("true || true");
+        SBoolean d = (SBoolean) result4.getArg();
+        assertTrue(d.isBoolean());
+        assertTrue(d.getValue());
+    }
+    
+    @Test
+    public void not(){
+        ShiroRuntime rt = new ShiroRuntime();
+        
+        SFunc result = rt.executedExpr("!true");
+        SBoolean a = (SBoolean) result.getArg();
+        assertTrue(a.isBoolean());
+        assertFalse(a.getValue());
+        
+        SFunc result2 = rt.executedExpr("!false");
+        SBoolean b = (SBoolean) result2.getArg();
+        assertTrue(b.isBoolean());
+        assertTrue(b.getValue());
+    }
+    
+    @Test
+    public void parens(){
+        ShiroRuntime rt = new ShiroRuntime();
+        
+        SFunc result = rt.executedExpr("(4 + 2) * 2");
+        SInteger a = (SInteger) result.getArg();
+        assertTrue(a.isInteger());
+        assertEquals(12, (int) a.getValue());
+        
+        SFunc result2 = rt.executedExpr("4 + 2 * 2");
+        SInteger b = (SInteger) result2.getArg();
+        assertTrue(b.isInteger());
+        assertEquals(8, (int) b.getValue());
+    }
+    
+    @Test
+    public void makeNegative(){
+        ShiroRuntime rt = new ShiroRuntime();
+        
+        SFunc result = rt.executedExpr("-2");
+        SInteger a = (SInteger) result.getArg();
+        assertTrue(a.isInteger());
+        assertEquals(-2, (int) a.getValue());
+        
+        SFunc result2 = rt.executedExpr("-2.0");
+        SDouble b = (SDouble) result2.getArg();
+        assertTrue(b.isDouble());
+        assertEquals(-2.0, b.getValue(), 1e-15);
     }
 }

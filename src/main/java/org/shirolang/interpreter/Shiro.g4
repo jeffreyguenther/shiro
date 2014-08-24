@@ -11,8 +11,9 @@ shiro : statement
 statement : expr
 		  ;
 
-expr :  '(' expr ')'						  #bracketsExpr
+expr :  '(' expr ')'						  #parensExpr
 	 |	NOT_OP expr 				          #notExpr
+	 |  MINUS_OP expr      					  #negExpr
 	 |  expr AND_OP expr  		  			  #andExpr
 	 |  expr OR_OP expr 					  #orExpr
 	 |	expr (DIV_OP | MULT_OP | MOD_OP) expr #multExpr
@@ -21,6 +22,7 @@ expr :  '(' expr ')'						  #bracketsExpr
 	 |  expr ( EQ | NEQ ) expr                #equalityExpr
 	 // put in identifier once it's time.
 	 |	NUMBER 								  #numExpr
+	 |  BOOLEAN_LITERAL						  #boolExpr
 	 ;
 
 NOT_OP   : '!';

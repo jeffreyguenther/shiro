@@ -33,56 +33,51 @@ import org.shirolang.values.SInteger;
  *
  * @author jeffreyguenther
  */
-public class SMultiply extends SFuncBase{
+public class SNegative extends SFuncBase{
 
-    public SMultiply() {
+    public SNegative() {
         super();
         // setup args
         args.setKeyForIndex("a", 0);
-        args.setKeyForIndex("b", 1);
         
         result.set(null);
     }
     
-    public SMultiply(SFunc a, SFunc b){
+    public SNegative(SFunc a){
         this();
         args.set(a);
-        args.set(b);
     }
 
     @Override
     public void evaluate() {
         SFunc lhs = args.get(0).getArg();
-        SFunc rhs = args.get(1).getArg();
         
         // Only allow doubles to be added     
-        if(lhs.isDouble() && rhs.isDouble()){
-            Double l = ((SDouble) lhs).getValue();
-            Double r = ((SDouble) rhs).getValue();
-            Double sum = l * r;
+        if(lhs.isInteger()){
+            Integer l = ((SInteger) lhs.getArg()).getValue();
+            Integer product = -1 * l;
             
-            SDouble s = new SDouble(sum);
+            SInteger s = new SInteger(product);
             s.evaluate();
             
             result.set(s, 0);
-        }else if(lhs.isInteger() && lhs.isInteger()){
-            Integer l = ((SInteger) lhs).getValue();
-            Integer r = ((SInteger) rhs).getValue();
-            Integer sum = l * r;
+        }else if(lhs.isDouble()){
+            Double d = ((SDouble) lhs.getArg()).getValue();
+            Double product = -1 * d;
             
-            SInteger s = new SInteger(sum);
+            SDouble s = new SDouble(product);
             s.evaluate();
             
             result.set(s, 0);
         }else{
             // identify which argument is not a double
-            throw new RuntimeException("Only Doubles and Integers can be multiplied. Instead we found " 
-                    + lhs.getType() + " and " + rhs.getType());
+            throw new RuntimeException("Only Integers and Doubles can be made negative. "
+                    + "Instead we found " + lhs.getType() + ".");
         }
     }
 
     @Override
     public String getType() {
-        return "Multiply";
+        return "Negative";
     }
 }

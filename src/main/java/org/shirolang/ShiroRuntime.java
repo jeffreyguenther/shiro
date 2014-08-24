@@ -76,6 +76,10 @@ public class ShiroRuntime implements Scope{
             for(SFunc arg: f.getArgs()){
                 addDependency(f, arg);
             }
+            
+            if(!f.hasArgs()){
+                addDependency(f, null);
+            }
         }
         
         TopologicalSort<SFunc> sorter = new TopologicalSort<>(graph);
