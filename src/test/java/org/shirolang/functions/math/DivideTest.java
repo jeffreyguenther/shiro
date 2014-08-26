@@ -53,7 +53,7 @@ public class DivideTest {
         b.evaluate();
         quotient.evaluate();
         
-        SDouble r = (SDouble) quotient.getArg();
+        SDouble r = (SDouble) quotient.getResult();
         assertTrue(r.isDouble());
         assertEquals(0.0, r.getValue(), 1e-16);
     }
@@ -69,7 +69,7 @@ public class DivideTest {
         b.evaluate();
         quotient.evaluate();
         
-        SDouble r = (SDouble) quotient.getArg();
+        SDouble r = (SDouble) quotient.getResult();
         assertTrue(r.isDouble());
         assertEquals(-38.23529411764706, r.getValue(), 1e-16);
     }
@@ -85,8 +85,8 @@ public class DivideTest {
         b.evaluate();
         quotient.evaluate();
         
-        SInteger r = (SInteger) quotient.getArg();
-        assertTrue(quotient.getArg().isInteger());
+        SInteger r = (SInteger) quotient.getResult();
+        assertTrue(quotient.getResult().isInteger());
         assertEquals(-13, (int)r.getValue());
     }
     
@@ -110,5 +110,12 @@ public class DivideTest {
         a.evaluate();
         s.evaluate();
         product.evaluate();
+    }
+    
+    @Test
+    public void argCount(){
+        SDivide s = new SDivide();
+        assertEquals(2, s.getMaxArgs());
+        assertEquals(2, s.getMinArgs());
     }
 }

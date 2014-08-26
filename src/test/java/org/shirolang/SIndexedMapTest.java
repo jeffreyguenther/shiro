@@ -24,6 +24,7 @@
 
 package org.shirolang;
 
+import java.util.ArrayList;
 import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -60,4 +61,22 @@ public class SIndexedMapTest {
         SIndexedMap<Integer> ints = new SIndexedMap<>();
         assertTrue(ints.isEmpty());
     }
+    
+    @Test
+    public void getKeys(){
+        SIndexedMap<Integer> ints = new SIndexedMap<>();
+        ints.setKeyForIndex("a", 0);
+        ints.setKeyForIndex("b", 1);
+        ints.setKeyForIndex("c", 2);
+        
+        List<String> expectedNames = new ArrayList<>();
+        expectedNames.add("a");
+        expectedNames.add("b");
+        expectedNames.add("c");
+        
+        List<String> keys = ints.getKeys();
+        assertEquals("lists of keys should match", expectedNames, keys);
+    }
+    
+    
 }

@@ -74,4 +74,11 @@ public class IdentTest {
         assertFalse(id.hasArgs());
     }
     
+    @Test
+    public void argCount(){
+        SIdent s = new SIdent();
+        assertEquals(0, s.getMaxArgs());
+        assertEquals(0, s.getMinArgs());
+    }
+    
 }

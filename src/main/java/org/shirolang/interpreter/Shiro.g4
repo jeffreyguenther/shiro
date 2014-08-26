@@ -8,8 +8,40 @@ public static final int COMMENTS = 2;
 shiro : statement
 	  ;
 
-statement : expr
+statement :  	expr
+			|	portstmt
 		  ;
+
+portDecl
+	:	portType portName mfName
+	;
+	
+portDeclInit
+	:	portType portName mfCall
+	;
+
+portstmt	
+	:	(portDecl | portDeclInit ) NEWLINE?
+	;	
+	
+portName 
+	:	IDENT
+	;
+	
+portType:	'port'
+		|	'input'
+		| 	'output'
+        |   'eval'
+	;
+	
+mfCall	:	mfName '(' mfparams ')'
+	;
+	
+mfName 	:	IDENT
+	;
+
+mfparams:	expr(',' expr)* 
+	;
 
 expr :  '(' expr ')'						  #parensExpr
 	 |	NOT_OP expr 				          #notExpr
@@ -41,6 +73,8 @@ LT		 : '<';
 LTE      : '<=';
 EQ		 : '==';
 NEQ      : '!=';
+
+OPTION : 'option';
 
 BOOLEAN_LITERAL
     : 'true' | 'false'

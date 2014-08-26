@@ -53,7 +53,7 @@ public class AddTest {
         b.evaluate();
         sum.evaluate();
         
-        SDouble r = (SDouble) sum.getArg();
+        SDouble r = (SDouble) sum.getResult();
         assertTrue(r.isDouble());
         assertEquals(12.87, r.getValue(), 1e-16);
     }
@@ -69,8 +69,8 @@ public class AddTest {
         b.evaluate();
         sum.evaluate();
         
-        SInteger r = (SInteger) sum.getArg();
-        assertTrue(sum.getArg().isInteger());
+        SInteger r = (SInteger) sum.getResult();
+        assertTrue(sum.getResult().isInteger());
         assertEquals(12, (int)r.getValue());
     }
     
@@ -94,5 +94,12 @@ public class AddTest {
         a.evaluate();
         s.evaluate();
         sum.evaluate();
+    }
+    
+    @Test
+    public void argCount(){
+        SAdd s = new SAdd();
+        assertEquals(2, s.getMaxArgs());
+        assertEquals(2, s.getMinArgs());
     }
 }

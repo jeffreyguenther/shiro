@@ -30,6 +30,10 @@ package org.shirolang.values;
  */
 public class SInteger extends SValue<Integer>{
 
+    public SInteger(){
+        this(Integer.MIN_VALUE);
+    }
+    
     public SInteger(Integer i) {
         super(i);
     }

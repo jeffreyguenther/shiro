@@ -50,4 +50,11 @@ public class IntegerTest {
         SInteger s = new SInteger(-1);
         assertFalse(s.hasArgs());
     }
+    
+    @Test
+    public void argCount(){
+        SInteger s = new SInteger();
+        assertEquals(0, s.getMaxArgs());
+        assertEquals(0, s.getMinArgs());
+    }
 }

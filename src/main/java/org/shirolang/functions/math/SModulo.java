@@ -25,7 +25,6 @@
 package org.shirolang.functions.math;
 
 import org.shirolang.SFunc;
-import org.shirolang.SFuncBase;
 import org.shirolang.values.SDouble;
 import org.shirolang.values.SInteger;
 
@@ -33,7 +32,7 @@ import org.shirolang.values.SInteger;
  *
  * @author jeffreyguenther
  */
-public class SModulo extends SFuncBase{
+public class SModulo extends SBinaryFunction{
 
     public SModulo() {
         super();
@@ -41,7 +40,7 @@ public class SModulo extends SFuncBase{
         args.setKeyForIndex("a", 0);
         args.setKeyForIndex("b", 1);
         
-        result.set(null);
+        results.set(null);
     }
     
     public SModulo(SFunc a, SFunc b){
@@ -52,8 +51,8 @@ public class SModulo extends SFuncBase{
 
     @Override
     public void evaluate() {
-        SFunc lhs = args.get(0).getArg();
-        SFunc rhs = args.get(1).getArg();
+        SFunc lhs = args.get(0).getResult();
+        SFunc rhs = args.get(1).getResult();
         
         // Only allow doubles to be added     
         if(lhs.isDouble() && rhs.isDouble()){
@@ -64,7 +63,7 @@ public class SModulo extends SFuncBase{
             SDouble s = new SDouble(sum);
             s.evaluate();
             
-            result.set(s, 0);
+            results.set(s, 0);
         }else if(lhs.isInteger() && lhs.isInteger()){
             Integer l = ((SInteger) lhs).getValue();
             Integer r = ((SInteger) rhs).getValue();
@@ -73,7 +72,7 @@ public class SModulo extends SFuncBase{
             SInteger s = new SInteger(sum);
             s.evaluate();
             
-            result.set(s, 0);
+            results.set(s, 0);
         }else{
             // identify which argument is not a double
             throw new RuntimeException("Only Doubles and Integers can be moduloed.");

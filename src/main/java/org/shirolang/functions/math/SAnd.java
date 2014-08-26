@@ -25,15 +25,14 @@
 package org.shirolang.functions.math;
 
 import org.shirolang.SFunc;
-import org.shirolang.SFuncBase;
+import static org.shirolang.SType.AND;
 import org.shirolang.values.SBoolean;
-import org.shirolang.values.SInteger;
 
 /**
  *
  * @author jeffreyguenther
  */
-public class SAnd extends SFuncBase{
+public class SAnd extends SBinaryFunction{
 
     public SAnd() {
         super();
@@ -41,7 +40,7 @@ public class SAnd extends SFuncBase{
         args.setKeyForIndex("a", 0);
         args.setKeyForIndex("b", 1);
         
-        result.set(null);
+        results.set(null);
     }
     
     public SAnd(SFunc a, SFunc b){
@@ -52,8 +51,8 @@ public class SAnd extends SFuncBase{
 
     @Override
     public void evaluate() {
-        SFunc lhs = args.get(0).getArg();
-        SFunc rhs = args.get(1).getArg();
+        SFunc lhs = args.get(0).getResult();
+        SFunc rhs = args.get(1).getResult();
         
         // Only allow doubles to be added     
         if(lhs.isBoolean() && rhs.isBoolean()){
@@ -64,7 +63,7 @@ public class SAnd extends SFuncBase{
             SBoolean s = new SBoolean(sum);
             s.evaluate();
             
-            result.set(s, 0);
+            results.set(s, 0);
         }else{
             // identify which argument is not a double
             throw new RuntimeException("Only Booleans can be used with And.");
@@ -73,6 +72,6 @@ public class SAnd extends SFuncBase{
 
     @Override
     public String getType() {
-        return "And";
+        return AND;
     }
 }

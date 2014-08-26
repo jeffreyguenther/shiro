@@ -24,18 +24,24 @@
 
 package org.shirolang.values;
 
+import org.shirolang.SType;
+
 /**
  *
  * @author jeffreyguenther
  */
 public class SDouble extends SValue<Double>{
 
+    public SDouble(){
+        this(Double.NaN);
+    }
+    
     public SDouble(Double f) {
         super(f);
     }
    
     @Override
     public String getType() {
-        return DOUBLE;
+        return SType.DOUBLE;
     }
 }

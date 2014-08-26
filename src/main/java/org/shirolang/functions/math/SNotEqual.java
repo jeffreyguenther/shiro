@@ -26,7 +26,7 @@ package org.shirolang.functions.math;
 
 import java.util.Objects;
 import org.shirolang.SFunc;
-import org.shirolang.SFuncBase;
+import static org.shirolang.SType.NOT_EQUAL;
 import org.shirolang.values.SBoolean;
 import org.shirolang.values.SDouble;
 import org.shirolang.values.SInteger;
@@ -36,7 +36,7 @@ import org.shirolang.values.SString;
  *
  * @author jeffreyguenther
  */
-public class SNotEqual extends SFuncBase{
+public class SNotEqual extends SBinaryFunction{
 
     public SNotEqual() {
         super();
@@ -44,7 +44,7 @@ public class SNotEqual extends SFuncBase{
         args.setKeyForIndex("a", 0);
         args.setKeyForIndex("b", 1);
         
-        result.set(null);
+        results.set(null);
     }
     
     public SNotEqual(SFunc a, SFunc b){
@@ -55,8 +55,8 @@ public class SNotEqual extends SFuncBase{
 
     @Override
     public void evaluate() {
-        SFunc lhs = args.get(0).getArg();
-        SFunc rhs = args.get(1).getArg();
+        SFunc lhs = args.get(0).getResult();
+        SFunc rhs = args.get(1).getResult();
         
         // Only allow doubles to be added     
         if(lhs.isDouble() && rhs.isDouble()){
@@ -67,7 +67,7 @@ public class SNotEqual extends SFuncBase{
             SBoolean s = new SBoolean(gt);
             s.evaluate();
             
-            result.set(s, 0);
+            results.set(s, 0);
         }else if(lhs.isInteger() && lhs.isInteger()){
             Integer l = ((SInteger) lhs).getValue();
             Integer r = ((SInteger) rhs).getValue();
@@ -76,7 +76,7 @@ public class SNotEqual extends SFuncBase{
             SBoolean s = new SBoolean(gt);
             s.evaluate();
             
-            result.set(s, 0);
+            results.set(s, 0);
         }else if(lhs.isString() && rhs.isString()){
             String l = ((SString) lhs).getValue();
             String r = ((SString) rhs).getValue();
@@ -85,7 +85,7 @@ public class SNotEqual extends SFuncBase{
             SBoolean s = new SBoolean(gt);
             s.evaluate();
             
-            result.set(s, 0);
+            results.set(s, 0);
         }else{
             // identify which argument is not a double
             throw new RuntimeException("Only Doubles, Integers, and Strings can be compared.");

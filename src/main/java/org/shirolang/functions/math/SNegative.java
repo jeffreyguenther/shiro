@@ -25,7 +25,6 @@
 package org.shirolang.functions.math;
 
 import org.shirolang.SFunc;
-import org.shirolang.SFuncBase;
 import org.shirolang.values.SDouble;
 import org.shirolang.values.SInteger;
 
@@ -33,14 +32,14 @@ import org.shirolang.values.SInteger;
  *
  * @author jeffreyguenther
  */
-public class SNegative extends SFuncBase{
+public class SNegative extends SUnaryFunction{
 
     public SNegative() {
         super();
         // setup args
         args.setKeyForIndex("a", 0);
         
-        result.set(null);
+        results.set(null);
     }
     
     public SNegative(SFunc a){
@@ -50,25 +49,24 @@ public class SNegative extends SFuncBase{
 
     @Override
     public void evaluate() {
-        SFunc lhs = args.get(0).getArg();
-        
-        // Only allow doubles to be added     
+        SFunc lhs = args.get(0).getResult();
+     
         if(lhs.isInteger()){
-            Integer l = ((SInteger) lhs.getArg()).getValue();
+            Integer l = ((SInteger) lhs).getValue();
             Integer product = -1 * l;
             
             SInteger s = new SInteger(product);
             s.evaluate();
             
-            result.set(s, 0);
+            results.set(s, 0);
         }else if(lhs.isDouble()){
-            Double d = ((SDouble) lhs.getArg()).getValue();
+            Double d = ((SDouble) lhs).getValue();
             Double product = -1 * d;
             
             SDouble s = new SDouble(product);
             s.evaluate();
             
-            result.set(s, 0);
+            results.set(s, 0);
         }else{
             // identify which argument is not a double
             throw new RuntimeException("Only Integers and Doubles can be made negative. "

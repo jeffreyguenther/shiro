@@ -36,10 +36,19 @@ public interface SFunc {
     SFunc getArg(String s);
     SFunc getArg(Integer i);
     List<SFunc> getArgs();
+    int getMaxArgs();
+    int getMinArgs();
+    List<String> getArgKeys();
     void setArg(String s, SFunc v);
     void setArg(Integer i, SFunc v);
-    void setArg(SFunc v);
+    void appendArg(SFunc v);
     boolean hasArgs();
+    
+    SFunc getResult();
+    SFunc getResult(Integer i);
+    SFunc getResult(String s);
+    List<SFunc> getResults();
+    List<String> getResultKeys();
     
     
     String getType();

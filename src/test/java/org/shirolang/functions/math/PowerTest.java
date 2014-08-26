@@ -55,7 +55,7 @@ public class PowerTest {
         b.evaluate();
         product.evaluate();
         
-        SDouble r = (SDouble) product.getArg();
+        SDouble r = (SDouble) product.getResult();
         assertTrue(r.isDouble());
         assertEquals(169, r.getValue(), 1e-16);
     }
@@ -71,8 +71,8 @@ public class PowerTest {
         b.evaluate();
         product.evaluate();
         
-        SInteger r = (SInteger) product.getArg();
-        assertTrue(product.getArg().isInteger());
+        SInteger r = (SInteger) product.getResult();
+        assertTrue(product.getResult().isInteger());
         assertEquals(2197, (int)r.getValue());
     }
     
@@ -108,5 +108,12 @@ public class PowerTest {
         List<SFunc> args = product.getArgs();
         assertTrue(args.contains(a));
         assertTrue(args.contains(b));
+    }
+    
+    @Test
+    public void argCount(){
+        SPower s = new SPower();
+        assertEquals(2, s.getMaxArgs());
+        assertEquals(2, s.getMinArgs());
     }
 }

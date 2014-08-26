@@ -29,5 +29,5 @@ package org.shirolang;
  * @author jeffreyguenther
  */
 public interface Scope {
-    public SFuncBase resolvePath(String s);
+    public SFunc resolvePath(String s);
 }

@@ -25,21 +25,20 @@
 package org.shirolang.functions.math;
 
 import org.shirolang.SFunc;
-import org.shirolang.SFuncBase;
 import org.shirolang.values.SBoolean;
 
 /**
  *
  * @author jeffreyguenther
  */
-public class SNot extends SFuncBase{
+public class SNot extends SUnaryFunction{
 
     public SNot() {
         super();
         // setup args
         args.setKeyForIndex("a", 0);
         
-        result.set(null);
+        results.set(null);
     }
     
     public SNot(SFunc a){
@@ -49,17 +48,16 @@ public class SNot extends SFuncBase{
 
     @Override
     public void evaluate() {
-        SFunc lhs = args.get(0).getArg();
-        
-        // Only allow doubles to be added     
+        SFunc lhs = args.get(0).getResult();
+             
         if(lhs.isBoolean()){
-            Boolean l = ((SBoolean) lhs.getArg()).getValue();
+            Boolean l = ((SBoolean) lhs).getValue();
             Boolean bool = !l;
             
             SBoolean s = new SBoolean(bool);
             s.evaluate();
             
-            result.set(s, 0);
+            results.set(s, 0);
         }else{
             // identify which argument is not a double
             throw new RuntimeException("Only Booleans can be negated.");

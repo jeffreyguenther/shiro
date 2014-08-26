@@ -11,12 +11,13 @@ import java.util.ArrayList;
 import java.util.List;
 import org.shirolang.SFunc;
 import org.shirolang.SFuncBase;
+import org.shirolang.functions.math.SBinaryFunction;
 
 /**
  *
  * @author jeffreyguenther
  */
-public class SMap extends SFuncBase{
+public class SMap extends SBinaryFunction{
     
     public SMap(SFunc list, SFunc func){
         args.set(list);
@@ -38,7 +39,7 @@ public class SMap extends SFuncBase{
             rs.add(r);
         }
         
-        result.set(new SList(rs));
+        results.set(new SList(rs));
     }
 
     @Override

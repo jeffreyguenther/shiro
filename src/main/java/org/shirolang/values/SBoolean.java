@@ -24,18 +24,24 @@
 
 package org.shirolang.values;
 
+import org.shirolang.SType;
+
 /**
  *
  * @author jeffreyguenther
  */
 public class SBoolean extends SValue<Boolean>{
 
+    public SBoolean(){
+        this(false);
+    }
+    
     public SBoolean(Boolean b) {
         super(b);
     }
    
     @Override
     public String getType() {
-        return BOOLEAN;
+        return SType.BOOLEAN;
     }
 }

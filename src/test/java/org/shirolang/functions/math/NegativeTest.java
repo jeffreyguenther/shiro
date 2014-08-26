@@ -50,7 +50,7 @@ public class NegativeTest {
         a.evaluate();
         result.evaluate();
         
-        SInteger r = (SInteger) result.getArg();
+        SInteger r = (SInteger) result.getResult();
         assertTrue(r.isInteger());
         assertEquals(-2, (int)r.getValue());
         
@@ -61,7 +61,7 @@ public class NegativeTest {
         b.evaluate();
         result2.evaluate();
         
-        SInteger r2 = (SInteger) result2.getArg();
+        SInteger r2 = (SInteger) result2.getResult();
         assertTrue(r2.isInteger());
         assertEquals(2, (int)r2.getValue());
     }
@@ -75,7 +75,7 @@ public class NegativeTest {
         a.evaluate();
         result.evaluate();
         
-        SDouble r = (SDouble) result.getArg();
+        SDouble r = (SDouble) result.getResult();
         assertTrue(r.isDouble());
         assertEquals(-2.0, r.getValue(), 1e-15);
         
@@ -86,7 +86,7 @@ public class NegativeTest {
         b.evaluate();
         result2.evaluate();
         
-        SDouble r2 = (SDouble) result2.getArg();
+        SDouble r2 = (SDouble) result2.getResult();
         assertTrue(r2.isDouble());
         assertEquals(2.0, r2.getValue(), 1e-15);
     }
@@ -98,5 +98,12 @@ public class NegativeTest {
         
         assertTrue(result.hasArgs());
         assertTrue(result.getArgs().contains(a));
+    }
+    
+    @Test
+    public void argCount(){
+        SNegative s = new SNegative();
+        assertEquals(1, s.getMaxArgs());
+        assertEquals(1, s.getMinArgs());
     }
 }

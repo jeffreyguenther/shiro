@@ -25,14 +25,13 @@
 package org.shirolang.functions.math;
 
 import org.shirolang.SFunc;
-import org.shirolang.SFuncBase;
 import org.shirolang.values.SBoolean;
 
 /**
  *
  * @author jeffreyguenther
  */
-public class SOr extends SFuncBase{
+public class SOr extends SBinaryFunction{
 
     public SOr() {
         super();
@@ -40,7 +39,7 @@ public class SOr extends SFuncBase{
         args.setKeyForIndex("a", 0);
         args.setKeyForIndex("b", 1);
         
-        result.set(null);
+        results.set(null);
     }
     
     public SOr(SFunc a, SFunc b){
@@ -51,8 +50,8 @@ public class SOr extends SFuncBase{
 
     @Override
     public void evaluate() {
-        SFunc lhs = args.get(0).getArg();
-        SFunc rhs = args.get(1).getArg();
+        SFunc lhs = args.get(0).getResult();
+        SFunc rhs = args.get(1).getResult();
         
         // Only allow doubles to be added     
         if(lhs.isBoolean() && rhs.isBoolean()){
@@ -63,7 +62,7 @@ public class SOr extends SFuncBase{
             SBoolean s = new SBoolean(sum);
             s.evaluate();
             
-            result.set(s, 0);
+            results.set(s, 0);
         }else{
             // identify which argument is not a double
             throw new RuntimeException("Only Booleans can be used with Or.");

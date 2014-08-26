@@ -22,53 +22,12 @@
  * THE SOFTWARE.
  */
 
-package org.shirolang.values;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import org.junit.Test;
+package org.shirolang;
 
 /**
  *
  * @author jeffreyguenther
  */
-public class StringTest {
-    @Test
-    public void getType(){
-        SString s = new SString("Hello");
-        assertEquals("String", s.getType());
-    }
-    
-    @Test(expected = RuntimeException.class)
-    public void getValueFail(){
-        SString s = new SString("Hello");
-        assertEquals("Hello", s.getValue());
-    }
-    
-    @Test
-    public void getValue(){
-        SString s = new SString("Hello");
-        s.evaluate();
-        assertEquals("Hello", s.getValue());
-    }
-    
-    @Test
-    public void getArgs(){
-        SString s = new SString("Hello");
-        assertTrue(s.getArgs().isEmpty());
-    }
-    
-    @Test
-    public void hasArgs(){
-        SString s = new SString("Hello");
-        assertFalse(s.hasArgs());
-    }
-    
-    @Test
-    public void argCount(){
-        SString s = new SString();
-        assertEquals(0, s.getMaxArgs());
-        assertEquals(0, s.getMinArgs());
-    }
+public interface FunctionFactory {
+    public SFunc create();
 }

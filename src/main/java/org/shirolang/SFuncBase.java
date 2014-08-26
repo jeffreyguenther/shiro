@@ -1,7 +1,25 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * The MIT License
+ *
+ * Copyright (c) 2012 - 2014 Jeffrey Guenther.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 
 package org.shirolang;
@@ -14,44 +32,29 @@ import java.util.List;
  * @author jeffreyguenther
  */
 public abstract class SFuncBase implements SFunc {
-    public static final String INTEGER = "Integer";
-    public static final String DOUBLE = "Double";
-    public static final String STRING = "String";
-    public static final String BOOLEAN = "Boolean";
-    public static final String GREATERTHAN = "GreaterThan";
-    public static final String GREATERTHAN_OR_EQUAL = "GreaterThanOrEqual";
-    public static final String LESSTHAN = "LessThan";
-    public static final String LESSTHAN_OR_EQUAL = "LessThanOrEqual";
-    public static final String EQUAL = "Equal";
-    public static final String NOT_EQUAL = "NotEqual";
-    public static final String AND = "And";
-    public static final String OR = "Or";
-    public static final String NOT = "Not";
-            
-    
     protected SIndexedMap<SFunc> args;
-    protected SIndexedMap<SFunc> result; 
+    protected SIndexedMap<SFunc> results; 
     protected boolean isLiteral;
 
     public SFuncBase() {
         args = new SIndexedMap<>();
-        result = new SIndexedMap<>();
+        results = new SIndexedMap<>();
         this.isLiteral = false;
     }
     
     @Override
     public SFunc getArg() {
-        return result.get(0);
+        return args.get(0);
     }
 
     @Override
     public SFunc getArg(String s) {
-        return result.get(s);
+        return args.get(s);
     }
 
     @Override
     public SFunc getArg(Integer i) {
-        return result.get(i);
+        return args.get(i);
     }
 
     @Override
@@ -60,8 +63,38 @@ public abstract class SFuncBase implements SFunc {
     }
 
     @Override
+    public List<String> getArgKeys() {
+        return args.getKeys();
+    }
+
+    @Override
     public boolean hasArgs() {
         return !args.isEmpty();
+    }
+
+    @Override
+    public SFunc getResult() {
+        return results.get(0);
+    }
+
+    @Override
+    public SFunc getResult(Integer i) {
+        return results.get(i);
+    }
+
+    @Override
+    public SFunc getResult(String s) {
+        return results.get(s);
+    }
+
+    @Override
+    public List<SFunc> getResults() {
+        return results.getAll();
+    }
+
+    @Override
+    public List<String> getResultKeys() {
+        return results.getKeys();
     }
     
     @Override
@@ -80,7 +113,7 @@ public abstract class SFuncBase implements SFunc {
     }
     
     @Override
-    public void setArg(SFunc v){
+    public void appendArg(SFunc v){
         args.set(v);
     }
     
@@ -90,21 +123,21 @@ public abstract class SFuncBase implements SFunc {
     
     @Override
     public boolean isInteger(){
-        return isType(INTEGER);
+        return isType(SType.INTEGER);
     }
     
     @Override
     public boolean isDouble(){
-        return isType(DOUBLE);
+        return isType(SType.DOUBLE);
     }
     
     @Override
     public boolean isString(){
-        return isType(STRING);
+        return isType(SType.STRING);
     }
     
     @Override
     public boolean isBoolean(){
-        return isType(BOOLEAN);
+        return isType(SType.BOOLEAN);
     }
 }

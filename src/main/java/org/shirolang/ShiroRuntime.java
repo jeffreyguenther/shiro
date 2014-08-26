@@ -35,29 +35,86 @@ import org.shirolang.dag.DAGraph;
 import org.shirolang.dag.DependencyRelation;
 import org.shirolang.dag.GraphNode;
 import org.shirolang.dag.TopologicalSort;
+import org.shirolang.functions.math.SAdd;
+import org.shirolang.functions.math.SAnd;
+import org.shirolang.functions.math.SDivide;
+import org.shirolang.functions.math.SEqual;
+import org.shirolang.functions.math.SGreaterThan;
+import org.shirolang.functions.math.SGreaterThanOrEqual;
+import org.shirolang.functions.math.SLessThan;
+import org.shirolang.functions.math.SLessThanOrEqual;
+import org.shirolang.functions.math.SModulo;
+import org.shirolang.functions.math.SMultiply;
+import org.shirolang.functions.math.SNegative;
+import org.shirolang.functions.math.SNot;
+import org.shirolang.functions.math.SNotEqual;
+import org.shirolang.functions.math.SOr;
+import org.shirolang.functions.math.SPower;
+import org.shirolang.functions.math.SSubtract;
 import org.shirolang.interpreter.ShiroExpressionListener;
 import org.shirolang.interpreter.ShiroLexer;
 import org.shirolang.interpreter.ShiroParser;
+import org.shirolang.values.SBoolean;
+import org.shirolang.values.SDouble;
+import org.shirolang.values.SIdent;
+import org.shirolang.values.SInteger;
+import org.shirolang.values.SString;
 
 /**
  *
  * @author jeffreyguenther
  */
 public class ShiroRuntime implements Scope{
-    private Map<String, SFuncBase> symbols;
+    private Map<String, SFunc> symbols;
     private DAGraph<SFunc> graph = new DAGraph<>();
     private SFuncAction graphNodeAction = new SFuncAction();
+    private Map<String, FunctionFactory> mfuncs;
 
     public ShiroRuntime() {
         symbols = new HashMap<>();
+        mfuncs = new HashMap<>();
+        loadRuntimeFunctions();
     }
     
-    public void addSymbol(String s, SFuncBase v){
+    public final void registerFunction(String name, FunctionFactory f){
+        mfuncs.put(name, f);
+    }
+    
+    public SFunc createFunction(String name){
+        return mfuncs.get(name).create();
+    }
+    
+    private void loadRuntimeFunctions(){
+        registerFunction(SType.BOOLEAN, () -> new SBoolean());
+        registerFunction(SType.DOUBLE, () -> new SDouble());
+        registerFunction(SType.IDENT, () -> new SIdent());
+        registerFunction(SType.INTEGER, () -> new SInteger());
+        registerFunction(SType.STRING, () -> new SString());
+        
+        registerFunction(SType.ADD, () -> new SAdd());
+        registerFunction(SType.AND, () -> new SAnd());
+        registerFunction(SType.DIVIDE, () -> new SDivide());
+        registerFunction(SType.EQUAL, () -> new SEqual());
+        registerFunction(SType.GREATERTHAN, () -> new SGreaterThan());
+        registerFunction(SType.GREATERTHAN_OR_EQUAL, () -> new SGreaterThanOrEqual());
+        registerFunction(SType.LESSTHAN, () -> new SLessThan());
+        registerFunction(SType.LESSTHAN_OR_EQUAL, () -> new SLessThanOrEqual());
+        registerFunction(SType.MODULO, () -> new SModulo());
+        registerFunction(SType.MULTIPLY, () -> new SMultiply());
+        registerFunction(SType.NEGATIVE, () -> new SNegative());
+        registerFunction(SType.NOT, () -> new SNot());
+        registerFunction(SType.NOT_EQUAL, () -> new SNotEqual());
+        registerFunction(SType.OR, () -> new SOr());
+        registerFunction(SType.POWER, () -> new SPower());
+        registerFunction(SType.SUBTRACT, () -> new SSubtract());
+    }
+    
+    public void addSymbol(String s, SFunc v){
         symbols.put(s, v);
     }
 
     @Override
-    public SFuncBase resolvePath(String s) {
+    public SFunc resolvePath(String s) {
         return symbols.get(s);
     }
 
@@ -65,10 +122,10 @@ public class ShiroRuntime implements Scope{
         graph.removeAllDependencies();
         ShiroLexer lex = new ShiroLexer(new ANTLRInputStream(expr));
         ShiroParser parser = new ShiroParser(new CommonTokenStream(lex));
-        ParseTree tree = parser.expr();
+        ParseTree tree = parser.shiro();
         
         ParseTreeWalker walker = new ParseTreeWalker();
-        ShiroExpressionListener expression = new ShiroExpressionListener();
+        ShiroExpressionListener expression = new ShiroExpressionListener(this);
         walker.walk(expression, tree);
         List<SFunc> exprs = expression.getExprs();
         

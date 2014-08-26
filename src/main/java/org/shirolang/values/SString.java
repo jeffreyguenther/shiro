@@ -24,18 +24,24 @@
 
 package org.shirolang.values;
 
+import org.shirolang.SType;
+
 /**
  *
  * @author jeffreyguenther
  */
 public class SString extends SValue<String>{
 
+    public SString() {
+        super("");
+    }
+    
     public SString(String s) {
         super(s);
     }
 
     @Override
     public String getType() {
-        return STRING;
+        return SType.STRING;
     }
 }

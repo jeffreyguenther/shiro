@@ -50,4 +50,11 @@ public class BooleanTest {
         SBoolean s = new SBoolean(false);
         assertFalse(s.hasArgs());
     }
+    
+    @Test
+    public void argCount(){
+        SBoolean s = new SBoolean();
+        assertEquals(0, s.getMaxArgs());
+        assertEquals(0, s.getMinArgs());
+    }
 }

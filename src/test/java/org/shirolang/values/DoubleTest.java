@@ -48,4 +48,11 @@ public class DoubleTest {
         SDouble s = new SDouble(-1.1);
         assertFalse(s.hasArgs());
     }
+    
+    @Test
+    public void argCount(){
+        SDouble s = new SDouble();
+        assertEquals(0, s.getMaxArgs());
+        assertEquals(0, s.getMinArgs());
+    }
 }

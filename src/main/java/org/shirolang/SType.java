@@ -22,53 +22,32 @@
  * THE SOFTWARE.
  */
 
-package org.shirolang.values;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import org.junit.Test;
+package org.shirolang;
 
 /**
  *
  * @author jeffreyguenther
  */
-public class StringTest {
-    @Test
-    public void getType(){
-        SString s = new SString("Hello");
-        assertEquals("String", s.getType());
-    }
-    
-    @Test(expected = RuntimeException.class)
-    public void getValueFail(){
-        SString s = new SString("Hello");
-        assertEquals("Hello", s.getValue());
-    }
-    
-    @Test
-    public void getValue(){
-        SString s = new SString("Hello");
-        s.evaluate();
-        assertEquals("Hello", s.getValue());
-    }
-    
-    @Test
-    public void getArgs(){
-        SString s = new SString("Hello");
-        assertTrue(s.getArgs().isEmpty());
-    }
-    
-    @Test
-    public void hasArgs(){
-        SString s = new SString("Hello");
-        assertFalse(s.hasArgs());
-    }
-    
-    @Test
-    public void argCount(){
-        SString s = new SString();
-        assertEquals(0, s.getMaxArgs());
-        assertEquals(0, s.getMinArgs());
-    }
+public final class SType {
+    public static final String INTEGER = "Integer";
+    public static final String DOUBLE = "Double";
+    public static final String STRING = "String";
+    public static final String BOOLEAN = "Boolean";
+    public static final String GREATERTHAN = "GreaterThan";
+    public static final String GREATERTHAN_OR_EQUAL = "GreaterThanOrEqual";
+    public static final String LESSTHAN = "LessThan";
+    public static final String LESSTHAN_OR_EQUAL = "LessThanOrEqual";
+    public static final String EQUAL = "Equal";
+    public static final String NOT_EQUAL = "NotEqual";
+    public static final String AND = "And";
+    public static final String OR = "Or";
+    public static final String NOT = "Not";
+    public static final String ADD = "Add";
+    public static final String DIVIDE = "Divide";
+    public static final String MODULO = "Modulo";
+    public static final String MULTIPLY = "Multiply";
+    public static final String NEGATIVE = "Negative";
+    public static final String POWER = "Power";
+    public static final String SUBTRACT = "Subtract";
+    public static final String IDENT = "Ident";
 }

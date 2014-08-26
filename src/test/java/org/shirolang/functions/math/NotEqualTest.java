@@ -57,7 +57,7 @@ public class NotEqualTest {
         b.evaluate();
         result.evaluate();
         
-        SBoolean r = (SBoolean) result.getArg();
+        SBoolean r = (SBoolean) result.getResult();
         assertTrue(r.isBoolean());
         assertTrue(r.getValue());
     }
@@ -73,7 +73,7 @@ public class NotEqualTest {
         b.evaluate();
         result.evaluate();
         
-        SBoolean r = (SBoolean) result.getArg();
+        SBoolean r = (SBoolean) result.getResult();
         assertTrue(r.isBoolean());
         assertTrue(r.getValue());
     }
@@ -89,7 +89,7 @@ public class NotEqualTest {
         b.evaluate();
         result.evaluate();
         
-        SBoolean r = (SBoolean) result.getArg();
+        SBoolean r = (SBoolean) result.getResult();
         assertTrue(r.isBoolean());
         assertFalse(r.getValue());
     }
@@ -105,7 +105,7 @@ public class NotEqualTest {
         b.evaluate();
         result.evaluate();
         
-        SBoolean r = (SBoolean) result.getArg();
+        SBoolean r = (SBoolean) result.getResult();
         assertTrue(r.isBoolean());
         assertTrue(r.getValue());
     }
@@ -121,7 +121,7 @@ public class NotEqualTest {
         b.evaluate();
         result.evaluate();
         
-        SBoolean r = (SBoolean) result.getArg();
+        SBoolean r = (SBoolean) result.getResult();
         assertTrue(r.isBoolean());
         assertTrue(r.getValue());
     }
@@ -137,7 +137,7 @@ public class NotEqualTest {
         b.evaluate();
         result.evaluate();
         
-        SBoolean r = (SBoolean) result.getArg();
+        SBoolean r = (SBoolean) result.getResult();
         assertTrue(r.isBoolean());
         assertFalse(r.getValue());
     }
@@ -153,7 +153,7 @@ public class NotEqualTest {
         b.evaluate();
         result.evaluate();
         
-        SBoolean r = (SBoolean) result.getArg();
+        SBoolean r = (SBoolean) result.getResult();
         assertTrue(r.isBoolean());
         assertFalse(r.getValue());
     }
@@ -169,7 +169,7 @@ public class NotEqualTest {
         b.evaluate();
         result.evaluate();
         
-        SBoolean r = (SBoolean) result.getArg();
+        SBoolean r = (SBoolean) result.getResult();
         assertTrue(r.isBoolean());
         assertTrue(r.getValue());
     }
@@ -184,5 +184,12 @@ public class NotEqualTest {
         List<SFunc> args = result.getArgs();
         assertTrue(args.contains(a));
         assertTrue(args.contains(b));
+    }
+    
+    @Test
+    public void argCount(){
+        SNotEqual s = new SNotEqual();
+        assertEquals(2, s.getMaxArgs());
+        assertEquals(2, s.getMinArgs());
     }
 }

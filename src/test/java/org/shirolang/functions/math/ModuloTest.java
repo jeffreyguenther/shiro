@@ -53,7 +53,7 @@ public class ModuloTest {
         b.evaluate();
         remainder.evaluate();
         
-        SDouble r = (SDouble) remainder.getArg();
+        SDouble r = (SDouble) remainder.getResult();
         assertTrue(r.isDouble());
         assertEquals(0.5, r.getValue(), 1e-16);
     }
@@ -69,8 +69,8 @@ public class ModuloTest {
         b.evaluate();
         remainder.evaluate();
         
-        SInteger r = (SInteger) remainder.getArg();
-        assertTrue(remainder.getArg().isInteger());
+        SInteger r = (SInteger) remainder.getResult();
+        assertTrue(remainder.getResult().isInteger());
         assertEquals(0, (int)r.getValue());
     }
     
@@ -102,10 +102,15 @@ public class ModuloTest {
         SString s = new SString("5");
         SModulo product = new SModulo(s, a);
         
-        System.out.println(product.hasArgs());
-        System.out.println(product.getArgs());
         assertTrue(product.hasArgs());
         assertTrue(product.getArgs().contains(a));
         assertTrue(product.getArgs().contains(s));
+    }
+    
+    @Test
+    public void argCount(){
+        SModulo s = new SModulo();
+        assertEquals(2, s.getMaxArgs());
+        assertEquals(2, s.getMinArgs());
     }
 }

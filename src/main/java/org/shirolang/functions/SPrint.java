@@ -6,6 +6,7 @@
 
 package org.shirolang.functions;
 
+import org.shirolang.SFunc;
 import org.shirolang.SFuncBase;
 
 /**
@@ -13,16 +14,14 @@ import org.shirolang.SFuncBase;
  * @author jeffreyguenther
  */
 public class SPrint extends SFuncBase{
-    private SFuncBase value;
+    private SFunc value;
 
-    public SPrint(SFuncBase value) {
+    public SPrint(SFunc value) {
         this.value = value;
     }
 
     @Override
     public void evaluate() {
-//        if()
-        
         System.out.println(value);
     }
 
@@ -30,6 +29,14 @@ public class SPrint extends SFuncBase{
     public String getType() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
-    
+
+    @Override
+    public int getMaxArgs() {
+        return 1;
+    }
+
+    @Override
+    public int getMinArgs() {
+        return 1;
+    }
 }

@@ -32,8 +32,12 @@ import org.shirolang.Scope;
  * @author jeffreyguenther
  */
 public class SIdent extends SFuncBase{
-    private final Scope scope;
-    private final String value;
+    private Scope scope;
+    private String value;
+    
+    public SIdent(){
+        this(null, "");
+    }
     
     public SIdent(Scope scope, String s) {
         super();
@@ -41,9 +45,17 @@ public class SIdent extends SFuncBase{
         value = s;
     }
     
+    public void setValue(String s){
+        value = s;
+    }
+    
+    public void setScope(Scope s){
+        this.scope = s;
+    }
+    
     @Override
     public void evaluate() {
-        result.set(scope.resolvePath(value));
+        results.set(scope.resolvePath(value));
     }
 
     @Override
@@ -54,5 +66,15 @@ public class SIdent extends SFuncBase{
     @Override
     public String toString() {
         return value;
+    }
+
+    @Override
+    public int getMaxArgs() {
+        return 0;
+    }
+
+    @Override
+    public int getMinArgs() {
+        return 0;
     }
 }

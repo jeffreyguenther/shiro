@@ -51,7 +51,7 @@ public class NotTest {
         a.evaluate();
         result.evaluate();
         
-        SBoolean r = (SBoolean) result.getArg();
+        SBoolean r = (SBoolean) result.getResult();
         assertTrue(r.isBoolean());
         assertFalse(r.getValue());
         
@@ -62,7 +62,7 @@ public class NotTest {
         b.evaluate();
         result2.evaluate();
         
-        SBoolean r2 = (SBoolean) result2.getArg();
+        SBoolean r2 = (SBoolean) result2.getResult();
         assertTrue(r2.isBoolean());
         assertTrue(r2.getValue());
     }
@@ -84,5 +84,12 @@ public class NotTest {
         
         assertTrue(result.hasArgs());
         assertTrue(result.getArgs().contains(a));
+    }
+    
+    @Test
+    public void argCount(){
+        SNot s = new SNot();
+        assertEquals(1, s.getMaxArgs());
+        assertEquals(1, s.getMinArgs());
     }
 }

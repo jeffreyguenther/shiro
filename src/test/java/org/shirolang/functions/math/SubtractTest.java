@@ -55,7 +55,7 @@ public class SubtractTest {
         b.evaluate();
         diff.evaluate();
         
-        SDouble r = (SDouble) diff.getArg();
+        SDouble r = (SDouble) diff.getResult();
         assertTrue(r.isDouble());
         assertEquals(13.13, r.getValue(), 1e-16);
     }
@@ -71,8 +71,8 @@ public class SubtractTest {
         b.evaluate();
         diff.evaluate();
         
-        SInteger r = (SInteger) diff.getArg();
-        assertTrue(diff.getArg().isInteger());
+        SInteger r = (SInteger) diff.getResult();
+        assertTrue(diff.getResult().isInteger());
         assertEquals(14, (int)r.getValue());
     }
     
@@ -109,5 +109,12 @@ public class SubtractTest {
         assertEquals(2, deps.size());
         assertTrue(deps.contains(a));
         assertTrue(deps.contains(s));
+    }
+    
+    @Test
+    public void argCount(){
+        SSubtract s = new SSubtract();
+        assertEquals(2, s.getMaxArgs());
+        assertEquals(2, s.getMinArgs());
     }
 }

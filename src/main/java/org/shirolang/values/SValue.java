@@ -46,11 +46,11 @@ public abstract class SValue<T> extends SFuncBase{
 
     @Override
     public void evaluate() {
-       result.set(this);
+       results.set(this);
     }
     
     public T getValue(){
-        if(result.size() < 1){
+        if(results.size() < 1){
             throw new RuntimeException("Cannot return value. "
                     + "Multifunction has not been evaluated. "
                     + "Call evaluate() before getting value.");
@@ -62,5 +62,15 @@ public abstract class SValue<T> extends SFuncBase{
     @Override
     public String toString() {
        return "" + v;
+    }
+
+    @Override
+    public int getMaxArgs() {
+        return 0;
+    }
+
+    @Override
+    public int getMinArgs() {
+        return 0;
     }
 }

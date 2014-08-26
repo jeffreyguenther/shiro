@@ -28,6 +28,7 @@ import java.util.List;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
 import org.shirolang.SFunc;
+import org.shirolang.ShiroRuntime;
 import org.shirolang.functions.math.SAdd;
 import org.shirolang.functions.math.SAnd;
 import org.shirolang.functions.math.SDivide;
@@ -45,6 +46,7 @@ import org.shirolang.functions.math.SOr;
 import org.shirolang.functions.math.SSubtract;
 import org.shirolang.values.SBoolean;
 import org.shirolang.values.SDouble;
+import org.shirolang.values.SIdent;
 import org.shirolang.values.SInteger;
 
 /**
@@ -56,10 +58,12 @@ public class ShiroExpressionListener extends ShiroBaseListener {
 
     protected ParseTreeProperty<SFunc> expressions;
     private final List<SFunc> exprs;
+    private ShiroRuntime rt;
 
-    public ShiroExpressionListener() {
+    public ShiroExpressionListener(ShiroRuntime rt) {
         this.expressions = new ParseTreeProperty<>();
         exprs = new ArrayList<>();
+        this.rt = rt;
     }
 
     /**
@@ -238,6 +242,29 @@ public class ShiroExpressionListener extends ShiroBaseListener {
         SNegative negate = new SNegative(op1);
         setExpr(ctx, negate);
     }
-    
-    
+
+    @Override
+    public void exitPortDeclInit(ShiroParser.PortDeclInitContext ctx) {
+        String portName = ctx.portName().IDENT().getText();
+        String portType = ctx.portType().getText();
+        String mfName = ctx.mfCall().mfName().getText();
+        List<ShiroParser.ExprContext> expr = ctx.mfCall().mfparams().expr();
+        
+        // look up the multifunction in the runtime
+        SIdent ident = (SIdent) rt.createFunction("Ident");
+        ident.setScope(rt);
+        ident.setValue(portName);
+        
+        // ensure that the number of args provided matches the number the function accepts
+        // throw errors as necessary
+        // set the port as the given input type
+        for(int i = 0; i < expr.size(); i++){
+            SFunc expr1 = getExpr(expr.get(i));
+            ident.appendArg(expr1);
+        }
+        
+        // add the symbol to the runtime
+        rt.addSymbol(portName, ident);
+        setExpr(ctx, ident);
+    }
 }

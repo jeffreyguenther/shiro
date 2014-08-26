@@ -25,7 +25,7 @@
 package org.shirolang.functions.math;
 
 import org.shirolang.SFunc;
-import org.shirolang.SFuncBase;
+import static org.shirolang.SType.GREATERTHAN_OR_EQUAL;
 import org.shirolang.values.SBoolean;
 import org.shirolang.values.SDouble;
 import org.shirolang.values.SInteger;
@@ -34,7 +34,7 @@ import org.shirolang.values.SInteger;
  *
  * @author jeffreyguenther
  */
-public class SGreaterThanOrEqual extends SFuncBase{
+public class SGreaterThanOrEqual extends SBinaryFunction{
 
     public SGreaterThanOrEqual() {
         super();
@@ -42,7 +42,7 @@ public class SGreaterThanOrEqual extends SFuncBase{
         args.setKeyForIndex("a", 0);
         args.setKeyForIndex("b", 1);
         
-        result.set(null);
+        results.set(null);
     }
     
     public SGreaterThanOrEqual(SFunc a, SFunc b){
@@ -53,8 +53,8 @@ public class SGreaterThanOrEqual extends SFuncBase{
 
     @Override
     public void evaluate() {
-        SFunc lhs = args.get(0).getArg();
-        SFunc rhs = args.get(1).getArg();
+        SFunc lhs = args.get(0).getResult();
+        SFunc rhs = args.get(1).getResult();
         
         // Only allow doubles to be added     
         if(lhs.isDouble() && rhs.isDouble()){
@@ -65,7 +65,7 @@ public class SGreaterThanOrEqual extends SFuncBase{
             SBoolean s = new SBoolean(gt);
             s.evaluate();
             
-            result.set(s, 0);
+            results.set(s, 0);
         }else if(lhs.isInteger() && lhs.isInteger()){
             Integer l = ((SInteger) lhs).getValue();
             Integer r = ((SInteger) rhs).getValue();
@@ -74,7 +74,7 @@ public class SGreaterThanOrEqual extends SFuncBase{
             SBoolean s = new SBoolean(gt);
             s.evaluate();
             
-            result.set(s, 0);
+            results.set(s, 0);
         }else{
             // identify which argument is not a double
             throw new RuntimeException("Only Doubles and Integers can be compared.");

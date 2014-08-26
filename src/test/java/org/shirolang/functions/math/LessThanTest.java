@@ -54,7 +54,7 @@ public class LessThanTest {
         b.evaluate();
         result.evaluate();
         
-        SBoolean r = (SBoolean) result.getArg();
+        SBoolean r = (SBoolean) result.getResult();
         assertTrue(r.isBoolean());
         assertFalse(r.getValue());
     }
@@ -70,7 +70,7 @@ public class LessThanTest {
         b.evaluate();
         sum.evaluate();
         
-        SBoolean r = (SBoolean) sum.getArg();
+        SBoolean r = (SBoolean) sum.getResult();
         assertTrue(r.isBoolean());
         assertTrue(r.getValue());
     }
@@ -86,7 +86,7 @@ public class LessThanTest {
         b.evaluate();
         result.evaluate();
         
-        SBoolean r = (SBoolean) result.getArg();
+        SBoolean r = (SBoolean) result.getResult();
         assertTrue(r.isBoolean());
         assertFalse(r.getValue());
     }
@@ -102,8 +102,15 @@ public class LessThanTest {
         b.evaluate();
         sum.evaluate();
         
-        SBoolean r = (SBoolean) sum.getArg();
+        SBoolean r = (SBoolean) sum.getResult();
         assertTrue(r.isBoolean());
         assertTrue(r.getValue());
+    }
+    
+    @Test
+    public void argCount(){
+        SLessThan s = new SLessThan();
+        assertEquals(2, s.getMaxArgs());
+        assertEquals(2, s.getMinArgs());
     }
 }

@@ -55,7 +55,7 @@ public class EqualTest {
         b.evaluate();
         result.evaluate();
         
-        SBoolean r = (SBoolean) result.getArg();
+        SBoolean r = (SBoolean) result.getResult();
         assertTrue(r.isBoolean());
         assertFalse(r.getValue());
     }
@@ -71,7 +71,7 @@ public class EqualTest {
         b.evaluate();
         result.evaluate();
         
-        SBoolean r = (SBoolean) result.getArg();
+        SBoolean r = (SBoolean) result.getResult();
         assertTrue(r.isBoolean());
         assertFalse(r.getValue());
     }
@@ -87,7 +87,7 @@ public class EqualTest {
         b.evaluate();
         result.evaluate();
         
-        SBoolean r = (SBoolean) result.getArg();
+        SBoolean r = (SBoolean) result.getResult();
         assertTrue(r.isBoolean());
         assertTrue(r.getValue());
     }
@@ -103,7 +103,7 @@ public class EqualTest {
         b.evaluate();
         result.evaluate();
         
-        SBoolean r = (SBoolean) result.getArg();
+        SBoolean r = (SBoolean) result.getResult();
         assertTrue(r.isBoolean());
         assertFalse(r.getValue());
     }
@@ -119,7 +119,7 @@ public class EqualTest {
         b.evaluate();
         result.evaluate();
         
-        SBoolean r = (SBoolean) result.getArg();
+        SBoolean r = (SBoolean) result.getResult();
         assertTrue(r.isBoolean());
         assertFalse(r.getValue());
     }
@@ -135,7 +135,7 @@ public class EqualTest {
         b.evaluate();
         result.evaluate();
         
-        SBoolean r = (SBoolean) result.getArg();
+        SBoolean r = (SBoolean) result.getResult();
         assertTrue(r.isBoolean());
         assertTrue(r.getValue());
         
@@ -148,7 +148,7 @@ public class EqualTest {
         b1.evaluate();
         result2.evaluate();
         
-        SBoolean r2 = (SBoolean) result2.getArg();
+        SBoolean r2 = (SBoolean) result2.getResult();
         assertTrue(r2.isBoolean());
         assertFalse(r2.getValue());
         
@@ -161,7 +161,7 @@ public class EqualTest {
         b3.evaluate();
         result3.evaluate();
         
-        SBoolean r3 = (SBoolean) result3.getArg();
+        SBoolean r3 = (SBoolean) result3.getResult();
         assertTrue(r3.isBoolean());
         assertFalse(r3.getValue());
     }
@@ -177,7 +177,7 @@ public class EqualTest {
         b.evaluate();
         result.evaluate();
         
-        SBoolean r = (SBoolean) result.getArg();
+        SBoolean r = (SBoolean) result.getResult();
         assertTrue(r.isBoolean());
         assertTrue(r.getValue());
     }
@@ -193,8 +193,15 @@ public class EqualTest {
         b.evaluate();
         result.evaluate();
         
-        SBoolean r = (SBoolean) result.getArg();
+        SBoolean r = (SBoolean) result.getResult();
         assertTrue(r.isBoolean());
         assertFalse(r.getValue());
+    }
+    
+    @Test
+    public void argCount(){
+        SEqual s = new SEqual();
+        assertEquals(2, s.getMaxArgs());
+        assertEquals(2, s.getMinArgs());
     }
 }
