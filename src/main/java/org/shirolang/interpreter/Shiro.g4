@@ -1,19 +1,21 @@
 grammar Shiro;
 
-@lexer::members{
-public static final int WHITESPACE = 1;
-public static final int COMMENTS = 2;
-}
+//@lexer::members{
+//public static final int WHITESPACE = 1;
+//public static final int COMMENTS = 2;
+//}
 
-shiro : statement
+shiro : statement* EOF
 	  ;
 
-statement :  	expr
-			|	portstmt
-		  ;
+statement :
+               portstmt
+            |  inLineExpr
+            |  NEWLINE
+	      ;
 
 portDecl
-	:	portType portName mfName
+	:	portType portName MFNAME
 	;
 	
 portDeclInit
@@ -21,27 +23,37 @@ portDeclInit
 	;
 
 portstmt	
-	:	(portDecl | portDeclInit ) NEWLINE?
+	:	( portDeclInit | portDecl ) NEWLINE
 	;	
 	
 portName 
 	:	IDENT
 	;
 	
-portType:	'port'
-		|	'input'
-		| 	'output'
-        |   'eval'
+portType:   PORT
+	|   INPUT
+	|   OUTPUT
+        |   EVAL
 	;
 	
 mfCall	:	mfName '(' mfparams ')'
 	;
 	
-mfName 	:	IDENT
+mfName 	:	MFNAME
 	;
 
 mfparams:	expr(',' expr)* 
 	;
+
+path 	:	(IDENT | THIS)('.' IDENT)* (LSQUARE pathIndex RSQUARE)?
+	;
+	
+pathIndex
+	        :	index=(NUMBER
+        |       STRING_LITERAL)
+	;
+
+inLineExpr : expr NEWLINE;
 
 expr :  '(' expr ')'						  #parensExpr
 	 |	NOT_OP expr 				          #notExpr
@@ -52,11 +64,17 @@ expr :  '(' expr ')'						  #parensExpr
 	 |  expr (PLUS_OP | MINUS_OP ) expr       #addExpr
 	 |  expr (GT | GTE | LT | LTE) expr       #comparisonExpr
 	 |  expr ( EQ | NEQ ) expr                #equalityExpr
-	 // put in identifier once it's time.
+	 |  path                                  #pathExpr
 	 |	NUMBER 								  #numExpr
 	 |  BOOLEAN_LITERAL						  #boolExpr
+	 |  STRING_LITERAL                        #stringExpr
 	 ;
 
+PORT: 'port';
+INPUT: 'input';
+OUTPUT: 'output';
+EVAL: 'eval';
+THIS : 'this';
 NOT_OP   : '!';
 AND_OP	 : '&&';
 OR_OP    : '||';
@@ -89,18 +107,21 @@ NUMBER
     ;
 
 IDENT
-    : (LCLETTER | UCLETTER | DIGIT)(LCLETTER | UCLETTER | DIGIT|'_')*
+    : LCLETTER (LCLETTER | UCLETTER | DIGIT|'_')*
     ;
 
-WS :  (' '|'\t'|'\f')+ -> channel(WHITESPACE)
+MFNAME: UCLETTER (LCLETTER | UCLETTER | DIGIT|'_')*
+    ;
+
+WS :  (' '|'\t'|'\f')+ -> channel(HIDDEN)
    ;
 
 COMMENT 
-    :   '//' ~('\n'|'\r')* -> channel(COMMENTS)
+    :   '//' ~('\n'|'\r')* -> channel(HIDDEN)
     ;
 
 LINE_COMMENT 
-    :   '/*' .*? '*/' NEWLINE? -> channel(WHITESPACE)
+    :   '/*' .*? '*/' NEWLINE? -> channel(HIDDEN)
     ;
 
 NEWLINE : '\r'?'\n'

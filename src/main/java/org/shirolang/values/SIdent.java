@@ -24,29 +24,51 @@
 
 package org.shirolang.values;
 
+import java.util.Collections;
+import java.util.List;
+import org.shirolang.SFunc;
 import org.shirolang.SFuncBase;
 import org.shirolang.Scope;
 
 /**
- *
+ * Defines an identifier points to. This
+ * is a functional representation of the identifier.
+ * 
+ * When it is evaluated it resolves its path object to
+ * a SFunc.
  * @author jeffreyguenther
  */
 public class SIdent extends SFuncBase{
     private Scope scope;
-    private String value;
+    private Path value;
     
     public SIdent(){
         this(null, "");
     }
     
-    public SIdent(Scope scope, String s) {
+    public SIdent(Scope scope, String path){
+        this(scope, Path.create(path));
+    }
+    
+    public SIdent(Scope scope, Path s) {
         super();
         this.scope = scope;
         value = s;
     }
     
-    public void setValue(String s){
+    public void setValue(Path s){
         value = s;
+    }
+    
+    /**
+     * Sets the value of the identifier to
+     * path represented by the string. The
+     * string is converted into path object
+     * before being stored.
+     * @param path path the identifier points to
+     */
+    public void setValue(String path){
+        value = Path.create(path);
     }
     
     public void setScope(Scope s){
@@ -59,13 +81,18 @@ public class SIdent extends SFuncBase{
     }
 
     @Override
+    public List<SFunc> getDependencies() {
+        return Collections.singletonList(scope.resolvePath(value));
+    }
+
+    @Override
     public String getType() {
         return "Ident";
     }
 
     @Override
     public String toString() {
-        return value;
+        return value.toString();
     }
 
     @Override

@@ -24,10 +24,13 @@
 
 package org.shirolang;
 
+import org.shirolang.values.Path;
+
 /**
  *
  * @author jeffreyguenther
  */
 public interface Scope {
-    public SFunc resolvePath(String s);
+    public SFunc resolvePath(Path s);
+    public SFunc resolvePath(String path);
 }

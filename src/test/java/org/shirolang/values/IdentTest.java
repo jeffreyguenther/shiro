@@ -50,7 +50,7 @@ public class IdentTest {
         SIdent id = new SIdent(rt, "d");
         id.evaluate();
         
-        assertSame("Should return the stored function", d, id.getArg());
+        assertSame("Should return the stored function", d, id.getResult());
     }
     
     @Test

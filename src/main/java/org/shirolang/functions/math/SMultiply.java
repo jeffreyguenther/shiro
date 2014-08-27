@@ -64,7 +64,7 @@ public class SMultiply extends SBinaryFunction{
             s.evaluate();
             
             results.set(s, 0);
-        }else if(lhs.isInteger() && lhs.isInteger()){
+        }else if(lhs.isInteger() && rhs.isInteger()){
             Integer l = ((SInteger) lhs).getValue();
             Integer r = ((SInteger) rhs).getValue();
             Integer sum = l * r;
@@ -72,6 +72,24 @@ public class SMultiply extends SBinaryFunction{
             SInteger s = new SInteger(sum);
             s.evaluate();
             
+            results.set(s, 0);
+        }else if (lhs.isDouble() && rhs.isInteger()){
+            Double l = ((SDouble) lhs).getValue();
+            Integer r = ((SInteger) rhs).getValue();
+            Double sum = l * r;
+
+            SDouble s = new SDouble(sum);
+            s.evaluate();
+
+            results.set(s, 0);
+        }else if (lhs.isInteger() && rhs.isDouble()){
+            Integer l = ((SInteger) lhs).getValue();
+            Double r = ((SDouble) rhs).getValue();
+            Double sum = l * r;
+
+            SDouble s = new SDouble(sum);
+            s.evaluate();
+
             results.set(s, 0);
         }else{
             // identify which argument is not a double

@@ -44,6 +44,8 @@ public interface SFunc {
     void appendArg(SFunc v);
     boolean hasArgs();
     
+    List<SFunc> getDependencies();
+    
     SFunc getResult();
     SFunc getResult(Integer i);
     SFunc getResult(String s);
@@ -56,6 +58,7 @@ public interface SFunc {
     boolean isDouble();
     boolean isInteger();
     boolean isLiteral();
+    void makeLiteral();
     boolean isString();
     boolean isBoolean();
 }

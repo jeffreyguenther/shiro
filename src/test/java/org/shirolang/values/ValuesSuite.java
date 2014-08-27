@@ -37,7 +37,8 @@ import org.junit.runners.Suite;
     DoubleTest.class,
     StringTest.class,
     IntegerTest.class,
-    IdentTest.class
+    IdentTest.class,
+    PathTest.class
 })
 public class ValuesSuite {
     

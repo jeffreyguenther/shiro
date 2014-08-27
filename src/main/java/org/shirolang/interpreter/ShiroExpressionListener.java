@@ -25,9 +25,12 @@ package org.shirolang.interpreter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
+import org.antlr.v4.runtime.tree.TerminalNode;
 import org.shirolang.SFunc;
+import org.shirolang.Scope;
 import org.shirolang.ShiroRuntime;
 import org.shirolang.functions.math.SAdd;
 import org.shirolang.functions.math.SAnd;
@@ -44,10 +47,12 @@ import org.shirolang.functions.math.SNot;
 import org.shirolang.functions.math.SNotEqual;
 import org.shirolang.functions.math.SOr;
 import org.shirolang.functions.math.SSubtract;
+import org.shirolang.values.Path;
 import org.shirolang.values.SBoolean;
 import org.shirolang.values.SDouble;
 import org.shirolang.values.SIdent;
 import org.shirolang.values.SInteger;
+import org.shirolang.values.SString;
 
 /**
  * An listener to create expressions.
@@ -56,13 +61,16 @@ import org.shirolang.values.SInteger;
  */
 public class ShiroExpressionListener extends ShiroBaseListener {
 
+    protected Stack<Scope> scope;
     protected ParseTreeProperty<SFunc> expressions;
     private final List<SFunc> exprs;
-    private ShiroRuntime rt;
+    private final ShiroRuntime rt;
 
     public ShiroExpressionListener(ShiroRuntime rt) {
         this.expressions = new ParseTreeProperty<>();
         exprs = new ArrayList<>();
+        scope = new Stack<>();
+        scope.push(rt);
         this.rt = rt;
     }
 
@@ -106,10 +114,12 @@ public class ShiroExpressionListener extends ShiroBaseListener {
         // Detect if the number is a double
         if (number.contains(".")) {
             expr = new SDouble(Double.parseDouble(number));
+            System.out.println("Created a double");
         } else {
             expr = new SInteger(Integer.parseInt(number));
         }
-
+        
+        expr.makeLiteral();
         setExpr(ctx, expr);
     }
 
@@ -118,7 +128,56 @@ public class ShiroExpressionListener extends ShiroBaseListener {
         String value = ctx.BOOLEAN_LITERAL().getText();
         
         SBoolean bool = new SBoolean(Boolean.parseBoolean(value));
+        bool.makeLiteral();
         setExpr(ctx, bool);
+    }
+
+    @Override
+    public void exitStringExpr(ShiroParser.StringExprContext ctx) {
+        String literalString = ctx.STRING_LITERAL().getText();
+        // Remove the quotes from around the string literal
+        SString s = new SString(literalString.substring(1, literalString.length() -1));
+        s.makeLiteral();
+        setExpr(ctx, s);
+    }
+    
+    protected SFunc createPath(Scope currentScope, ShiroParser.PathContext ctx) {
+        // Declare a list to store the path's parts
+        List<String> parts = new ArrayList<>();
+
+        Path p;
+
+        // Convert the tree nodes into strings and add to list
+        for (TerminalNode t : ctx.IDENT()) {
+            parts.add(t.getText());
+        }
+
+        // prepend this, when used
+        if (ctx.THIS() != null) {
+            parts.add(0, "this");
+        }
+
+        if (ctx.pathIndex() != null) {
+            ShiroParser.PathIndexContext pathIndex = ctx.pathIndex();
+
+            if (pathIndex.index.getType() == ShiroParser.NUMBER) {
+                int i = Integer.parseInt(pathIndex.NUMBER().getText());
+                p = new Path(parts, i);
+            } else {
+                String key = pathIndex.STRING_LITERAL().getText().replace("\"", "");
+                p = new Path(parts, key);
+            }
+
+        } else {
+            p = new Path(parts);
+        }
+
+        return new SIdent(currentScope, p);
+    }
+
+    @Override
+    public void enterPath(ShiroParser.PathContext ctx) {
+        setExpr(ctx, createPath(scope.peek(), ctx));
     }
 
     @Override
@@ -245,26 +304,59 @@ public class ShiroExpressionListener extends ShiroBaseListener {
 
     @Override
     public void exitPortDeclInit(ShiroParser.PortDeclInitContext ctx) {
+        System.out.println("entering decl init");
         String portName = ctx.portName().IDENT().getText();
         String portType = ctx.portType().getText();
         String mfName = ctx.mfCall().mfName().getText();
-        List<ShiroParser.ExprContext> expr = ctx.mfCall().mfparams().expr();
+        List<ShiroParser.ExprContext> args = ctx.mfCall().mfparams().expr();
         
-        // look up the multifunction in the runtime
-        SIdent ident = (SIdent) rt.createFunction("Ident");
-        ident.setScope(rt);
-        ident.setValue(portName);
+        // get the type name
+        SFunc function = rt.createFunction(mfName);
+        if(function == null){
+            throw new RuntimeException("A multifunction by the name " + mfName
+            + "does not exist.");
+        }
         
-        // ensure that the number of args provided matches the number the function accepts
-        // throw errors as necessary
-        // set the port as the given input type
-        for(int i = 0; i < expr.size(); i++){
-            SFunc expr1 = getExpr(expr.get(i));
-            ident.appendArg(expr1);
+        // if the function is not one of the literals (number, string, etc.)
+        if (!function.isLiteral() && args.size() > 1) {
+            // check to see if the right number of exprs came back
+            if (args.size() < function.getMinArgs()) {
+                throw new RuntimeException("Expected at least " + function.getMinArgs()
+                        + " arguments to be provided.");
+            }
+
+            if (args.size() > function.getMaxArgs()) {
+                throw new RuntimeException("Expected at most " + function.getMinArgs()
+                        + " arguments to be provided.");
+            }
+            
+            // todo add argument type checking
+
+            // append the args to the function
+            for (ShiroParser.ExprContext arg : args) {
+                SFunc exp = getExpr(arg);
+                function.appendArg(exp);
+            }
+        }else{
+            function = getExpr(args.get(0));
+            
+            if(!function.getType().equals(mfName)){
+                throw new RuntimeException("Literal expression is " 
+                        + function.getType() + ", but should be " + mfName);
+            }
         }
         
         // add the symbol to the runtime
-        rt.addSymbol(portName, ident);
-        setExpr(ctx, ident);
+        rt.addSymbol(portName, function);
+    }
+
+    @Override
+    public void exitInLineExpr(ShiroParser.InLineExprContext ctx) {
+        System.out.println("exited inline expression");
+    }
+
+    @Override
+    public void exitPortstmt(ShiroParser.PortstmtContext ctx) {
+        System.out.println("exited port statement");
     }
 }

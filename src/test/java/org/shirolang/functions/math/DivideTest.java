@@ -89,6 +89,35 @@ public class DivideTest {
         assertTrue(quotient.getResult().isInteger());
         assertEquals(-13, (int)r.getValue());
     }
+
+    @Test
+    public void divDoubleAndInt(){
+        SDouble a = new SDouble(13.0);
+        SInteger b = new SInteger(-1);
+        SDivide sum = new SDivide(a, b);
+
+        // simulate evaluation order
+        a.evaluate();
+        b.evaluate();
+        sum.evaluate();
+
+        SDouble r = (SDouble) sum.getResult();
+        assertTrue(sum.getResult().isDouble());
+        assertEquals(-13.0, r.getValue(), 1e-15);
+
+        SDouble a1 = new SDouble(2.0);
+        SInteger b2 = new SInteger(-12);
+        SDivide sum2 = new SDivide(b2, a1);
+
+        // simulate evaluation order
+        a1.evaluate();
+        b2.evaluate();
+        sum2.evaluate();
+
+        SDouble r2 = (SDouble) sum2.getResult();
+        assertTrue(sum2.getResult().isDouble());
+        assertEquals(-6.0, r2.getValue(), 1e-15);
+    }
     
     @Test(expected= RuntimeException.class)
     public void divDoubleString(){

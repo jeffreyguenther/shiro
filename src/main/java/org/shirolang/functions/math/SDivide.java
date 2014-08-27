@@ -60,27 +60,61 @@ public class SDivide extends SBinaryFunction{
             Double r = ((SDouble) rhs).getValue();
             
             if(r == 0){
-                throw new RuntimeException("Cannot divide a Double by zero");
+                throw new RuntimeException("Cannot divide by zero");
             }
             
-            Double sum = l / r;
+            Double quotient = l / r;
             
-            SDouble s = new SDouble(sum);
+            SDouble s = new SDouble(quotient);
             s.evaluate();
             
             results.set(s, 0);
-        }else if(lhs.isInteger() && lhs.isInteger()){
+        }else if(lhs.isInteger() && rhs.isInteger()){
             Integer l = ((SInteger) lhs).getValue();
             Integer r = ((SInteger) rhs).getValue();
-            Integer sum = l / r;
+
+            if(r == 0){
+                throw new RuntimeException("Cannot divide by zero");
+            }
+
+            Integer quotient = l / r;
             
-            SInteger s = new SInteger(sum);
+            SInteger s = new SInteger(quotient);
             s.evaluate();
             
+            results.set(s, 0);
+        }else if (lhs.isDouble() && rhs.isInteger()){
+            Double l = ((SDouble) lhs).getValue();
+            Integer r = ((SInteger) rhs).getValue();
+
+            if(r == 0){
+                throw new RuntimeException("Cannot divide by zero");
+            }
+
+            Double quotient = l / r;
+
+            SDouble s = new SDouble(quotient);
+            s.evaluate();
+
+            results.set(s, 0);
+        }else if (lhs.isInteger() && rhs.isDouble()){
+            Integer l = ((SInteger) lhs).getValue();
+            Double r = ((SDouble) rhs).getValue();
+
+            if(r == 0){
+                throw new RuntimeException("Cannot divide by zero");
+            }
+
+            Double quotient = l / r;
+
+            SDouble s = new SDouble(quotient);
+            s.evaluate();
+
             results.set(s, 0);
         }else{
             // identify which argument is not a double
-            throw new RuntimeException("Only Doubles and Integers can be divided.");
+            throw new RuntimeException("Only Doubles and Integers can be divided. "
+                    + lhs.getType() + " and " + rhs.getType() + " were found.");
         }
     }
 

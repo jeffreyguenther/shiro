@@ -64,7 +64,7 @@ public class SSubtract extends SBinaryFunction{
             s.evaluate();
             
             results.set(s, 0);
-        }else if(lhs.isInteger() && lhs.isInteger()){
+        }else if(lhs.isInteger() && rhs.isInteger()){
             Integer l = ((SInteger) lhs).getValue();
             Integer r = ((SInteger) rhs).getValue();
             Integer sum = l - r;
@@ -73,9 +73,28 @@ public class SSubtract extends SBinaryFunction{
             s.evaluate();
             
             results.set(s, 0);
+        }else if (lhs.isDouble() && rhs.isInteger()){
+            Double l = ((SDouble) lhs).getValue();
+            Integer r = ((SInteger) rhs).getValue();
+            Double sum = l - r;
+
+            SDouble s = new SDouble(sum);
+            s.evaluate();
+
+            results.set(s, 0);
+        }else if (lhs.isInteger() && rhs.isDouble()){
+            Integer l = ((SInteger) lhs).getValue();
+            Double r = ((SDouble) rhs).getValue();
+            Double sum = l - r;
+
+            SDouble s = new SDouble(sum);
+            s.evaluate();
+
+            results.set(s, 0);
         }else{
             // identify which argument is not a double
-            throw new RuntimeException("Only Doubles and Integers can be subtracted.");
+            throw new RuntimeException("Only Doubles and Integers can be subtracted. "
+                    + lhs.getType() + " and " + rhs.getType() + " were found.");
         }
     }
 

@@ -73,6 +73,11 @@ public abstract class SFuncBase implements SFunc {
     }
 
     @Override
+    public List<SFunc> getDependencies() {
+        return getArgs();
+    }
+
+    @Override
     public SFunc getResult() {
         return results.get(0);
     }
@@ -100,6 +105,11 @@ public abstract class SFuncBase implements SFunc {
     @Override
     public boolean isLiteral(){
         return isLiteral;
+    }
+
+    @Override
+    public void makeLiteral() {
+        isLiteral = true;
     }
     
     @Override

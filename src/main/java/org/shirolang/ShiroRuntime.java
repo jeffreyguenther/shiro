@@ -54,6 +54,7 @@ import org.shirolang.functions.math.SSubtract;
 import org.shirolang.interpreter.ShiroExpressionListener;
 import org.shirolang.interpreter.ShiroLexer;
 import org.shirolang.interpreter.ShiroParser;
+import org.shirolang.values.Path;
 import org.shirolang.values.SBoolean;
 import org.shirolang.values.SDouble;
 import org.shirolang.values.SIdent;
@@ -114,14 +115,20 @@ public class ShiroRuntime implements Scope{
     }
 
     @Override
-    public SFunc resolvePath(String s) {
-        return symbols.get(s);
+    public SFunc resolvePath(String path) {
+        return symbols.get(path);
     }
 
+    @Override
+    public SFunc resolvePath(Path path) {
+        return symbols.get(path.getCurrentPathHead());
+    }
+    
     public SFunc executedExpr(String expr) {
         graph.removeAllDependencies();
         ShiroLexer lex = new ShiroLexer(new ANTLRInputStream(expr));
         ShiroParser parser = new ShiroParser(new CommonTokenStream(lex));
+        parser.setBuildParseTree(true);
         ParseTree tree = parser.shiro();
         
         ParseTreeWalker walker = new ParseTreeWalker();
@@ -130,7 +137,7 @@ public class ShiroRuntime implements Scope{
         List<SFunc> exprs = expression.getExprs();
         
         for(SFunc f: exprs){
-            for(SFunc arg: f.getArgs()){
+            for(SFunc arg: f.getDependencies()){
                 addDependency(f, arg);
             }
             
@@ -146,8 +153,6 @@ public class ShiroRuntime implements Scope{
         for (GraphNode<SFunc> gn : topologicalOrdering) {
             gn.doAction();
         }
-        
-//        System.out.println(graph.getLeafNodes());
         return expression.getRoot();
     }
     

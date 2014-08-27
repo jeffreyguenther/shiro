@@ -57,4 +57,12 @@ public class IntegerTest {
         assertEquals(0, s.getMaxArgs());
         assertEquals(0, s.getMinArgs());
     }
+    
+    @Test
+    public void makeLiteral(){
+        SInteger s = new SInteger();
+        assertFalse(s.isLiteral());
+        s.makeLiteral();
+        assertFalse(s.isLiteral());
+    }
 }
