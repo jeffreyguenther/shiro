@@ -105,6 +105,25 @@ public class PowerTest {
         assertTrue(sum2.getResult().isDouble());
         assertEquals(8.0, r2.getValue(), 1e-15);
     }
+
+    @Test
+    public void complicatedExpression(){
+        SDouble a = new SDouble(2.0);
+        SInteger b = new SInteger(3);
+        SAdd sum = new SAdd(a, b);
+        SDouble c = new SDouble(3.0);
+        SPower product = new SPower(sum, c);
+
+        a.evaluate();
+        b.evaluate();
+        c.evaluate();
+        sum.evaluate();
+        c.evaluate();
+        product.evaluate();
+
+        SDouble result = (SDouble) product.getResult();
+        assertEquals(125.0, result.getValue() ,1e-15);
+    }
     
     @Test(expected= RuntimeException.class)
     public void powerDoubleString(){

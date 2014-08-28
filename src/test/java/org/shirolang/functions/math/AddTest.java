@@ -3,7 +3,10 @@ package org.shirolang.functions.math;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
+import org.shirolang.SFunc;
+import org.shirolang.ShiroRuntime;
 import org.shirolang.values.SDouble;
+import org.shirolang.values.SIdent;
 import org.shirolang.values.SInteger;
 import org.shirolang.values.SString;
 
@@ -102,6 +105,27 @@ public class AddTest {
         SDouble r2 = (SDouble) sum2.getResult();
         assertTrue(sum2.getResult().isDouble());
         assertEquals(12.0, r2.getValue(), 1e-15);
+    }
+
+    @Test
+    public void addIdent(){
+        ShiroRuntime rt = new ShiroRuntime();
+        SDouble a = new SDouble(23.0);
+        rt.addSymbol("a", a);
+
+        SIdent id = new SIdent(rt, "a");
+        SDouble b = new SDouble(2.0);
+        SAdd sum = new SAdd(id, b);
+
+        a.evaluate();
+        id.evaluate();
+        b.evaluate();
+        sum.evaluate();
+
+        SFunc result = sum.getResult();
+        SDouble asDouble = (SDouble)result;
+        assertTrue(result.isDouble());
+        assertEquals(25.0, asDouble.getValue(), 1e-15);
     }
 
     

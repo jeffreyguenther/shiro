@@ -53,8 +53,7 @@ public class SPower extends SBinaryFunction{
     public void evaluate() {
         SFunc lhs = args.get(0).getResult();
         SFunc rhs = args.get(1).getResult();
-        
-        // Only allow doubles to be added     
+
         if(lhs.isDouble() && rhs.isDouble()){
             Double l = ((SDouble) lhs).getValue();
             Double r = ((SDouble) rhs).getValue();

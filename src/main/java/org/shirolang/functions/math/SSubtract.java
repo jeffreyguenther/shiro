@@ -53,41 +53,42 @@ public class SSubtract extends SBinaryFunction{
     public void evaluate() {
         SFunc lhs = args.get(0).getResult();
         SFunc rhs = args.get(1).getResult();
+
         
         // Only allow doubles to be added     
         if(lhs.isDouble() && rhs.isDouble()){
             Double l = ((SDouble) lhs).getValue();
             Double r = ((SDouble) rhs).getValue();
-            Double sum = l - r;
+            Double diff = l - r;
             
-            SDouble s = new SDouble(sum);
+            SDouble s = new SDouble(diff);
             s.evaluate();
             
             results.set(s, 0);
         }else if(lhs.isInteger() && rhs.isInteger()){
             Integer l = ((SInteger) lhs).getValue();
             Integer r = ((SInteger) rhs).getValue();
-            Integer sum = l - r;
+            Integer diff = l - r;
             
-            SInteger s = new SInteger(sum);
+            SInteger s = new SInteger(diff);
             s.evaluate();
             
             results.set(s, 0);
         }else if (lhs.isDouble() && rhs.isInteger()){
             Double l = ((SDouble) lhs).getValue();
             Integer r = ((SInteger) rhs).getValue();
-            Double sum = l - r;
+            Double diff = l - r;
 
-            SDouble s = new SDouble(sum);
+            SDouble s = new SDouble(diff);
             s.evaluate();
 
             results.set(s, 0);
         }else if (lhs.isInteger() && rhs.isDouble()){
             Integer l = ((SInteger) lhs).getValue();
             Double r = ((SDouble) rhs).getValue();
-            Double sum = l - r;
+            Double diff = l - r;
 
-            SDouble s = new SDouble(sum);
+            SDouble s = new SDouble(diff);
             s.evaluate();
 
             results.set(s, 0);

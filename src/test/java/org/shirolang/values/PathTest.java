@@ -24,10 +24,11 @@
 
 package org.shirolang.values;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Test a path expression object
@@ -145,5 +146,13 @@ public class PathTest {
         parts.add("c");
         
         Assert.assertEquals(parts, path.getPathParts());
+    }
+
+    @Test
+    public void isReference(){
+        Path p = new Path();
+        Assert.assertFalse(p.isReference());
+        p.makeReference();
+        Assert.assertTrue(p.isReference());
     }
 }

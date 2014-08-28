@@ -135,7 +135,8 @@ public class ShiroRuntime implements Scope{
         ShiroExpressionListener expression = new ShiroExpressionListener(this);
         walker.walk(expression, tree);
         List<SFunc> exprs = expression.getExprs();
-        
+        System.out.println(exprs);
+
         for(SFunc f: exprs){
             for(SFunc arg: f.getDependencies()){
                 addDependency(f, arg);
@@ -159,7 +160,6 @@ public class ShiroRuntime implements Scope{
     /**
      * Add a dependency between two SFuncs
      *
-     * @param graph
      * @param dependency dependency relation to be added to the graph
      */
     private void addDependency(DependencyRelation<SFunc> dependency) {
@@ -170,7 +170,6 @@ public class ShiroRuntime implements Scope{
      * *
      * Add a dependency between two SFuncs A - depends on -> B
      *
-     * @param graph
      * @param a the depended on SFunc reference
      * @param b the dependent SFunc reference
      */

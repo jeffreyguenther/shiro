@@ -104,4 +104,8 @@ public class SIdent extends SFuncBase{
     public int getMinArgs() {
         return 0;
     }
+
+    public boolean isReference(){
+        return value.isReference();
+    }
 }

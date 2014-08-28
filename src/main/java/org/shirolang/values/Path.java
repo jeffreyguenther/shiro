@@ -58,6 +58,7 @@ public class Path {
     private String indexKey = null; // A port index name
     private int index = -1;         // A port index number
     private int pathHead;           // index of the path head
+    private boolean isReference = false;    // indicates whether the path should be treated as a reference(pointer)
 
     /**
      * Default constructor
@@ -272,49 +273,13 @@ public class Path {
         return hasIntegerIndex() || hasStringIndex();
     }
 
-    /**
-     * Get the ports depended upon. This method returns a set because the set is
-     * recursively added to for all paths in an expression.
-     *
-     * @return a set of one port is returned
-     * @throws PathNotFoundException
-     */
-//    @Override
-//    public Set<Port> getPortsDependedOn() throws PathNotFoundException {
-//        Set<Port> ports = new HashSet<>();
-//        portReferenced = (Port) scope.resolvePath(this);
-//        ports.add(portReferenced);
-//        return ports;
-//    }
+    public void makeReference(){
+        isReference = true;
+    }
 
-    /**
-     * Evaluate the path expression
-     *
-     * @return the value for the path expression
-     * @throws PortNotActiveException
-     */
-//    @Override
-//    public Value evaluate() throws PortNotActiveException {
-//        Value v = null; // value of the path to be output
-//
-//        // look up the port
-//        try {
-//            // look up the value at a given path
-//            portReferenced = (Port) scope.resolvePath(this);
-//
-//            // if the port is active return the value
-//            if (portReferenced.isActive()) {
-//                // get the value
-//                v = getValue();
-//            } else {
-//                throw new PortNotActiveException();
-//            }
-//        } catch (PathNotFoundException | PortIndexNotFoundException ex) {
-//            Logger.getLogger(Path.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//
-//        return v;
-//    }
+    public boolean isReference() {
+        return isReference;
+    }
 
     /**
      * Return return a string of the path

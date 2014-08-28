@@ -411,4 +411,18 @@ public class ShiroRuntimeTest {
         SDouble r = (SDouble) executedExpr.getResult();
         assertEquals(22.0, r.getValue(), 1e-15);
     }
+
+    @Test
+    public void complicatedExpr(){
+        String code = "port a Double(11.0)\n" +
+                "port b Double(2.0)\n" +
+                "port c Power(a, b)\n" +
+                "c + b\n";
+
+        SFunc executedExpr = rt.executedExpr(code);
+        assertEquals(SType.ADD, executedExpr.getType());
+
+        SDouble r = (SDouble) executedExpr.getResult();
+        assertEquals(123.0, r.getValue(), 1e-15);
+    }
 }

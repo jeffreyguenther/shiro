@@ -114,7 +114,6 @@ public class ShiroExpressionListener extends ShiroBaseListener {
         // Detect if the number is a double
         if (number.contains(".")) {
             expr = new SDouble(Double.parseDouble(number));
-            System.out.println("Created a double");
         } else {
             expr = new SInteger(Integer.parseInt(number));
         }
@@ -170,6 +169,10 @@ public class ShiroExpressionListener extends ShiroBaseListener {
 
         } else {
             p = new Path(parts);
+        }
+
+        if(ctx.REF() != null){
+            p.makeReference();
         }
 
         return new SIdent(currentScope, p);
@@ -337,6 +340,7 @@ public class ShiroExpressionListener extends ShiroBaseListener {
                 SFunc exp = getExpr(arg);
                 function.appendArg(exp);
             }
+            setExpr(ctx, function);
         }else{
             function = getExpr(args.get(0));
             
@@ -352,11 +356,11 @@ public class ShiroExpressionListener extends ShiroBaseListener {
 
     @Override
     public void exitInLineExpr(ShiroParser.InLineExprContext ctx) {
-        System.out.println("exited inline expression");
+
     }
 
     @Override
     public void exitPortstmt(ShiroParser.PortstmtContext ctx) {
-        System.out.println("exited port statement");
+
     }
 }

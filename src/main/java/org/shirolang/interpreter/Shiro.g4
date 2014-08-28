@@ -46,6 +46,7 @@ mfparams:	expr(',' expr)*
 	;
 
 path 	:	(IDENT | THIS)('.' IDENT)* (LSQUARE pathIndex RSQUARE)?
+        |   REF (IDENT | THIS)('.' IDENT)*
 	;
 	
 pathIndex
@@ -70,6 +71,7 @@ expr :  '(' expr ')'						  #parensExpr
 	 |  STRING_LITERAL                        #stringExpr
 	 ;
 
+REF : '~';
 PORT: 'port';
 INPUT: 'input';
 OUTPUT: 'output';

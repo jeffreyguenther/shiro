@@ -61,4 +61,5 @@ public interface SFunc {
     void makeLiteral();
     boolean isString();
     boolean isBoolean();
+    boolean isIdent();
 }

@@ -104,6 +104,25 @@ public class SubtractTest {
         assertTrue(sum2.getResult().isDouble());
         assertEquals(-14.0, r2.getValue(), 1e-15);
     }
+
+    @Test
+    public void complicatedExpression(){
+        SDouble a = new SDouble(2.0);
+        SInteger b = new SInteger(3);
+        SAdd sum = new SAdd(a, b);
+        SDouble c = new SDouble(0.5);
+        SSubtract diff = new SSubtract(sum, c);
+
+        a.evaluate();
+        b.evaluate();
+        c.evaluate();
+        sum.evaluate();
+        c.evaluate();
+        diff.evaluate();
+
+        SDouble result = (SDouble) diff.getResult();
+        assertEquals(4.5, result.getValue() ,1e-15);
+    }
     
     @Test(expected= RuntimeException.class)
     public void subDoubleString(){

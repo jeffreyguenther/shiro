@@ -24,6 +24,8 @@
 
 package org.shirolang;
 
+import org.shirolang.values.SIdent;
+
 import java.util.List;
 
 /**
@@ -77,9 +79,31 @@ public abstract class SFuncBase implements SFunc {
         return getArgs();
     }
 
+    /**
+     * Detects if the multifunction is an identifier that refers to
+     * another multifunction rather than the values at the multifunction
+     * This allows the runtime to know if a path refers to multifunction or it's values
+     * For example, if you wrote
+     * <code>
+     * port a Add(1, 2)
+     * </code>
+     *
+     * The path `a` refers to the path's first result.
+     * By adding the reference operator, the path `~a` refers the Add multifunction
+     * This method ensure that identifiers return the correct value.
+     * @return the first value of the results.
+     */
     @Override
     public SFunc getResult() {
-        return results.get(0);
+        if(isIdent()){
+            SIdent id = (SIdent) this;
+            if(!id.isReference()){
+                return id.getResult(0).getResult();
+            }else{
+                return getResult(0);
+            }
+        }
+        return getResult(0);
     }
 
     @Override
@@ -149,5 +173,10 @@ public abstract class SFuncBase implements SFunc {
     @Override
     public boolean isBoolean(){
         return isType(SType.BOOLEAN);
+    }
+
+    @Override
+    public boolean isIdent() {
+        return isType(SType.IDENT);
     }
 }
