@@ -108,4 +108,8 @@ public class SIdent extends SFuncBase{
     public boolean isReference(){
         return value.isReference();
     }
+
+    public boolean isSelector(){
+        return value.isSelector();
+    }
 }

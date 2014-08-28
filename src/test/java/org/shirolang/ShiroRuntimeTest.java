@@ -425,4 +425,22 @@ public class ShiroRuntimeTest {
         SDouble r = (SDouble) executedExpr.getResult();
         assertEquals(123.0, r.getValue(), 1e-15);
     }
+
+    @Test
+     public void parseReferencePath(){
+        SFunc executedExpr = rt.executedExpr("~a\n");
+        assertEquals(SType.IDENT, executedExpr.getType());
+
+        SIdent id = (SIdent) executedExpr;
+        assertTrue(id.isReference());
+    }
+
+    @Test
+    public void parseSelector(){
+        SFunc executedExpr = rt.executedExpr("@a\n");
+        assertEquals(SType.IDENT, executedExpr.getType());
+
+        SIdent id = (SIdent) executedExpr;
+        assertTrue(id.isSelector());
+    }
 }

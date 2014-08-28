@@ -24,11 +24,10 @@
 
 package org.shirolang.values;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
 import org.junit.Test;
 import org.shirolang.ShiroRuntime;
+
+import static org.junit.Assert.*;
 
 /**
  *
@@ -79,6 +78,22 @@ public class IdentTest {
         SIdent s = new SIdent();
         assertEquals(0, s.getMaxArgs());
         assertEquals(0, s.getMinArgs());
+    }
+
+    @Test
+    public void isReference(){
+        Path p = new Path("a");
+        p.makeReference();
+        SIdent s = new SIdent(null, p);
+        assertTrue(s.isReference());
+    }
+
+    @Test
+    public void isSelector(){
+        Path p = new Path("a");
+        p.makeSelector();
+        SIdent s = new SIdent(null, p);
+        assertTrue(s.isSelector());
     }
     
 }

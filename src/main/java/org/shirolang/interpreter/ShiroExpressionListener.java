@@ -175,6 +175,10 @@ public class ShiroExpressionListener extends ShiroBaseListener {
             p.makeReference();
         }
 
+        if(ctx.SELECT() != null){
+            p.makeSelector();
+        }
+
         return new SIdent(currentScope, p);
     }
 

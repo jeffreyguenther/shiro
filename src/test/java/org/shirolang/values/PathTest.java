@@ -155,4 +155,19 @@ public class PathTest {
         p.makeReference();
         Assert.assertTrue(p.isReference());
     }
+
+    @Test
+    public void isSelector(){
+        Path p = new Path();
+        Assert.assertFalse(p.isSelector());
+        p.makeSelector();
+        Assert.assertTrue(p.isSelector());
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void alreadySelectorMakeReference(){
+        Path p = new Path();
+        p.makeSelector();
+        p.makeReference();
+    }
 }

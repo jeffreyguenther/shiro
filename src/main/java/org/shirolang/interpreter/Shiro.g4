@@ -46,7 +46,8 @@ mfparams:	expr(',' expr)*
 	;
 
 path 	:	(IDENT | THIS)('.' IDENT)* (LSQUARE pathIndex RSQUARE)?
-        |   REF (IDENT | THIS)('.' IDENT)*
+        |   REF IDENT('.' IDENT)*
+        |   SELECT IDENT('.' IDENT)*
 	;
 	
 pathIndex
@@ -71,6 +72,7 @@ expr :  '(' expr ')'						  #parensExpr
 	 |  STRING_LITERAL                        #stringExpr
 	 ;
 
+SELECT: '@';
 REF : '~';
 PORT: 'port';
 INPUT: 'input';

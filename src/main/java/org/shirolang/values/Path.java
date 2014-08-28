@@ -59,6 +59,7 @@ public class Path {
     private int index = -1;         // A port index number
     private int pathHead;           // index of the path head
     private boolean isReference = false;    // indicates whether the path should be treated as a reference(pointer)
+    private boolean isSelector = false;
 
     /**
      * Default constructor
@@ -273,12 +274,44 @@ public class Path {
         return hasIntegerIndex() || hasStringIndex();
     }
 
+    /**
+     * Make the path a reference
+     * Use this method to represent paths like "~a" and "~Point"
+     */
     public void makeReference(){
+        if(isSelector){
+            throw new RuntimeException("Path is a selector. Cannot be made a reference.");
+        }
+
         isReference = true;
     }
 
+    /**
+     * Returns whether the path is a reference
+     * @return true if the path is a reference, otherwise false
+     */
     public boolean isReference() {
         return isReference;
+    }
+
+    /**
+     * Make the path a selector
+     * This method is used to represent paths like "@a" and "@Point.x"
+     */
+    public void makeSelector(){
+        if(isReference){
+            throw new RuntimeException("Path is a reference. Cannot be made a selector.");
+        }
+
+        isSelector = true;
+    }
+
+    /**
+     * Returns whether the path is a selector
+     * @return true if the path is a selector, otherwise false
+     */
+    public boolean isSelector(){
+        return isSelector;
     }
 
     /**
