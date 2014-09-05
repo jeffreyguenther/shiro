@@ -8,11 +8,28 @@ grammar Shiro;
 shiro : statement* EOF
 	  ;
 
-statement :
-               portstmt
-            |  inLineExpr
-            |  NEWLINE
-	      ;
+statement
+    :
+          nodestmt
+        | portstmt
+        | inLineExpr
+        | NEWLINE
+	;
+
+nodestmt
+    :   NODE IDENT ('[' activeSelector ']')? BEGIN NEWLINE
+        nodeInternal
+        END
+    ;
+
+activeSelector
+	:	IDENT
+	;
+
+nodeInternal
+    :   (portstmt
+        | NEWLINE)*
+    ;
 
 portDecl
 	:	portType portName MFNAME
@@ -30,9 +47,10 @@ portName
 	:	IDENT
 	;
 	
-portType:   PORT
-	|   INPUT
-	|   OUTPUT
+portType
+    :       PORT
+	    |   INPUT
+	    |   OUTPUT
         |   EVAL
 	;
 	
@@ -95,6 +113,10 @@ LT		 : '<';
 LTE      : '<=';
 EQ		 : '==';
 NEQ      : '!=';
+
+BEGIN: 'begin';
+END: 'end';
+NODE: 'node';
 
 OPTION : 'option';
 

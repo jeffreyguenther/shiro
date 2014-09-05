@@ -24,7 +24,7 @@
 
 package org.shirolang.functions.math;
 
-import org.shirolang.SFuncBase;
+import org.shirolang.base.SFuncBase;
 
 /**
  *

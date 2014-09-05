@@ -24,7 +24,8 @@
 
 package org.shirolang.values;
 
-import org.shirolang.SFuncBase;
+import org.shirolang.base.SFuncBase;
+import org.shirolang.base.SymbolType;
 
 /**
  * A base class to  help speed writing functional representations of values.
@@ -42,6 +43,7 @@ public abstract class SValue<T> extends SFuncBase{
     public SValue(T f) {
         super();
         this.v = f;
+        symbolType = SymbolType.LITERAL;
     }
 
     @Override
@@ -60,11 +62,6 @@ public abstract class SValue<T> extends SFuncBase{
     }
 
     @Override
-    public String toString() {
-       return "" + v;
-    }
-
-    @Override
     public int getMaxArgs() {
         return 0;
     }
@@ -72,5 +69,10 @@ public abstract class SValue<T> extends SFuncBase{
     @Override
     public int getMinArgs() {
         return 0;
+    }
+
+    @Override
+    public String toString() {
+       return "" + v;
     }
 }

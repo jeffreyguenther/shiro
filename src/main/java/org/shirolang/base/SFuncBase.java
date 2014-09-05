@@ -22,8 +22,13 @@
  * THE SOFTWARE.
  */
 
-package org.shirolang;
+package org.shirolang.base;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import org.shirolang.SIndexedMap;
 import org.shirolang.values.SIdent;
 
 import java.util.List;
@@ -31,17 +36,23 @@ import java.util.List;
 /**
  * A base class to handle the common requirements
  * of implementing multi-functions.
- * @author jeffreyguenther
  */
 public abstract class SFuncBase implements SFunc {
     protected SIndexedMap<SFunc> args;
     protected SIndexedMap<SFunc> results; 
-    protected boolean isLiteral;
+    protected BooleanProperty isActive;
+
+    protected StringProperty name;
+    protected StringProperty fullName;
+    protected SymbolType symbolType;
 
     public SFuncBase() {
         args = new SIndexedMap<>();
         results = new SIndexedMap<>();
-        this.isLiteral = false;
+        isActive = new SimpleBooleanProperty(true);
+        name = new SimpleStringProperty("");
+        fullName = new SimpleStringProperty("");
+        symbolType = SymbolType.PORT;
     }
     
     @Override
@@ -50,8 +61,8 @@ public abstract class SFuncBase implements SFunc {
     }
 
     @Override
-    public SFunc getArg(String s) {
-        return args.get(s);
+    public SFunc getArg(String name) {
+        return args.get(name);
     }
 
     @Override
@@ -112,8 +123,8 @@ public abstract class SFuncBase implements SFunc {
     }
 
     @Override
-    public SFunc getResult(String s) {
-        return results.get(s);
+    public SFunc getResult(String name) {
+        return results.get(name);
     }
 
     @Override
@@ -127,18 +138,23 @@ public abstract class SFuncBase implements SFunc {
     }
     
     @Override
-    public boolean isLiteral(){
-        return isLiteral;
+    public boolean isActive(){
+        return isActive.get();
     }
 
     @Override
-    public void makeLiteral() {
-        isLiteral = true;
+    public void setActive(boolean b) {
+        isActive.set(b);
     }
-    
+
     @Override
-    public void setArg(String s, SFunc v){
-        args.set(v, s);
+    public BooleanProperty isActiveProperty() {
+        return isActive;
+    }
+
+    @Override
+    public void setArg(String name, SFunc v){
+        args.set(v, name);
     }
     
     @Override
@@ -178,5 +194,39 @@ public abstract class SFuncBase implements SFunc {
     @Override
     public boolean isIdent() {
         return isType(SType.IDENT);
+    }
+
+    @Override
+    public SymbolType getSymbolType(){
+        return symbolType;
+    }
+
+    @Override
+    public void setSymbolType(SymbolType type){
+        this.symbolType = type;
+    }
+
+    public StringProperty nameProperty(){
+        return name;
+    }
+
+    public StringProperty fullNameProperty(){
+        return fullName;
+    }
+
+    public String getFullName(){
+        return fullName.get();
+    }
+
+    public void setFullName(String fullName){
+        this.fullName.set(fullName);
+    }
+
+    public String getName(){
+        return name.get();
+    }
+
+    public void setName(String name){
+        this.name.set(name);
     }
 }

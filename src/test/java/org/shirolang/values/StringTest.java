@@ -71,12 +71,4 @@ public class StringTest {
         assertEquals(0, s.getMaxArgs());
         assertEquals(0, s.getMinArgs());
     }
-    
-    @Test
-    public void makeLiteral(){
-        SString s = new SString();
-        assertFalse(s.isLiteral());
-        s.makeLiteral();
-        assertFalse(s.isLiteral());
-    }
 }

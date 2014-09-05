@@ -24,6 +24,8 @@
 
 package org.shirolang;
 
+import org.shirolang.base.SFunc;
+
 /**
  *
  * @author jeffreyguenther

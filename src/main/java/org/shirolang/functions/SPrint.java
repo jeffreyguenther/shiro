@@ -6,8 +6,8 @@
 
 package org.shirolang.functions;
 
-import org.shirolang.SFunc;
-import org.shirolang.SFuncBase;
+import org.shirolang.base.SFunc;
+import org.shirolang.base.SFuncBase;
 
 /**
  *

@@ -24,7 +24,7 @@
 
 package org.shirolang.values;
 
-import org.shirolang.SType;
+import org.shirolang.base.SType;
 
 /**
  *

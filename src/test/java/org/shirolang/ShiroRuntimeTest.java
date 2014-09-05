@@ -31,6 +31,9 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
+import org.shirolang.base.SFunc;
+import org.shirolang.base.SType;
+import org.shirolang.base.SymbolType;
 import org.shirolang.functions.math.SAdd;
 import org.shirolang.values.SBoolean;
 import org.shirolang.values.SDouble;
@@ -442,5 +445,14 @@ public class ShiroRuntimeTest {
 
         SIdent id = (SIdent) executedExpr;
         assertTrue(id.isSelector());
+    }
+
+    @Test
+    public void parseNode(){
+        String code = "node a begin\n" +
+                "end";
+
+        SFunc executedExpr = rt.executedExpr(code);
+        assertEquals(SymbolType.NODE, executedExpr.getSymbolType());
     }
 }

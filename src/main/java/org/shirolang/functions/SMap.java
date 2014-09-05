@@ -9,8 +9,7 @@ package org.shirolang.functions;
 import org.shirolang.values.SList;
 import java.util.ArrayList;
 import java.util.List;
-import org.shirolang.SFunc;
-import org.shirolang.SFuncBase;
+import org.shirolang.base.SFunc;
 import org.shirolang.functions.math.SBinaryFunction;
 
 /**

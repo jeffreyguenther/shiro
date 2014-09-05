@@ -31,6 +31,9 @@ import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
+import org.shirolang.base.SFunc;
+import org.shirolang.base.SType;
+import org.shirolang.base.Scope;
 import org.shirolang.dag.DAGraph;
 import org.shirolang.dag.DependencyRelation;
 import org.shirolang.dag.GraphNode;
@@ -65,7 +68,7 @@ import org.shirolang.values.SString;
  *
  * @author jeffreyguenther
  */
-public class ShiroRuntime implements Scope{
+public class ShiroRuntime implements Scope {
     private Map<String, SFunc> symbols;
     private DAGraph<SFunc> graph = new DAGraph<>();
     private SFuncAction graphNodeAction = new SFuncAction();
@@ -181,5 +184,20 @@ public class ShiroRuntime implements Scope{
             graph.addDependency(graph.getNodeForValue(a, graphNodeAction),
                     graph.getNodeForValue(b, graphNodeAction));
         }
+    }
+
+    @Override
+    public String getFullName() {
+        return "";
+    }
+
+    @Override
+    public String getName() {
+        return "";
+    }
+
+    @Override
+    public boolean isRoot() {
+        return true;
     }
 }

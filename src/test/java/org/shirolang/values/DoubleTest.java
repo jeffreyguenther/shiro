@@ -55,12 +55,4 @@ public class DoubleTest {
         assertEquals(0, s.getMaxArgs());
         assertEquals(0, s.getMinArgs());
     }
-    
-    @Test
-    public void makeLiteral(){
-        SDouble s = new SDouble();
-        assertFalse(s.isLiteral());
-        s.makeLiteral();
-        assertFalse(s.isLiteral());
-    }
 }

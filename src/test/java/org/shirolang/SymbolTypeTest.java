@@ -26,24 +26,62 @@ package org.shirolang;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.shirolang.base.SymbolType;
 
 /**
- * Created by jeffreyguenther on 2014-09-05.
+ * Test the internal type enum
  */
 public class SymbolTypeTest {
     @Test
     public void isNode(){
         SymbolType node = SymbolType.NODE;
         SymbolType port = SymbolType.PORT;
+        SymbolType literal = SymbolType.LITERAL;
+        SymbolType ident = SymbolType.IDENT;
+
+
         Assert.assertTrue("is node", node.isNode());
         Assert.assertFalse("is not node", port.isNode());
+        Assert.assertFalse("is not node", literal.isNode());
+        Assert.assertFalse("is not node", ident.isNode());
     }
 
     @Test
     public void isPort(){
         SymbolType node = SymbolType.NODE;
         SymbolType port = SymbolType.PORT;
-        Assert.assertTrue("is port", port.isPort());
+        SymbolType literal = SymbolType.LITERAL;
+        SymbolType ident = SymbolType.IDENT;
+
         Assert.assertFalse("is not port", node.isPort());
+        Assert.assertTrue("is port", port.isPort());
+        Assert.assertFalse("is not port", literal.isPort());
+        Assert.assertFalse("is not port", ident.isPort());
+    }
+
+    @Test
+    public void isLiteral(){
+        SymbolType node = SymbolType.NODE;
+        SymbolType port = SymbolType.PORT;
+        SymbolType literal = SymbolType.LITERAL;
+        SymbolType ident = SymbolType.IDENT;
+
+        Assert.assertFalse("is not literal", node.isLiteral());
+        Assert.assertFalse("is not literal", port.isLiteral());
+        Assert.assertTrue("is literal", literal.isLiteral());
+        Assert.assertTrue("is not literal", ident.isLiteral());
+    }
+
+    @Test
+    public void isIdent(){
+        SymbolType node = SymbolType.NODE;
+        SymbolType port = SymbolType.PORT;
+        SymbolType literal = SymbolType.LITERAL;
+        SymbolType ident = SymbolType.IDENT;
+
+        Assert.assertFalse("is not ident", node.isIdent());
+        Assert.assertFalse("is not ident", port.isIdent());
+        Assert.assertFalse("is not ident", literal.isIdent());
+        Assert.assertTrue("is ident", ident.isIdent());
     }
 }

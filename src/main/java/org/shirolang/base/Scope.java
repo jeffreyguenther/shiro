@@ -22,44 +22,18 @@
  * THE SOFTWARE.
  */
 
-package org.shirolang;
+package org.shirolang.base;
 
-import java.util.List;
+import org.shirolang.values.Path;
 
 /**
  *
- * @author jeffreyguenther
+ * Defines a scope in Shiro
  */
-public interface SFunc {
-    void evaluate();
-    SFunc getArg();
-    SFunc getArg(String s);
-    SFunc getArg(Integer i);
-    List<SFunc> getArgs();
-    int getMaxArgs();
-    int getMinArgs();
-    List<String> getArgKeys();
-    void setArg(String s, SFunc v);
-    void setArg(Integer i, SFunc v);
-    void appendArg(SFunc v);
-    boolean hasArgs();
-    
-    List<SFunc> getDependencies();
-    
-    SFunc getResult();
-    SFunc getResult(Integer i);
-    SFunc getResult(String s);
-    List<SFunc> getResults();
-    List<String> getResultKeys();
-    
-    
-    String getType();
-    
-    boolean isDouble();
-    boolean isInteger();
-    boolean isLiteral();
-    void makeLiteral();
-    boolean isString();
-    boolean isBoolean();
-    boolean isIdent();
+public interface Scope {
+    public SFunc resolvePath(Path s);
+    public SFunc resolvePath(String path);
+    public String getName();
+    public String getFullName();
+    public boolean isRoot();
 }

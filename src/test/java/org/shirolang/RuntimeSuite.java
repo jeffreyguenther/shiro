@@ -36,7 +36,8 @@ import org.shirolang.functions.math.MathSuite;
 @Suite.SuiteClasses({
     ShiroRuntimeTest.class,
     SIndexedMapTest.class,
-    MathSuite.class
+    MathSuite.class,
+    SymbolTypeTest.class
 })
 public class RuntimeSuite {
     

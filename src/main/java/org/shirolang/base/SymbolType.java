@@ -22,15 +22,43 @@
  * THE SOFTWARE.
  */
 
-package org.shirolang;
-
-import org.shirolang.values.Path;
+package org.shirolang.base;
 
 /**
- *
- * @author jeffreyguenther
+ * Defines the basic types of symbols used in the runtime.
  */
-public interface Scope {
-    public SFunc resolvePath(Path s);
-    public SFunc resolvePath(String path);
+public enum SymbolType {
+    NODE, PORT, LITERAL, IDENT;
+
+    /**
+     * Determines if the type is a node
+     * @return true if the type is a node, otherwise false
+     */
+    public boolean isNode(){
+        return this.equals(NODE);
+    }
+
+    /**
+     * Determines if the type is a port
+     * @return true if the type is a port, otherwise false
+     */
+    public boolean isPort(){
+        return this.equals(PORT);
+    }
+
+    /**
+     * Determines if the type is a literal
+     * @return true if the type is a literal, otherwise false
+     */
+    public boolean isLiteral(){
+        return this.equals(LITERAL);
+    }
+
+    /**
+     * Determines if the type is a identifier
+     * @return true if the type is an identifier, otherwise false
+     */
+    public boolean isIdent(){
+        return this.equals(IDENT);
+    }
 }

@@ -24,8 +24,8 @@
 
 package org.shirolang.functions.math;
 
-import org.shirolang.SFunc;
-import static org.shirolang.SType.GREATERTHAN;
+import org.shirolang.base.SFunc;
+import static org.shirolang.base.SType.GREATERTHAN;
 import org.shirolang.values.SBoolean;
 import org.shirolang.values.SDouble;
 import org.shirolang.values.SInteger;

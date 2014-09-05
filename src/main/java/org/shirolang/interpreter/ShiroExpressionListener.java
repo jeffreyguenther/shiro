@@ -21,6 +21,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
 package org.shirolang.interpreter;
 
 import java.util.ArrayList;
@@ -29,8 +30,8 @@ import java.util.Stack;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
 import org.antlr.v4.runtime.tree.TerminalNode;
-import org.shirolang.SFunc;
-import org.shirolang.Scope;
+import org.shirolang.base.SFunc;
+import org.shirolang.base.Scope;
 import org.shirolang.ShiroRuntime;
 import org.shirolang.functions.math.SAdd;
 import org.shirolang.functions.math.SAnd;
@@ -117,8 +118,7 @@ public class ShiroExpressionListener extends ShiroBaseListener {
         } else {
             expr = new SInteger(Integer.parseInt(number));
         }
-        
-        expr.makeLiteral();
+
         setExpr(ctx, expr);
     }
 
@@ -127,7 +127,6 @@ public class ShiroExpressionListener extends ShiroBaseListener {
         String value = ctx.BOOLEAN_LITERAL().getText();
         
         SBoolean bool = new SBoolean(Boolean.parseBoolean(value));
-        bool.makeLiteral();
         setExpr(ctx, bool);
     }
 
@@ -136,7 +135,6 @@ public class ShiroExpressionListener extends ShiroBaseListener {
         String literalString = ctx.STRING_LITERAL().getText();
         // Remove the quotes from around the string literal
         SString s = new SString(literalString.substring(1, literalString.length() -1));
-        s.makeLiteral();
         setExpr(ctx, s);
     }
     
@@ -325,7 +323,7 @@ public class ShiroExpressionListener extends ShiroBaseListener {
         }
         
         // if the function is not one of the literals (number, string, etc.)
-        if (!function.isLiteral() && args.size() > 1) {
+        if (!function.getSymbolType().isLiteral() && args.size() > 1) {
             // check to see if the right number of exprs came back
             if (args.size() < function.getMinArgs()) {
                 throw new RuntimeException("Expected at least " + function.getMinArgs()
@@ -356,15 +354,5 @@ public class ShiroExpressionListener extends ShiroBaseListener {
         
         // add the symbol to the runtime
         rt.addSymbol(portName, function);
-    }
-
-    @Override
-    public void exitInLineExpr(ShiroParser.InLineExprContext ctx) {
-
-    }
-
-    @Override
-    public void exitPortstmt(ShiroParser.PortstmtContext ctx) {
-
     }
 }

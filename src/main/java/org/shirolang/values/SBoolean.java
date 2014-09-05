@@ -24,24 +24,47 @@
 
 package org.shirolang.values;
 
-import org.shirolang.SType;
+import org.shirolang.base.SType;
+import org.shirolang.base.SymbolType;
 
 /**
  *
- * @author jeffreyguenther
+ * A multi-function to represent a boolean in Shiro
  */
 public class SBoolean extends SValue<Boolean>{
 
+    /**
+     * Creates an SBoolean initialized to false
+     */
     public SBoolean(){
         this(false);
     }
-    
+
+    /**
+     * Creates an SBoolean with the passed value
+     * @param b value to set the SBoolean
+     */
     public SBoolean(Boolean b) {
         super(b);
     }
-   
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getType() {
         return SType.BOOLEAN;
+    }
+
+    /**
+     * Creates a SBoolean with SymbolType PORT
+     * @param b value to set the SBoolean
+     * @return An SBoolean with it's symbolType field set to
+     * SymbolType.PORT
+     */
+    public static SBoolean createAsPort(Boolean b){
+        SBoolean bool = new SBoolean(b);
+        bool.setSymbolType(SymbolType.PORT);
+        return bool;
     }
 }

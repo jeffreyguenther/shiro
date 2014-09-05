@@ -4,8 +4,9 @@
  * and open the template in the editor.
  */
 
-package org.shirolang;
+package org.shirolang.base;
 
+import org.shirolang.ShiroRuntime;
 import org.shirolang.values.SList;
 import org.shirolang.functions.math.SAdd;
 import org.shirolang.values.SDouble;

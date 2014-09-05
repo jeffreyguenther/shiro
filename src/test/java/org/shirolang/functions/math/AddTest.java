@@ -3,7 +3,7 @@ package org.shirolang.functions.math;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
-import org.shirolang.SFunc;
+import org.shirolang.base.SFunc;
 import org.shirolang.ShiroRuntime;
 import org.shirolang.values.SDouble;
 import org.shirolang.values.SIdent;

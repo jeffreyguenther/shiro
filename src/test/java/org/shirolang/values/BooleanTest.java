@@ -57,12 +57,4 @@ public class BooleanTest {
         assertEquals(0, s.getMaxArgs());
         assertEquals(0, s.getMinArgs());
     }
-    
-    @Test
-    public void makeLiteral(){
-        SBoolean s = new SBoolean();
-        assertFalse(s.isLiteral());
-        s.makeLiteral();
-        assertFalse(s.isLiteral());
-    }
 }

@@ -25,7 +25,7 @@
 package org.shirolang.values;
 
 import java.util.List;
-import org.shirolang.SFunc;
+import org.shirolang.base.SFunc;
 
 /**
  *

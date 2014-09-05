@@ -24,8 +24,8 @@
 
 package org.shirolang.functions.math;
 
-import org.shirolang.SFunc;
-import static org.shirolang.SType.AND;
+import org.shirolang.base.SFunc;
+import static org.shirolang.base.SType.AND;
 import org.shirolang.values.SBoolean;
 
 /**

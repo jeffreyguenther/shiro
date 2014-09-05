@@ -22,11 +22,12 @@
  * THE SOFTWARE.
  */
 
-package org.shirolang;
+package org.shirolang.base;
 
 /**
  *
- * @author jeffreyguenther
+ * Defines a set of pre-defined multi-function types to
+ * be used to determine the
  */
 public final class SType {
     public static final String INTEGER = "Integer";

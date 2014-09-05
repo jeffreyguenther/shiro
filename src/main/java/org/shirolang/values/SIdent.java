@@ -26,9 +26,10 @@ package org.shirolang.values;
 
 import java.util.Collections;
 import java.util.List;
-import org.shirolang.SFunc;
-import org.shirolang.SFuncBase;
-import org.shirolang.Scope;
+import org.shirolang.base.SFunc;
+import org.shirolang.base.SFuncBase;
+import org.shirolang.base.Scope;
+import org.shirolang.base.SymbolType;
 
 /**
  * Defines an identifier points to. This
@@ -111,5 +112,10 @@ public class SIdent extends SFuncBase{
 
     public boolean isSelector(){
         return value.isSelector();
+    }
+
+    @Override
+    public SymbolType getSymbolType(){
+        return SymbolType.IDENT;
     }
 }

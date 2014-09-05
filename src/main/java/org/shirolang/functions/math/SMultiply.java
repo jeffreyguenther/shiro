@@ -24,7 +24,7 @@
 
 package org.shirolang.functions.math;
 
-import org.shirolang.SFunc;
+import org.shirolang.base.SFunc;
 import org.shirolang.values.SDouble;
 import org.shirolang.values.SInteger;
 

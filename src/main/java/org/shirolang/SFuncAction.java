@@ -25,6 +25,8 @@
 package org.shirolang;
 
 import java.util.Set;
+
+import org.shirolang.base.SFunc;
 import org.shirolang.dag.GraphNode;
 import org.shirolang.dag.NodeAction;
 
