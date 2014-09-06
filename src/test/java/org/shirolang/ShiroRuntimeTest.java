@@ -451,7 +451,7 @@ public class ShiroRuntimeTest {
     @Test
     public void parseNode(){
         String code = "node a begin\n" +
-                "end";
+                "end\n";
 
         SFunc executedExpr = rt.executedExpr(code);
         assertEquals(SymbolType.NODE, executedExpr.getSymbolType());
