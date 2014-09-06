@@ -6,10 +6,10 @@
 
 package org.shirolang.values;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import junit.framework.Assert;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 /**
  *
@@ -54,5 +54,12 @@ public class DoubleTest {
         SDouble s = new SDouble();
         assertEquals(0, s.getMaxArgs());
         assertEquals(0, s.getMinArgs());
+    }
+
+    @Test
+    public void getResult(){
+        SDouble d = new SDouble(12.344);
+        d.evaluate();
+        assertSame(d, d.getResult());
     }
 }

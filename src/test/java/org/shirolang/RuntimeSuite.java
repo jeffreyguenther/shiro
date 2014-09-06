@@ -26,6 +26,7 @@ package org.shirolang;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
+import org.shirolang.base.SNodeTest;
 import org.shirolang.functions.math.MathSuite;
 
 /**
@@ -37,7 +38,8 @@ import org.shirolang.functions.math.MathSuite;
     ShiroRuntimeTest.class,
     SIndexedMapTest.class,
     MathSuite.class,
-    SymbolTypeTest.class
+    SymbolTypeTest.class,
+    SNodeTest.class
 })
 public class RuntimeSuite {
     

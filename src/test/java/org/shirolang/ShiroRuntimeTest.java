@@ -59,7 +59,8 @@ public class ShiroRuntimeTest {
         rt.addSymbol("a", a1);
         
         assertSame(a1, rt.resolvePath("a"));
-        
+
+        a1.evaluate();
         aId.evaluate();
         assertSame(a1, aId.getResult());
         assertTrue(a1.isDouble());

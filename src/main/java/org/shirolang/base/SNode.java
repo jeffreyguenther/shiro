@@ -222,6 +222,11 @@ public class SNode extends SFuncBase implements Scope{
     public void evaluate() {
         // LEAVE empty. A node should never be evaluated
         // Evaluation in shiro happens based on ports.
+
+        // todo handle node evaluation.
+        // This is where we will deal with the mechanics of having a
+        // node evaluate itself when it's not attached to a graph.
+        // this will happen when a node is passes as a lambda
     }
 
     @Override

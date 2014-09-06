@@ -69,7 +69,7 @@ public class SymbolTypeTest {
         Assert.assertFalse("is not literal", node.isLiteral());
         Assert.assertFalse("is not literal", port.isLiteral());
         Assert.assertTrue("is literal", literal.isLiteral());
-        Assert.assertTrue("is not literal", ident.isLiteral());
+        Assert.assertFalse("is not literal", ident.isLiteral());
     }
 
     @Test
