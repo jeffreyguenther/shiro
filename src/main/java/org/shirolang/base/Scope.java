@@ -24,6 +24,7 @@
 
 package org.shirolang.base;
 
+import org.shirolang.exceptions.PathNotFoundException;
 import org.shirolang.values.Path;
 
 /**
@@ -31,8 +32,8 @@ import org.shirolang.values.Path;
  * Defines a scope in Shiro
  */
 public interface Scope {
-    public SFunc resolvePath(Path s);
-    public SFunc resolvePath(String path);
+    public SFunc resolvePath(Path path) throws PathNotFoundException;
+    public SFunc resolvePath(String path) throws PathNotFoundException;
     public String getName();
     public String getFullName();
     public boolean isRoot();

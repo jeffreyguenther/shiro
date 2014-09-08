@@ -26,10 +26,13 @@ package org.shirolang.values;
 
 import java.util.Collections;
 import java.util.List;
+
+import org.omg.SendingContext.RunTime;
 import org.shirolang.base.SFunc;
 import org.shirolang.base.SFuncBase;
 import org.shirolang.base.Scope;
 import org.shirolang.base.SymbolType;
+import org.shirolang.exceptions.PathNotFoundException;
 
 /**
  * Defines an identifier points to. This
@@ -78,12 +81,20 @@ public class SIdent extends SFuncBase{
     
     @Override
     public void evaluate() {
-        results.set(scope.resolvePath(value));
+        try {
+            results.set(scope.resolvePath(value));
+        } catch (PathNotFoundException e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     @Override
     public List<SFunc> getDependencies() {
-        return Collections.singletonList(scope.resolvePath(value));
+        try {
+            return Collections.singletonList(scope.resolvePath(value));
+        } catch (PathNotFoundException e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     @Override

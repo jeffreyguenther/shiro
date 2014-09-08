@@ -24,6 +24,8 @@
 
 package org.shirolang.base;
 
+import org.shirolang.exceptions.OptionNotFoundException;
+import org.shirolang.exceptions.PathNotFoundException;
 import org.shirolang.values.Path;
 
 import java.util.HashMap;
@@ -33,10 +35,8 @@ import java.util.Set;
 
 /**
  * Specifies a node in a subjunctive dependency graph. A node is simply a
- * reference to a collection of ports. Each node has at least one special port
- * called an "evaluated port." We will call them e-ports for short. This port
- * acts as an update method for the node. All node dependent ports depend on the
- * evaluated port.
+ * reference to a collection of ports.
+ *
  *
  */
 public class SNode extends SFuncBase implements Scope{
@@ -113,6 +113,8 @@ public class SNode extends SFuncBase implements Scope{
 
         // create map for the node's ports
         ports = new HashMap<>();
+
+        symbolType = SymbolType.NODE;
     }
 
     /**
@@ -141,6 +143,88 @@ public class SNode extends SFuncBase implements Scope{
     }
 
     /**
+     * Gets a port by name
+     * @param name name of the port get
+     * @return the port with the passed name. Returns null if a port with the given
+     * name is not found.
+     */
+    public SFunc getPort(String name){
+        return ports.get(name);
+    }
+
+    /**
+     * Gets the default option for the node
+     * @return a reference to the default option. Returns null
+     * if no default is set.
+     */
+    public SFunc getDefaultOption(){
+        return defaultOption;
+    }
+
+    /**
+     * Sets the node's default option.
+     * @param name name of node or port to set as default
+     */
+    public void setDefaultOption(String name) throws OptionNotFoundException {
+        SFunc option = options.get(name);
+
+        if(option == null){
+            throw new OptionNotFoundException(this.getFullName() + " does not have an option " + name);
+        }
+
+        defaultOption = option;
+    }
+
+    /**
+     * Adds the option and makes it the default
+     * @param option option to be added
+     */
+    public void addOptionAsDefault(SFunc option){
+        addOption(option);
+        defaultOption = option;
+    }
+
+
+    /**
+     * Adds an option to the node The option is renamed to have the correct full
+     * name. If another option exists that has the same name, it is overwritten.
+     *
+     * @param option option to be added
+     */
+    public void addOption(SFunc option) {
+        // add the option to the appropriate collection
+        if (option.getSymbolType().isNode()) {
+            SNode n = (SNode) option;
+            addNestedNode(n);
+        } else { // option is a port
+           addPort(option);
+        }
+
+        if(option.getName().isEmpty()){
+            throw new RuntimeException(option + " has no name. Cannot add an option with an empty name");
+        }
+
+        options.put(option.getName(), option);
+    }
+
+    /**
+     * Gets the option with the given name
+     * @param name name of the option
+     * @return a reference to the option, or null it is not found
+     */
+    public SFunc getOption(String name){
+        return options.get(name);
+    }
+
+    /**
+     * Gets the options for the node
+     * @return a reference to a new map containing the node's options
+     */
+    public Map<String, SFunc> getOptions(){
+        return new HashMap<>(options);
+    }
+
+    /**
      * Gets whether the node has options
      * @return true if the node has options, otherwise false
      */
@@ -156,6 +240,63 @@ public class SNode extends SFuncBase implements Scope{
      */
     public SFunc getActiveOption() {
         return activeOption;
+    }
+
+    /**
+     * Adds an option and makes it active
+     * @param option option to be added
+     */
+    public void addOptionAsActive(SFunc option){
+        addOption(option);
+        activateOption(option);
+    }
+
+    /**
+     * Sets the node's active option. Options are stored in a node in map by the
+     * options name. To set the active option use the symbol's name, not it's
+     * full name
+     *
+     * @param name name of symbol to set active
+     * @return the symbol set active, returns null if name is not found
+     */
+    public SFunc setActiveOption(String name) throws OptionNotFoundException {
+        SFunc activeItem = options.get(name);
+
+        if(activeItem == null){
+            throw new OptionNotFoundException(this.getFullName() + " does not have an option " + name);
+        }
+
+        activateOption(activeItem);
+
+        return activeOption;
+    }
+
+    /**
+     * Activates the passed option
+     * Deactivates all other options
+     * @param option the option to activate
+     */
+    private void activateOption(SFunc option) {
+        // Create a set of the inactive options
+        Set<SFunc> inactive = new HashSet<>(options.values());
+        inactive.remove(option);
+
+        // deactivate the inactive options
+        inactive.stream().forEach((s) -> s.setActive(false));
+
+        // activate the passed option
+        option.setActive(true);
+
+        activeOption = option;
+    }
+
+    /**
+     * Gets the nested node of the given name
+     * @param name name of the node
+     * @return null if node is not found
+     */
+    public SNode getNestedNode(String name){
+        return nestedNodes.get(name);
     }
 
     /**
@@ -245,13 +386,56 @@ public class SNode extends SFuncBase implements Scope{
     }
 
     @Override
-    public SFunc resolvePath(Path s) {
-        throw new UnsupportedOperationException("Feature not implemented yet!");
+    public SFunc resolvePath(Path path) throws PathNotFoundException {
+        SFunc portReferenced = null;
+
+        String pathHead = path.getCurrentPathHead();
+        if(pathHead.equals("active") || pathHead.equals("this") || path.isAtEnd()){
+            if(pathHead.equals("active")){
+                // if active refers to a port
+                if(path.isAtEnd()){
+                    portReferenced = activeOption;
+                    path.resetPathHead();
+                }else if (activeOption.getSymbolType().isNode()){ // if active refers to a node
+                    path.popPathHead();
+                    SNode subjunct = (SNode) activeOption;
+                    portReferenced = subjunct.resolvePath(path);
+                }
+            }else {
+
+                if (pathHead.equals("this")) {
+                    // move up the path
+                    path.popPathHead();
+                }
+
+                String portName = path.getCurrentPathHead();
+                portReferenced = ports.get(portName);
+
+                // reset the path for future use
+                path.resetPathHead();
+            }
+        }else{ // check the nested nodes
+            if(hasNestedNodes()){
+                Scope nestedNodeMatch = nestedNodes.get(path.getCurrentPathHead());
+                if (nestedNodeMatch != null) {
+                    // pop the head and search the nested node
+                    path.popPathHead();
+                    portReferenced = nestedNodeMatch.resolvePath(path);
+                }
+            }
+        }
+
+        if(portReferenced == null){
+            throw new PathNotFoundException(path + " was not found.");
+        }
+
+
+        return portReferenced;
     }
 
     @Override
-    public SFunc resolvePath(String path) {
-        throw new UnsupportedOperationException("Feature not implemented yet!");
+    public SFunc resolvePath(String path) throws PathNotFoundException {
+        return resolvePath(Path.create(path));
     }
 
     @Override
@@ -264,6 +448,7 @@ public class SNode extends SFuncBase implements Scope{
             throw new RuntimeException("Only SFuncs of SymbolType.PORT can be added to nodes.");
         }
 
+        port.setFullName(Path.createFullName(fullName.get(), port.getName()));
         ports.put(port.getName(), port);
     }
 }
