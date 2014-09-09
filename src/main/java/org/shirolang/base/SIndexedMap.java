@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package org.shirolang;
+package org.shirolang.base;
 
 import java.util.ArrayList;
 import java.util.Collections;

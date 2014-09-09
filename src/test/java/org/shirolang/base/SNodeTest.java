@@ -369,9 +369,25 @@ public class SNodeTest {
     }
 
     @Test
-    public void resolvePathToGlobalScope(){
+    public void resolvePathToGlobalScope() throws PathNotFoundException {
         ShiroRuntime rt = new ShiroRuntime();
         SNode n = new SNode("Type", "A", rt);
+        SDouble d = new SDouble(183.2);
+        d.setSymbolType(SymbolType.PORT);
+        d.setName("d");
+        n.addPort(d);
+
+        SNode n1 = new SNode("Type", "B", rt);
+        SDouble d1 = new SDouble(13.2);
+        d1.setSymbolType(SymbolType.PORT);
+        d1.setName("e");
+        n1.addPort(d1);
+
+        rt.addSymbol(n.getName(), n);
+        rt.addSymbol(n1.getName(), n1);
+
+        Assert.assertSame(d, n1.resolvePath("A.d"));
+        Assert.assertSame(d1, n.resolvePath("B.e"));
     }
 
     @Test

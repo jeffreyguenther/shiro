@@ -34,6 +34,7 @@ import org.junit.Test;
 import org.shirolang.base.SFunc;
 import org.shirolang.base.SType;
 import org.shirolang.base.SymbolType;
+import org.shirolang.exceptions.PathNotFoundException;
 import org.shirolang.functions.math.SAdd;
 import org.shirolang.values.SBoolean;
 import org.shirolang.values.SDouble;
@@ -53,7 +54,7 @@ public class ShiroRuntimeTest {
     }
     
     @Test
-    public void resolvePath(){
+    public void resolvePath() throws PathNotFoundException {
         SIdent aId = new SIdent(rt, "a");
         SDouble a1 = new SDouble(12.90);
         rt.addSymbol("a", a1);
@@ -382,7 +383,7 @@ public class ShiroRuntimeTest {
     }
     
     @Test
-    public void parsePortDeclInit(){
+    public void parsePortDeclInit() throws PathNotFoundException {
         System.out.println("port decl init");
         SFunc executedExpr = rt.executedExpr("port a Double(12.0)\n");
         System.out.println(rt.resolvePath("a"));

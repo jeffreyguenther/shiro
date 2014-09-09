@@ -38,6 +38,7 @@ import org.shirolang.dag.DAGraph;
 import org.shirolang.dag.DependencyRelation;
 import org.shirolang.dag.GraphNode;
 import org.shirolang.dag.TopologicalSort;
+import org.shirolang.exceptions.PathNotFoundException;
 import org.shirolang.functions.math.SAdd;
 import org.shirolang.functions.math.SAnd;
 import org.shirolang.functions.math.SDivide;
@@ -118,15 +119,23 @@ public class ShiroRuntime implements Scope {
     }
 
     @Override
-    public SFunc resolvePath(String path) {
-        return symbols.get(path);
+    public SFunc resolvePath(Path path) throws PathNotFoundException {
+        // check ports
+        if(path.isAtEnd()){
+            return symbols.get(path.getCurrentPathHead());
+        }
+
+        // check nodes
+        Scope referenced = (Scope) symbols.get(path.getCurrentPathHead());
+        path.popPathHead();
+        return referenced.resolvePath(path);
     }
 
     @Override
-    public SFunc resolvePath(Path path) {
-        return symbols.get(path.getCurrentPathHead());
+    public SFunc resolvePath(String path) throws PathNotFoundException {
+        return resolvePath(Path.create(path));
     }
-    
+
     public SFunc executedExpr(String expr) {
         graph.removeAllDependencies();
         ShiroLexer lex = new ShiroLexer(new ANTLRInputStream(expr));

@@ -26,6 +26,7 @@ package org.shirolang;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
+import org.shirolang.base.SIndexedMapTest;
 import org.shirolang.base.SNodeTest;
 import org.shirolang.functions.math.MathSuite;
 

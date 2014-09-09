@@ -422,6 +422,10 @@ public class SNode extends SFuncBase implements Scope{
                     path.popPathHead();
                     portReferenced = nestedNodeMatch.resolvePath(path);
                 }
+            }else{
+                path.resetPathHead();
+
+                portReferenced = parentScope.resolvePath(path);
             }
         }
 
