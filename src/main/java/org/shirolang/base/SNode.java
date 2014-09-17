@@ -67,6 +67,10 @@ public class SNode extends SFuncBase implements Scope{
         initializeVars("", "", null);
     }
 
+    public SNode(String type, String name){
+        initializeVars(type, name, null);
+    }
+
     /**
      * Creates a new node
      * @param type type of the node
