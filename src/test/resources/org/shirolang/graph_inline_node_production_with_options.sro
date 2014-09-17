@@ -1,0 +1,12 @@
+node Box[vol] begin
+	input length Double
+	input width Double
+	input height Double
+	option eval base Multiply(length, width)
+	option eval vol Multiply(length, width, height)
+	output volume Double(vol)
+	output area Double(base)
+	output name String("Box")
+end
+
+Box -> b[base](length: 100, width: 20, height: 7)

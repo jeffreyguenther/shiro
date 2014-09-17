@@ -1,0 +1,11 @@
+port aList Array(1, 2, 3, 4)
+
+node DayOfWeek begin
+	input day Integer
+	eval update NumToDay(day)
+	output english String(update[0])
+	output german String(update[1])
+end
+
+port result Map(aList DayOfWeek, @german)
+// by passing in the path, the map function knows which output value to use
