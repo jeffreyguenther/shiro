@@ -46,6 +46,12 @@ public abstract class SValue<T> extends SFuncBase{
         symbolType = SymbolType.LITERAL;
     }
 
+    public SValue(String name, T v){
+        this(v);
+        symbolType = SymbolType.PORT;
+        setFullName(name);
+    }
+
     @Override
     public void evaluate() {
        results.set(this);

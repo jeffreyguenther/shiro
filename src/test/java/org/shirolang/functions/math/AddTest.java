@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.shirolang.base.SFunc;
 import org.shirolang.ShiroRuntime;
+import org.shirolang.base.SGraph;
 import org.shirolang.values.SDouble;
 import org.shirolang.values.SIdent;
 import org.shirolang.values.SInteger;
@@ -109,11 +110,11 @@ public class AddTest {
 
     @Test
     public void addIdent(){
-        ShiroRuntime rt = new ShiroRuntime();
-        SDouble a = new SDouble(23.0);
-        rt.addSymbol("a", a);
+        SGraph g = new SGraph();
+        SDouble a = new SDouble("a", 23.0);
+        g.addPort(a);
 
-        SIdent id = new SIdent(rt, "a");
+        SIdent id = new SIdent(g, "a");
         SDouble b = new SDouble(2.0);
         SAdd sum = new SAdd(id, b);
 

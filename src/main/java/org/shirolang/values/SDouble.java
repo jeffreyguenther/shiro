@@ -25,19 +25,38 @@
 package org.shirolang.values;
 
 import org.shirolang.base.SType;
+import org.shirolang.base.SymbolType;
 
 /**
  *
- * @author jeffreyguenther
+ * Defines a double in Shiro
  */
 public class SDouble extends SValue<Double>{
 
+    /**
+     * Creates a Shiro double with the value NAN.
+     * The symboltype is also intialized to LITERAL
+     */
     public SDouble(){
         this(Double.NaN);
     }
-    
-    public SDouble(Double f) {
-        super(f);
+
+    /**
+     * Creates a Shiro double
+     * Makes the double a LITERAL
+     * @param d
+     */
+    public SDouble(Double d) {
+        super(d);
+    }
+
+    /**
+     * Creates a Shiro double with the given name
+     * @param name name of the the double
+     * @param d value of the Shiro double
+     */
+    public SDouble(String name, Double d) {
+        super(name, d);
     }
    
     @Override

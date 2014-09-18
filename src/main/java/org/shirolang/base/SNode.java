@@ -331,16 +331,14 @@ public class SNode extends SFuncBase implements Scope{
      */
     @Override
     public void setFullName(String fullName) {
-        this.fullName.set(fullName);
-        this.name.set(Path.getNameFromPath(fullName));
+        super.setFullName(fullName);
 
         updateNames(this.fullName.get());
     }
 
     @Override
     public void setName(String name) {
-        this.name.set(name);
-        this.fullName.set(Path.replaceNameInPath(fullName.get(), name));
+        super.setName(name);
 
         // update all the contained nodes and options
         updateNames(fullName.get());

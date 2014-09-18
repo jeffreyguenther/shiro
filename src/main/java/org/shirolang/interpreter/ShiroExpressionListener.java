@@ -32,7 +32,7 @@ import org.antlr.v4.runtime.tree.ParseTreeProperty;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.shirolang.base.SFunc;
 import org.shirolang.base.Scope;
-import org.shirolang.ShiroRuntime;
+import org.shirolang.exceptions.GraphNotFoundException;
 import org.shirolang.functions.math.SAdd;
 import org.shirolang.functions.math.SAnd;
 import org.shirolang.functions.math.SDivide;
@@ -65,14 +65,13 @@ public class ShiroExpressionListener extends ShiroBaseListener {
     protected Stack<Scope> scope;
     protected ParseTreeProperty<SFunc> expressions;
     private final List<SFunc> exprs;
-    private final ShiroRuntime rt;
+    private final Library library;
 
-    public ShiroExpressionListener(ShiroRuntime rt) {
+    public ShiroExpressionListener(Library lib) {
         this.expressions = new ParseTreeProperty<>();
         exprs = new ArrayList<>();
         scope = new Stack<>();
-        scope.push(rt);
-        this.rt = rt;
+        this.library = lib;
     }
 
     /**
@@ -316,7 +315,7 @@ public class ShiroExpressionListener extends ShiroBaseListener {
         List<ShiroParser.ExprContext> args = ctx.mfCall().mfparams().expr();
         
         // get the type name
-        SFunc function = rt.createFunction(mfName);
+        SFunc function = library.createFunction(mfName);
         if(function == null){
             throw new RuntimeException("A multifunction by the name " + mfName
             + "does not exist.");
@@ -352,7 +351,11 @@ public class ShiroExpressionListener extends ShiroBaseListener {
             }
         }
         
-        // add the symbol to the runtime
-        rt.addSymbol(portName, function);
+        // add the symbol to the runtime. Throw a runtime exception
+        try {
+            library.addSymbolToGraph(Library.DEFAULT_GRAPH_NAME, function);
+        } catch (GraphNotFoundException e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 }

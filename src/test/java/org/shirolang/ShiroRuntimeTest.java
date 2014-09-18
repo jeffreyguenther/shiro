@@ -54,20 +54,6 @@ public class ShiroRuntimeTest {
     }
     
     @Test
-    public void resolvePath() throws PathNotFoundException {
-        SIdent aId = new SIdent(rt, "a");
-        SDouble a1 = new SDouble(12.90);
-        rt.addSymbol("a", a1);
-        
-        assertSame(a1, rt.resolvePath("a"));
-
-        a1.evaluate();
-        aId.evaluate();
-        assertSame(a1, aId.getResult());
-        assertTrue(a1.isDouble());
-    }
-    
-    @Test
     public void parseInt(){
         
         SFunc result = rt.executedExpr("20\n");
@@ -386,19 +372,10 @@ public class ShiroRuntimeTest {
     public void parsePortDeclInit() throws PathNotFoundException {
         System.out.println("port decl init");
         SFunc executedExpr = rt.executedExpr("port a Double(12.0)\n");
-        System.out.println(rt.resolvePath("a"));
-        assertEquals(SType.DOUBLE, rt.resolvePath("a").getType());
         assertEquals(SType.DOUBLE, executedExpr.getType());
+
         SDouble result = (SDouble) executedExpr;
         assertEquals(12.0, result.getValue(), 1e-15);
-    }
-    
-    @Test
-    public void registerMFuncByName(){
-        String name = "myfunction";
-        rt.registerFunction(name, () -> new SAdd());
-        SFunc function = rt.createFunction(name);
-        assertEquals("Add", function.getType());
     }
     
     @Test

@@ -28,6 +28,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import org.shirolang.values.Path;
 import org.shirolang.values.SIdent;
 
 import java.util.List;
@@ -219,6 +220,7 @@ public abstract class SFuncBase implements SFunc {
 
     public void setFullName(String fullName){
         this.fullName.set(fullName);
+        this.name.set(Path.getNameFromPath(fullName));
     }
 
     public String getName(){
@@ -227,5 +229,6 @@ public abstract class SFuncBase implements SFunc {
 
     public void setName(String name){
         this.name.set(name);
+        this.fullName.set(Path.replaceNameInPath(fullName.get(), name));
     }
 }

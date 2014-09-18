@@ -55,6 +55,7 @@ import org.shirolang.functions.math.SNotEqual;
 import org.shirolang.functions.math.SOr;
 import org.shirolang.functions.math.SPower;
 import org.shirolang.functions.math.SSubtract;
+import org.shirolang.interpreter.Library;
 import org.shirolang.interpreter.ShiroExpressionListener;
 import org.shirolang.interpreter.ShiroLexer;
 import org.shirolang.interpreter.ShiroParser;
@@ -69,71 +70,15 @@ import org.shirolang.values.SString;
  *
  * @author jeffreyguenther
  */
-public class ShiroRuntime implements Scope {
-    private Map<String, SFunc> symbols;
+public class ShiroRuntime{
+
+    private Library library;
     private DAGraph<SFunc> graph = new DAGraph<>();
     private SFuncAction graphNodeAction = new SFuncAction();
-    private Map<String, FunctionFactory> mfuncs;
+
 
     public ShiroRuntime() {
-        symbols = new HashMap<>();
-        mfuncs = new HashMap<>();
-        loadRuntimeFunctions();
-    }
-    
-    public final void registerFunction(String name, FunctionFactory f){
-        mfuncs.put(name, f);
-    }
-    
-    public SFunc createFunction(String name){
-        return mfuncs.get(name).create();
-    }
-    
-    private void loadRuntimeFunctions(){
-        registerFunction(SType.BOOLEAN, () -> new SBoolean());
-        registerFunction(SType.DOUBLE, () -> new SDouble());
-        registerFunction(SType.IDENT, () -> new SIdent());
-        registerFunction(SType.INTEGER, () -> new SInteger());
-        registerFunction(SType.STRING, () -> new SString());
-        
-        registerFunction(SType.ADD, () -> new SAdd());
-        registerFunction(SType.AND, () -> new SAnd());
-        registerFunction(SType.DIVIDE, () -> new SDivide());
-        registerFunction(SType.EQUAL, () -> new SEqual());
-        registerFunction(SType.GREATERTHAN, () -> new SGreaterThan());
-        registerFunction(SType.GREATERTHAN_OR_EQUAL, () -> new SGreaterThanOrEqual());
-        registerFunction(SType.LESSTHAN, () -> new SLessThan());
-        registerFunction(SType.LESSTHAN_OR_EQUAL, () -> new SLessThanOrEqual());
-        registerFunction(SType.MODULO, () -> new SModulo());
-        registerFunction(SType.MULTIPLY, () -> new SMultiply());
-        registerFunction(SType.NEGATIVE, () -> new SNegative());
-        registerFunction(SType.NOT, () -> new SNot());
-        registerFunction(SType.NOT_EQUAL, () -> new SNotEqual());
-        registerFunction(SType.OR, () -> new SOr());
-        registerFunction(SType.POWER, () -> new SPower());
-        registerFunction(SType.SUBTRACT, () -> new SSubtract());
-    }
-    
-    public void addSymbol(String s, SFunc v){
-        symbols.put(s, v);
-    }
-
-    @Override
-    public SFunc resolvePath(Path path) throws PathNotFoundException {
-        // check ports
-        if(path.isAtEnd()){
-            return symbols.get(path.getCurrentPathHead());
-        }
-
-        // check nodes
-        Scope referenced = (Scope) symbols.get(path.getCurrentPathHead());
-        path.popPathHead();
-        return referenced.resolvePath(path);
-    }
-
-    @Override
-    public SFunc resolvePath(String path) throws PathNotFoundException {
-        return resolvePath(Path.create(path));
+        library = new Library();
     }
 
     public SFunc executedExpr(String expr) {
@@ -144,7 +89,7 @@ public class ShiroRuntime implements Scope {
         ParseTree tree = parser.shiro();
         
         ParseTreeWalker walker = new ParseTreeWalker();
-        ShiroExpressionListener expression = new ShiroExpressionListener(this);
+        ShiroExpressionListener expression = new ShiroExpressionListener(library);
         walker.walk(expression, tree);
         List<SFunc> exprs = expression.getExprs();
         System.out.println(exprs);
@@ -193,20 +138,5 @@ public class ShiroRuntime implements Scope {
             graph.addDependency(graph.getNodeForValue(a, graphNodeAction),
                     graph.getNodeForValue(b, graphNodeAction));
         }
-    }
-
-    @Override
-    public String getFullName() {
-        return "";
-    }
-
-    @Override
-    public String getName() {
-        return "";
-    }
-
-    @Override
-    public boolean isRoot() {
-        return true;
     }
 }

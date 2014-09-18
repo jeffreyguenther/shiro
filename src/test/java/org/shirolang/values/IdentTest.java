@@ -26,6 +26,7 @@ package org.shirolang.values;
 
 import org.junit.Test;
 import org.shirolang.ShiroRuntime;
+import org.shirolang.base.SGraph;
 
 import static org.junit.Assert.*;
 
@@ -42,11 +43,11 @@ public class IdentTest {
     
     @Test
     public void evaluate(){
-        ShiroRuntime rt = new ShiroRuntime();
-        SDouble d = new SDouble(0.12);
-        rt.addSymbol("d", d);
+        SGraph g = new SGraph();
+        SDouble d = new SDouble("d", 0.12);
+        g.addPort(d);
         
-        SIdent id = new SIdent(rt, "d");
+        SIdent id = new SIdent(g, "d");
         id.evaluate();
         
         assertSame("Should return the stored function", d, id.getResult());
@@ -54,22 +55,22 @@ public class IdentTest {
     
     @Test
     public void getArgs(){
-        ShiroRuntime rt = new ShiroRuntime();
-        SDouble d = new SDouble(0.12);
-        rt.addSymbol("d", d);
+        SGraph g = new SGraph();
+        SDouble d = new SDouble("d", 0.12);
+        g.addPort(d);
         
-        SIdent id = new SIdent(rt, "d");
+        SIdent id = new SIdent(g, "d");
         
         assertEquals(0, id.getArgs().size());
     }
     
     @Test
     public void hasArgs(){
-        ShiroRuntime rt = new ShiroRuntime();
+        SGraph g = new SGraph();
         SDouble d = new SDouble(0.12);
-        rt.addSymbol("d", d);
+        g.addPort( d);
         
-        SIdent id = new SIdent(rt, "d");
+        SIdent id = new SIdent(g, "d");
         assertFalse(id.hasArgs());
     }
     
