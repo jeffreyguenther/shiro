@@ -106,4 +106,25 @@ public class NegativeTest {
         assertEquals(1, s.getMaxArgs());
         assertEquals(1, s.getMinArgs());
     }
+
+    @Test
+    public void toConsole(){
+        SInteger a = new SInteger(2);
+        SNegative result = new SNegative(a);
+
+        // simulate evaluation order
+        a.evaluate();
+        result.evaluate();
+
+        assertEquals("#<Negative args:[a:2], results:[-2]>", result.toConsole());
+
+        SInteger b = new SInteger(-2);
+        SNegative result2 = new SNegative(b);
+
+        // simulate evaluation order
+        b.evaluate();
+        result2.evaluate();
+
+        assertEquals("#<Negative args:[a:-2], results:[2]>", result2.toConsole());
+    }
 }

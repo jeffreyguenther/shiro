@@ -113,4 +113,18 @@ public class ModuloTest {
         assertEquals(2, s.getMaxArgs());
         assertEquals(2, s.getMinArgs());
     }
+
+    @Test
+    public void toConsole(){
+        SDouble a = new SDouble(13.0);
+        SDouble b = new SDouble(2.5);
+        SModulo remainder = new SModulo(a, b);
+
+        // simulate evaluation order
+        a.evaluate();
+        b.evaluate();
+        remainder.evaluate();
+
+        assertEquals("#<Modulo args:[a:13.0, b:2.5], results:[0.5]>", remainder.toConsole());
+    }
 }

@@ -132,4 +132,18 @@ public class MultiplyTest {
         assertEquals(2, s.getMaxArgs());
         assertEquals(2, s.getMinArgs());
     }
+
+    @Test
+    public void toConsole(){
+        SDouble a = new SDouble(13.0);
+        SDouble b = new SDouble(-0.13);
+        SMultiply product = new SMultiply(a, b);
+
+        // simulate evaluation order
+        a.evaluate();
+        b.evaluate();
+        product.evaluate();
+
+        assertEquals("#<Multiply args:[a:13.0, b:-0.13], results:[-1.69]>", product.toConsole());
+    }
 }

@@ -165,4 +165,29 @@ public class SubtractTest {
         assertEquals(2, s.getMaxArgs());
         assertEquals(2, s.getMinArgs());
     }
+
+    @Test
+    public void toConsole(){
+        SDouble a = new SDouble(13.0);
+        SInteger b = new SInteger(-1);
+        SSubtract diff = new SSubtract(a, b);
+
+        // simulate evaluation order
+        a.evaluate();
+        b.evaluate();
+        diff.evaluate();
+
+        assertEquals("#<Subtract args:[a:13.0, b:-1], results:[14.0]>", diff.toConsole());
+
+        SDouble a1 = new SDouble(13.0);
+        SInteger b2 = new SInteger(-1);
+        SSubtract diff2 = new SSubtract(b2, a1);
+
+        // simulate evaluation order
+        a1.evaluate();
+        b2.evaluate();
+        diff2.evaluate();
+
+        assertEquals("#<Subtract args:[a:-1, b:13.0], results:[-14.0]>", diff2.toConsole());
+    }
 }

@@ -116,4 +116,40 @@ public class OrTest {
         assertEquals(2, s.getMaxArgs());
         assertEquals(2, s.getMinArgs());
     }
+
+    @Test
+    public void toConsole(){
+        SBoolean a = new SBoolean(true);
+        SBoolean b = new SBoolean(true);
+        SOr truetrue = new SOr(a, b);
+
+        // simulate evaluation order
+        a.evaluate();
+        b.evaluate();
+        truetrue.evaluate();
+
+        assertEquals("#<Or args:[a:true, b:true], results:[true]>", truetrue.toConsole());
+
+        SBoolean a1 = new SBoolean(false);
+        SBoolean b1 = new SBoolean(false);
+        SOr falsefalse = new SOr(a1, b1);
+
+        // simulate evaluation order
+        a1.evaluate();
+        b1.evaluate();
+        falsefalse.evaluate();
+
+        assertEquals("#<Or args:[a:false, b:false], results:[false]>", falsefalse.toConsole());
+
+        SBoolean a2 = new SBoolean(true);
+        SBoolean b2 = new SBoolean(false);
+        SOr truefalse = new SOr(a2, b2);
+
+        // simulate evaluation order
+        a2.evaluate();
+        b2.evaluate();
+        truefalse.evaluate();
+
+        assertEquals("#<Or args:[a:true, b:false], results:[true]>", truefalse.toConsole());
+    }
 }

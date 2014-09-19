@@ -165,4 +165,18 @@ public class PowerTest {
         assertEquals(2, s.getMaxArgs());
         assertEquals(2, s.getMinArgs());
     }
+
+    @Test
+    public void toConsole(){
+        SInteger a = new SInteger(13);
+        SInteger b = new SInteger(3);
+        SPower product = new SPower(a, b);
+
+        // simulate evaluation order
+        a.evaluate();
+        b.evaluate();
+        product.evaluate();
+
+        assertEquals("#<Subtract args:[a:13, b:3], results:[2197]>", product.toConsole());
+    }
 }

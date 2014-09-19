@@ -147,4 +147,19 @@ public class DivideTest {
         assertEquals(2, s.getMaxArgs());
         assertEquals(2, s.getMinArgs());
     }
+
+    @Test
+    public void toConsole(){
+        SDouble a = new SDouble(13.0);
+        SDouble b = new SDouble(-0.34);
+        SDivide quotient = new SDivide(a, b);
+
+        // simulate evaluation order
+        a.evaluate();
+        b.evaluate();
+        quotient.evaluate();
+
+
+        assertEquals("#<Divide args:[a:13.0, b:-0.34], results:[-38.23529411764706]>", quotient.toConsole());
+    }
 }

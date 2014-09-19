@@ -145,4 +145,18 @@ public class LessThanOrEqualTest {
         assertEquals(2, s.getMaxArgs());
         assertEquals(2, s.getMinArgs());
     }
+
+    @Test
+    public void toConsole(){
+        SDouble a = new SDouble(13.0);
+        SDouble b = new SDouble(-0.13);
+        SLessThanOrEqual result = new SLessThanOrEqual(a, b);
+
+        // simulate evaluation order
+        a.evaluate();
+        b.evaluate();
+        result.evaluate();
+
+        assertEquals("#<LessThanOrEqual args:[a:13.0, b:-0.13], results:[false]>", result.toConsole());
+    }
 }

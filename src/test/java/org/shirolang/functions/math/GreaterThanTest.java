@@ -113,4 +113,18 @@ public class GreaterThanTest {
         assertEquals(2, s.getMaxArgs());
         assertEquals(2, s.getMinArgs());
     }
+
+    @Test
+    public void toConsole(){
+        SDouble a = new SDouble(13.0);
+        SDouble b = new SDouble(-0.13);
+        SGreaterThan result = new SGreaterThan(a, b);
+
+        // simulate evaluation order
+        a.evaluate();
+        b.evaluate();
+        result.evaluate();
+
+        assertEquals("#<GreaterThan args:[a:13.0, b:-0.13], results:[true]>", result.toConsole());
+    }
 }

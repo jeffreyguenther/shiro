@@ -37,7 +37,7 @@ import org.shirolang.values.SString;
 
 /**
  *
- * @author jeffreyguenther
+ * Test the Shiro add method
  */
 public class AddTest {
     @Test
@@ -157,5 +157,19 @@ public class AddTest {
         SAdd s = new SAdd();
         assertEquals(2, s.getMaxArgs());
         assertEquals(2, s.getMinArgs());
+    }
+
+    @Test
+    public void toConsole(){
+        SDouble a = new SDouble(13.0);
+        SDouble b = new SDouble(-0.13);
+        SAdd sum = new SAdd(a, b);
+
+        // simulate evaluation order
+        a.evaluate();
+        b.evaluate();
+        sum.evaluate();
+
+        assertEquals("#<Add args:[a:13.0, b:-0.13], results:[12.87]>", sum.toConsole());
     }
 }

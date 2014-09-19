@@ -102,4 +102,18 @@ public class AndTest {
         assertEquals(2, s.getMaxArgs());
         assertEquals(2, s.getMinArgs());
     }
+
+    @Test
+    public void toConsole(){
+        SBoolean a = new SBoolean(true);
+        SBoolean b = new SBoolean(true);
+        SAnd truetrue = new SAnd(a, b);
+
+        // simulate evaluation order
+        a.evaluate();
+        b.evaluate();
+        truetrue.evaluate();
+
+        assertEquals("#<And args:[a:true, b:true], results:[true]>", truetrue.toConsole());
+    }
 }

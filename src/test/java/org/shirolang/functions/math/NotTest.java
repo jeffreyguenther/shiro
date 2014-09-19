@@ -92,4 +92,25 @@ public class NotTest {
         assertEquals(1, s.getMaxArgs());
         assertEquals(1, s.getMinArgs());
     }
+
+    @Test
+    public void toConsole(){
+        SBoolean a = new SBoolean(true);
+        SNot result = new SNot(a);
+
+        // simulate evaluation order
+        a.evaluate();
+        result.evaluate();
+
+        assertEquals("#<Not args:[a:true], results:[false]>", result.toConsole());
+
+        SBoolean b = new SBoolean(false);
+        SNot result2 = new SNot(b);
+
+        // simulate evaluation order
+        b.evaluate();
+        result2.evaluate();
+
+        assertEquals("#<Not args:[a:false], results:[true]>", result2.toConsole());
+    }
 }
