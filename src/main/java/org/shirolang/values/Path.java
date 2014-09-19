@@ -447,4 +447,34 @@ public class Path {
         String[] pathParts = path.split("\\.");
         return new Path(pathParts);
     }
+
+    /**
+     * Create a path from a string and make it a reference
+     * For example, "Area.length" will be turned into a path
+     * object representing it. It should be noted that scope of
+     * the path is null.
+     * @param path the string to be turned into a path object
+     * @return path created from the string that has it's isReference
+     * flag set to true
+     */
+    public static Path createReference(String path){
+        Path p = create(path);
+        p.makeReference();
+        return p;
+    }
+
+    /**
+     * Create a path from a string and make it a selector
+     * For example, "Area.length" will be turned into a path
+     * object representing it. It should be noted that scope of
+     * the path is null.
+     * @param path the string to be turned into a path object
+     * @return path created from the string that has it's isSelector
+     * flag set to true
+     */
+    public static Path createSelector(String path){
+        Path p = create(path);
+        p.makeSelector();
+        return p;
+    }
 }

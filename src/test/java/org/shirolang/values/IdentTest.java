@@ -24,6 +24,7 @@
 
 package org.shirolang.values;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.shirolang.ShiroRuntime;
 import org.shirolang.base.SGraph;
@@ -31,8 +32,7 @@ import org.shirolang.base.SGraph;
 import static org.junit.Assert.*;
 
 /**
- *
- * @author jeffreyguenther
+ * Test an identifier
  */
 public class IdentTest {
     @Test
@@ -46,6 +46,8 @@ public class IdentTest {
         SGraph g = new SGraph();
         SDouble d = new SDouble("d", 0.12);
         g.addPort(d);
+        d.evaluate();
+
         
         SIdent id = new SIdent(g, "d");
         id.evaluate();
@@ -67,7 +69,7 @@ public class IdentTest {
     @Test
     public void hasArgs(){
         SGraph g = new SGraph();
-        SDouble d = new SDouble(0.12);
+        SDouble d = new SDouble("d", 0.12);
         g.addPort( d);
         
         SIdent id = new SIdent(g, "d");
@@ -96,5 +98,40 @@ public class IdentTest {
         SIdent s = new SIdent(null, p);
         assertTrue(s.isSelector());
     }
-    
+
+    @Test
+    public void toConsolePath(){
+        SGraph g = new SGraph();
+        SDouble d = new SDouble("d", 0.12);
+        d.evaluate();
+        g.addPort(d);
+
+        SIdent id = new SIdent(g, "d");
+        id.evaluate();
+        Assert.assertEquals("0.12", id.toConsole());
+    }
+
+    @Test
+    public void toConsoleReference(){
+        SGraph g = new SGraph();
+        SDouble d = new SDouble("d", 0.12);
+        d.evaluate();
+        g.addPort(d);
+
+        SIdent id = new SIdent(g, Path.createReference("d"));
+        id.evaluate();
+        Assert.assertEquals(d.toConsole(), id.toConsole());
+    }
+
+    @Test
+    public void toConsoleSelector(){
+        SGraph g = new SGraph();
+        SDouble d = new SDouble("d", 0.12);
+        d.evaluate();
+        g.addPort(d);
+
+        SIdent id = new SIdent(g, Path.createSelector("d"));
+        id.evaluate();
+        Assert.assertEquals("d", id.toConsole());
+    }
 }

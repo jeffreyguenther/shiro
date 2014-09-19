@@ -129,4 +129,23 @@ public class SIdent extends SFuncBase{
     public SymbolType getSymbolType(){
         return SymbolType.IDENT;
     }
+
+    @Override
+    public String toConsole(){
+        if(isReference()){
+            return getResult().toConsole();
+        }else if(isSelector()){
+            return value.getPath();
+        }else{
+            SFunc r = getResult();
+
+            // convert the output to a literal
+            SymbolType prev = r.getSymbolType();
+            r.setSymbolType(SymbolType.LITERAL);
+            String output = r.toConsole();
+            r.setSymbolType(prev);
+
+            return output;
+        }
+    }
 }
