@@ -26,6 +26,10 @@ package org.shirolang.interpreter;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.shirolang.exceptions.NameUsedException;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  *
@@ -38,45 +42,49 @@ public class NameManagerTest {
         nm = new NameManager();
     }
 
-    @Test
-    public void getNextName(){
-        Assert.assertEquals("l1", nm.getNextName("L"));
-        Assert.assertEquals("l2", nm.getNextName("L"));
-        Assert.assertEquals("p1", nm.getNextName("P"));
+    @Test(expected = NameUsedException.class)
+    public void saveName() throws NameUsedException {
+        nm.saveName("T", "n");
+        nm.saveName("T", "n");
+    }
+
+    @Test(expected = NameUsedException.class)
+    public void saveNameDifferentType() throws NameUsedException {
+        nm.saveName("T", "n");
+        nm.saveName("L", "n");
     }
 
     @Test
-    public void getNumberOfInstances(){
-        Assert.assertEquals("l1", nm.getNextName("L"));
-        Assert.assertEquals("l2", nm.getNextName("L"));
-        Assert.assertEquals("p1", nm.getNextName("P"));
-
-        Assert.assertEquals(2, nm.getNumberOfInstances("L"));
-        Assert.assertEquals(1, nm.getNumberOfInstances("P"));
-        Assert.assertEquals(0, nm.getNumberOfInstances("M"));
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void setInstanceCountFail(){
-        nm.setInstanceCount("L", -22);
+    public void generateName(){
+        Assert.assertEquals("l1", nm.generateName("L"));
     }
 
     @Test
-    public void setInstanceCount(){
-        nm.setInstanceCount("L", 22);
-        Assert.assertEquals("l23", nm.getNextName("L"));
-        nm.setInstanceCount("P", 2);
-        Assert.assertEquals("p3", nm.getNextName("P"));
+    public void generateNameAfterOtherTypeUsesName() throws NameUsedException {
+        Assert.assertEquals("l1", nm.generateName("L"));
+        nm.saveName("P", "l2");
+        Assert.assertEquals("l3", nm.generateName("L"));
     }
 
     @Test
-    public void reset(){
-        nm.getNextName("L");
-        nm.getNextName("L");
-        nm.getNextName("P");
+    public void getNames() throws NameUsedException {
+        Set<String> namesOfL = new HashSet<>();
+        namesOfL.add("l1");
+        namesOfL.add("l3");
+        namesOfL.add("l2");
 
-        nm.reset();
-        Assert.assertEquals(0, nm.getNumberOfInstances("L"));
-        Assert.assertEquals(0, nm.getNumberOfInstances("P"));
+        Set<String> allNames = new HashSet<>();
+        allNames.add("l1");
+        allNames.add("l2");
+        allNames.add("l3");
+        allNames.add("p1");
+
+        nm.saveName("L", nm.generateName("L"));
+        nm.saveName("L", nm.generateName("L"));
+        nm.saveName("L", nm.generateName("L"));
+        nm.saveName("P", "p1");
+
+        Assert.assertEquals(namesOfL, nm.getNames("L"));
+        Assert.assertEquals(allNames, nm.getNames());
     }
 }
