@@ -31,29 +31,57 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
- * @author jeffreyguenther
+ * A list that can have keys assigned to an index, so values can
+ * be looked up by key
  * @param <T>
  */
 public class SIndexedMap<T> {
-    Map<String, Integer> indexToKeyMap;
+    Map<String, Integer> keyToIndexMap;
+    Map<Integer, String> indexToKeyMap;
     List<T> values;
 
     public SIndexedMap() {
         indexToKeyMap = new HashMap<>();
+        keyToIndexMap = new HashMap<>();
         values = new ArrayList<>();
     }
-    
-    public void setKeyForIndex(String s, Integer i){
-        indexToKeyMap.put(s, i);
+
+    /**
+     * Sets the key for an index
+     * @param key key to assign to the passed index
+     * @param index index to which key is assigned
+     */
+    public void setKeyForIndex(String key, Integer index){
+        keyToIndexMap.put(key, index);
+        indexToKeyMap.put(index, key);
     }
-    
-    public T get(String s){
-        return values.get(indexToKeyMap.get(s));
+
+    /**
+     * Gets the key for an index
+     * @param i
+     * @return the key for the index. It returns null if no
+     * key has been associated with the index
+     */
+    public String getKey(Integer i){
+        return indexToKeyMap.get(i);
     }
-    
-    public T get(Integer i){
-        return values.get(i);
+
+    /**
+     * Gets the value at the given index
+     * @param key key of the index being requested
+     * @return value at the index associated with the key
+     */
+    public T get(String key){
+        return values.get(keyToIndexMap.get(key));
+    }
+
+    /**
+     * Gets the value at the given index
+     * @param index index of the value to retrieve
+     * @return value at the given index
+     */
+    public T get(Integer index){
+        return values.get(index);
     }
     
     /**
@@ -72,21 +100,41 @@ public class SIndexedMap<T> {
     public void set(T v){
         values.add(v);
     }
-    
+
+    /**
+     * Sets the value at the given index
+     * Behaves just like a list as the method delegates
+     * to the list set method
+     * @param v value to store
+     * @param i index to store the value
+     */
     public void set(T v, Integer i){
         values.set(i, v);
     }
-    
+
+    /**
+     * Sets the value at the index associated with key
+     * @param v value to store
+     * @param s key associated with the index
+     */
     public void set(T v, String s){
-        values.set(indexToKeyMap.get(s), v);
+        values.set(keyToIndexMap.get(s), v);
     }
 
+    /**
+     * Gets the number of elements stored
+     * @return the number of elements stored
+     */
     public int size() {
         return values.size();
     }
 
+    /**
+     * Determines if the indexed map is empty
+     * @return
+     */
     public boolean isEmpty() {
-        return indexToKeyMap.isEmpty();
+        return values.isEmpty();
     }
     
     /**
@@ -97,8 +145,8 @@ public class SIndexedMap<T> {
     public List<String> getKeys(){
         List<String> keys = new ArrayList<>(Collections.nCopies(indexToKeyMap.size(), ""));
         
-        for(String key: indexToKeyMap.keySet()){
-            keys.set(indexToKeyMap.get(key), key);
+        for(String key: keyToIndexMap.keySet()){
+            keys.set(keyToIndexMap.get(key), key);
         }
         return keys;
     }

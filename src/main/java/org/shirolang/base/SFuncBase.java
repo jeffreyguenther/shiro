@@ -231,4 +231,55 @@ public abstract class SFuncBase implements SFunc {
         this.name.set(name);
         this.fullName.set(Path.replaceNameInPath(fullName.get(), name));
     }
+
+    /**
+     * Prints index map
+     * @param values
+     * @return
+     */
+    private String printIndexMap(SIndexedMap<SFunc> values){
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < values.size(); i++) {
+            // if there is a key associated with the index
+            // prepend it
+            String key = values.getKey(i);
+            if (key != null) {
+                sb.append(key).append(":");
+            }
+
+            SFunc func = values.get(i);
+            SymbolType type = func.getSymbolType();
+            if(func == this){
+                func.setSymbolType(SymbolType.LITERAL);
+            }
+
+            String toConsole = func.toConsole();
+            func.setSymbolType(type);
+
+            sb.append(toConsole).append(", ");
+        }
+
+        if(!sb.toString().isEmpty()){
+            sb.delete(sb.length() -2, sb.length() -1);
+        }
+
+        return sb.toString().trim();
+    }
+
+    public String toConsole(){
+        StringBuilder sb = new StringBuilder();
+        sb.append("#<")
+                .append(getType())
+                .append(" ")
+                .append("args:[");
+
+        // if there is name for the element
+        // write it out
+        sb.append(printIndexMap(args)).append("], ");
+
+        sb.append("results:[");
+
+        sb.append(printIndexMap(results)).append("]>");
+        return sb.toString();
+    }
 }

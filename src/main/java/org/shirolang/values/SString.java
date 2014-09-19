@@ -32,16 +32,42 @@ import org.shirolang.base.SType;
  */
 public class SString extends SValue<String>{
 
+    /**
+     * Creates a Shiro string with the value of
+     * the empty string.
+     */
     public SString() {
         super("");
     }
-    
+
+    /**
+     * Creates a Shiro string
+     * @param s value of the Shiro string
+     */
     public SString(String s) {
         super(s);
+    }
+
+    /**
+     * Creates a Shiro string with the given name
+     * @param name name of the string
+     * @param s value of the Shiro string
+     */
+    public SString(String name, String s) {
+        super(name, s);
     }
 
     @Override
     public String getType() {
         return SType.STRING;
+    }
+
+    @Override
+    public String toConsole(){
+        if(getSymbolType().isLiteral()){
+            return "\""+ getValue() + "\"";
+        }else{
+            return super.toConsole();
+        }
     }
 }

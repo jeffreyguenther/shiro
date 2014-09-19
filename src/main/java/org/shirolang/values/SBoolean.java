@@ -49,6 +49,15 @@ public class SBoolean extends SValue<Boolean>{
     }
 
     /**
+     * Creates an SBoolean with the passed value
+     * @param name name of the boolean
+     * @param b value to set the SBoolean
+     */
+    public SBoolean(String name, Boolean b) {
+        super(name, b);
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override

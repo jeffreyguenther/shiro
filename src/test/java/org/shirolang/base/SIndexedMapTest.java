@@ -28,12 +28,13 @@ import java.util.ArrayList;
 import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+
+import org.junit.Assert;
 import org.junit.Test;
-import org.shirolang.base.SIndexedMap;
 
 /**
  *
- * @author jeffreyguenther
+ * Tests the IndexedMap
  */
 public class SIndexedMapTest {
     @Test
@@ -61,6 +62,14 @@ public class SIndexedMapTest {
     public void isEmpty(){
         SIndexedMap<Integer> ints = new SIndexedMap<>();
         assertTrue(ints.isEmpty());
+    }
+
+    @Test
+    public void getKey(){
+        SIndexedMap<Integer> ints = new SIndexedMap<>();
+        ints.setKeyForIndex("a", 0);
+        Assert.assertEquals("a", ints.getKey(0));
+        Assert.assertNull("a", ints.getKey(1));
     }
     
     @Test

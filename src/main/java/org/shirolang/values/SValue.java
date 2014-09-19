@@ -25,6 +25,7 @@
 package org.shirolang.values;
 
 import org.shirolang.base.SFuncBase;
+import org.shirolang.base.SType;
 import org.shirolang.base.SymbolType;
 
 /**
@@ -80,5 +81,14 @@ public abstract class SValue<T> extends SFuncBase{
     @Override
     public String toString() {
        return "" + v;
+    }
+
+    @Override
+    public String toConsole(){
+        if(getSymbolType().isLiteral()){
+            return "" + getValue();
+        }else{
+            return super.toConsole();
+        }
     }
 }

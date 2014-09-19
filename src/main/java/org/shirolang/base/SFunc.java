@@ -227,4 +227,6 @@ public interface SFunc {
     public void setName(String name);
     public String getFullName();
     public void setFullName(String name);
+
+    public String toConsole();
 }

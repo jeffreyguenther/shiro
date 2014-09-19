@@ -27,13 +27,29 @@ package org.shirolang.values;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
- *
- * @author jeffreyguenther
+ * Tests a Shiro string.
  */
 public class StringTest {
+    @Test
+    public void constructors(){
+        SString s = new SString();
+        Assert.assertTrue(s.getSymbolType().isLiteral());
+
+        SString s1 = new SString("Test");
+        s1.evaluate();
+        Assert.assertTrue(s1.getSymbolType().isLiteral());
+        Assert.assertEquals("Test", s1.getValue());
+
+        SString s2 = new SString("a", "Test");
+        Assert.assertTrue(s2.getSymbolType().isPort());
+        Assert.assertEquals("a", s2.getName());
+    }
+
     @Test
     public void getType(){
         SString s = new SString("Hello");
@@ -70,5 +86,16 @@ public class StringTest {
         SString s = new SString();
         assertEquals(0, s.getMaxArgs());
         assertEquals(0, s.getMinArgs());
+    }
+
+    @Test
+    public void toConsole(){
+        SString s = new SString("hello");
+        s.evaluate();
+        Assert.assertEquals("\"hello\"", s.toConsole());
+
+        SString s1 = new SString("a", "hello");
+        s1.evaluate();
+        Assert.assertEquals("#<String args:[], results:[\"hello\"]>", s1.toConsole());
     }
 }

@@ -13,10 +13,25 @@ import static org.junit.Assert.*;
 
 /**
  *
- * @author jeffreyguenther
+ * Test a Shiro double
  */
 public class DoubleTest {
     private static final double DELTA = 1e-15;
+    @Test
+    public void constructors(){
+        SDouble d = new SDouble();
+        org.junit.Assert.assertTrue(d.getSymbolType().isLiteral());
+
+        SDouble d1 = new SDouble(12.3232);
+        d1.evaluate();
+        org.junit.Assert.assertTrue(d1.getSymbolType().isLiteral());
+        org.junit.Assert.assertEquals(12.3232, d1.getValue(), DELTA);
+
+        SDouble d2 = new SDouble("a", 12.3232);
+        org.junit.Assert.assertTrue(d2.getSymbolType().isPort());
+        org.junit.Assert.assertEquals("a", d2.getName());
+    }
+    
     
     @Test
     public void getType(){
@@ -61,5 +76,16 @@ public class DoubleTest {
         SDouble d = new SDouble(12.344);
         d.evaluate();
         assertSame(d, d.getResult());
+    }
+
+    @Test
+    public void toConsole(){
+        SDouble d = new SDouble(0.34);
+        d.evaluate();
+        org.junit.Assert.assertEquals("0.34", d.toConsole());
+
+        SDouble d1 = new SDouble("a", 12.345);
+        d1.evaluate();
+        org.junit.Assert.assertEquals("#<Double args:[], results:[12.345]>", d1.toConsole());
     }
 }

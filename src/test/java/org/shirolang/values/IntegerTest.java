@@ -9,13 +9,30 @@ package org.shirolang.values;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
  *
- * @author jeffreyguenther
+ * Tests a Shiro integer
  */
 public class IntegerTest {
+    @Test
+    public void constructors(){
+        SInteger i = new SInteger();
+        Assert.assertTrue(i.getSymbolType().isLiteral());
+
+        SString i1 = new SString("Test");
+        i1.evaluate();
+        Assert.assertTrue(i1.getSymbolType().isLiteral());
+        Assert.assertEquals("Test", i1.getValue());
+
+        SInteger s2 = new SInteger("a", 12);
+        Assert.assertTrue(s2.getSymbolType().isPort());
+        Assert.assertEquals("a", s2.getName());
+    }
+
     @Test
     public void getType(){
         SInteger d = new SInteger(10);
@@ -56,5 +73,16 @@ public class IntegerTest {
         SInteger s = new SInteger();
         assertEquals(0, s.getMaxArgs());
         assertEquals(0, s.getMinArgs());
+    }
+
+    @Test
+    public void toConsole(){
+        SInteger i = new SInteger(12);
+        i.evaluate();
+        Assert.assertEquals("12", i.toConsole());
+
+        SInteger i2 = new SInteger("a", 12);
+        i2.evaluate();
+        Assert.assertEquals("#<Integer args:[], results:[12]>", i2.toConsole());
     }
 }

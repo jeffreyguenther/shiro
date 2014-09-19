@@ -25,15 +25,18 @@
 package org.shirolang.values;
 
 /**
- *
- * @author jeffreyguenther
+ * Represents an integer in Shiro
  */
 public class SInteger extends SValue<Integer>{
 
     public SInteger(){
         this(Integer.MIN_VALUE);
     }
-    
+
+    public SInteger(String name, Integer i) {
+        super(name, i);
+    }
+
     public SInteger(Integer i) {
         super(i);
     }

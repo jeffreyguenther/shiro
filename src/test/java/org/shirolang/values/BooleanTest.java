@@ -9,6 +9,8 @@ package org.shirolang.values;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+
+import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -16,6 +18,21 @@ import org.junit.Test;
  * @author jeffreyguenther
  */
 public class BooleanTest {
+    @Test
+    public void constructors(){
+        SBoolean b = new SBoolean();
+        Assert.assertTrue(b.getSymbolType().isLiteral());
+
+        SBoolean b1 = new SBoolean(true);
+        b1.evaluate();
+        Assert.assertTrue(b1.getSymbolType().isLiteral());
+        Assert.assertEquals(true, b1.getValue());
+
+        SBoolean b2 = new SBoolean("a", false);
+        Assert.assertTrue(b2.getSymbolType().isPort());
+        Assert.assertEquals("a", b2.getName());
+    }
+
     @Test
     public void getType(){
         SBoolean b = new SBoolean(true);
@@ -56,5 +73,16 @@ public class BooleanTest {
         SBoolean s = new SBoolean();
         assertEquals(0, s.getMaxArgs());
         assertEquals(0, s.getMinArgs());
+    }
+
+    @Test
+    public void toConsole(){
+        SBoolean b = new SBoolean(true);
+        b.evaluate();
+        Assert.assertEquals("true", b.toConsole());
+
+        SBoolean b1 = new SBoolean("a", false);
+        b1.evaluate();
+        Assert.assertEquals("#<Boolean args:[], results:[false]>", b1.toConsole());
     }
 }
