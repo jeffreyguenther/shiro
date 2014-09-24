@@ -24,26 +24,23 @@
 
 package org.shirolang;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.shirolang.base.SFunc;
 import org.shirolang.base.SType;
 import org.shirolang.base.SymbolType;
 import org.shirolang.exceptions.PathNotFoundException;
-import org.shirolang.functions.math.SAdd;
 import org.shirolang.values.SBoolean;
 import org.shirolang.values.SDouble;
 import org.shirolang.values.SIdent;
 import org.shirolang.values.SInteger;
 
+import static org.junit.Assert.*;
+
 /**
  *
- * @author jeffreyguenther
+ * Test the Shiro runtime
  */
 public class ShiroRuntimeTest {
     private ShiroRuntime rt;
@@ -51,6 +48,71 @@ public class ShiroRuntimeTest {
     @Before
     public void setup(){
         rt = new ShiroRuntime();
+    }
+
+    @Test
+    public void executeLiteralInteger(){
+        Assert.assertEquals("3", rt.executeStatement("3\n"));
+    }
+
+    @Test
+    public void executeLiteralDouble(){
+        Assert.assertEquals("3.123", rt.executeStatement("3.123\n"));
+    }
+
+    @Test
+    public void executeLiteralString(){
+        Assert.assertEquals("\"hello world\"", rt.executeStatement("\"hello world\"\n"));
+    }
+
+    @Test
+    public void executePortDecl(){
+        Assert.assertEquals("#<Double args:[], results:[12.3]>", rt.executeStatement("port a Double(12.3)\n"));
+    }
+
+    @Test
+    public void executePath(){
+//        Assert.assertEquals("a was not found", rt.executeStatement("a\n"));
+
+        rt.executeStatement("port a Double(12.3)\n");
+        Assert.assertEquals("12.3", rt.executeStatement("a\n"));
+    }
+
+    @Test
+    public void executeReferencePath(){
+//        Assert.assertEquals("~a was not found", rt.executeStatement("~a\n"));
+
+        rt.executeStatement("port a Double(12.3)\n");
+        Assert.assertEquals("#<Double args:[], results:[12.3]>", rt.executeStatement("~a\n"));
+    }
+
+    @Test
+    public void executeSelector(){
+        Assert.assertEquals("a.b.c", rt.executeStatement("@a.b.c\n"));
+    }
+
+    @Test
+    public void executeNode(){
+        String input = "node Box begin\n" +
+                 "input width Double(12.3)\n" +
+                 "input height Double(100)\n" +
+                 "eval update Double( width * height)\n" +
+                "end";
+        String expected = "#<Box input:[width, height], eval:[], output:[], " +
+                "dependencies:[#<Double args:[width * height], results:[1230]> => #<Double args:[], results:[12.3]>," +
+                " #<Double args:[width * height] results:[1230]> => #<Double args:[] results:[100]>]>";
+        Assert.assertEquals(expected, rt.executeStatement(input));
+    }
+
+    @Test
+    public void executeGraph(){
+        String expected = "";
+        fail();
+    }
+
+    @Test
+    public void executeBlock(){
+        Assert.fail();
     }
     
     @Test

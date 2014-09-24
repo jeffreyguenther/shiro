@@ -23,13 +23,15 @@
 
 package org.shirolang.base;
 
+import org.shirolang.SFuncAction;
+import org.shirolang.dag.DAGraph;
+import org.shirolang.dag.DependencyRelation;
+import org.shirolang.dag.GraphNode;
+import org.shirolang.dag.TopologicalSort;
 import org.shirolang.exceptions.PathNotFoundException;
 import org.shirolang.values.Path;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Defines a graph instance in Shiro.
@@ -38,6 +40,9 @@ import java.util.Set;
  * a Shiro program.
  */
 public class SGraph implements Scope{
+    private DAGraph<SFunc> graph;
+    private SFuncAction graphNodeAction = new SFuncAction();
+
     private String name; // name of the graph
     private Map<String, SNode> nodes; // nodes stored in the graph
     private Map<String, SFunc> ports;
@@ -50,6 +55,7 @@ public class SGraph implements Scope{
         this.name = name;
         nodes = new HashMap<>();
         ports = new HashMap<>();
+        graph = new DAGraph<>();
     }
 
     /**
@@ -85,10 +91,10 @@ public class SGraph implements Scope{
      * @param port port to be added to the graph
      */
     public void addPort(SFunc port){
-        if(!port.getSymbolType().isPort()){
-            throw new IllegalArgumentException("Only multi-functions whose SymbolType " +
-                    "is SymbolType.PORT can be added.");
-        }
+//        if(!port.getSymbolType().isPort()){
+//            throw new IllegalArgumentException("Only multi-functions whose SymbolType " +
+//                    "is SymbolType.PORT can be added.");
+//        }
 
         ports.put(port.getName(), port);
     }
@@ -108,6 +114,26 @@ public class SGraph implements Scope{
      */
     public SFunc getPort(String name){
         return ports.get(name);
+    }
+
+    public void evaluate(){
+        for(SFunc f: getPorts()){
+            for(SFunc arg: f.getDependencies()){
+                addDependency(f, arg);
+            }
+
+            if(f.getSymbolType().isLiteral()){
+                addDependency(f, null);
+            }
+        }
+
+        TopologicalSort<SFunc> sorter = new TopologicalSort<>(graph);
+        List<GraphNode<SFunc>> topologicalOrdering = sorter.getTopologicalOrdering();
+
+        // loop through all ports to update them.
+        for (GraphNode<SFunc> gn : topologicalOrdering) {
+            gn.doAction();
+        }
     }
 
     @Override
@@ -155,5 +181,31 @@ public class SGraph implements Scope{
     @Override
     public boolean isRoot() {
         return true;
+    }
+
+    /**
+     * Add a dependency between two SFuncs
+     *
+     * @param dependency dependency relation to be added to the graph
+     */
+    private void addDependency(DependencyRelation<SFunc> dependency) {
+        addDependency(dependency.getDependent(), dependency.getDependedOn());
+    }
+
+    /**
+     * *
+     * Add a dependency between two SFuncs A - depends on -> B
+     *
+     * @param a the depended on SFunc reference
+     * @param b the dependent SFunc reference
+     */
+    private void addDependency(SFunc a, SFunc b) {
+
+        if (b == null) {
+            graph.addDependency(new GraphNode<>(a, graphNodeAction), null);
+        } else {
+            graph.addDependency(graph.getNodeForValue(a, graphNodeAction),
+                    graph.getNodeForValue(b, graphNodeAction));
+        }
     }
 }

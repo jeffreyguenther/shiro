@@ -30,11 +30,13 @@ import org.shirolang.base.SGraph;
 import org.shirolang.base.SNode;
 import org.shirolang.base.SType;
 import org.shirolang.exceptions.GraphNotFoundException;
+import org.shirolang.exceptions.NameUsedException;
 import org.shirolang.functions.math.*;
 import org.shirolang.values.*;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * A Library is the central store of runtime information.
@@ -82,7 +84,7 @@ public class Library {
         SGraph graph = graphs.get(graphName);
 
         if(graph == null){
-            throw new GraphNotFoundException("A graph named " + graphName + " cannot be found.");
+            throw new GraphNotFoundException("A graph named \"" + graphName + "\" cannot be found.");
         }
 
         if(symbol.getSymbolType().isNode()){
@@ -107,37 +109,70 @@ public class Library {
      * @param name name of the multi-function you are adding
      * @param f factory being associated with the name
      */
-    public final void registerFunction(String name, FunctionFactory f){
-        // TODO check the runtime to ensure the name is free
+    public final void registerFunction(String name, FunctionFactory f) throws NameUsedException {
+        if(isTypeNameUsed(name)){
+            throw new NameUsedException(name + " is already used. Please choose another name for your type.");
+        }
 
         mfuncs.put(name, f);
+    }
+
+    /**
+     * Checks if type already used
+     * @param type name of type being checked
+     * @return true if the name is already being used, otherwise false
+     */
+    public boolean isTypeNameUsed(String type){
+        // check the mfuncs
+        return mfuncs.keySet().contains(type);
+    }
+
+    /**
+     * Get all the used type names
+     * @return
+     */
+    public Set<String> getTypeNames(){
+        return mfuncs.keySet();
+    }
+
+    /**
+     * Gets the default graph
+     * @return the default graph
+     */
+    public SGraph getDefaultGraph(){
+        return graphs.get(DEFAULT_GRAPH_NAME);
     }
 
     /**
      * Creates FunctionFactories for all of the internal Shiro multi-functions
      */
     private void loadRuntimeFunctions(){
-        registerFunction(SType.BOOLEAN, () -> new SBoolean());
-        registerFunction(SType.DOUBLE, () -> new SDouble());
-        registerFunction(SType.IDENT, () -> new SIdent());
-        registerFunction(SType.INTEGER, () -> new SInteger());
-        registerFunction(SType.STRING, () -> new SString());
+        try {
+            registerFunction(SType.BOOLEAN, () -> new SBoolean());
+            registerFunction(SType.DOUBLE, () -> new SDouble());
+            registerFunction(SType.IDENT, () -> new SIdent());
+            registerFunction(SType.INTEGER, () -> new SInteger());
+            registerFunction(SType.STRING, () -> new SString());
 
-        registerFunction(SType.ADD, () -> new SAdd());
-        registerFunction(SType.AND, () -> new SAnd());
-        registerFunction(SType.DIVIDE, () -> new SDivide());
-        registerFunction(SType.EQUAL, () -> new SEqual());
-        registerFunction(SType.GREATERTHAN, () -> new SGreaterThan());
-        registerFunction(SType.GREATERTHAN_OR_EQUAL, () -> new SGreaterThanOrEqual());
-        registerFunction(SType.LESSTHAN, () -> new SLessThan());
-        registerFunction(SType.LESSTHAN_OR_EQUAL, () -> new SLessThanOrEqual());
-        registerFunction(SType.MODULO, () -> new SModulo());
-        registerFunction(SType.MULTIPLY, () -> new SMultiply());
-        registerFunction(SType.NEGATIVE, () -> new SNegative());
-        registerFunction(SType.NOT, () -> new SNot());
-        registerFunction(SType.NOT_EQUAL, () -> new SNotEqual());
-        registerFunction(SType.OR, () -> new SOr());
-        registerFunction(SType.POWER, () -> new SPower());
-        registerFunction(SType.SUBTRACT, () -> new SSubtract());
+            registerFunction(SType.ADD, () -> new SAdd());
+            registerFunction(SType.AND, () -> new SAnd());
+            registerFunction(SType.DIVIDE, () -> new SDivide());
+            registerFunction(SType.EQUAL, () -> new SEqual());
+            registerFunction(SType.GREATERTHAN, () -> new SGreaterThan());
+            registerFunction(SType.GREATERTHAN_OR_EQUAL, () -> new SGreaterThanOrEqual());
+            registerFunction(SType.LESSTHAN, () -> new SLessThan());
+            registerFunction(SType.LESSTHAN_OR_EQUAL, () -> new SLessThanOrEqual());
+            registerFunction(SType.MODULO, () -> new SModulo());
+            registerFunction(SType.MULTIPLY, () -> new SMultiply());
+            registerFunction(SType.NEGATIVE, () -> new SNegative());
+            registerFunction(SType.NOT, () -> new SNot());
+            registerFunction(SType.NOT_EQUAL, () -> new SNotEqual());
+            registerFunction(SType.OR, () -> new SOr());
+            registerFunction(SType.POWER, () -> new SPower());
+            registerFunction(SType.SUBTRACT, () -> new SSubtract());
+
+        } catch (NameUsedException e) {
+            throw new RuntimeException("Something crazy happened and an internal type is already defined!");
+        }
     }
 }

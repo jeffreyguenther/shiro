@@ -32,6 +32,7 @@ import org.antlr.v4.runtime.tree.ParseTreeProperty;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.shirolang.base.SFunc;
 import org.shirolang.base.Scope;
+import org.shirolang.base.SymbolType;
 import org.shirolang.exceptions.GraphNotFoundException;
 import org.shirolang.functions.math.SAdd;
 import org.shirolang.functions.math.SAnd;
@@ -64,12 +65,10 @@ public class ShiroExpressionListener extends ShiroBaseListener {
 
     protected Stack<Scope> scope;
     protected ParseTreeProperty<SFunc> expressions;
-    private final List<SFunc> exprs;
-    private final Library library;
+    protected final Library library;
 
     public ShiroExpressionListener(Library lib) {
         this.expressions = new ParseTreeProperty<>();
-        exprs = new ArrayList<>();
         scope = new Stack<>();
         this.library = lib;
     }
@@ -95,15 +94,6 @@ public class ShiroExpressionListener extends ShiroBaseListener {
      */
     protected void setExpr(ParseTree node, SFunc expr) {
         expressions.put(node, expr);
-        exprs.add(expr);
-    }
-
-    public SFunc getRoot() {
-        return exprs.get(exprs.size() - 1);
-    }
-
-    public List<SFunc> getExprs() {
-        return exprs;
     }
 
     @Override
@@ -320,9 +310,9 @@ public class ShiroExpressionListener extends ShiroBaseListener {
             throw new RuntimeException("A multifunction by the name " + mfName
             + "does not exist.");
         }
-        
+
         // if the function is not one of the literals (number, string, etc.)
-        if (!function.getSymbolType().isLiteral() && args.size() > 1) {
+        if (!function.getSymbolType().isLiteral() && args.size() >= 1) {
             // check to see if the right number of exprs came back
             if (args.size() < function.getMinArgs()) {
                 throw new RuntimeException("Expected at least " + function.getMinArgs()
@@ -344,18 +334,14 @@ public class ShiroExpressionListener extends ShiroBaseListener {
             setExpr(ctx, function);
         }else{
             function = getExpr(args.get(0));
+            function.setSymbolType(SymbolType.PORT);
+            function.setName(portName);
+            setExpr(ctx, function);
             
             if(!function.getType().equals(mfName)){
                 throw new RuntimeException("Literal expression is " 
                         + function.getType() + ", but should be " + mfName);
             }
-        }
-        
-        // add the symbol to the runtime. Throw a runtime exception
-        try {
-            library.addSymbolToGraph(Library.DEFAULT_GRAPH_NAME, function);
-        } catch (GraphNotFoundException e) {
-            throw new RuntimeException(e.getMessage());
         }
     }
 }
