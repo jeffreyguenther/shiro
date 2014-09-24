@@ -40,11 +40,13 @@ import org.shirolang.base.SymbolType;
  */
 public abstract class SValue<T> extends SFuncBase{
     private final T v;
+    private boolean notEvaluated;
     
     public SValue(T f) {
         super();
         this.v = f;
         symbolType = SymbolType.LITERAL;
+        notEvaluated = true;
     }
 
     public SValue(String name, T v){
@@ -55,7 +57,12 @@ public abstract class SValue<T> extends SFuncBase{
 
     @Override
     public void evaluate() {
-       results.set(this);
+       // because values are repeated
+       if(notEvaluated){
+           results.set(this);
+           notEvaluated = false;
+       }
+
     }
     
     public T getValue(){

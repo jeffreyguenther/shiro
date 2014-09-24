@@ -298,7 +298,6 @@ public class ShiroExpressionListener extends ShiroBaseListener {
 
     @Override
     public void exitPortDeclInit(ShiroParser.PortDeclInitContext ctx) {
-        System.out.println("entering decl init");
         String portName = ctx.portName().IDENT().getText();
         String portType = ctx.portType().getText();
         String mfName = ctx.mfCall().mfName().getText();
@@ -310,6 +309,8 @@ public class ShiroExpressionListener extends ShiroBaseListener {
             throw new RuntimeException("A multifunction by the name " + mfName
             + "does not exist.");
         }
+
+        function.setName(portName);
 
         // if the function is not one of the literals (number, string, etc.)
         if (!function.getSymbolType().isLiteral() && args.size() >= 1) {
@@ -325,6 +326,7 @@ public class ShiroExpressionListener extends ShiroBaseListener {
             }
             
             // todo add argument type checking
+            // todo add support for argument maps
 
             // append the args to the function
             for (ShiroParser.ExprContext arg : args) {

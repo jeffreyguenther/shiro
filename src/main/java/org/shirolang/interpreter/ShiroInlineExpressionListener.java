@@ -23,6 +23,7 @@
 
 package org.shirolang.interpreter;
 
+import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -63,7 +64,13 @@ public class ShiroInlineExpressionListener extends ShiroExpressionListener {
     @Override
     protected void setExpr(ParseTree node, SFunc expr) {
         super.setExpr(node, expr);
-        defaultGraph.addPort(expr);
+
+        if(expr.getName().isEmpty()){
+            defaultGraph.addAnonymousPort(expr);
+        }else{
+            defaultGraph.addPort(expr);
+        }
+
         lastFuncProcessed = expr;
     }
 
@@ -81,5 +88,17 @@ public class ShiroInlineExpressionListener extends ShiroExpressionListener {
         } catch (GraphNotFoundException e) {
             throw new RuntimeException(e.getMessage());
         }
+    }
+
+    @Override
+    public void enterPath(ShiroParser.PathContext ctx) {
+        super.enterPath(ctx);
+        // add the symbol to the runtime. Throw a runtime exception
+        try {
+            library.addSymbolToGraph(Library.DEFAULT_GRAPH_NAME, getExpr(ctx));
+        } catch (GraphNotFoundException e) {
+            throw new RuntimeException(e.getMessage());
+        }
+
     }
 }

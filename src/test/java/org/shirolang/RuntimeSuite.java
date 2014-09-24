@@ -29,6 +29,7 @@ import org.junit.runners.Suite;
 import org.shirolang.base.SIndexedMapTest;
 import org.shirolang.base.SNodeTest;
 import org.shirolang.functions.math.MathSuite;
+import org.shirolang.interpreter.InterpreterSuite;
 
 /**
  *
@@ -40,7 +41,8 @@ import org.shirolang.functions.math.MathSuite;
     SIndexedMapTest.class,
     MathSuite.class,
     SymbolTypeTest.class,
-    SNodeTest.class
+    SNodeTest.class,
+    InterpreterSuite.class
 })
 public class RuntimeSuite {
     

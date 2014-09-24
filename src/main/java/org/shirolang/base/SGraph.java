@@ -30,6 +30,7 @@ import org.shirolang.dag.GraphNode;
 import org.shirolang.dag.TopologicalSort;
 import org.shirolang.exceptions.PathNotFoundException;
 import org.shirolang.values.Path;
+import org.shirolang.values.SIdent;
 
 import java.util.*;
 
@@ -46,16 +47,19 @@ public class SGraph implements Scope{
     private String name; // name of the graph
     private Map<String, SNode> nodes; // nodes stored in the graph
     private Map<String, SFunc> ports;
+    private Set<SFunc> anonymousPorts;
 
     public SGraph(){
         this("");
     }
 
     public SGraph(String name){
-        this.name = name;
-        nodes = new HashMap<>();
-        ports = new HashMap<>();
         graph = new DAGraph<>();
+
+        this.name = name;
+        this.nodes = new HashMap<>();
+        this.ports = new HashMap<>();
+        this.anonymousPorts = new HashSet<>();
     }
 
     /**
@@ -99,12 +103,19 @@ public class SGraph implements Scope{
         ports.put(port.getName(), port);
     }
 
+
+    public void addAnonymousPort(SFunc port){
+        anonymousPorts.add(port);
+    }
+
     /**
      * Gets all of the ports in the graph
      * @return the set of named ports in the graph
      */
     public Set<SFunc> getPorts(){
-        return new HashSet<>(ports.values());
+        HashSet<SFunc> allPorts = new HashSet<>(ports.values());
+        allPorts.addAll(anonymousPorts);
+        return allPorts;
     }
 
     /**
@@ -117,13 +128,32 @@ public class SGraph implements Scope{
     }
 
     public void evaluate(){
+        graph.removeAllDependencies();
         for(SFunc f: getPorts()){
-            for(SFunc arg: f.getDependencies()){
-                addDependency(f, arg);
-            }
+            if(f.isIdent()){
+                SIdent fAsId = (SIdent) f;
+                if(!fAsId.isSelector()){
+                    if(fAsId.getDependencies().isEmpty()){
+                        addDependency(f, null);
+                    }else{
+                        for (SFunc arg : f.getDependencies()) {
+                            addDependency(f, arg);
+                        }
+                    }
+                }
+            }else {
+                for (SFunc arg : f.getDependencies()) {
+                    addDependency(f, arg);
+                }
 
-            if(f.getSymbolType().isLiteral()){
-                addDependency(f, null);
+
+                if (f.getSymbolType().isLiteral()) {
+                    addDependency(f, null);
+                }
+
+                if (f.getDependencies().isEmpty() && f.getSymbolType().isPort()) {
+                    addDependency(f, null);
+                }
             }
         }
 
@@ -200,12 +230,15 @@ public class SGraph implements Scope{
      * @param b the dependent SFunc reference
      */
     private void addDependency(SFunc a, SFunc b) {
-
         if (b == null) {
-            graph.addDependency(new GraphNode<>(a, graphNodeAction), null);
+            GraphNode<SFunc> aNode = graph.getNodeForValue(a, graphNodeAction);
+            graph.addDependency(aNode, null);
         } else {
             graph.addDependency(graph.getNodeForValue(a, graphNodeAction),
                     graph.getNodeForValue(b, graphNodeAction));
         }
+    }
+
+    private void inGraph(SFunc f){
     }
 }

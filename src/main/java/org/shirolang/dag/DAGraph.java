@@ -44,7 +44,7 @@ public class DAGraph<T> {
      * This is a helper when creating dependencies between
      * nodes that already exist in the graph. For dependencies to
      * be created as you expect, you must use the same graph node
-     * references to create the dependences. If you create a new graph node
+     * references to create the dependencies. If you create a new graph node
      * each time, you'll end up with a bunch of extra nodes in the graph.
      * @param value
      * @param action
@@ -213,8 +213,11 @@ public class DAGraph<T> {
             if (dependedOnNode == null && dependentNode != null && !nodes.contains(dependentNode)) {
                 addNode(dependentNode);
             } else {
-                throw new NullPointerException("Both the dependent and the depended on"
-                        + " values are null. Relation cannot be added.");
+                // throw exception where both nodes are null
+                if(dependedOnNode == null && dependentNode == null){
+                    throw new NullPointerException("Both the dependent and the depended on"
+                            + " values are null. Relation cannot be added.");
+                }
             }
         }
     }

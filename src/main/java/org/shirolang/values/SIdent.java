@@ -81,10 +81,12 @@ public class SIdent extends SFuncBase{
     
     @Override
     public void evaluate() {
-        try {
-            results.set(scope.resolvePath(value));
-        } catch (PathNotFoundException e) {
-            throw new RuntimeException(e.getMessage());
+        if(!isSelector()) {
+            try {
+                results.set(scope.resolvePath(value));
+            } catch (PathNotFoundException e) {
+                throw new RuntimeException(e.getMessage());
+            }
         }
     }
 

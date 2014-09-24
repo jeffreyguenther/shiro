@@ -27,7 +27,9 @@ package org.shirolang.base;
 import org.junit.Assert;
 import org.junit.Test;
 import org.shirolang.exceptions.PathNotFoundException;
+import org.shirolang.values.Path;
 import org.shirolang.values.SDouble;
+import org.shirolang.values.SIdent;
 
 /**
  *
@@ -162,5 +164,23 @@ public class SGraphTest {
 
         SFunc path = g.resolvePath("nums");
         Assert.assertSame(d, path);
+    }
+
+    @Test
+    public void resolveIdentifier(){
+        SGraph g = new SGraph();
+
+        SDouble d = new SDouble();
+        d.setSymbolType(SymbolType.PORT);
+        d.setName("num");
+        g.addPort(d);
+
+        d.evaluate();
+
+        SIdent id = new SIdent(g, "num");
+
+        id.evaluate();
+        Assert.assertSame(d, id.getResult());
+
     }
 }
