@@ -17,7 +17,7 @@ statement
 	;
 
 nodestmt
-    :   NODE IDENT ('[' activeSelector ']')? BEGIN NEWLINE
+    :   NODE MFNAME ('[' activeSelector ']')? BEGIN NEWLINE
         nodeInternal
         END
     ;
@@ -69,11 +69,12 @@ path 	:	(IDENT | THIS)('.' IDENT)* (LSQUARE pathIndex RSQUARE)?
 	;
 	
 pathIndex
-	        :	index=(NUMBER
-        |       STRING_LITERAL)
+	    :	index=(NUMBER
+        |   STRING_LITERAL)
 	;
 
-inLineExpr : expr NEWLINE;
+inLineExpr : expr NEWLINE
+    ;
 
 expr :  '(' expr ')'						  #parensExpr
 	 |	NOT_OP expr 				          #notExpr
