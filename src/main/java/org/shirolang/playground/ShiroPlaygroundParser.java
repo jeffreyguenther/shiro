@@ -31,7 +31,6 @@ import javafx.stage.Stage;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.Token;
-import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.fxmisc.richtext.*;
 import org.reactfx.EventStream;
@@ -41,16 +40,16 @@ import org.shirolang.interpreter.ShiroParser;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
  *
  */
-public class ShiroPlayground extends Application {
+public class ShiroPlaygroundParser extends Application {
     private CodeArea codeArea;
     private ExecutorService executor;
+
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -66,7 +65,10 @@ public class ShiroPlayground extends Application {
             .subscribe(this::applyHighlighting);
 
         codeArea.replaceText("port a Double(343)\n" +
-                "port b String(\"dfd\")\n");
+                "port b String(\"dfd\")\n" +
+                "node D begin\n" +
+                "port a Double(12)\n" +
+                "end");
 
         Scene scene = new Scene(new StackPane(codeArea), 600, 400);
         scene.getStylesheets().add(getClass().getResource("syntax.css").toExternalForm());
@@ -95,40 +97,30 @@ public class ShiroPlayground extends Application {
     }
 
     private static StyleSpans<Collection<String>> computeHighlighting(String text){
-        StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();
-        int lastEnd = 0;
+        if(text.length() > 0){
+            ShiroLexer lex = new ShiroLexer(new ANTLRInputStream(text));
+            lex.getErrorListeners().clear();
+            // parse
+            ShiroParser parser = new ShiroParser(new CommonTokenStream(lex));
+            parser.getErrorListeners().clear();
+            parser.setBuildParseTree(true);
+            ShiroParser.ShiroContext shiro = parser.shiro();
 
-        ShiroLexer lex = new ShiroLexer(new ANTLRInputStream(text));
-        // parse
-
-        for(Token t: lex.getAllTokens()){
-            spansBuilder.add(Collections.emptyList(), t.getStartIndex() - lastEnd);
-            spansBuilder.add(Collections.singleton(getStyleClass(t)), (t.getStopIndex() + 1 - t.getStartIndex()));
-            lastEnd = t.getStopIndex() + 1;
-        }
-
-        spansBuilder.add(Collections.emptyList(), text.length() - lastEnd);
-
-        return spansBuilder.create();
-    }
-
-    private static String getStyleClass(Token t){
-        switch (t.getType()){
-            case ShiroLexer.BEGIN:
-                return "begin-end";
-            case ShiroLexer.END:
-                return "begin-end";
-            case ShiroLexer.MFNAME:
-                return "mf";
-            case ShiroLexer.IDENT:
-                return "ident";
-            default:
-                return "";
+            ParseTreeWalker walker = new ParseTreeWalker();
+            SyntaxHighlighter h = new SyntaxHighlighter(text.length());
+            walker.walk(h, shiro);
+            return h.getStyles();
+        }else{
+            StyleSpansBuilder<Collection<String>> objectStyleSpansBuilder = new StyleSpansBuilder<>();
+            objectStyleSpansBuilder.add(Collections.emptyList(), 0);
+            return objectStyleSpansBuilder.create();
         }
     }
 
     private void applyHighlighting(StyleSpans<Collection<String>> highlighting) {
-        codeArea.setStyleSpans(0, highlighting);
+        if(highlighting.getSpanCount() > 0) {
+            codeArea.setStyleSpans(0, highlighting);
+        }
     }
 
     public static void main(String[] args) {

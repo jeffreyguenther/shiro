@@ -5,6 +5,7 @@
 
 .node-type{
     -fx-fill: rgb(55, 26, 148);
+    -fx-font-weight: bold;
 }
 
 .mf{

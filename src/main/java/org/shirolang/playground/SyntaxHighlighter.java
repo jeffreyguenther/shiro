@@ -25,11 +25,13 @@ package org.shirolang.playground;
 
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.misc.NotNull;
+import org.antlr.v4.runtime.tree.TerminalNode;
 import org.fxmisc.richtext.StyleSpans;
 import org.fxmisc.richtext.StyleSpansBuilder;
 import org.shirolang.interpreter.ShiroBaseListener;
 import org.shirolang.interpreter.ShiroParser;
 
+import javax.xml.bind.SchemaOutputResolver;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -45,43 +47,61 @@ public class SyntaxHighlighter extends ShiroBaseListener{
 
 	public SyntaxHighlighter(int l) {
         textlength = l;
-	}
+    }
 
     @Override
-    public void enterPortDecl(@NotNull ShiroParser.PortDeclContext ctx) {
-        add(ctx.MFNAME().getSymbol(), "mf");
+    public void enterShiro(@NotNull ShiroParser.ShiroContext ctx) {
+        lastEnd = 0;
+    }
+
+    @Override
+    public void exitPortDecl(@NotNull ShiroParser.PortDeclContext ctx) {
+        add(ctx.MFNAME(), "mf");
     }
 
     @Override
     public void enterPortName(@NotNull ShiroParser.PortNameContext ctx) {
-        add(ctx.IDENT().getSymbol(), "ident");
+        add(ctx.IDENT(), "ident");
     }
 
     @Override
     public void enterMfName(@NotNull ShiroParser.MfNameContext ctx) {
-        add(ctx.MFNAME().getSymbol(), "mf");
+        add(ctx.MFNAME(), "mf");
     }
 
     @Override
     public void enterNodestmt(@NotNull ShiroParser.NodestmtContext ctx) {
-        add(ctx.BEGIN().getSymbol(), "begin-end");
-        add(ctx.MFNAME().getSymbol(), "ident");
-        add(ctx.MFNAME().getSymbol(), "node-type");
-        add(ctx.END().getSymbol(), "begin-end");
+        add(ctx.MFNAME(), "node-type");
+        add(ctx.BEGIN(), "begin-end");
+
+
+    }
+
+    @Override
+    public void exitNodestmt(@NotNull ShiroParser.NodestmtContext ctx) {
+        add(ctx.END(), "begin-end");
     }
 
     /**
 	 * @return the styles
 	 */
 	public StyleSpans<Collection<String>> getStyles() {
-        spansBuilder.add(Collections.emptyList(), textlength - lastEnd);
+        spansBuilder.add(Collections.emptyList(), textlength - lastEnd );
 		return spansBuilder.create();
 	}
 
-	private void add(Token ident, String style) {
-        System.out.println("start: " + ident.getStartIndex() + " end: " + ident.getStopIndex());
-        spansBuilder.add(Collections.emptyList(), ident.getStartIndex() - lastEnd);
-        spansBuilder.add(Collections.singleton(style), (ident.getStopIndex() + 1 - ident.getStartIndex()));
-        lastEnd = ident.getStopIndex() + 1;
+	private void add(TerminalNode ident, String style) {
+        if(ident != null) {
+            Token t = ident.getSymbol();
+
+            int spacer = t.getStartIndex() - lastEnd;
+            if(spacer > 0) {
+                spansBuilder.add(Collections.emptyList(), spacer);
+
+                int gap = t.getText().length();
+                spansBuilder.add(Collections.singleton(style), gap);
+                lastEnd = t.getStopIndex() + 1;
+            }
+        }
 	}
 }
