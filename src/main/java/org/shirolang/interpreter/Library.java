@@ -44,7 +44,7 @@ import java.util.Set;
  * variable names
  */
 public class Library {
-    public static String DEFAULT_GRAPH_NAME = "";
+    public static String DEFAULT_GRAPH_NAME = "^";
     private Map<String, FunctionFactory> mfuncs;
 
     // Runtime instances

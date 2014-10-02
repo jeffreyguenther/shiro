@@ -31,11 +31,8 @@ import org.fxmisc.richtext.StyleSpansBuilder;
 import org.shirolang.interpreter.ShiroBaseListener;
 import org.shirolang.interpreter.ShiroParser;
 
-import javax.xml.bind.SchemaOutputResolver;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Computes the the style class and segment for Shiro code.
