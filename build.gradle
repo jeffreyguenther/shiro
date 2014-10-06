@@ -23,7 +23,7 @@ ext.versions = [
 ext.antlr = [
     grammarpackage: "shiro.interpreter",
     antlrSource: 'src/main/java',
-    destinationDir: "src/generated-sources/java"
+    destinationDir: "src/antlr/java"
 ]
 
 repositories {
@@ -36,6 +36,14 @@ repositories {
 configurations {
     antlr4 {
         description = "ANTLR4"
+    }
+}
+
+sourceSets{
+    main{
+        java{
+            srcDirs 'src/main/java', 'src/antlr/java'
+        }
     }
 }
 
@@ -53,14 +61,14 @@ dependencies {
     compile 'net.sf.jung:jung-visualization:2.0.1'
     
     
-    testJavaCompile group: "junit", name: "junit", version: versions.junit
+    testCompile group: "junit", name: "junit", version: versions.junit
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '1.12'
+    gradleVersion = '2.1'
 }
 
-tasks.withType(Compile) {
+tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }
 
@@ -89,7 +97,7 @@ task generateGrammarSource(dependsOn: antlrOutputDir, type: JavaExec) {
 
 compileJava {
     dependsOn generateGrammarSource
-    source antlr.destinationDir
+//    source antlr.destinationDir
 }
 
 clean {
