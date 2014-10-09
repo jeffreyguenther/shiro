@@ -24,4 +24,4 @@ scenicView.properties
 
 *.iml
 .idea/
-src/generated-sources/**
+src/generated/**
