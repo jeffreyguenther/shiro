@@ -75,7 +75,7 @@ mfName 	:	MFNAME
 mfparams:	expr(',' expr)* 
 	;
 
-path 	:	(IDENT | THIS)('.' IDENT)* (LSQUARE pathIndex RSQUARE)?
+path 	:	(IDENT | MFNAME | THIS)('.' (MFNAME | IDENT))* (LSQUARE pathIndex RSQUARE)?
         |   REF IDENT('.' IDENT)*
         |   SELECT IDENT('.' IDENT)*
 	;
@@ -85,7 +85,9 @@ pathIndex
         |   STRING_LITERAL)
 	;
 
-inLineExpr : expr NEWLINE
+inLineExpr
+    : expr NEWLINE
+    | nodeProduction
     ;
 
 expr :  '(' expr ')'						  #parensExpr
@@ -126,6 +128,8 @@ LT		 : '<';
 LTE      : '<=';
 EQ		 : '==';
 NEQ      : '!=';
+
+PROD_OP : '->';
 
 BEGIN: 'begin';
 END: 'end';
