@@ -22,6 +22,18 @@ nodestmt
         END
     ;
 
+nodeProduction
+	:	path (PROD_OP activation)+ NEWLINE
+	;
+
+activation
+	:	nodeName=IDENT ( LSQUARE activeObject=IDENT RSQUARE)?('(' argMap ')')?
+	;
+
+argMap
+    :   (IDENT ':' expr)(',' IDENT ':' expr)*
+    ;
+
 activeSelector
 	:	IDENT
 	;
