@@ -2,16 +2,13 @@
  * This build script is based on https://github.com/ae6rt/gradle-antlr4-template
  * 
  * */
-
 description = "shiro - a data flow language for alternatives"
 apply plugin: 'java'
 apply plugin: 'application'
-apply from: file('gradle/idea.gradle')
 apply from: 'gradle/javafx.plugin'
 
-//mainClassName = 'shiro.viewer.Viewer'
 gradle.projectsEvaluated {
-    tasks.withType(Compile) {
+    tasks.withType(JavaCompile) {
         options.compilerArgs << "-Xlint:unchecked"
     }
 }
@@ -23,26 +20,35 @@ ext.versions = [
 ext.antlr = [
     grammarpackage: "org.shirolang.interpreter",
     antlrSource: 'src/main/java/org/shirolang',
-    destinationDir: "src/generated-sources/java"
+    destinationDir: "src/generated/java"
 ]
+
+sourceSets{
+    generated
+    main{
+        compileClasspath += generated.output
+        runtimeClasspath += generated.output
+    }
+    test{
+        compileClasspath += generated.output
+        runtimeClasspath += generated.output
+    }
+}
+project.run.classpath += sourceSets.generated.output
 
 repositories {
     mavenCentral()
-//    maven{
-//        url "https://oss.sonatype.org/content/repositories/snapshots/"
-//    }
 }
 
 configurations {
-    antlr4 {
-        description = "ANTLR4"
-    }
+    antlr4
 }
 
 dependencies {
     compile group: "org.antlr", name: "antlr4-runtime", version: "4.3"
+    generatedCompile group: "org.antlr", name: "antlr4-runtime", version: "4.3"
     compile 'org.antlr:ST4:4.0.8'
-    antlr4 group: "org.antlr", name: "antlr4", version: "4.3"
+    compile group: "org.antlr", name: "antlr4", version: "4.3"
 
     compile group: 'org.fxmisc.richtext', name: 'richtextfx', version: '0.4.4'
     compile 'com.google.guava:guava:12.0'
@@ -58,10 +64,10 @@ dependencies {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '1.12'
+    gradleVersion = '2.1'
 }
 
-tasks.withType(Compile) {
+tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }
 
@@ -83,14 +89,14 @@ task generateGrammarSource(dependsOn: antlrOutputDir, type: JavaExec) {
     def grammars = fileTree(antlr.antlrSource).include('**/*.g4')
 
     main = 'org.antlr.v4.Tool'
-    classpath = configurations.antlr4
+    classpath = sourceSets.main.compileClasspath
     def pkg = antlr.grammarpackage.replaceAll("\\.", "/")
     args = ["-o", "${antlr.destinationDir}/${pkg}"/*, "-atn"*/, "-listener", "-package", antlr.grammarpackage, grammars.files].flatten()
 }
 
 compileJava {
     dependsOn generateGrammarSource
-    source antlr.destinationDir
+    classpath += sourceSets.generated.output
 }
 
 clean {
@@ -101,7 +107,7 @@ jar{
     manifest {
         attributes 'Implementation-Title': 'shiro', 
                    'Implementation-Version': "0.1.0",
-                   'Main-Class': "shiro.interpreter.Shiro"
+                   'Main-Class': "org.shirolang.playground.ShiroPlayground"
     }
 }
 
@@ -110,18 +116,12 @@ task fatJar(type: Jar, dependsOn: classes) {
     from sourceSets.main.output
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
 }
-
 assemble.dependsOn fatJar
 
-run {
-    //    main = 'shiro.drawing.ProjectAmoeba'
-    if(project.hasProperty('args')){
-        args project.args.split('\\s+')
-    }
-}
+mainClassName = 'org.shirolang.playground.ShiroPlayground'
 
 javafx{
-    appID 'Shiro Viewer'
-    appName 'Shiro Viewer'
+    appID 'Shiro Playground'
+    appName 'Shiro Playground'
     mainClass mainClassName
 }
