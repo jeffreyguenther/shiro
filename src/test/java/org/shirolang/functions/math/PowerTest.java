@@ -177,6 +177,6 @@ public class PowerTest {
         b.evaluate();
         product.evaluate();
 
-        assertEquals("#<Subtract args:[a:13, b:3], results:[2197]>", product.toConsole());
+        assertEquals("#<Power args:[a:13, b:3], results:[2197]>", product.toConsole());
     }
 }
