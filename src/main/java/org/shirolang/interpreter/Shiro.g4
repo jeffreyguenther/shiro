@@ -11,7 +11,6 @@ shiro : statement* EOF
 statement
     :
           nodestmt
-        | portstmt
         | graphDecl
         | inLineExpr
         | NEWLINE
@@ -104,6 +103,7 @@ portAssignment
 inLineExpr
     : expr NEWLINE
     | nodeProduction
+    | portDeclInit NEWLINE
     | portAssignment
     ;
 

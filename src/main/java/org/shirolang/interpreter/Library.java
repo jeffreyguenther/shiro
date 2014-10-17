@@ -140,6 +140,8 @@ public class Library {
         return g;
     }
 
+
+
     /**
      * Registers a function factory with the library. This is done to add
      * a custom type to the Shiro runtime.

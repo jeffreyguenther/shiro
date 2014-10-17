@@ -38,7 +38,6 @@ import org.shirolang.interpreter.ShiroRuntimeTest;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-    ShiroRuntimeTest.class,
     SIndexedMapTest.class,
     MathSuite.class,
     SymbolTypeTest.class,

@@ -82,18 +82,11 @@ public class ShiroRuntime{
         DefinitionCollector definitionCollector = new DefinitionCollector();
         walker.walk(definitionCollector, tree);
 
-        // store the definitions in the
-//        definitionListener.getAlternativeDefinitions();
-//        definitionListener.getGraphs();
+        library.addGraphDefs(definitionCollector.getGraphs());
         library.addNodeDefs(definitionCollector.getNodeDefinitions());
 
-        ShiroInlineExpressionListener inline = new ShiroInlineExpressionListener(library);
+        InlineGraphBuilder inline = new InlineGraphBuilder(library);
         walker.walk(inline, tree);
-
-        // walk to realize graphs(including anonymous)
-//        library.
-
-        // walk to realize states
 
         library.getDefaultGraph().evaluate();
 

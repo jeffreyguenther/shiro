@@ -23,10 +23,13 @@
 
 package org.shirolang.interpreter;
 
+import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.shirolang.interpreter.ShiroBaseListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -36,6 +39,7 @@ public class DefinitionCollector extends ShiroBaseListener {
     private Map<String, ParseTree> defs;
     private Map<String, ParseTree> alternativeDefs;
     private Map<String, ParseTree> graphs;
+    private List<ParseTree> inLineStatements;
     private boolean locked;
 
     public DefinitionCollector() {
@@ -43,7 +47,17 @@ public class DefinitionCollector extends ShiroBaseListener {
         defs = new HashMap<>();
         alternativeDefs = new HashMap<>();
         graphs = new HashMap<>();
+        inLineStatements = new ArrayList<>();
         locked = false;
+    }
+
+    /**
+     * Gets all of the graph statements made in line
+     * They are stored in the order they appear in the text
+     * @return
+     */
+    public List<ParseTree> getInLineStatements(){
+        return inLineStatements;
     }
 
     /**
@@ -91,7 +105,9 @@ public class DefinitionCollector extends ShiroBaseListener {
     public void enterGraphDecl(ShiroParser.GraphDeclContext ctx) {
         graphs.put(ctx.IDENT().getText(), ctx);
     }
-//
+
+
+    //
 //    @Override
 //    public void enterStatestmt(ShiroParser.StatestmtContext ctx) {
 //        alternativeDefs.put(ctx.stateName().getText(), ctx);

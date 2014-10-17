@@ -33,17 +33,13 @@ import org.junit.Test;
 import org.shirolang.base.SFunc;
 import org.shirolang.base.SGraph;
 import org.shirolang.base.SType;
-import org.shirolang.functions.math.SAdd;
-import org.shirolang.functions.math.SPower;
-import org.shirolang.values.SDouble;
-import org.shirolang.values.SIdent;
 
 import java.util.List;
 
 /**
  *
  */
-public class ShiroInlineExpressionListenerTest {
+public class InlineGraphBuilderTest {
     private static ParseTree buildParseTree(String expr){
         ShiroLexer lex = new ShiroLexer(new ANTLRInputStream(expr));
         // parse
@@ -61,13 +57,14 @@ public class ShiroInlineExpressionListenerTest {
 
 
     @Test
-    public void objectConstruction(){
+    public void buildInline(){
         String code = "port a Double(11.0)\n" +
                 "port b Double(2.0)\n" +
                 "port c Power(a, b)\n" +
                 "c + b\n";
 
-        ShiroInlineExpressionListener inline = new ShiroInlineExpressionListener(lib);
+        InlineGraphBuilder inline = new InlineGraphBuilder(lib);
+        inline.setPass(InlineGraphBuilder.SECOND_PASS);
         ParseTreeWalker walker = new ParseTreeWalker();
         walker.walk(inline, buildParseTree(code));
 
@@ -90,28 +87,6 @@ public class ShiroInlineExpressionListenerTest {
         Assert.assertTrue("a ident refers to Double named a", powDepA.getDependencies().contains(a));
         Assert.assertTrue("b ident refers to Double named b", powDepB.getDependencies().contains(b));
 
-//        SDouble a = new SDouble("a", 11.0);
-//        g.addPort(a);
-//        SDouble b = new SDouble("b", 2.0);
-//        g.addPort(b);
-//
-//        SIdent aIdent = new SIdent(g, "a");
-//        Assert.assertTrue(aIdent.getDependencies().contains(a));
-//        SIdent bIdent = new SIdent(g, "b");
-//        Assert.assertTrue(bIdent.getDependencies().contains(b));
-//
-//        SPower pow = new SPower(aIdent, bIdent);
-//        pow.setName("c");
-//        g.addPort(pow);
-//        Assert.assertEquals(2, pow.getDependencies().size());
-//        Assert.assertTrue(pow.getDependencies().contains(aIdent));
-//        Assert.assertTrue(pow.getDependencies().contains(bIdent));
-//
-//        SIdent cIdent = new SIdent(g, "c");
-//        Assert.assertTrue(cIdent.getDependencies().contains(pow));
-//
-//        SAdd add = new SAdd(cIdent, bIdent);
-//        Assert.assertTrue(add.getDependencies().contains(cIdent));
-//        Assert.assertTrue(add.getDependencies().contains(bIdent));
+        graph.evaluate();
     }
 }

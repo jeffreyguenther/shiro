@@ -43,16 +43,30 @@ import java.util.Stack;
  *
  * @author jeffreyguenther
  */
-public class ShiroInlineExpressionListener extends ShiroExpressionListener {
+public class InlineGraphBuilder extends GraphBuilder {
+    public static final int FIRST_PASS = 1;
+    public static final int SECOND_PASS = 2;
     private SFunc lastFuncProcessed;
     private final SGraph defaultGraph;
+    private boolean isInLine;
+    private int pass;
 
 
-    public ShiroInlineExpressionListener(Library lib) {
-        super(lib);
+    public InlineGraphBuilder(Library lib) {
+        super(lib, lib.getDefaultGraph());
         lastFuncProcessed = null;
         defaultGraph = library.getDefaultGraph();
         scope.push(defaultGraph);
+        isInLine = false;
+        pass = FIRST_PASS;
+    }
+
+    /**
+     * Sets the pass of the walker
+     * @param pass
+     */
+    public void setPass(int pass) {
+        this.pass = pass;
     }
 
     /**
@@ -79,26 +93,47 @@ public class ShiroInlineExpressionListener extends ShiroExpressionListener {
     }
 
     @Override
-    public void exitPortDeclInit(ShiroParser.PortDeclInitContext ctx) {
-        super.exitPortDeclInit(ctx);
+    public void enterInLineExpr(@NotNull ShiroParser.InLineExprContext ctx) {
+        isInLine = true;
+    }
 
-        // add the symbol to the runtime. Throw a runtime exception
-        try {
-            library.addSymbolToGraph(Library.DEFAULT_GRAPH_NAME, getExpr(ctx));
-        } catch (GraphNotFoundException e) {
-            throw new RuntimeException(e.getMessage());
+    @Override
+    public void exitInLineExpr(@NotNull ShiroParser.InLineExprContext ctx) {
+        isInLine = false;
+    }
+
+    @Override
+    public void exitNodeProduction(@NotNull ShiroParser.NodeProductionContext ctx) {
+        if(isInLine && pass == FIRST_PASS) {
+            super.exitNodeProduction(ctx);
         }
     }
 
     @Override
-    public void enterPath(ShiroParser.PathContext ctx) {
-        super.enterPath(ctx);
-        // add the symbol to the runtime. Throw a runtime exception
-        try {
-            library.addSymbolToGraph(Library.DEFAULT_GRAPH_NAME, getExpr(ctx));
-        } catch (GraphNotFoundException e) {
-            throw new RuntimeException(e.getMessage());
+    public void exitPortDeclInit(@NotNull ShiroParser.PortDeclInitContext ctx) {
+        if(isInLine && pass == SECOND_PASS) {
+            super.exitPortDeclInit(ctx);
         }
+    }
 
+    @Override
+    public void enterPath(@NotNull ShiroParser.PathContext ctx) {
+        if(isInLine && pass == SECOND_PASS) {
+
+            super.enterPath(ctx);
+            // add the symbol to the runtime. Throw a runtime exception
+            try {
+                library.addSymbolToGraph(Library.DEFAULT_GRAPH_NAME, getExpr(ctx));
+            } catch (GraphNotFoundException e) {
+                throw new RuntimeException(e.getMessage());
+            }
+        }
+    }
+
+    @Override
+    public void exitPortAssignment(@NotNull ShiroParser.PortAssignmentContext ctx) {
+        if(isInLine && pass == SECOND_PASS) {
+            super.exitPortAssignment(ctx);
+        }
     }
 }
