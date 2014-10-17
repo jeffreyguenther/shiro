@@ -24,10 +24,7 @@
 package org.shirolang.interpreter;
 
 import org.antlr.v4.runtime.misc.NotNull;
-import org.shirolang.base.SFunc;
-import org.shirolang.base.SGraph;
-import org.shirolang.base.SNode;
-import org.shirolang.base.SymbolType;
+import org.shirolang.base.*;
 import org.shirolang.exceptions.OptionNotFoundException;
 import org.shirolang.exceptions.PathNotFoundException;
 import org.shirolang.values.Path;
@@ -90,5 +87,13 @@ public class GraphBuilder extends ShiroExpressionListener {
         } catch(PathNotFoundException pnfe) {
             System.out.println(pnfe.getMessage());
         }
+    }
+
+    @Override
+    public void exitPortDeclInit(@NotNull ShiroParser.PortDeclInitContext ctx) {
+        super.exitPortDeclInit(ctx);
+        SFunc port = getExpr(ctx);
+        SGraph g = (SGraph) scope.peek();
+        g.addPort(port);
     }
 }

@@ -125,6 +125,32 @@ public class LibraryTest{
         DefinitionCollector definitionCollector = new DefinitionCollector();
         walker.walk(definitionCollector, tree);
 
+        l.addNodeDefs(definitionCollector.getNodeDefinitions());
+        l.addGraphDefs(definitionCollector.getGraphs());
+
+
+        for(Map.Entry<String, ParseTree> e: l.getGraphDefs().entrySet()){
+            SGraph graph = l.instantiateNamedGraph(e.getValue(), e.getKey());
+            l.saveGraph(graph);
+
+            graph.evaluate();
+        }
+
+        Assert.assertTrue(l.getGraphDefs().containsKey("box_calc"));
+    }
+
+    @Test
+    public void instantiateNamedGraphWithLoosePort() throws IOException {
+        ParseTreeWalker walker = new ParseTreeWalker();
+        ShiroLexer lex = new ShiroLexer(new ANTLRInputStream(this.getClass()
+                .getResourceAsStream("graph_named_with_loose_ports.sro")));
+        CommonTokenStream tokens = new CommonTokenStream(lex);
+        ShiroParser parser = new ShiroParser(tokens);
+        parser.setBuildParseTree(true);
+        ParseTree tree = parser.shiro();
+
+        DefinitionCollector definitionCollector = new DefinitionCollector();
+        walker.walk(definitionCollector, tree);
 
         l.addNodeDefs(definitionCollector.getNodeDefinitions());
         l.addGraphDefs(definitionCollector.getGraphs());
@@ -138,6 +164,5 @@ public class LibraryTest{
         }
 
         Assert.assertTrue(l.getGraphDefs().containsKey("box_calc"));
-
     }
 }

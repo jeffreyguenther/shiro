@@ -25,7 +25,7 @@ graphDecl
 	;
 
 graphLine
-	:	nodeProduction | portAssignment | NEWLINE
+	:	portDeclInit | nodeProduction | portAssignment | NEWLINE
 	;
 
 nodestmt

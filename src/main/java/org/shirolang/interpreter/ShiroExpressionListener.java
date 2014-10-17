@@ -300,7 +300,7 @@ public class ShiroExpressionListener extends ShiroBaseListener {
     }
 
     @Override
-    public void exitPortDeclInit(ShiroParser.PortDeclInitContext ctx) {
+    public void exitPortDeclInit(@NotNull ShiroParser.PortDeclInitContext ctx) {
         String portName = ctx.portName().IDENT().getText();
         String portType = ctx.portType().getText();
         String mfName = ctx.mfCall().mfName().getText();
