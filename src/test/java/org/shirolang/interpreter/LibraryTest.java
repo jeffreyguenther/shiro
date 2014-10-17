@@ -23,15 +23,22 @@
 
 package org.shirolang.interpreter;
 
+import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.shirolang.base.SFunc;
+import org.shirolang.base.SGraph;
 import org.shirolang.base.SType;
 import org.shirolang.exceptions.NameUsedException;
 import org.shirolang.functions.math.SAdd;
 
+import java.io.IOException;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
@@ -39,7 +46,7 @@ import static org.junit.Assert.assertEquals;
 /**
  *
  */
-public class LibraryTest {
+public class LibraryTest{
     private  Library l;
     @Before
     public void setup(){
@@ -53,7 +60,6 @@ public class LibraryTest {
 
     @Test
     public void createFunction(){
-        Library l = new Library();
         SFunc add = l.createFunction("Add");
         Assert.assertEquals("Add", add.getType());
     }
@@ -104,5 +110,34 @@ public class LibraryTest {
     @Test
     public void getDefaultGraph(){
         Assert.assertNotNull(l.getDefaultGraph());
+    }
+
+    @Test
+    public void instantiateNamedGraph() throws IOException {
+        ParseTreeWalker walker = new ParseTreeWalker();
+        ShiroLexer lex = new ShiroLexer(new ANTLRInputStream(this.getClass()
+                .getResourceAsStream("graph_named.sro")));
+        CommonTokenStream tokens = new CommonTokenStream(lex);
+        ShiroParser parser = new ShiroParser(tokens);
+        parser.setBuildParseTree(true);
+        ParseTree tree = parser.shiro();
+
+        DefinitionCollector definitionCollector = new DefinitionCollector();
+        walker.walk(definitionCollector, tree);
+
+
+        l.addNodeDefs(definitionCollector.getNodeDefinitions());
+        l.addGraphDefs(definitionCollector.getGraphs());
+
+
+        for(Map.Entry<String, ParseTree> e: l.getGraphDefs().entrySet()){
+            SGraph graph = l.instantiateNamedGraph(e.getValue(), e.getKey());
+            l.saveGraph(graph);
+
+            graph.evaluate();
+        }
+
+        Assert.assertTrue(l.getGraphDefs().containsKey("box_calc"));
+
     }
 }

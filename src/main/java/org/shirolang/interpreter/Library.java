@@ -112,6 +112,7 @@ public class Library {
      * @return an instance of the Snode of the given type
      */
     public SFunc instantiateNode(SGraph g, Path p, String name){
+        // TODO handle the instantiation of nested nodes
         ParseTree nodeDef = nodeDefs.get(p.getCurrentPathHead());
         NodeInstantiator nodeProducer = new NodeInstantiator(this, g);
         ParseTreeWalker walker = new ParseTreeWalker();
@@ -119,6 +120,24 @@ public class Library {
         SNode node = nodeProducer.getCreatedNode();
         node.setName(name);
         return node;
+    }
+
+    /**
+     * Instantiate a graph object from a parse tree
+     * Note: the graph is not stored in the libary.
+     * You must store it yourself
+     * @param tree parse tree of graph to instantiate
+     * @param name name of graph
+     * @return the created graph
+     */
+    public SGraph instantiateNamedGraph(ParseTree tree, String name){
+        ParseTreeWalker walker = new ParseTreeWalker();
+
+        SGraph g = new SGraph(name);
+        GraphBuilder graphBuilder = new GraphBuilder(this,g);
+        walker.walk(graphBuilder, tree);
+
+        return g;
     }
 
     /**
@@ -167,6 +186,31 @@ public class Library {
      */
     public void addNodeDefs(Map<String, ParseTree> defs){
         nodeDefs.putAll(defs);
+    }
+
+    /**
+     * Stores the graph definitions to the map
+     * @param defs map of graph names to their parse trees
+     */
+    public void addGraphDefs(Map<String, ParseTree> defs){
+        graphDefs.putAll(defs);
+    }
+
+    /**
+     * Get all of the parse trees for the named graphs
+     * Does not include anonymous graph
+     * @return the map of named parse trees
+     */
+    public Map<String, ParseTree> getGraphDefs(){
+        return graphDefs;
+    }
+
+    /**
+     * Saves the graph to the library
+     * @param g graph to be stored
+     */
+    public void saveGraph(SGraph g){
+        graphs.put(g.getName(), g);
     }
 
     /**

@@ -87,10 +87,10 @@ public class DefinitionCollector extends ShiroBaseListener {
         locked = false;
     }
 
-//    @Override
-//    public void enterGraphDecl(ShiroParser.GraphDeclContext ctx) {
-//        graphs.put(ctx.IDENT().getText(), ctx);
-//    }
+    @Override
+    public void enterGraphDecl(ShiroParser.GraphDeclContext ctx) {
+        graphs.put(ctx.IDENT().getText(), ctx);
+    }
 //
 //    @Override
 //    public void enterStatestmt(ShiroParser.StatestmtContext ctx) {

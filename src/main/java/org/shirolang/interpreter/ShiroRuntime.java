@@ -91,6 +91,8 @@ public class ShiroRuntime{
         walker.walk(inline, tree);
 
         // walk to realize graphs(including anonymous)
+//        library.
+
         // walk to realize states
 
         library.getDefaultGraph().evaluate();

@@ -12,8 +12,20 @@ statement
     :
           nodestmt
         | portstmt
+        | graphDecl
         | inLineExpr
         | NEWLINE
+	;
+
+
+graphDecl
+	:	'graph' IDENT BEGIN NEWLINE
+		graphLine+
+		END
+	;
+
+graphLine
+	:	nodeProduction | portAssignment | NEWLINE
 	;
 
 nodestmt

@@ -42,7 +42,8 @@ public class GraphBuilderTest extends ShiroBaseTest{
         ParseTreeWalker walker = new ParseTreeWalker();
         Library l = new Library();
 
-        ShiroLexer lex = new ShiroLexer(new ANTLRInputStream(this.getClass().getResourceAsStream("graph_inline_node_production_assignment.sro")));
+        ShiroLexer lex = new ShiroLexer(new ANTLRInputStream(this.getClass()
+                .getResourceAsStream("graph_inline_node_production_assignment.sro")));
         CommonTokenStream tokens = new CommonTokenStream(lex);
         ShiroParser parser = new ShiroParser(tokens);
         parser.setBuildParseTree(true);
