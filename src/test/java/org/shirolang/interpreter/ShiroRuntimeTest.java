@@ -22,24 +22,12 @@
  * THE SOFTWARE.
  */
 
-package org.shirolang;
+package org.shirolang.interpreter;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.shirolang.base.SFunc;
-import org.shirolang.base.SGraph;
-import org.shirolang.base.SType;
-import org.shirolang.base.SymbolType;
-import org.shirolang.exceptions.PathNotFoundException;
-import org.shirolang.functions.math.SAdd;
-import org.shirolang.functions.math.SPower;
-import org.shirolang.values.SBoolean;
-import org.shirolang.values.SDouble;
-import org.shirolang.values.SIdent;
-import org.shirolang.values.SInteger;
-
-import static org.junit.Assert.*;
+import org.shirolang.interpreter.ShiroRuntime;
 
 /**
  *

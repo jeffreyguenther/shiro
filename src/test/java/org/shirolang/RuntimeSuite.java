@@ -30,6 +30,7 @@ import org.shirolang.base.SIndexedMapTest;
 import org.shirolang.base.SNodeTest;
 import org.shirolang.functions.math.MathSuite;
 import org.shirolang.interpreter.InterpreterSuite;
+import org.shirolang.interpreter.ShiroRuntimeTest;
 
 /**
  *

@@ -26,7 +26,6 @@ package org.shirolang.values;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.shirolang.ShiroRuntime;
 import org.shirolang.base.SGraph;
 
 import static org.junit.Assert.*;

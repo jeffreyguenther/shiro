@@ -1,0 +1,94 @@
+/*
+ * Copyright (c) 2012-2014 Jeffrey Guenther
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software  and associated documentation files (the
+ * "Software"), to deal in the Software without restriction,  including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute,  sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be
+ * included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ * EXPRESS OR IMPLIED, INCLUDING BUT  NOT LIMITED TO THE WARRANTIES OF
+ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+ * CLAIM, DAMAGES OR  OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+ * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
+package org.shirolang.interpreter;
+
+import org.antlr.v4.runtime.misc.NotNull;
+import org.shirolang.base.SFunc;
+import org.shirolang.base.SGraph;
+import org.shirolang.base.SNode;
+import org.shirolang.base.SymbolType;
+import org.shirolang.exceptions.OptionNotFoundException;
+import org.shirolang.exceptions.PathNotFoundException;
+import org.shirolang.values.Path;
+import org.shirolang.values.SIdent;
+import org.shirolang.values.SPath;
+
+import java.util.List;
+
+/**
+ *
+ */
+public class GraphBuilder extends ShiroExpressionListener {
+
+    public GraphBuilder(Library lib, SGraph g) {
+        super(lib);
+        scope.push(g);
+    }
+
+    @Override
+    public void exitNodeProduction(@NotNull ShiroParser.NodeProductionContext ctx) {
+        System.out.println("exit node production");
+        //  get the path of LHS of production operator
+        SIdent lhs = (SIdent) getExpr(ctx.path());
+        Path p = lhs.getValue();
+
+        // for each activation
+        for (ShiroParser.ActivationContext ac : ctx.activation()) {
+            String nodeName = ac.nodeName.getText();
+
+            SGraph g = (SGraph) scope.peek();
+            SNode producedNode = (SNode) library.instantiateNode(g, p, nodeName);
+
+            // TODO add support for argument maps
+
+            g.addNode(producedNode);
+
+            if (ac.activeObject != null) {
+                String updatePort = ac.activeObject.getText();
+                try {
+                    producedNode.setActiveOption(updatePort);
+                } catch (OptionNotFoundException e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+        }
+    }
+
+    @Override
+    public void exitPortAssignment(@NotNull ShiroParser.PortAssignmentContext ctx) {
+        // look up port based on the path
+        try {
+            SIdent lhs = (SIdent) getExpr(ctx.path());
+            Path path = lhs.getValue();
+
+            SFunc function = scope.peek().resolvePath(path);
+            function.setSymbolType(SymbolType.PORT);
+            List<ShiroParser.ExprContext> args = ctx.mfparams().expr();
+            setArgs(function, args);
+
+        } catch(PathNotFoundException pnfe) {
+            System.out.println(pnfe.getMessage());
+        }
+    }
+}

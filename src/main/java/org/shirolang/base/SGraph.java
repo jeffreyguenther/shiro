@@ -115,6 +115,9 @@ public class SGraph implements Scope{
     public Set<SFunc> getPorts(){
         HashSet<SFunc> allPorts = new HashSet<>(ports.values());
         allPorts.addAll(anonymousPorts);
+        for(SNode n: getNodes()){
+            allPorts.addAll(n.getPorts());
+        }
         return allPorts;
     }
 
@@ -237,8 +240,5 @@ public class SGraph implements Scope{
             graph.addDependency(graph.getNodeForValue(a, graphNodeAction),
                     graph.getNodeForValue(b, graphNodeAction));
         }
-    }
-
-    private void inGraph(SFunc f){
     }
 }

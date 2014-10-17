@@ -156,6 +156,15 @@ public class SNode extends SFuncBase implements Scope{
         return ports.get(name);
     }
 
+    public Set<SFunc> getPorts(){
+        Set<SFunc> allPorts = new HashSet<>();
+        for(SFunc f: ports.values()){
+            allPorts.addAll(f.getDependencies());
+            allPorts.add(f);
+        }
+        return allPorts;
+    }
+
     /**
      * Gets the default option for the node
      * @return a reference to the default option. Returns null
@@ -450,9 +459,9 @@ public class SNode extends SFuncBase implements Scope{
     }
 
     public void addPort(SFunc port){
-        if(!port.getSymbolType().isPort()){
-            throw new RuntimeException("Only SFuncs of SymbolType.PORT can be added to nodes.");
-        }
+//        if(!port.getSymbolType().isPort()){
+//            throw new RuntimeException("Found " + port.getSymbolType() + " Only SFuncs of SymbolType.PORT can be added to nodes.");
+//        }
 
         port.setFullName(Path.createFullName(fullName.get(), port.getName()));
         ports.put(port.getName(), port);

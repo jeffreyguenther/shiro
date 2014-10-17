@@ -44,11 +44,11 @@ nodeInternal
     ;
 
 portDecl
-	:	portType portName MFNAME
+	:	OPTION? portType portName MFNAME
 	;
 	
 portDeclInit
-	:	portType portName mfCall
+	:	OPTION? portType portName mfCall
 	;
 
 portstmt	
@@ -75,7 +75,7 @@ mfName 	:	MFNAME
 mfparams:	expr(',' expr)* 
 	;
 
-path 	:	(IDENT | MFNAME | THIS)('.' (MFNAME | IDENT))* (LSQUARE pathIndex RSQUARE)?
+path 	:	(parts+=IDENT | parts+=MFNAME | THIS)('.' (parts+=MFNAME | parts+=IDENT))* (LSQUARE pathIndex RSQUARE)?
         |   REF IDENT('.' IDENT)*
         |   SELECT IDENT('.' IDENT)*
 	;
@@ -85,9 +85,14 @@ pathIndex
         |   STRING_LITERAL)
 	;
 
+portAssignment
+    :	path '(' mfparams ')' NEWLINE
+    ;
+
 inLineExpr
     : expr NEWLINE
     | nodeProduction
+    | portAssignment
     ;
 
 expr :  '(' expr ')'						  #parensExpr

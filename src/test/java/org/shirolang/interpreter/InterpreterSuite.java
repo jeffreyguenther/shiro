@@ -25,19 +25,23 @@ package org.shirolang.interpreter;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
-import org.shirolang.ShiroRuntimeTest;
-import org.shirolang.SymbolTypeTest;
-import org.shirolang.base.SIndexedMapTest;
+import org.shirolang.base.SGraphTest;
 import org.shirolang.base.SNodeTest;
-import org.shirolang.functions.math.MathSuite;
 
 /**
  * Runs the test for the interpreter
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
+        DefinitionCollectorTest.class,
+        GraphBuilderTest.class,
         LibraryTest.class,
-        NameManagerTest.class
+        NameManagerTest.class,
+        NodeInstantiatorTest.class,
+        ShiroRuntimeTest.class,
+
+        SGraphTest.class,
+        SNodeTest.class
 })
 public class InterpreterSuite {
 }

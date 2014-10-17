@@ -6,8 +6,12 @@
 
 package org.shirolang.values;
 
-import junit.framework.Assert;
+
+import org.junit.Assert;
 import org.junit.Test;
+import org.shirolang.base.SFunc;
+import org.shirolang.base.SGraph;
+import org.shirolang.base.SymbolType;
 
 import static org.junit.Assert.*;
 
@@ -24,8 +28,8 @@ public class DoubleTest {
 
         SDouble d1 = new SDouble(12.3232);
         d1.evaluate();
-        org.junit.Assert.assertTrue(d1.getSymbolType().isLiteral());
-        org.junit.Assert.assertEquals(12.3232, d1.getValue(), DELTA);
+        assertTrue(d1.getSymbolType().isLiteral());
+        Assert.assertEquals(12.3232, d1.getValue(), DELTA);
 
         SDouble d2 = new SDouble("a", 12.3232);
         org.junit.Assert.assertTrue(d2.getSymbolType().isPort());
@@ -82,10 +86,53 @@ public class DoubleTest {
     public void toConsole(){
         SDouble d = new SDouble(0.34);
         d.evaluate();
-        org.junit.Assert.assertEquals("0.34", d.toConsole());
+        Assert.assertEquals("0.34", d.toConsole());
 
         SDouble d1 = new SDouble("a", 12.345);
         d1.evaluate();
-        org.junit.Assert.assertEquals("#<Double args:[], results:[12.345]>", d1.toConsole());
+        Assert.assertEquals("#<Double args:[], results:[12.345]>", d1.toConsole());
+    }
+
+    @Test
+    public void aDoubleWithArgs(){
+        SGraph g = new SGraph();
+
+        SDouble refValue = new SDouble(12.3);
+        refValue.setName("a");
+        g.addPort(refValue);
+
+        SIdent id = new SIdent(g, "a");
+        g.addPort(id);
+
+        SDouble d = new SDouble();
+        d.setSymbolType(SymbolType.PORT);
+        d.appendArg(id);
+        g.addPort(d);
+
+        g.evaluate();
+
+        SDouble result = (SDouble) d.getResult();
+        Double value = result.getValue();
+        Assert.assertEquals(12.3, value, DELTA);
+
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void aDoubleWithNonDoubleArg(){
+        SGraph g = new SGraph();
+
+        SBoolean refValue = new SBoolean(true);
+        refValue.setName("a");
+        g.addPort(refValue);
+
+        SIdent id = new SIdent(g, "a");
+        g.addPort(id);
+
+        SDouble d = new SDouble();
+        d.setSymbolType(SymbolType.PORT);
+        d.appendArg(id);
+        g.addPort(d);
+
+        g.evaluate();
     }
 }

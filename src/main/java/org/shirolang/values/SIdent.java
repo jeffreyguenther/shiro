@@ -78,6 +78,10 @@ public class SIdent extends SFuncBase{
     public void setScope(Scope s){
         this.scope = s;
     }
+
+    public Path getValue(){
+        return value;
+    }
     
     @Override
     public void evaluate() {

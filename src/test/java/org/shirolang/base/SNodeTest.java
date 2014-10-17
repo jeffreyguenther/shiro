@@ -26,12 +26,12 @@ package org.shirolang.base;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.shirolang.ShiroRuntime;
 import org.shirolang.exceptions.OptionNotFoundException;
 import org.shirolang.exceptions.PathNotFoundException;
-import org.shirolang.values.Path;
-import org.shirolang.values.SDouble;
-import org.shirolang.values.SString;
+import org.shirolang.values.*;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Test the a node
@@ -394,6 +394,26 @@ public class SNodeTest {
     public void isRoot(){
         SNode n = new SNode();
         Assert.assertFalse(n.isRoot());
+    }
+
+    @Test
+    public void getNodes(){
+        SNode n = new SNode();
+        SInteger i = new SInteger("b", 11);
+        n.addPort(i);
+        SIdent id = new SIdent(n, "b");
+//        n.addPort(id);
+        SInteger i2 = new SInteger();
+        i2.appendArg(id);
+        n.addPort(i2);
+
+        Set<SFunc> expected = new HashSet<>();
+        expected.add(i);
+        expected.add(id);
+        expected.add(i2);
+
+        Assert.assertEquals(expected, n.getPorts());
+
     }
 
 }

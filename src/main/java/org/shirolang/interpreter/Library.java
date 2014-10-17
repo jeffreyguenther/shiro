@@ -23,7 +23,8 @@
 
 package org.shirolang.interpreter;
 
-import org.antlr.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.shirolang.FunctionFactory;
 import org.shirolang.base.SFunc;
 import org.shirolang.base.SGraph;
@@ -72,7 +73,7 @@ public class Library {
 
         // load basic multi-functions
         loadRuntimeFunctions();
-        graphs.put(DEFAULT_GRAPH_NAME, new SGraph());
+        graphs.put(DEFAULT_GRAPH_NAME, new SGraph(DEFAULT_GRAPH_NAME));
     }
 
     /**
@@ -100,7 +101,24 @@ public class Library {
      * @return the multi-function corresponding to the type
      */
     public SFunc createFunction(String type){
-        return mfuncs.get(type).create();
+            return mfuncs.get(type).create();
+    }
+
+    /**
+     * Create a function of the given type
+     * Looks in the node definitions
+     * @param p type of the node to create
+     * @param g graph where the node should be stored
+     * @return an instance of the Snode of the given type
+     */
+    public SFunc instantiateNode(SGraph g, Path p, String name){
+        ParseTree nodeDef = nodeDefs.get(p.getCurrentPathHead());
+        NodeInstantiator nodeProducer = new NodeInstantiator(this, g);
+        ParseTreeWalker walker = new ParseTreeWalker();
+        walker.walk(nodeProducer, nodeDef);
+        SNode node = nodeProducer.getCreatedNode();
+        node.setName(name);
+        return node;
     }
 
     /**
@@ -141,6 +159,14 @@ public class Library {
      */
     public SGraph getDefaultGraph(){
         return graphs.get(DEFAULT_GRAPH_NAME);
+    }
+
+    /**
+     * Adds the node definitions to the map
+     * @param defs map of node names and their parse trees
+     */
+    public void addNodeDefs(Map<String, ParseTree> defs){
+        nodeDefs.putAll(defs);
     }
 
     /**

@@ -27,6 +27,9 @@ package org.shirolang.interpreter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+
+import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -134,7 +137,7 @@ public class ShiroExpressionListener extends ShiroBaseListener {
         Path p;
 
         // Convert the tree nodes into strings and add to list
-        for (TerminalNode t : ctx.IDENT()) {
+        for (Token t : ctx.parts) {
             parts.add(t.getText());
         }
 
@@ -314,36 +317,61 @@ public class ShiroExpressionListener extends ShiroBaseListener {
 
         // if the function is not one of the literals (number, string, etc.)
         if (!function.getSymbolType().isLiteral() && args.size() >= 1) {
-            // check to see if the right number of exprs came back
-            if (args.size() < function.getMinArgs()) {
-                throw new RuntimeException("Expected at least " + function.getMinArgs()
-                        + " arguments to be provided.");
-            }
-
-            if (args.size() > function.getMaxArgs()) {
-                throw new RuntimeException("Expected at most " + function.getMinArgs()
-                        + " arguments to be provided.");
-            }
-            
-            // todo add argument type checking
-            // todo add support for argument maps
-
-            // append the args to the function
-            for (ShiroParser.ExprContext arg : args) {
-                SFunc exp = getExpr(arg);
-                function.appendArg(exp);
-            }
+            setArgs(function, args);
             setExpr(ctx, function);
         }else{
             function = getExpr(args.get(0));
             function.setSymbolType(SymbolType.PORT);
             function.setName(portName);
             setExpr(ctx, function);
-            
-            if(!function.getType().equals(mfName)){
-                throw new RuntimeException("Literal expression is " 
-                        + function.getType() + ", but should be " + mfName);
-            }
+
+            int line = ctx.mfCall().mfName().MFNAME().getSymbol().getLine();
+            int col = ctx.mfCall().mfName().MFNAME().getSymbol().getCharPositionInLine();
+
+//            if(!function.getType().equals(mfName)){
+//                throw new RuntimeException(line + ":" + col + " Literal expression is "
+//                        + function.getType() + ", but should be " + mfName);
+//            }
         }
+    }
+
+    protected void setArgs(SFunc function, List<ShiroParser.ExprContext> args){
+        // check to see if the right number of exprs came back
+        if (args.size() < function.getMinArgs()) {
+            throw new RuntimeException("Expected at least " + function.getMinArgs()
+                    + " arguments to be provided.");
+        }
+
+        if (args.size() > function.getMaxArgs()) {
+            throw new RuntimeException("Expected at most " + function.getMinArgs()
+                    + " arguments to be provided.");
+        }
+
+        // todo add argument type checking
+        // todo add support for argument maps
+
+        // append the args to the function
+        for (ShiroParser.ExprContext arg : args) {
+            SFunc exp = getExpr(arg);
+            function.appendArg(exp);
+        }
+    }
+
+    @Override
+    public void exitPortDecl(@NotNull ShiroParser.PortDeclContext ctx) {
+        String portName = ctx.portName().IDENT().getText();
+        String portType = ctx.portType().getText();
+        String mfName = ctx.MFNAME().getText();
+
+        // get the type name
+        SFunc function = library.createFunction(mfName);
+        if(function == null){
+            throw new RuntimeException("A multifunction by the name " + mfName
+                    + "does not exist.");
+        }
+
+        function.setName(portName);
+        function.setSymbolType(SymbolType.PORT);
+        setExpr(ctx, function);
     }
 }

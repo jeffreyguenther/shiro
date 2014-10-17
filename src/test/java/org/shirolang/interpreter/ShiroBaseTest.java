@@ -27,9 +27,10 @@
  * and open the template in the editor.
  */
 
-package org.shirolang;
+package org.shirolang.interpreter;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Paths;
@@ -44,8 +45,8 @@ import org.shirolang.interpreter.ShiroParser;
  */
 public class ShiroBaseTest {
     public ShiroParser parse(String file) throws IOException{
-        ShiroLexer lexer = new ShiroLexer(new ANTLRInputStream(getClass()
-                .getResourceAsStream(file)));
+        InputStream resourceAsStream = getClass().getResourceAsStream(file);
+        ShiroLexer lexer = new ShiroLexer(new ANTLRInputStream(resourceAsStream));
         CommonTokenStream tokens = new CommonTokenStream(lexer);
         ShiroParser parser = new ShiroParser(tokens);
         parser.setBuildParseTree(true);

@@ -22,11 +22,7 @@
  * THE SOFTWARE.
  */
 
-package org.shirolang;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+package org.shirolang.interpreter;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -35,36 +31,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.shirolang.base.SFunc;
-import org.shirolang.base.SType;
-import org.shirolang.base.Scope;
 import org.shirolang.dag.DAGraph;
-import org.shirolang.dag.DependencyRelation;
-import org.shirolang.dag.GraphNode;
-import org.shirolang.dag.TopologicalSort;
-import org.shirolang.exceptions.PathNotFoundException;
-import org.shirolang.functions.math.SAdd;
-import org.shirolang.functions.math.SAnd;
-import org.shirolang.functions.math.SDivide;
-import org.shirolang.functions.math.SEqual;
-import org.shirolang.functions.math.SGreaterThan;
-import org.shirolang.functions.math.SGreaterThanOrEqual;
-import org.shirolang.functions.math.SLessThan;
-import org.shirolang.functions.math.SLessThanOrEqual;
-import org.shirolang.functions.math.SModulo;
-import org.shirolang.functions.math.SMultiply;
-import org.shirolang.functions.math.SNegative;
-import org.shirolang.functions.math.SNot;
-import org.shirolang.functions.math.SNotEqual;
-import org.shirolang.functions.math.SOr;
-import org.shirolang.functions.math.SPower;
-import org.shirolang.functions.math.SSubtract;
-import org.shirolang.interpreter.*;
-import org.shirolang.values.Path;
-import org.shirolang.values.SBoolean;
-import org.shirolang.values.SDouble;
-import org.shirolang.values.SIdent;
-import org.shirolang.values.SInteger;
-import org.shirolang.values.SString;
 
 /**
  * The Shiro runtime. This class parses and evaluates Shiro expressions.
@@ -112,13 +79,13 @@ public class ShiroRuntime{
         ParseTreeWalker walker = new ParseTreeWalker();
         // walk to get definitions
         // store the definitions in the library as it goes
-        DefinitionListener definitionListener = new DefinitionListener();
-//        walker.walk(definitionListener, tree);
+        DefinitionCollector definitionCollector = new DefinitionCollector();
+        walker.walk(definitionCollector, tree);
 
         // store the definitions in the
 //        definitionListener.getAlternativeDefinitions();
 //        definitionListener.getGraphs();
-//        definitionListener.getNodeDefinitions();
+        library.addNodeDefs(definitionCollector.getNodeDefinitions());
 
         ShiroInlineExpressionListener inline = new ShiroInlineExpressionListener(library);
         walker.walk(inline, tree);

@@ -23,56 +23,48 @@
 
 package org.shirolang.interpreter;
 
-import org.antlr.v4.runtime.ANTLRFileStream;
 import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.junit.Assert;
 import org.junit.Test;
-import org.shirolang.ShiroBaseTest;
+import org.shirolang.base.SGraph;
 
 import java.io.IOException;
 
 /**
  *
  */
-public class DefinitionListenerTest extends ShiroBaseTest{
-
+public class GraphBuilderTest extends ShiroBaseTest{
     @Test
-    public void handlesNonNestedNodes() throws IOException {
-        ShiroParser parser = parse("single_node.sro");
+    public void buildDefaultGraph() throws IOException {
+        ParseTreeWalker walker = new ParseTreeWalker();
+        Library l = new Library();
+
+        ShiroLexer lex = new ShiroLexer(new ANTLRInputStream(this.getClass().getResourceAsStream("graph_inline_node_production_assignment.sro")));
+        CommonTokenStream tokens = new CommonTokenStream(lex);
+        ShiroParser parser = new ShiroParser(tokens);
+        parser.setBuildParseTree(true);
         ParseTree tree = parser.shiro();
 
-        ParseTreeWalker walker = new ParseTreeWalker();
-        DefinitionListener l = new DefinitionListener();
-        walker.walk(l, tree);
-
-        Assert.assertEquals(1, l.getNodeDefinitions().size());
-        Assert.assertTrue(l.getNodeDefinitions().containsKey("Box"));
-    }
-
-    @Test
-    public void handlesNoAlts() throws IOException {
-        ShiroParser parser = parse("single_node.sro");
-        ParseTree tree = parser.shiro();
-
-        ParseTreeWalker walker = new ParseTreeWalker();
-        DefinitionListener l = new DefinitionListener();
-        walker.walk(l, tree);
-
-        Assert.assertTrue(l.getAlternativeDefinitions().isEmpty());
-    }
+        DefinitionCollector definitionCollector = new DefinitionCollector();
+        walker.walk(definitionCollector, tree);
 
 
-    @Test
-    public void handlesNoGraphs() throws IOException {
-        ShiroParser parser = parse("single_node.sro");
-        ParseTree tree = parser.shiro();
+        l.addNodeDefs(definitionCollector.getNodeDefinitions());
 
-        ParseTreeWalker walker = new ParseTreeWalker();
-        DefinitionListener l = new DefinitionListener();
-        walker.walk(l, tree);
+        SGraph g = l.getDefaultGraph();
 
-        Assert.assertTrue(l.getGraphs().isEmpty());
+        ParseTreeWalker w2 = new ParseTreeWalker();
+        GraphBuilder graphBuilder = new GraphBuilder(l, g);
+        w2.walk(graphBuilder, tree);
+
+        Assert.assertEquals(1, g.getNodes().size());
+        Assert.assertNotNull(g.getNode("b"));
+        Assert.assertEquals(11, g.getPorts().size());
+
+        g.evaluate();
+
     }
 }

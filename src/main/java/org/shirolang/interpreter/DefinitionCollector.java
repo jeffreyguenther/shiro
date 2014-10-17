@@ -32,13 +32,13 @@ import java.util.Map;
 /**
  *  Collects all of the object definitions
  */
-public class DefinitionListener extends ShiroBaseListener {
+public class DefinitionCollector extends ShiroBaseListener {
     private Map<String, ParseTree> defs;
     private Map<String, ParseTree> alternativeDefs;
     private Map<String, ParseTree> graphs;
     private boolean locked;
 
-    public DefinitionListener() {
+    public DefinitionCollector() {
         super();
         defs = new HashMap<>();
         alternativeDefs = new HashMap<>();
