@@ -36,6 +36,7 @@ import org.shirolang.functions.math.*;
 import org.shirolang.values.*;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -190,6 +191,10 @@ public class Library {
         nodeDefs.putAll(defs);
     }
 
+    public Map<String, ParseTree> getNodeDefs(){
+        return nodeDefs;
+    }
+
     /**
      * Stores the graph definitions to the map
      * @param defs map of graph names to their parse trees
@@ -213,6 +218,15 @@ public class Library {
      */
     public void saveGraph(SGraph g){
         graphs.put(g.getName(), g);
+    }
+
+    /**
+     * Gets the graphs stored in the library
+     * @return set of all the graphs stored in the library
+     * including the default graph
+     */
+    public Set<SGraph> getGraphs(){
+        return new HashSet(graphs.values());
     }
 
     /**

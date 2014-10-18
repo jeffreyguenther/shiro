@@ -25,7 +25,9 @@ package org.shirolang.playground;
 
 import javafx.application.Application;
 import javafx.concurrent.Task;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import org.antlr.v4.runtime.ANTLRInputStream;
@@ -38,6 +40,7 @@ import org.reactfx.EventStream;
 import org.shirolang.interpreter.ShiroLexer;
 import org.shirolang.interpreter.ShiroParser;
 
+import java.net.URL;
 import java.time.Duration;
 import java.util.Collection;
 import java.util.Collections;
@@ -54,6 +57,11 @@ public class ShiroPlayground extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        URL resource = getClass().getResource("fxml_viewer.fxml");
+        FXMLLoader loader = new FXMLLoader();
+        BorderPane root = (BorderPane) loader.load(resource);
+        final FXMLViewerController c = loader.getController();
+
         executor = Executors.newSingleThreadExecutor();
         codeArea = new CodeArea();
         codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
@@ -67,8 +75,9 @@ public class ShiroPlayground extends Application {
 
         codeArea.replaceText("port a Double(343)\n" +
                 "port b String(\"dfd\")\n");
+        new StackPane(codeArea);
 
-        Scene scene = new Scene(new StackPane(codeArea), 600, 400);
+        Scene scene = new Scene(root);
         scene.getStylesheets().add(getClass().getResource("syntax.css").toExternalForm());
         primaryStage.setTitle("Shiro Playground");
         primaryStage.setScene(scene);

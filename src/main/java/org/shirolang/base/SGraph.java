@@ -29,6 +29,7 @@ import org.shirolang.dag.DependencyRelation;
 import org.shirolang.dag.GraphNode;
 import org.shirolang.dag.TopologicalSort;
 import org.shirolang.exceptions.PathNotFoundException;
+import org.shirolang.interpreter.Consoleable;
 import org.shirolang.values.Path;
 import org.shirolang.values.SIdent;
 
@@ -40,7 +41,7 @@ import java.util.*;
  * A graph functions as the root of the scope tree for
  * a Shiro program.
  */
-public class SGraph implements Scope{
+public class SGraph implements Scope, Consoleable{
     private DAGraph<SFunc> graph;
     private SFuncAction graphNodeAction = new SFuncAction();
 
@@ -240,5 +241,44 @@ public class SGraph implements Scope{
             graph.addDependency(graph.getNodeForValue(a, graphNodeAction),
                     graph.getNodeForValue(b, graphNodeAction));
         }
+    }
+
+    public String toConsole(){
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("#<").append(name).append(" [");
+
+        for(GraphNode<SFunc> n: graph.getNodes()){
+            sb.append(formatDependency(n));
+        }
+        sb.deleteCharAt(sb.length() - 2);
+        sb.append("]>");
+        return sb.toString();
+    }
+
+
+    private String formatDependency(GraphNode<SFunc> node){
+        StringBuilder sb = new StringBuilder();
+
+        SFunc dependent = node.getValue();
+
+        if(!dependent.getDependencies().isEmpty()) {
+
+            for (GraphNode<SFunc> dependedOn : node.getNodesDependedOn()) {
+                SFunc func = dependedOn.getValue();
+
+                sb.append(dependent.getFullName())
+                    .append(dependent.toConsole())
+                    .append(" => ")
+                    .append(func.getFullName())
+                    .append(func.toConsole())
+                .append("  ");
+            }
+        }else{
+            sb.append(dependent.getFullName())
+              .append(dependent.toConsole());
+        }
+
+        return sb.toString();
     }
 }

@@ -29,6 +29,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.junit.Assert;
 import org.junit.Test;
+import org.shirolang.base.SFunc;
 import org.shirolang.base.SGraph;
 
 import java.io.IOException;
@@ -38,12 +39,12 @@ import java.io.IOException;
  */
 public class GraphBuilderTest extends ShiroBaseTest{
     @Test
-    public void buildDefaultGraph() throws IOException {
+    public void buildNamedGraph() throws IOException {
         ParseTreeWalker walker = new ParseTreeWalker();
         Library l = new Library();
 
         ShiroLexer lex = new ShiroLexer(new ANTLRInputStream(this.getClass()
-                .getResourceAsStream("graph_inline_node_production_assignment.sro")));
+                .getResourceAsStream("graph_named.sro")));
         CommonTokenStream tokens = new CommonTokenStream(lex);
         ShiroParser parser = new ShiroParser(tokens);
         parser.setBuildParseTree(true);
@@ -52,20 +53,23 @@ public class GraphBuilderTest extends ShiroBaseTest{
         DefinitionCollector definitionCollector = new DefinitionCollector();
         walker.walk(definitionCollector, tree);
 
-
         l.addNodeDefs(definitionCollector.getNodeDefinitions());
+        l.addGraphDefs(definitionCollector.getGraphs());
+        ParseTree graph = l.getGraphDefs().get("box_calc");
 
-        SGraph g = l.getDefaultGraph();
+        SGraph g = new SGraph("box_calc");
 
         ParseTreeWalker w2 = new ParseTreeWalker();
         GraphBuilder graphBuilder = new GraphBuilder(l, g);
-        w2.walk(graphBuilder, tree);
+        w2.walk(graphBuilder, graph);
+
+        graphBuilder.setPass(GraphBuilder.SECOND_PASS);
+        w2.walk(graphBuilder, graph);
 
         Assert.assertEquals(1, g.getNodes().size());
         Assert.assertNotNull(g.getNode("b"));
-        Assert.assertEquals(11, g.getPorts().size());
+        Assert.assertEquals(12, g.getPorts().size());
 
         g.evaluate();
-
     }
 }

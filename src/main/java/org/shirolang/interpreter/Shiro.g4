@@ -158,9 +158,12 @@ BOOLEAN_LITERAL
     : 'true' | 'false'
     ;
 
-STRING_LITERAL
-    :	'"' .*?'"'
-    ;
+//STRING_LITERAL
+  //  :	'"' .*?'"'
+    //;
+
+STRING_LITERAL : '"' (~'"'|'\\"')* '"'  ;
+
 
 NUMBER 	
     :	DIGIT+ ('.'DIGIT+)?

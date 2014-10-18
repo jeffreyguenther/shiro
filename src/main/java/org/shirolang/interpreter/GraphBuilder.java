@@ -38,35 +38,50 @@ import java.util.List;
  */
 public class GraphBuilder extends ShiroExpressionListener {
 
+    public static final int FIRST_PASS = 1;
+    public static final int SECOND_PASS = 2;
+    protected int pass;
+
     public GraphBuilder(Library lib, SGraph g) {
         super(lib);
         scope.push(g);
+
+        pass = FIRST_PASS;
+    }
+
+    /**
+     * Sets the pass of the walker
+     * @param pass
+     */
+    public void setPass(int pass) {
+        this.pass = pass;
     }
 
     @Override
     public void exitNodeProduction(@NotNull ShiroParser.NodeProductionContext ctx) {
-        System.out.println("exit node production");
-        //  get the path of LHS of production operator
-        SIdent lhs = (SIdent) getExpr(ctx.path());
-        Path p = lhs.getValue();
+        if(pass == FIRST_PASS) {
+            //  get the path of LHS of production operator
+            SIdent lhs = (SIdent) getExpr(ctx.path());
+            Path p = lhs.getValue();
 
-        // for each activation
-        for (ShiroParser.ActivationContext ac : ctx.activation()) {
-            String nodeName = ac.nodeName.getText();
+            // for each activation
+            for (ShiroParser.ActivationContext ac : ctx.activation()) {
+                String nodeName = ac.nodeName.getText();
 
-            SGraph g = (SGraph) scope.peek();
-            SNode producedNode = (SNode) library.instantiateNode(g, p, nodeName);
+                SGraph g = (SGraph) scope.peek();
+                SNode producedNode = (SNode) library.instantiateNode(g, p, nodeName);
 
-            // TODO add support for argument maps
+                // TODO add support for argument maps
 
-            g.addNode(producedNode);
+                g.addNode(producedNode);
 
-            if (ac.activeObject != null) {
-                String updatePort = ac.activeObject.getText();
-                try {
-                    producedNode.setActiveOption(updatePort);
-                } catch (OptionNotFoundException e) {
-                    System.out.println(e.getMessage());
+                if (ac.activeObject != null) {
+                    String updatePort = ac.activeObject.getText();
+                    try {
+                        producedNode.setActiveOption(updatePort);
+                    } catch (OptionNotFoundException e) {
+                        System.out.println(e.getMessage());
+                    }
                 }
             }
         }
@@ -74,26 +89,30 @@ public class GraphBuilder extends ShiroExpressionListener {
 
     @Override
     public void exitPortAssignment(@NotNull ShiroParser.PortAssignmentContext ctx) {
-        // look up port based on the path
-        try {
-            SIdent lhs = (SIdent) getExpr(ctx.path());
-            Path path = lhs.getValue();
+        if(pass == SECOND_PASS) {
+            // look up port based on the path
+            try {
+                SIdent lhs = (SIdent) getExpr(ctx.path());
+                Path path = lhs.getValue();
 
-            SFunc function = scope.peek().resolvePath(path);
-            function.setSymbolType(SymbolType.PORT);
-            List<ShiroParser.ExprContext> args = ctx.mfparams().expr();
-            setArgs(function, args);
+                SFunc function = scope.peek().resolvePath(path);
+                function.setSymbolType(SymbolType.PORT);
+                List<ShiroParser.ExprContext> args = ctx.mfparams().expr();
+                setArgs(function, args);
 
-        } catch(PathNotFoundException pnfe) {
-            System.out.println(pnfe.getMessage());
+            } catch (PathNotFoundException pnfe) {
+                System.out.println(pnfe.getMessage());
+            }
         }
     }
 
     @Override
     public void exitPortDeclInit(@NotNull ShiroParser.PortDeclInitContext ctx) {
-        super.exitPortDeclInit(ctx);
-        SFunc port = getExpr(ctx);
-        SGraph g = (SGraph) scope.peek();
-        g.addPort(port);
+        if(pass == SECOND_PASS) {
+            super.exitPortDeclInit(ctx);
+            SFunc port = getExpr(ctx);
+            SGraph g = (SGraph) scope.peek();
+            g.addPort(port);
+        }
     }
 }

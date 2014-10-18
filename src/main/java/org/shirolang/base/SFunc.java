@@ -25,6 +25,7 @@
 package org.shirolang.base;
 
 import javafx.beans.property.BooleanProperty;
+import org.shirolang.interpreter.Consoleable;
 
 import java.util.List;
 
@@ -37,7 +38,7 @@ import java.util.List;
  *
  * Arguments and results can be access by name and by index. Implementing classes should map names to indices
  */
-public interface SFunc {
+public interface SFunc extends Consoleable {
     /**
      * Evaluate the multifunction
      */
@@ -227,6 +228,4 @@ public interface SFunc {
     public void setName(String name);
     public String getFullName();
     public void setFullName(String name);
-
-    public String toConsole();
 }

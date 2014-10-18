@@ -27,9 +27,11 @@ package org.shirolang.base;
 import org.junit.Assert;
 import org.junit.Test;
 import org.shirolang.exceptions.PathNotFoundException;
+import org.shirolang.functions.math.SAdd;
 import org.shirolang.values.Path;
 import org.shirolang.values.SDouble;
 import org.shirolang.values.SIdent;
+import org.shirolang.values.SInteger;
 
 /**
  *
@@ -182,5 +184,18 @@ public class SGraphTest {
         id.evaluate();
         Assert.assertSame(d, id.getResult());
 
+    }
+
+    @Test
+    public void toConsole(){
+        SGraph g = new SGraph("blue");
+        SDouble d = new SDouble("a", 12.4);
+        SInteger i = new SInteger("b", 3);
+        SAdd add = new SAdd(d, i);
+
+        g.addPort(add);
+        g.evaluate();
+        String expected = "#<blue [#<Add args:[a:#<Double args:[], results:[12.4]>, b:#<Integer args:[], results:[3]>], results:[15.4]> => a#<Double args:[], results:[12.4]>, #<Add args:[a:#<Double args:[], results:[12.4]>, b:#<Integer args:[], results:[3]>], results:[15.4]> => b#<Integer args:[], results:[3]>, a#<Double args:[], results:[12.4]>b#<Integer args:[], results:[3>]>";
+        Assert.assertEquals(expected, g.toConsole());
     }
 }

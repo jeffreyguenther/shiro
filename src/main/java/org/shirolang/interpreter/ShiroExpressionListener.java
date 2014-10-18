@@ -126,7 +126,8 @@ public class ShiroExpressionListener extends ShiroBaseListener {
     public void exitStringExpr(ShiroParser.StringExprContext ctx) {
         String literalString = ctx.STRING_LITERAL().getText();
         // Remove the quotes from around the string literal
-        SString s = new SString(literalString.substring(1, literalString.length() -1));
+        String value = literalString.substring(1, literalString.length() - 1);
+        SString s = new SString(value);
         setExpr(ctx, s);
     }
     
@@ -312,27 +313,38 @@ public class ShiroExpressionListener extends ShiroBaseListener {
             throw new RuntimeException("A multifunction by the name " + mfName
             + "does not exist.");
         }
+        function.setSymbolType(SymbolType.PORT);
 
-        function.setName(portName);
-
-        // if the function is not one of the literals (number, string, etc.)
-        if (!function.getSymbolType().isLiteral() && args.size() >= 1) {
-            setArgs(function, args);
-            setExpr(ctx, function);
-        }else{
-            function = getExpr(args.get(0));
-            function.setSymbolType(SymbolType.PORT);
+        SFunc arg0 = getExpr(args.get(0));
+        if(args.size() == 1 && arg0.getType().equals(function.getType())){
+            function = arg0;
             function.setName(portName);
-            setExpr(ctx, function);
-
-            int line = ctx.mfCall().mfName().MFNAME().getSymbol().getLine();
-            int col = ctx.mfCall().mfName().MFNAME().getSymbol().getCharPositionInLine();
-
-//            if(!function.getType().equals(mfName)){
-//                throw new RuntimeException(line + ":" + col + " Literal expression is "
-//                        + function.getType() + ", but should be " + mfName);
-//            }
+        }else{
+            setArgs(function, args);
+            function.setName(portName);
         }
+
+        setExpr(ctx, function);
+
+//        // if the function is not one of the literals (number, string, etc.)
+//        if (!function.getSymbolType().isLiteral() && args.size() >= 1) {
+//            setArgs(function, args);
+//            function.setName(portName);
+//            setExpr(ctx, function);
+//        }else{
+//            function = getExpr(args.get(0));
+//            function.setSymbolType(SymbolType.PORT);
+//            function.setName(portName);
+//            setExpr(ctx, function);
+//
+//            int line = ctx.mfCall().mfName().MFNAME().getSymbol().getLine();
+//            int col = ctx.mfCall().mfName().MFNAME().getSymbol().getCharPositionInLine();
+//
+////            if(!function.getType().equals(mfName)){
+////                throw new RuntimeException(line + ":" + col + " Literal expression is "
+////                        + function.getType() + ", but should be " + mfName);
+////            }
+//        }
     }
 
     protected void setArgs(SFunc function, List<ShiroParser.ExprContext> args){

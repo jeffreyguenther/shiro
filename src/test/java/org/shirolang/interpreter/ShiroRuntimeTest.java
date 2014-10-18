@@ -218,4 +218,9 @@ public class ShiroRuntimeTest {
         Assert.assertEquals("#<Subtract args:[a:#<Multiply args:[a:#<Add args:[a:121.0, b:2.0], results:[123.0]>, b:2], " +
                 "results:[246.0]>, b:10], results:[236.0]>", rt.executeStatement(code));
     }
+
+    @Test
+    public void inlineGraphDecl(){
+
+    }
 }

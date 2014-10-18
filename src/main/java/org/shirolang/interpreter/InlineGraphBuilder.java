@@ -25,18 +25,8 @@ package org.shirolang.interpreter;
 
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.antlr.v4.runtime.tree.ParseTreeProperty;
-import org.antlr.v4.runtime.tree.TerminalNode;
 import org.shirolang.base.SFunc;
 import org.shirolang.base.SGraph;
-import org.shirolang.base.Scope;
-import org.shirolang.exceptions.GraphNotFoundException;
-import org.shirolang.functions.math.*;
-import org.shirolang.values.*;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
 
 /**
  * An listener to create expressions.
@@ -44,12 +34,9 @@ import java.util.Stack;
  * @author jeffreyguenther
  */
 public class InlineGraphBuilder extends GraphBuilder {
-    public static final int FIRST_PASS = 1;
-    public static final int SECOND_PASS = 2;
     private SFunc lastFuncProcessed;
     private final SGraph defaultGraph;
     private boolean isInLine;
-    private int pass;
 
 
     public InlineGraphBuilder(Library lib) {
@@ -58,15 +45,6 @@ public class InlineGraphBuilder extends GraphBuilder {
         defaultGraph = library.getDefaultGraph();
         scope.push(defaultGraph);
         isInLine = false;
-        pass = FIRST_PASS;
-    }
-
-    /**
-     * Sets the pass of the walker
-     * @param pass
-     */
-    public void setPass(int pass) {
-        this.pass = pass;
     }
 
     /**
@@ -79,11 +57,11 @@ public class InlineGraphBuilder extends GraphBuilder {
     protected void setExpr(ParseTree node, SFunc expr) {
         super.setExpr(node, expr);
 
-        if(expr.getName().isEmpty()){
-            defaultGraph.addAnonymousPort(expr);
-        }else{
-            defaultGraph.addPort(expr);
-        }
+//        if(expr.getName().isEmpty()){
+//            defaultGraph.addAnonymousPort(expr);
+//        }else{
+//            defaultGraph.addPort(expr);
+//        }
 
         lastFuncProcessed = expr;
     }
@@ -110,23 +88,16 @@ public class InlineGraphBuilder extends GraphBuilder {
     }
 
     @Override
-    public void exitPortDeclInit(@NotNull ShiroParser.PortDeclInitContext ctx) {
-        if(isInLine && pass == SECOND_PASS) {
-            super.exitPortDeclInit(ctx);
+    public void enterPath(@NotNull ShiroParser.PathContext ctx) {
+        if(isInLine && pass == FIRST_PASS) {
+            super.enterPath(ctx);
         }
     }
 
     @Override
-    public void enterPath(@NotNull ShiroParser.PathContext ctx) {
+    public void exitPortDeclInit(@NotNull ShiroParser.PortDeclInitContext ctx) {
         if(isInLine && pass == SECOND_PASS) {
-
-            super.enterPath(ctx);
-            // add the symbol to the runtime. Throw a runtime exception
-            try {
-                library.addSymbolToGraph(Library.DEFAULT_GRAPH_NAME, getExpr(ctx));
-            } catch (GraphNotFoundException e) {
-                throw new RuntimeException(e.getMessage());
-            }
+            super.exitPortDeclInit(ctx);
         }
     }
 

@@ -31,6 +31,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.shirolang.base.SFunc;
+import org.shirolang.base.SGraph;
 import org.shirolang.dag.DAGraph;
 
 /**
@@ -67,6 +68,7 @@ public class ShiroRuntime{
         return output;
     }
 
+
     public String executeStatement(String input){
         // execute the statement
         // lex
@@ -88,18 +90,24 @@ public class ShiroRuntime{
         InlineGraphBuilder inline = new InlineGraphBuilder(library);
         walker.walk(inline, tree);
 
-        library.getDefaultGraph().evaluate();
+        inline.setPass(GraphBuilder.SECOND_PASS);
+        walker.walk(inline, tree);
 
-        SFunc lastLine = inline.getLastLine();
-        String outputText = lastLine.toConsole();
-        output.set(outputText);
-        return outputText;
-        // build dependency graph
-        // evaluate dep graph
-        // get last statement in declaration if there is more than one
-        // get it's console output
-        // update output stringproperty
-        // return output
+        for(SGraph g: library.getGraphs()){
+            g.evaluate();
+
+            if(library.getGraphs().size() > 1){
+                output.set(g.toConsole());
+            }
+        }
+
+        if(library.getGraphs().size() == 1){
+            SFunc lastLine = inline.getLastLine();
+            String outputText = lastLine.toConsole();
+            output.set(outputText);
+        }
+
+        return output.get();
 
         // add the result to the history list
             // add command that was processed
@@ -117,38 +125,5 @@ public class ShiroRuntime{
                 // realize nodes
         // build dependency graph
         // evaluate
-    }
-
-    public SFunc executedExpr(String expr) {
-        graph.removeAllDependencies();
-        ShiroLexer lex = new ShiroLexer(new ANTLRInputStream(expr));
-        ShiroParser parser = new ShiroParser(new CommonTokenStream(lex));
-        parser.setBuildParseTree(true);
-        ParseTree tree = parser.shiro();
-        
-        ParseTreeWalker walker = new ParseTreeWalker();
-        ShiroExpressionListener expression = new ShiroExpressionListener(library);
-        walker.walk(expression, tree);
-//        List<SFunc> exprs = expression.getExprs();
-
-//        for(SFunc f: exprs){
-//            for(SFunc arg: f.getDependencies()){
-//                addDependency(f, arg);
-//            }
-//
-//            if(!f.hasArgs()){
-//                addDependency(f, null);
-//            }
-//        }
-//
-//        TopologicalSort<SFunc> sorter = new TopologicalSort<>(graph);
-//        List<GraphNode<SFunc>> topologicalOrdering = sorter.getTopologicalOrdering();
-//
-//        // loop through all ports to update them.
-//        for (GraphNode<SFunc> gn : topologicalOrdering) {
-//            gn.doAction();
-//        }
-//        return expression.getRoot();
-        return null;
     }
 }

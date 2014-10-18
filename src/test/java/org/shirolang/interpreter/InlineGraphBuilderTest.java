@@ -32,6 +32,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.shirolang.base.SFunc;
 import org.shirolang.base.SGraph;
+import org.shirolang.base.SNode;
 import org.shirolang.base.SType;
 
 import java.util.List;
@@ -55,6 +56,45 @@ public class InlineGraphBuilderTest {
         lib = new Library();
     }
 
+    @Test
+    public void firstPass(){
+        String code = "node Box begin\n" +
+                "     input length Double\n" +
+                "     input width Double\n" +
+                "     input height Double\n" +
+                "     eval update Multiply(length, width)\n" +
+                "     output area Double(update)\n" +
+                "     output name String(\"Box\")\n" +
+                "end\n" +
+                "\n" +
+                "port length Double(100)\n" +
+                "\n" +
+                "Box -> b\n" +
+                "b.length(length)\n" +
+                "b.width(20.0)\n" +
+                "b.height(7.0)\n";
+
+        ParseTree tree = buildParseTree(code);
+        ParseTreeWalker walker = new ParseTreeWalker();
+
+        DefinitionCollector definitionCollector = new DefinitionCollector();
+        walker.walk(definitionCollector, tree);
+
+        lib.addGraphDefs(definitionCollector.getGraphs());
+        lib.addNodeDefs(definitionCollector.getNodeDefinitions());
+
+        InlineGraphBuilder inline = new InlineGraphBuilder(lib);
+
+        walker.walk(inline, tree);
+
+        SGraph graph = lib.getDefaultGraph();
+        SNode node = graph.getNode("b");
+        Assert.assertNotNull(node);
+        Assert.assertEquals(9, node.getPorts().size());
+        Assert.assertNotNull(lib.getNodeDefs().get("Box"));
+        Assert.assertEquals(1, lib.getNodeDefs().size());
+    }
+
 
     @Test
     public void buildInline(){
@@ -64,7 +104,7 @@ public class InlineGraphBuilderTest {
                 "c + b\n";
 
         InlineGraphBuilder inline = new InlineGraphBuilder(lib);
-        inline.setPass(InlineGraphBuilder.SECOND_PASS);
+        inline.setPass(GraphBuilder.SECOND_PASS);
         ParseTreeWalker walker = new ParseTreeWalker();
         walker.walk(inline, buildParseTree(code));
 
