@@ -99,9 +99,8 @@ public class ShiroRuntime{
         for(SGraph g: library.getGraphs()){
             g.evaluate();
 
-            if(library.getGraphs().size() > 1){
-                output.set(g.toConsole());
-            }
+            output.set(g.toConsole());
+
         }
 
         return output.get();
