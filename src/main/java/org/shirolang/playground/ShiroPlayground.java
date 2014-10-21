@@ -52,30 +52,14 @@ import java.util.concurrent.Executors;
  *
  */
 public class ShiroPlayground extends Application {
-    private CodeArea codeArea;
-    private ExecutorService executor;
+    private FXMLViewerController c;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         URL resource = getClass().getResource("fxml_viewer.fxml");
-        FXMLLoader loader = new FXMLLoader();
-        BorderPane root = (BorderPane) loader.load(resource);
-        final FXMLViewerController c = loader.getController();
-
-        executor = Executors.newSingleThreadExecutor();
-        codeArea = new CodeArea();
-        codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
-
-        EventStream<PlainTextChange> textChanges = codeArea.plainTextChanges();
-
-        textChanges.successionEnds(Duration.ofMillis(500))
-            .supplyTask(this::computeHighlightingAsync)
-            .awaitLatest(textChanges)
-            .subscribe(this::applyHighlighting);
-
-        codeArea.replaceText("port a Double(343)\n" +
-                "port b String(\"dfd\")\n");
-        new StackPane(codeArea);
+        FXMLLoader loader = new FXMLLoader(resource);
+        BorderPane root = (BorderPane) loader.load();
+        c = loader.getController();
 
         Scene scene = new Scene(root);
         scene.getStylesheets().add(getClass().getResource("syntax.css").toExternalForm());
@@ -87,57 +71,7 @@ public class ShiroPlayground extends Application {
     @Override
     public void stop() throws Exception {
         // stop the thread service
-        executor.shutdown();
-    }
-
-    private Task<StyleSpans<Collection<String>>> computeHighlightingAsync(){
-        String code = codeArea.getText();
-
-        Task<StyleSpans<Collection<String>>> task = new Task<StyleSpans<Collection<String>>>() {
-            @Override
-            protected StyleSpans<Collection<String>> call() throws Exception {
-                return computeHighlighting(code);
-            }
-        };
-        executor.execute(task);
-        return task;
-    }
-
-    private static StyleSpans<Collection<String>> computeHighlighting(String text){
-        StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();
-        int lastEnd = 0;
-
-        ShiroLexer lex = new ShiroLexer(new ANTLRInputStream(text));
-        // parse
-
-        for(Token t: lex.getAllTokens()){
-            spansBuilder.add(Collections.emptyList(), t.getStartIndex() - lastEnd);
-            spansBuilder.add(Collections.singleton(getStyleClass(t)), (t.getStopIndex() + 1 - t.getStartIndex()));
-            lastEnd = t.getStopIndex() + 1;
-        }
-
-        spansBuilder.add(Collections.emptyList(), text.length() - lastEnd);
-
-        return spansBuilder.create();
-    }
-
-    private static String getStyleClass(Token t){
-        switch (t.getType()){
-            case ShiroLexer.BEGIN:
-                return "begin-end";
-            case ShiroLexer.END:
-                return "begin-end";
-            case ShiroLexer.MFNAME:
-                return "mf";
-            case ShiroLexer.IDENT:
-                return "ident";
-            default:
-                return "";
-        }
-    }
-
-    private void applyHighlighting(StyleSpans<Collection<String>> highlighting) {
-        codeArea.setStyleSpans(0, highlighting);
+        c.stop();
     }
 
     public static void main(String[] args) {

@@ -35,7 +35,7 @@ import org.shirolang.base.SGraph;
 import java.io.IOException;
 
 /**
- *
+ * Tests the parse tree listener to instantiate named graphs
  */
 public class GraphBuilderTest extends ShiroBaseTest{
     @Test

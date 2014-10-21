@@ -28,6 +28,7 @@
  */
 package org.shirolang.playground;
 
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
@@ -41,9 +42,20 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
+import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.Token;
+import org.fxmisc.richtext.*;
+import org.reactfx.EventStream;
+import org.shirolang.interpreter.ShiroLexer;
 import org.shirolang.interpreter.ShiroRuntime;
 
 import java.io.*;
+import java.time.Duration;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -59,7 +71,7 @@ public class FXMLViewerController {
     @FXML
     private Button run;
     @FXML
-    private TextArea code;
+    private CodeArea codeArea;
     @FXML
     private ListView<String> altsList;
     @FXML
@@ -88,104 +100,36 @@ public class FXMLViewerController {
     private Group lightTable;
     private MoveContext moveContext;
     private ImageView selectedTile;
-   
-    
+    private ExecutorService executor;
+
 
     public void initialize() {
         model = new ShiroRuntime();
         console.textProperty().bind(model.outputProperty());
-//        layers = new HashMap<>();
-//        addEventHandlersToList();
-//        altsList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
-//        currentFile = null;
-//        snapshots = new HashMap<>();
-//        lightTable = new Group();
-//        moveContext = new MoveContext();
-//        selectedTile = null;
-//
-//        model.errorMessagesProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
-//            appendToConsole(newValue + "\n");
-//        });
-//
-//        errorLabel.visibleProperty().bind(model.hasErrorsProperty());
-//        model.hasErrorsProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
-//            if (newValue) {
-//                code.setStyle("-fx-border-color:red;");
-//            } else {
-//                code.setStyle("-fx-border-color:null;");
-//            }
-//        });
-//
-//        tileSizes.valueProperty().addListener( (ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
-//            if(btnGrid.isSelected()){
-//                gallery.getChildren().clear();
-//
-//                for(WritableImage img: snapshots.values()){
-//                    gallery.getChildren().add(createImageTile(img, newValue.doubleValue()));
-//                }
-//            }else{
-//                lightTable = createLightTable(tileSizes.getValue());
-//                lightTableScrollPane.setContent(lightTable);
-//            }
-//        });
 
-    }
+        // setup the code area
+        executor = Executors.newSingleThreadExecutor();
+        codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
+        EventStream<PlainTextChange> textChanges = codeArea.plainTextChanges();
+
+        textChanges.successionEnds(Duration.ofMillis(500))
+            .supplyTask(this::computeHighlightingAsync)
+            .awaitLatest(textChanges)
+            .subscribe(this::applyHighlighting);
+}
 
     @FXML
     private void handleRun(ActionEvent event) {
         run();
     }
 
-    public void run() {
-           model.executeStatement(code.getText());
-           model.evaluate();
+    public void stop(){
+        executor.shutdown();
+    }
 
-//        altsList.getItems().clear();
-//        gallery.getChildren().clear();
-//        lightTable.getChildren().clear();
-//        snapshots.clear();
-//        layers.clear();
-//        model.reset();
-//        console.setText("");
-//
-//        if (currentFile == null) {
-//            FileChooser save = new FileChooser();
-//            save.setInitialFileName("Code.sro");
-//            save.setTitle("Save as .sro");
-//            currentFile = save.showSaveDialog(root.getScene().getWindow());
-//            save();
-//        }
-//
-//
-//        if (currentFile != null) {
-//            try {
-//                model.loadCode(currentFile.toPath());
-//            } catch (IOException ex) {
-//                Logger.getLogger(FXMLViewerController.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-//
-//            altsList.getItems().addAll(model.getStateNames());
-//
-//            for (StateDefinition s : model.getStates()) {
-//                Canvas c = createCanvas();
-//                layers.put(s, c);
-//                renderState(s);
-//
-//                canvas.getChildren().add(c);
-//                // put all canvases on scenegraph
-//                // capture image
-//                // and build gallery
-//                WritableImage snapshot = c.snapshot(null, null);
-//                snapshots.put(s, snapshot);
-//                gallery.getChildren().add(createImageTile(snapshot, tileSizes.getValue()));
-//
-//                canvas.getChildren().clear();
-//            }
-//
-//            altsList.getSelectionModel().select(0);
-//
-//            appendToConsole("Executed: " + currentFile.toString() + "\n");
-//        }
+    public void run() {
+       model.executeStatement(codeArea.getText());
+       model.evaluate();
     }
 
     private void appendToConsole(String s) {
@@ -263,7 +207,7 @@ public class FXMLViewerController {
     private void save() {
         if (currentFile != null) {
             try (FileWriter writer = new FileWriter(currentFile)) {
-                writer.write(code.getText());
+                writer.write(codeArea.getText());
                 writer.flush();
                 appendToConsole("Saved\n");
             } catch (IOException ex) {
@@ -288,7 +232,7 @@ public class FXMLViewerController {
                     sb.append(line);
                     sb.append(newLine);
                 }
-                code.setText(sb.toString().trim());
+                codeArea.replaceText(sb.toString().trim());
                 currentFile = fileToOpen;
 
             }
@@ -309,7 +253,7 @@ public class FXMLViewerController {
             FileWriter writer = null;
             try {
                 writer = new FileWriter(fileToSave);
-                writer.write(code.getText());
+                writer.write(codeArea.getText());
                 writer.flush();
             } catch (IOException ex) {
                 Logger.getLogger(FXMLViewerController.class.getName()).log(Level.SEVERE, null, ex);
@@ -608,4 +552,54 @@ public class FXMLViewerController {
 //
 //        return g;
 //    }
+
+    private Task<StyleSpans<Collection<String>>> computeHighlightingAsync(){
+        String code = codeArea.getText();
+
+        Task<StyleSpans<Collection<String>>> task = new Task<StyleSpans<Collection<String>>>() {
+            @Override
+            protected StyleSpans<Collection<String>> call() throws Exception {
+                return computeHighlighting(code);
+            }
+        };
+        executor.execute(task);
+        return task;
+    }
+
+    private static StyleSpans<Collection<String>> computeHighlighting(String text){
+        StyleSpansBuilder<Collection<String>> spansBuilder = new StyleSpansBuilder<>();
+        int lastEnd = 0;
+
+        ShiroLexer lex = new ShiroLexer(new ANTLRInputStream(text));
+        // parse
+
+        for(Token t: lex.getAllTokens()){
+            spansBuilder.add(Collections.emptyList(), t.getStartIndex() - lastEnd);
+            spansBuilder.add(Collections.singleton(getStyleClass(t)), (t.getStopIndex() + 1 - t.getStartIndex()));
+            lastEnd = t.getStopIndex() + 1;
+        }
+
+        spansBuilder.add(Collections.emptyList(), text.length() - lastEnd);
+
+        return spansBuilder.create();
+    }
+
+    private static String getStyleClass(Token t){
+        switch (t.getType()){
+            case ShiroLexer.BEGIN:
+                return "begin-end";
+            case ShiroLexer.END:
+                return "begin-end";
+            case ShiroLexer.MFNAME:
+                return "mf";
+            case ShiroLexer.IDENT:
+                return "ident";
+            default:
+                return "";
+        }
+    }
+
+    private void applyHighlighting(StyleSpans<Collection<String>> highlighting) {
+        codeArea.setStyleSpans(0, highlighting);
+    }
 }

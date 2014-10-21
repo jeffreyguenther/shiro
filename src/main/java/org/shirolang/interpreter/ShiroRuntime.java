@@ -70,7 +70,6 @@ public class ShiroRuntime{
 
 
     public String executeStatement(String input){
-        // execute the statement
         // lex
         ShiroLexer lex = new ShiroLexer(new ANTLRInputStream(input));
         // parse
@@ -93,18 +92,16 @@ public class ShiroRuntime{
         inline.setPass(GraphBuilder.SECOND_PASS);
         walker.walk(inline, tree);
 
+        // realize named graphs
+
+
+
         for(SGraph g: library.getGraphs()){
             g.evaluate();
 
             if(library.getGraphs().size() > 1){
                 output.set(g.toConsole());
             }
-        }
-
-        if(library.getGraphs().size() == 1){
-            SFunc lastLine = inline.getLastLine();
-            String outputText = lastLine.toConsole();
-            output.set(outputText);
         }
 
         return output.get();

@@ -38,7 +38,7 @@ import org.shirolang.base.SType;
 import java.util.List;
 
 /**
- *
+ * Tests parse tree listener to instantiate inline graphs
  */
 public class InlineGraphBuilderTest {
     private static ParseTree buildParseTree(String expr){
@@ -95,38 +95,47 @@ public class InlineGraphBuilderTest {
         Assert.assertEquals(1, lib.getNodeDefs().size());
     }
 
-
     @Test
-    public void buildInline(){
-        String code = "port a Double(11.0)\n" +
-                "port b Double(2.0)\n" +
-                "port c Power(a, b)\n" +
-                "c + b\n";
+    public void secondPass(){
+        String code = "node Box begin\n" +
+                "     input length Double\n" +
+                "     input width Double\n" +
+                "     input height Double\n" +
+                "     eval update Multiply(length, width)\n" +
+                "     output area Double(update)\n" +
+                "     output name String(\"Box\")\n" +
+                "end\n" +
+                "\n" +
+                "port length Double(100)\n" +
+                "\n" +
+                "Box -> b\n" +
+                "b.length(length)\n" +
+                "b.width(20.0)\n" +
+                "b.height(7.0)\n";
+
+        ParseTree tree = buildParseTree(code);
+        ParseTreeWalker walker = new ParseTreeWalker();
+
+        DefinitionCollector definitionCollector = new DefinitionCollector();
+        walker.walk(definitionCollector, tree);
+
+        lib.addGraphDefs(definitionCollector.getGraphs());
+        lib.addNodeDefs(definitionCollector.getNodeDefinitions());
 
         InlineGraphBuilder inline = new InlineGraphBuilder(lib);
+
+        walker.walk(inline, tree);
+
         inline.setPass(GraphBuilder.SECOND_PASS);
-        ParseTreeWalker walker = new ParseTreeWalker();
-        walker.walk(inline, buildParseTree(code));
+        walker.walk(inline, tree);
 
         SGraph graph = lib.getDefaultGraph();
-        SFunc a = graph.getPort("a");
-        SFunc b = graph.getPort("b");
-        SFunc c = graph.getPort("c");
+        SNode node = graph.getNode("b");
+        Assert.assertNotNull(node);
+        Assert.assertNotNull(lib.getNodeDefs().get("Box"));
+        Assert.assertEquals(1, lib.getNodeDefs().size());
 
-        Assert.assertEquals(SType.DOUBLE, a.getType());
-        Assert.assertEquals(SType.DOUBLE, b.getType());
-        Assert.assertEquals(SType.POWER, c.getType());
-
-        List<SFunc> dependencies = c.getDependencies();
-        SFunc powDepA = dependencies.get(0);
-        SFunc powDepB = dependencies.get(1);
-
-        Assert.assertEquals("Ident", powDepA.getType());
-        Assert.assertEquals("Ident", powDepB.getType());
-
-        Assert.assertTrue("a ident refers to Double named a", powDepA.getDependencies().contains(a));
-        Assert.assertTrue("b ident refers to Double named b", powDepB.getDependencies().contains(b));
-
-        graph.evaluate();
+        Assert.assertEquals(1, graph.getNodes().size());
+        Assert.assertEquals(13, graph.getPorts().size());
     }
 }
