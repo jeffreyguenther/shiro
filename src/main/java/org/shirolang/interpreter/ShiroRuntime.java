@@ -34,6 +34,9 @@ import org.shirolang.base.SFunc;
 import org.shirolang.base.SGraph;
 import org.shirolang.dag.DAGraph;
 
+import javax.naming.ldap.PagedResultsControl;
+import java.util.Map;
+
 /**
  * The Shiro runtime. This class parses and evaluates Shiro expressions.
  * It is the main class for the library.
@@ -93,14 +96,26 @@ public class ShiroRuntime{
         walker.walk(inline, tree);
 
         // realize named graphs
+        for(Map.Entry<String, ParseTree> graphDef: library.getGraphDefs().entrySet()){
+            String graphName = graphDef.getKey();
+            ParseTree def = graphDef.getValue();
 
+            // create instance of the new graph
+            SGraph g = new SGraph(graphName);
 
+            // create named graph
+            GraphBuilder namedGraph = new GraphBuilder(library, g);
+            walker.walk(namedGraph, def);
+
+            namedGraph.setPass(GraphBuilder.SECOND_PASS);
+            walker.walk(namedGraph, def);
+
+            library.addGraph(g);
+        }
 
         for(SGraph g: library.getGraphs()){
             g.evaluate();
-
             output.set(g.toConsole());
-
         }
 
         return output.get();

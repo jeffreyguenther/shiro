@@ -216,7 +216,7 @@ public class Library {
      * Saves the graph to the library
      * @param g graph to be stored
      */
-    public void saveGraph(SGraph g){
+    public void addGraph(SGraph g){
         graphs.put(g.getName(), g);
     }
 

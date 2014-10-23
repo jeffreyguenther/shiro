@@ -131,7 +131,7 @@ public class LibraryTest{
 
         for(Map.Entry<String, ParseTree> e: l.getGraphDefs().entrySet()){
             SGraph graph = l.instantiateNamedGraph(e.getValue(), e.getKey());
-            l.saveGraph(graph);
+            l.addGraph(graph);
 
             graph.evaluate();
         }
@@ -158,7 +158,7 @@ public class LibraryTest{
 
         for(Map.Entry<String, ParseTree> e: l.getGraphDefs().entrySet()){
             SGraph graph = l.instantiateNamedGraph(e.getValue(), e.getKey());
-            l.saveGraph(graph);
+            l.addGraph(graph);
 
             graph.evaluate();
         }

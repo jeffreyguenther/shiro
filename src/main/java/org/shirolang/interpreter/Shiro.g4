@@ -38,11 +38,15 @@ nodeProduction
 	;
 
 activation
-	:	nodeName=IDENT ( LSQUARE activeObject=IDENT RSQUARE)?('(' argMap ')')?
+	:	nodeName=IDENT ( LSQUARE activeObject=IDENT RSQUARE )? ('(' nodeAssignment ')')?
 	;
 
+nodeAssignment
+    :   argMap | mfparams
+    ;
+
 argMap
-    :   (IDENT ':' expr)(',' IDENT ':' expr)*
+    :   (keys+=IDENT ':' values+=expr)(',' keys+=IDENT ':' values+=expr)*
     ;
 
 activeSelector

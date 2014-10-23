@@ -23,6 +23,7 @@
 
 package org.shirolang.interpreter;
 
+import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.shirolang.base.*;
 import org.shirolang.exceptions.OptionNotFoundException;
@@ -72,6 +73,35 @@ public class GraphBuilder extends ShiroExpressionListener {
                 SNode producedNode = (SNode) library.instantiateNode(g, p, nodeName);
 
                 // TODO add support for argument maps
+                ShiroParser.NodeAssignmentContext assignment = ac.nodeAssignment();
+                if(assignment != null){
+                    if( assignment.argMap() != null ){
+                        List<Token> keys = assignment.argMap().keys;
+                        List<ShiroParser.ExprContext> values = assignment.argMap().values;
+
+                        for(int i = 0; i < keys.size(); i++){
+                            SFunc port = producedNode.getPort(keys.get(i).getText());
+
+                            if(port == null){
+                                throw new RuntimeException(keys.get(i).getText() + " cannot be found in " + producedNode.getFullName());
+                            }
+
+                            if(!port.hasArgs()){
+                                port.appendArg(getExpr(values.get(i)));
+                            }else{
+                                port.setArg(0, getExpr(values.get(i)));
+                            }
+
+                        }
+                    }
+
+                    if(assignment.mfparams() != null ){
+                        List<ShiroParser.ExprContext> exprs = assignment.mfparams().expr();
+                        // for each function
+                            // get the port at the same index
+                            // set the ports args to the same expression
+                    }
+                }
 
                 g.addNode(producedNode);
 
