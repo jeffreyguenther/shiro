@@ -3,8 +3,19 @@ node Box begin
      input width Double
      input height Double
      eval update Multiply(length, width)
-     output volume Double(update)
+     output area Double(update)
      output name String("Box")
 end
 
-Box -> b(100, 20, 7)
+
+graph box_calc begin
+    Box -> b
+    b.length(100.0)
+    b.width(20.0)
+    b.height(7.0)
+end
+
+
+state s1 begin
+    Graph box_calc
+end

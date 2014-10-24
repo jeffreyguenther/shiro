@@ -3,8 +3,8 @@ node Invest begin
 	input principle Double(5000)
 	input duration Double(1)
 	eval update SimpleInterest(rate, principle, duration)
-	output interest(update[0])
-	output value(update[1])
+	output interest Double(update[0])
+	output value Double(update[1])
 end
 
 node InterestRates[low] begin
@@ -12,18 +12,18 @@ node InterestRates[low] begin
 	option port high Double(0.1)
 end
 
-graph Money begin
-	InterestRate -> i
+graph money begin
+	InterestRates -> i
 
 	Invest -> investment(rate: i.active)
 end
 
 state lowRate begin
-	Graph Money
+	Graph money
 	i[low]
 end
 
 state highRate begin
-	Graph Money
+	Graph money
 	i[high]
 end

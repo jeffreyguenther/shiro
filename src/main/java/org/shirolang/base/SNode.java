@@ -24,6 +24,7 @@
 
 package org.shirolang.base;
 
+import javafx.util.Pair;
 import org.shirolang.exceptions.OptionNotFoundException;
 import org.shirolang.exceptions.PathNotFoundException;
 import org.shirolang.values.Path;
@@ -235,6 +236,19 @@ public class SNode extends SFuncBase implements Scope{
      */
     public Map<String, SFunc> getOptions(){
         return new HashMap<>(options);
+    }
+
+    /**
+     * Gets the node name to option name pairs used
+     * @return a set containing pairs of (nodename, optionName) for each
+     * option in the node
+     */
+    public Set<Pair<String, String>> getOptionPairs(){
+        Set<Pair<String, String>> pairs = new HashSet<>();
+        for(SFunc s: getOptions().values()){
+            pairs.add(new Pair<>(name.get(), s.getName()));
+        }
+        return pairs;
     }
 
     /**

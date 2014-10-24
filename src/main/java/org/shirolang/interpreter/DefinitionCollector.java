@@ -85,7 +85,7 @@ public class DefinitionCollector extends ShiroBaseListener {
     }
 
     @Override
-    public void enterNodestmt(ShiroParser.NodestmtContext ctx) {
+    public void enterNodestmt(@NotNull ShiroParser.NodestmtContext ctx) {
         // The locked flag is used to prevent nested nodes from being captured
         // as individual trees. Nested nodes will be children of their root
         // node
@@ -97,19 +97,17 @@ public class DefinitionCollector extends ShiroBaseListener {
     }
 
     @Override
-    public void exitNodestmt(ShiroParser.NodestmtContext ctx) {
+    public void exitNodestmt(@NotNull ShiroParser.NodestmtContext ctx) {
         locked = false;
     }
 
     @Override
-    public void enterGraphDecl(ShiroParser.GraphDeclContext ctx) {
+    public void enterGraphDecl(@NotNull ShiroParser.GraphDeclContext ctx) {
         graphs.put(ctx.IDENT().getText(), ctx);
     }
 
-
-    //
-//    @Override
-//    public void enterStatestmt(ShiroParser.StatestmtContext ctx) {
-//        alternativeDefs.put(ctx.stateName().getText(), ctx);
-//    }
+    @Override
+    public void enterStateStmt(@NotNull ShiroParser.StateStmtContext ctx) {
+        alternativeDefs.put(ctx.stateName().getText(), ctx);
+    }
 }

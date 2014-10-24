@@ -26,10 +26,7 @@ package org.shirolang.interpreter;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.shirolang.FunctionFactory;
-import org.shirolang.base.SFunc;
-import org.shirolang.base.SGraph;
-import org.shirolang.base.SNode;
-import org.shirolang.base.SType;
+import org.shirolang.base.*;
 import org.shirolang.exceptions.GraphNotFoundException;
 import org.shirolang.exceptions.NameUsedException;
 import org.shirolang.functions.math.*;
@@ -47,9 +44,13 @@ import java.util.Set;
  */
 public class Library {
     public static String DEFAULT_GRAPH_NAME = "^";
+    public static String DEFAULT_STATE_NAME = "$";
+
+    private NameManager nameManager;
     private Map<String, FunctionFactory> mfuncs;
 
     // Runtime instances
+    private Map<String, SState> states;
     private Map<String, SGraph> graphs;
     private Map<String, SFunc> symbols;
 
@@ -64,7 +65,10 @@ public class Library {
      * Shiro multi-functions. These are used to handle expressions.
      */
     public Library(){
+        nameManager = new NameManager();
         mfuncs = new HashMap<>();
+
+        states = new HashMap<>();
         graphs = new HashMap<>();
         symbols = new HashMap<>();
 
@@ -75,6 +79,15 @@ public class Library {
         // load basic multi-functions
         loadRuntimeFunctions();
         graphs.put(DEFAULT_GRAPH_NAME, new SGraph(DEFAULT_GRAPH_NAME));
+        states.put(DEFAULT_STATE_NAME, new SState(DEFAULT_STATE_NAME));
+    }
+
+    /**
+     * Gets the name manager used by the runtime.
+     * @return
+     */
+    public NameManager getNameManager() {
+        return nameManager;
     }
 
     /**
@@ -184,6 +197,14 @@ public class Library {
     }
 
     /**
+     * Gets the default runtime state
+     * @return the default state
+     */
+    public SState getDefaultState(){
+       return states.get(DEFAULT_STATE_NAME);
+    }
+
+    /**
      * Adds the node definitions to the map
      * @param defs map of node names and their parse trees
      */
@@ -191,6 +212,10 @@ public class Library {
         nodeDefs.putAll(defs);
     }
 
+    /**
+     * Gets the node definitions
+     * @return the map of parse tree and node names
+     */
     public Map<String, ParseTree> getNodeDefs(){
         return nodeDefs;
     }
@@ -204,6 +229,14 @@ public class Library {
     }
 
     /**
+     * Stores the state definition to the map
+     * @param defs map of state names to their parse trees
+     */
+    public void addAlternativeDefs(Map<String, ParseTree> defs){
+        alternativeDefs.putAll(defs);
+    }
+
+    /**
      * Get all of the parse trees for the named graphs
      * Does not include anonymous graph
      * @return the map of named parse trees
@@ -213,11 +246,35 @@ public class Library {
     }
 
     /**
+     * Gets all parse trees for the alternatives
+     * @return the map of named parse trees
+     */
+    public Map<String, ParseTree> getAlternativeDefs(){
+        return alternativeDefs;
+    }
+
+    /**
      * Saves the graph to the library
      * @param g graph to be stored
      */
     public void addGraph(SGraph g){
         graphs.put(g.getName(), g);
+    }
+
+    /**
+     * Stores the state in the library
+     * @param state state to be stored
+     */
+    public void addState(SState state){
+        states.put(state.getName(), state);
+    }
+
+    public Map<String, SState> getStates(){
+        return states;
+    }
+
+    public boolean hasUserDefinedStates(){
+        return !alternativeDefs.isEmpty();
     }
 
     /**
@@ -260,5 +317,14 @@ public class Library {
         } catch (NameUsedException e) {
             throw new RuntimeException("Something crazy happened and an internal type is already defined!");
         }
+    }
+
+    /**
+     * Gets the graph with the given name
+     * @param graphName the name of the graph to retrieve
+     * @return the graph mapped to the passed name
+     */
+    public SGraph getGraph(String graphName) {
+        return graphs.get(graphName);
     }
 }

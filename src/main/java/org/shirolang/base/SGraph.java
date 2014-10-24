@@ -28,12 +28,15 @@ import org.shirolang.dag.DAGraph;
 import org.shirolang.dag.DependencyRelation;
 import org.shirolang.dag.GraphNode;
 import org.shirolang.dag.TopologicalSort;
+import org.shirolang.exceptions.OptionNotFoundException;
 import org.shirolang.exceptions.PathNotFoundException;
 import org.shirolang.interpreter.Consoleable;
 import org.shirolang.values.Path;
 import org.shirolang.values.SIdent;
 
 import java.util.*;
+
+import static java.util.stream.Collectors.toSet;
 
 /**
  * Defines a graph instance in Shiro.
@@ -91,6 +94,10 @@ public class SGraph implements Scope, Consoleable{
         return new HashSet<>(nodes.values());
     }
 
+    public Set<SNode> getNodesWithOptions(){
+        return nodes.values().stream().filter((SNode n) -> n.hasOptions()).collect(toSet());
+    }
+
     /**
      * Adds a port to the graph
      * @param port port to be added to the graph
@@ -129,6 +136,15 @@ public class SGraph implements Scope, Consoleable{
      */
     public SFunc getPort(String name){
         return ports.get(name);
+    }
+
+    public void evaluate(Map<String, String> subjunctTable) throws OptionNotFoundException {
+        for(String optionName: subjunctTable.keySet()){
+            SNode node = nodes.get(optionName);
+            node.setActiveOption(subjunctTable.get(optionName));
+        }
+
+        evaluate();
     }
 
     public void evaluate(){

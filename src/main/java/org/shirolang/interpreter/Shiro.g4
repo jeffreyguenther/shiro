@@ -13,9 +13,32 @@ statement
           nodestmt
         | graphDecl
         | inLineExpr
+        | stateStmt
         | NEWLINE
 	;
 
+stateStmt
+    :   STATE stateName BEGIN NEWLINE
+        stateLine*
+        END
+    ;
+stateName
+    :   IDENT
+    ;
+
+stateLine
+    :   stateGraphSelection
+    |   stateActivation
+    |   NEWLINE
+    ;
+
+stateGraphSelection
+    :   'Graph' IDENT
+    ;
+
+stateActivation
+    :   nodeName=IDENT ( LSQUARE activeObject=IDENT RSQUARE )?
+    ;
 
 graphDecl
 	:	'graph' IDENT BEGIN NEWLINE
@@ -125,6 +148,8 @@ expr :  '(' expr ')'						  #parensExpr
 	 |  BOOLEAN_LITERAL						  #boolExpr
 	 |  STRING_LITERAL                        #stringExpr
 	 ;
+
+STATE: 'state';
 
 SELECT: '@';
 REF : '~';

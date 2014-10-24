@@ -72,4 +72,21 @@ public class DefinitionCollectorTest extends ShiroBaseTest{
 
         Assert.assertTrue(l.getGraphs().isEmpty());
     }
+
+    @Test
+    public void collectNodeGraphAndState() throws IOException {
+        ShiroParser parser = parse("graph_with_states.sro");
+
+        ParseTree tree = parser.shiro();
+
+        ParseTreeWalker walker = new ParseTreeWalker();
+        DefinitionCollector l = new DefinitionCollector();
+        walker.walk(l, tree);
+
+        Assert.assertTrue(l.getAlternativeDefinitions().containsKey("lowRate"));
+        Assert.assertTrue(l.getAlternativeDefinitions().containsKey("highRate"));
+        Assert.assertTrue(l.getGraphs().containsKey("money"));
+        Assert.assertTrue(l.getNodeDefinitions().containsKey("Invest"));
+        Assert.assertTrue(l.getNodeDefinitions().containsKey("InterestRates"));
+    }
 }
