@@ -79,7 +79,20 @@ public class Library {
         // load basic multi-functions
         loadRuntimeFunctions();
         graphs.put(DEFAULT_GRAPH_NAME, new SGraph(DEFAULT_GRAPH_NAME));
-        states.put(DEFAULT_STATE_NAME, new SState(DEFAULT_STATE_NAME));
+
+    }
+
+    public void reset() {
+        nameManager.reset();
+
+        states.clear();
+        graphs.clear();
+        symbols.clear();
+
+        nodeDefs.clear();
+        graphDefs.clear();
+        alternativeDefs.clear();
+        graphs.put(DEFAULT_GRAPH_NAME, new SGraph(DEFAULT_GRAPH_NAME));
     }
 
     /**
@@ -198,10 +211,15 @@ public class Library {
 
     /**
      * Gets the default runtime state
+     * The state is lazily created
      * @return the default state
      */
     public SState getDefaultState(){
-       return states.get(DEFAULT_STATE_NAME);
+        if(!states.containsKey(DEFAULT_STATE_NAME)){
+            states.put(DEFAULT_STATE_NAME, new SState(DEFAULT_STATE_NAME));
+        }
+
+        return states.get(DEFAULT_STATE_NAME);
     }
 
     /**
@@ -277,6 +295,19 @@ public class Library {
         return !alternativeDefs.isEmpty();
     }
 
+    public boolean hasUserDefinedGraphs(){
+        return !graphDefs.isEmpty();
+    }
+
+    /**
+     * Gets the graph with the given name
+     * @param graphName the name of the graph to retrieve
+     * @return the graph mapped to the passed name
+     */
+    public SGraph getGraph(String graphName) {
+        return graphs.get(graphName);
+    }
+
     /**
      * Gets the graphs stored in the library
      * @return set of all the graphs stored in the library
@@ -319,12 +350,6 @@ public class Library {
         }
     }
 
-    /**
-     * Gets the graph with the given name
-     * @param graphName the name of the graph to retrieve
-     * @return the graph mapped to the passed name
-     */
-    public SGraph getGraph(String graphName) {
-        return graphs.get(graphName);
-    }
+
+
 }

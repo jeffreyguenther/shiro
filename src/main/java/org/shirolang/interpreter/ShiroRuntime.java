@@ -62,8 +62,8 @@ public class ShiroRuntime{
 
     public ShiroRuntime() {
         library = new Library();
-        errorMesages = new SimpleStringProperty();
-        output = new SimpleStringProperty();
+        errorMesages = new SimpleStringProperty("");
+        output = new SimpleStringProperty("");
     }
 
     /**
@@ -83,6 +83,7 @@ public class ShiroRuntime{
 
 
     public String executeStatement(String input){
+        library.reset();
         // lex
         ShiroLexer lex = new ShiroLexer(new ANTLRInputStream(input));
         // parse
@@ -136,17 +137,14 @@ public class ShiroRuntime{
             library.addState(stateBuilder.getState());
         }
 
-        // if no states are defined
-        if(!library.hasUserDefinedStates()){
-            if(library.getGraphs().size() == 1 && library.getDefaultGraph().getNodesWithOptions().isEmpty()){
-                SState defaultState = library.getDefaultState();
-                defaultState.setGraph(library.DEFAULT_GRAPH_NAME);
-            }else {
+        if(!library.hasUserDefinedGraphs() && !library.hasUserDefinedStates()){
+            SState defaultState = library.getDefaultState();
+            defaultState.setGraph(library.DEFAULT_GRAPH_NAME);
 
-                // generate the states to evaluate the graphs
-                Set<SState> sStates = generateAllStates(library.getGraphs());
-                sStates.stream().forEach(s -> library.addState(s));
-            }
+        }else if (!library.hasUserDefinedStates()){ // has a graph (includes default), but no states
+            // generate the states to evaluate the graphs
+            Set<SState> sStates = generateAllStates(library.getGraphs());
+            sStates.stream().forEach(s -> library.addState(s));
         }
 
        for(SState state: library.getStates().values()){
@@ -154,20 +152,16 @@ public class ShiroRuntime{
            SGraph graph = library.getGraph(graphName);
 
            // only evaluate states that have a graph defined
-           if(graph != null) {
-
-
-               if (!state.getSubjunctTable().isEmpty()) {
-                   try {
-                       graph.evaluate(state.getSubjunctTable());
-                       output.set(graph.toConsole());
-                   } catch (OptionNotFoundException e) {
-                       throw new RuntimeException("Error during evaluation: " + e.getMessage());
-                   }
-               } else {
-                   graph.evaluate();
-                   output.set(graph.toConsole());
+           if (!state.getSubjunctTable().isEmpty()) {
+               try {
+                   graph.evaluate(state.getSubjunctTable());
+                   sendToOutput(graph.toConsole());
+               } catch (OptionNotFoundException e) {
+                   throw new RuntimeException("Error during evaluation: " + e.getMessage());
                }
+           } else {
+               graph.evaluate();
+               sendToOutput(graph.toConsole());
            }
        }
 
@@ -177,6 +171,27 @@ public class ShiroRuntime{
             // add command that was processed
             // add graph state
             // capture completed time
+    }
+
+    /**
+     * Appends the passed string to the output property
+     * if there is more than one state defined.
+     * @param s string to append to output
+     */
+    private void sendToOutput(String s){
+        if(library.getStates().size() > 1){
+            String prev = output.get();
+            String out;
+            if(!prev.isEmpty()){
+                out = prev + "\n" + s;
+            }else{
+                out = s;
+            }
+
+            output.set(out);
+        }else{
+            output.set(s);
+        }
     }
 
     public void evaluate(){
@@ -202,7 +217,8 @@ public class ShiroRuntime{
             // get all the nodes with options in a given graph
             Set<SNode> nodesWithOptions = g.getNodesWithOptions();
             if(nodesWithOptions.isEmpty()){
-                SState state = new SState(g.getName(), library.getNameManager().generateName("state"));
+                SState state = new SState(library.getNameManager().generateName("state"), g.getName());
+                states.add(state);
             }else {
 
                 List<Set<Pair<String, String>>> rawOptions = nodesWithOptions.stream()
@@ -213,7 +229,7 @@ public class ShiroRuntime{
                 // build all possible subjunct tables
                 for (List<Pair<String, String>> table : cartesianProduct) {
                     // create a state
-                    SState state = new SState(g.getName(), library.getNameManager().generateName("state"));
+                    SState state = new SState(library.getNameManager().generateName("state"), g.getName());
                     for (Pair<String, String> entry : table) {
                         state.addActiveNode(entry.getKey(), entry.getValue());
                     }
