@@ -26,7 +26,7 @@ package org.shirolang.base;
 
 /**
  *
- * Defines a set of pre-defined multi-function types to
+ * Defines a add of pre-defined multi-function types to
  * be used to determine the
  */
 public final class SType {

@@ -310,7 +310,7 @@ public class Library {
 
     /**
      * Gets the graphs stored in the library
-     * @return set of all the graphs stored in the library
+     * @return add of all the graphs stored in the library
      * including the default graph
      */
     public Set<SGraph> getGraphs(){

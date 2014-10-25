@@ -42,7 +42,7 @@ public class SBoolean extends SValue<Boolean>{
 
     /**
      * Creates an SBoolean with the passed value
-     * @param b value to set the SBoolean
+     * @param b value to add the SBoolean
      */
     public SBoolean(Boolean b) {
         super(b);
@@ -51,7 +51,7 @@ public class SBoolean extends SValue<Boolean>{
     /**
      * Creates an SBoolean with the passed value
      * @param name name of the boolean
-     * @param b value to set the SBoolean
+     * @param b value to add the SBoolean
      */
     public SBoolean(String name, Boolean b) {
         super(name, b);
@@ -67,8 +67,8 @@ public class SBoolean extends SValue<Boolean>{
 
     /**
      * Creates a SBoolean with SymbolType PORT
-     * @param b value to set the SBoolean
-     * @return An SBoolean with it's symbolType field set to
+     * @param b value to add the SBoolean
+     * @return An SBoolean with it's symbolType field add to
      * SymbolType.PORT
      */
     public static SBoolean createAsPort(Boolean b){

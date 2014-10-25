@@ -455,7 +455,7 @@ public class Path {
      * the path is null.
      * @param path the string to be turned into a path object
      * @return path created from the string that has it's isReference
-     * flag set to true
+     * flag add to true
      */
     public static Path createReference(String path){
         Path p = create(path);
@@ -470,7 +470,7 @@ public class Path {
      * the path is null.
      * @param path the string to be turned into a path object
      * @return path created from the string that has it's isSelector
-     * flag set to true
+     * flag add to true
      */
     public static Path createSelector(String path){
         Path p = create(path);

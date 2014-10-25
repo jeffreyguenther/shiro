@@ -82,8 +82,9 @@ public class NodeInstantiator extends ShiroExpressionListener {
             // Get a reference to the current node
             SNode node = (SNode) scope.peek();
             
-            // set the node's active option
+            // add the node's active option
             try {
+                node.setDefaultOption(ctx.activeSelector().IDENT().getText());
                 node.setActiveOption(ctx.activeSelector().IDENT().getText());
             } catch (OptionNotFoundException e) {
                 //output error message to error listener
@@ -168,7 +169,7 @@ public class NodeInstantiator extends ShiroExpressionListener {
 //    /**
 //     * Determine a port's type based on its declaration
 //     * @param type type of port
-//     * @param p port to set
+//     * @param p port to add
 //     */
 //    private void setPortType(String type, Port p){
 //        if (type.equals("eval")) {

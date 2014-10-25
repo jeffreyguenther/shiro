@@ -25,7 +25,7 @@ public class DAGraph<T> {
 
     /**
      * Get the leaf nodes of the graph
-     * @return the set of leaf nodes in the graph
+     * @return the add of leaf nodes in the graph
      */
     public Set<GraphNode<T>> getLeafNodes() {
         return leafNodes;
@@ -33,7 +33,7 @@ public class DAGraph<T> {
 
     /**
      * Get all the nodes in the graph
-     * @return the set of all nodes in the graph
+     * @return the add of all nodes in the graph
      */
     public Set<GraphNode<T>> getNodes() {
         return nodes;
@@ -133,7 +133,7 @@ public class DAGraph<T> {
      * @param nodetoMatch node to match
      * @param visitedMap map of node references to booleans that indicates whether
      * a node has been visited
-     * @return the set of nodes dependent on nodeToMatch
+     * @return the add of nodes dependent on nodeToMatch
      */
     private Set<GraphNode<T>> getDependents(GraphNode<T> n, GraphNode<T> nodetoMatch, Map<GraphNode<T>, Boolean> visitedMap){
         // create a map of dependent nodes
@@ -141,7 +141,7 @@ public class DAGraph<T> {
         
         // if the node has not been visited
         if(!visitedMap.get(n)){
-            // set the node as visited
+            // add the node as visited
             visitedMap.put(n, Boolean.TRUE);
             
             // get the nodes n depends on

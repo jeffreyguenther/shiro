@@ -77,6 +77,11 @@ public class ShiroRuntime{
         return errorMesages;
     }
 
+    /**
+     * "Standard out for the runtime." Runtime messages are appended
+     * to the property as the it runs
+     * @return
+     */
     public StringProperty outputProperty(){
         return output;
     }
@@ -166,11 +171,6 @@ public class ShiroRuntime{
        }
 
         return output.get();
-
-        // add the result to the history list
-            // add command that was processed
-            // add graph state
-            // capture completed time
     }
 
     /**

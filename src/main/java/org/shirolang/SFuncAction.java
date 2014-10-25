@@ -38,6 +38,8 @@ public class SFuncAction implements NodeAction<SFunc>{
 
     @Override
     public void doAction(SFunc node, Set<GraphNode<SFunc>> deps) {
-        node.evaluate();
+        if(node.isActive()) {
+            node.evaluate();
+        }
     }
 }

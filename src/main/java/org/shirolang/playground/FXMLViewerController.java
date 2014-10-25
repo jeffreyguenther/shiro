@@ -337,7 +337,7 @@ public class FXMLViewerController {
 //    /**
 //     * Create a Canvas and setup the event handlers
 //     *
-//     * @return Canvas object with event handlers set
+//     * @return Canvas object with event handlers add
 //     */
 //    private Canvas createCanvas() {
 //        Canvas c = new Canvas();

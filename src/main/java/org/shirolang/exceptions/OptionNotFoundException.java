@@ -24,7 +24,7 @@
 package org.shirolang.exceptions;
 
 /**
- * Thrown when runtime tries to set an option as active, but the
+ * Thrown when runtime tries to add an option as active, but the
  * option does not exist in the node.
  */
 public class OptionNotFoundException extends Exception {

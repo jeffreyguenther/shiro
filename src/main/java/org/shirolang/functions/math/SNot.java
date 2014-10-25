@@ -38,12 +38,12 @@ public class SNot extends SUnaryFunction{
         // setup args
         args.setKeyForIndex("a", 0);
         
-        results.set(null);
+        results.add(null);
     }
     
     public SNot(SFunc a){
         this();
-        args.set(a);
+        args.add(a);
     }
 
     @Override

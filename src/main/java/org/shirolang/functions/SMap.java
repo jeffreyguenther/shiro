@@ -19,8 +19,8 @@ import org.shirolang.functions.math.SBinaryFunction;
 public class SMap extends SBinaryFunction{
     
     public SMap(SFunc list, SFunc func){
-        args.set(list);
-        args.set(func);
+        args.add(list);
+        args.add(func);
     }
 
     @Override
@@ -38,7 +38,7 @@ public class SMap extends SBinaryFunction{
             rs.add(r);
         }
         
-        results.set(new SList(rs));
+        results.add(new SList(rs));
     }
 
     @Override

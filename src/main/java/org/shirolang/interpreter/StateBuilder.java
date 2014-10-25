@@ -62,5 +62,6 @@ public class StateBuilder extends ShiroExpressionListener{
     public void enterStateActivation(@NotNull ShiroParser.StateActivationContext ctx) {
         String nodeName = ctx.nodeName.getText();
         String activeOption = ctx.activeObject.getText();
+        subjunctTable.put(nodeName, activeOption);
     }
 }

@@ -54,7 +54,7 @@ public abstract class SFuncBase implements SFunc {
         fullName = new SimpleStringProperty("");
         symbolType = SymbolType.PORT;
     }
-    
+
     @Override
     public SFunc getArg() {
         return args.get(0);
@@ -164,7 +164,7 @@ public abstract class SFuncBase implements SFunc {
     
     @Override
     public void appendArg(SFunc v){
-        args.set(v);
+        args.add(v);
     }
     
     private boolean isType(String t){

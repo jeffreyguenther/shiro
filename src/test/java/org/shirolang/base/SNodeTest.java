@@ -199,7 +199,7 @@ public class SNodeTest {
         SNode n = new SNode();
         Assert.assertNull(n.getDefaultOption());
 
-        // set a default with the option not existing
+        // add a default with the option not existing
         SDouble d = new SDouble(12.0);
         d.setSymbolType(SymbolType.PORT);
         d.setName("d");
@@ -207,7 +207,7 @@ public class SNodeTest {
         Assert.assertSame(d, n.getDefaultOption());
 
         SNode n1 = new SNode();
-        // set a default with the option already existing
+        // add a default with the option already existing
         SString s = new SString("232");
         s.setSymbolType(SymbolType.PORT);
         s.setName("s");
@@ -278,7 +278,32 @@ public class SNodeTest {
     @Test(expected = OptionNotFoundException.class)
     public void setActiveOptionFail() throws OptionNotFoundException {
         SNode n = new SNode();
+        n.addPort(new SDouble("a", 95.3));
         n.setActiveOption("boom");
+    }
+
+    @Test
+    public void setActiveOption() throws OptionNotFoundException {
+        SNode n = new SNode();
+        SDouble d = new SDouble("a", 95.3);
+        n.addOption(d);
+        SDouble d2 = new SDouble("b", 5.3);
+        n.addOption(d2);
+
+        n.setActiveOption("b");
+        Assert.assertSame(d2, n.getActiveOption());
+        Assert.assertFalse(d.isActive());
+        Assert.assertTrue(d2.isActive());
+
+        n.setActiveOption("a");
+        Assert.assertSame(d, n.getActiveOption());
+        Assert.assertFalse(d2.isActive());
+        Assert.assertTrue(d.isActive());
+
+        Assert.assertNull(n.getDefaultOption());
+
+        Assert.assertFalse(n.getPorts().contains(d2));
+        Assert.assertTrue(n.getPorts().contains(d));
     }
 
     @Test
@@ -341,11 +366,6 @@ public class SNodeTest {
 
     @Test(expected = PathNotFoundException.class)
     public void resolvePathToNestedNode() throws PathNotFoundException {
-        /**
-         * I'm not sure if you should be able to reference nested nodes this way yet. For now, it
-         * will fail, but there might be a condition where this should work..
-         */
-
         SNode n =  new SNode("Type", "A", null);
         SNode nested = new SNode("Type", "Z", null);
 
@@ -415,5 +435,4 @@ public class SNodeTest {
         Assert.assertEquals(expected, n.getPorts());
 
     }
-
 }

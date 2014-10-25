@@ -43,7 +43,7 @@ public class NameManager {
             throw new NameUsedException(name + " is already used.");
         }
 
-        // initialize the set
+        // initialize the add
         if(instanceNames.get(type) == null){
             instanceNames.put(type, new HashSet<>());
         }
@@ -83,7 +83,7 @@ public class NameManager {
     /**
      * Gets the names for a type
      * @param type type to get the names for
-     * @return the set of names associated with the given type
+     * @return the add of names associated with the given type
      */
     public Set<String> getNames(String type){
         return instanceNames.get(type);
@@ -104,7 +104,7 @@ public class NameManager {
     
     /**
      * Clears all names and instance counts from the manager.
-     * All instance counts are set to zero
+     * All instance counts are add to zero
      */
     public void reset(){
         nextCounter.clear();

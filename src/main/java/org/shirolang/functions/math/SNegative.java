@@ -39,12 +39,12 @@ public class SNegative extends SUnaryFunction{
         // setup args
         args.setKeyForIndex("a", 0);
         
-        results.set(null);
+        results.add(null);
     }
     
     public SNegative(SFunc a){
         this();
-        args.set(a);
+        args.add(a);
     }
 
     @Override

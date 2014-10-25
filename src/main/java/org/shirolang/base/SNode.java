@@ -60,7 +60,7 @@ public class SNode extends SFuncBase implements Scope{
 
     /**
      * Creates a new node with it's name and
-     * type set to the empty string.
+     * type add to the empty string.
      * It's scope is null.
      */
     public SNode() {
@@ -93,18 +93,18 @@ public class SNode extends SFuncBase implements Scope{
     private final void initializeVars(String type, String name, Scope scope) {
         // type of node
         this.type = type;
-        // set the enclosing scope
+        // add the enclosing scope
         this.parentScope = scope;
-        // set the parent's full
+        // add the parent's full
 
-        // set the parent's full name based on the scope
+        // add the parent's full name based on the scope
         if (scope != null) {
             this.fullName.set(Path.createFullName(scope.getFullName(), name));
         } else {
             this.fullName.set(name);
         }
 
-        // set the name of the node
+        // add the name of the node
         this.name.set(name);
 
         // create map of options
@@ -160,8 +160,10 @@ public class SNode extends SFuncBase implements Scope{
     public Set<SFunc> getPorts(){
         Set<SFunc> allPorts = new HashSet<>();
         for(SFunc f: ports.values()){
-            allPorts.addAll(f.getDependencies());
-            allPorts.add(f);
+            if(f.isActive()) {
+                allPorts.addAll(f.getDependencies());
+                allPorts.add(f);
+            }
         }
         return allPorts;
     }
@@ -169,7 +171,7 @@ public class SNode extends SFuncBase implements Scope{
     /**
      * Gets the default option for the node
      * @return a reference to the default option. Returns null
-     * if no default is set.
+     * if no default is add.
      */
     public SFunc getDefaultOption(){
         return defaultOption;
@@ -177,7 +179,7 @@ public class SNode extends SFuncBase implements Scope{
 
     /**
      * Sets the node's default option.
-     * @param name name of node or port to set as default
+     * @param name name of node or port to add as default
      */
     public void setDefaultOption(String name) throws OptionNotFoundException {
         SFunc option = options.get(name);
@@ -240,7 +242,7 @@ public class SNode extends SFuncBase implements Scope{
 
     /**
      * Gets the node name to option name pairs used
-     * @return a set containing pairs of (nodename, optionName) for each
+     * @return a add containing pairs of (nodename, optionName) for each
      * option in the node
      */
     public Set<Pair<String, String>> getOptionPairs(){
@@ -280,11 +282,11 @@ public class SNode extends SFuncBase implements Scope{
 
     /**
      * Sets the node's active option. Options are stored in a node in map by the
-     * options name. To set the active option use the symbol's name, not it's
+     * options name. To add the active option use the symbol's name, not it's
      * full name
      *
-     * @param name name of symbol to set active
-     * @return the symbol set active, returns null if name is not found
+     * @param name name of symbol to add active
+     * @return the symbol add active, returns null if name is not found
      */
     public SFunc setActiveOption(String name) throws OptionNotFoundException {
         SFunc activeItem = options.get(name);
@@ -304,7 +306,7 @@ public class SNode extends SFuncBase implements Scope{
      * @param option the option to activate
      */
     private void activateOption(SFunc option) {
-        // Create a set of the inactive options
+        // Create a add of the inactive options
         Set<SFunc> inactive = new HashSet<>(options.values());
         inactive.remove(option);
 
@@ -350,7 +352,7 @@ public class SNode extends SFuncBase implements Scope{
     /**
      * Set the node's full name
      *
-     * @param fullName name to be set
+     * @param fullName name to be add
      */
     @Override
     public void setFullName(String fullName) {

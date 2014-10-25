@@ -97,14 +97,14 @@ public class SIndexedMap<T> {
      * Calls List.add
      * @param v 
      */
-    public void set(T v){
+    public void add(T v){
         values.add(v);
     }
 
     /**
      * Sets the value at the given index
      * Behaves just like a list as the method delegates
-     * to the list set method
+     * to the list add method
      * @param v value to store
      * @param i index to store the value
      */
@@ -135,6 +135,11 @@ public class SIndexedMap<T> {
      */
     public boolean isEmpty() {
         return values.isEmpty();
+    }
+
+
+    public void clear(){
+        values.clear();
     }
     
     /**

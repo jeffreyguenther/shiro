@@ -26,7 +26,6 @@ package org.shirolang.values;
 
 import org.shirolang.base.SFunc;
 import org.shirolang.base.SFuncBase;
-import org.shirolang.base.SType;
 import org.shirolang.base.SymbolType;
 
 /**
@@ -59,24 +58,34 @@ public abstract class SValue<T> extends SFuncBase{
     @Override
     public void evaluate() {
        // because values are repeated
-       if(notEvaluated){
+
+//       if(notEvaluated){
 
            if(getSymbolType().isLiteral()
                    || (getSymbolType().isPort() & !hasArgs())){
-            results.set(this);
+               if(results.isEmpty()){
+                   results.add(this);
+               }else{
+                   results.set(this, 0);
+               }
+
            }else{
                SFunc arg = args.get(0);
                SFunc result = arg.getResult();
                if(result.getType().equals(this.getType())){
-                   results.set(result);
+                   if(results.isEmpty()){
+                       results.add(result);
+                   }else{
+                        results.set(result, 0);
+                   }
                }else{
                    throw new RuntimeException("Types don't match in " + toString() + ". The type of the result 0 of arg 0 is " + result.getType() + ". "
                    + getType() + " was expected.");
                }
            }
 
-           notEvaluated = false;
-       }
+//           notEvaluated = false;
+//       }
 
     }
     

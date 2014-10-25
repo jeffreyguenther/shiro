@@ -99,7 +99,7 @@ public class GraphBuilder extends ShiroExpressionListener {
                         List<ShiroParser.ExprContext> exprs = assignment.mfparams().expr();
                         // for each function
                             // get the port at the same index
-                            // set the ports args to the same expression
+                            // add the ports args to the same expression
                     }
                 }
 

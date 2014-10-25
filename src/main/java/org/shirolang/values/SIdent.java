@@ -27,7 +27,6 @@ package org.shirolang.values;
 import java.util.Collections;
 import java.util.List;
 
-import org.omg.SendingContext.RunTime;
 import org.shirolang.base.SFunc;
 import org.shirolang.base.SFuncBase;
 import org.shirolang.base.Scope;
@@ -85,9 +84,15 @@ public class SIdent extends SFuncBase{
     
     @Override
     public void evaluate() {
+
         if(!isSelector()) {
             try {
-                results.set(scope.resolvePath(value));
+                if(!results.isEmpty()){
+                    results.set(scope.resolvePath(value), 0);
+                }else {
+                    results.add(scope.resolvePath(value));
+                }
+
             } catch (PathNotFoundException e) {
                 throw new RuntimeException(e.getMessage());
             }

@@ -88,7 +88,7 @@ public class SGraph implements Scope, Consoleable{
 
     /**
      * Gets the node instances in the graph
-     * @return the set of node instances in the graph
+     * @return the add of node instances in the graph
      */
     public Set<SNode> getNodes(){
         return new HashSet<>(nodes.values());
@@ -118,7 +118,7 @@ public class SGraph implements Scope, Consoleable{
 
     /**
      * Gets all of the ports in the graph
-     * @return the set of named ports in the graph
+     * @return the add of named ports in the graph
      */
     public Set<SFunc> getPorts(){
         HashSet<SFunc> allPorts = new HashSet<>(ports.values());
@@ -262,12 +262,11 @@ public class SGraph implements Scope, Consoleable{
     public String toConsole(){
         StringBuilder sb = new StringBuilder();
 
-        sb.append("#<").append(name).append(" [");
+        sb.append("#<Graph::").append(name).append("\n[");
 
         for(GraphNode<SFunc> n: graph.getNodes()){
             sb.append(formatDependency(n));
         }
-        sb.deleteCharAt(sb.length() - 2);
         sb.append("]>");
         return sb.toString();
     }
@@ -288,11 +287,12 @@ public class SGraph implements Scope, Consoleable{
                     .append(" => ")
                     .append(func.getFullName())
                     .append(func.toConsole())
-                .append("  ");
+                .append("\n");
             }
         }else{
             sb.append(dependent.getFullName())
-              .append(dependent.toConsole());
+              .append(dependent.toConsole())
+              .append("\n");
         }
 
         return sb.toString();

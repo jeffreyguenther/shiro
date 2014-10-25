@@ -34,7 +34,7 @@ import java.util.List;
  * Defines a multi-function to be used in Shiro.
  * A multi-function is the most basic object in Shiro. It is used to represent numbers, expressions, and nodes.
  * A multi-function is simply a function that returns multiple values. It is deterministic - given the same
- * inputs, you will get the same set of results.
+ * inputs, you will get the same add of results.
  *
  * Arguments and results can be access by name and by index. Implementing classes should map names to indices
  */
@@ -98,7 +98,7 @@ public interface SFunc extends Consoleable {
 
     /**
      * Sets the arg
-     * @param i index of the arg to set
+     * @param i index of the arg to add
      * @param v value to store
      */
     void setArg(Integer i, SFunc v);

@@ -113,7 +113,7 @@ public class GraphNode<T> {
 
     /***
      * Gets the graph nodes depended upon
-     * @return set of graph nodes depended upon
+     * @return add of graph nodes depended upon
      */
     public Set<GraphNode<T>> getNodesDependedOn() {
         return nodesDependedOn;
@@ -121,7 +121,7 @@ public class GraphNode<T> {
 
     /***
      * Sets the nodes depended upon
-     * @param nodesDependedOn set of nodes to be depended upon
+     * @param nodesDependedOn add of nodes to be depended upon
      */
     public void setNodesDependedOn(Set<GraphNode<T>> nodesDependedOn) {
         this.nodesDependedOn = nodesDependedOn;

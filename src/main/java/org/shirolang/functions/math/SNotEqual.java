@@ -44,13 +44,13 @@ public class SNotEqual extends SBinaryFunction{
         args.setKeyForIndex("a", 0);
         args.setKeyForIndex("b", 1);
         
-        results.set(null);
+        results.add(null);
     }
     
     public SNotEqual(SFunc a, SFunc b){
         this();
-        args.set(a);
-        args.set(b);
+        args.add(a);
+        args.add(b);
     }
 
     @Override

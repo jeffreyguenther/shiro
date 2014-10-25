@@ -40,16 +40,16 @@ public class SIndexedMapTest {
     @Test
     public void size(){
         SIndexedMap<Integer> ints = new SIndexedMap<>();
-        ints.set(1);
+        ints.add(1);
         assertEquals(1, ints.size());
     }
     
     @Test
     public void getAll(){
         SIndexedMap<Integer> ints = new SIndexedMap<>();
-        ints.set(1);
-        ints.set(3);
-        ints.set(5);
+        ints.add(1);
+        ints.add(3);
+        ints.add(5);
         
         List<Integer> values = ints.getAll();
         assertEquals(3, values.size());
