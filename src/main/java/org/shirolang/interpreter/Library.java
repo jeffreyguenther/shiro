@@ -314,7 +314,7 @@ public class Library {
      * including the default graph
      */
     public Set<SGraph> getGraphs(){
-        return new HashSet(graphs.values());
+        return new HashSet<SGraph>(graphs.values());
     }
 
     /**

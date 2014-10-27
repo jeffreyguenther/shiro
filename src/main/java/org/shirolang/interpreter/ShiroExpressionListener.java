@@ -174,7 +174,7 @@ public class ShiroExpressionListener extends ShiroBaseListener {
     }
 
     @Override
-    public void enterPath(ShiroParser.PathContext ctx) {
+    public void enterPath(@NotNull ShiroParser.PathContext ctx) {
         setExpr(ctx, createPath(scope.peek(), ctx));
     }
 
@@ -325,26 +325,6 @@ public class ShiroExpressionListener extends ShiroBaseListener {
         }
 
         setExpr(ctx, function);
-
-//        // if the function is not one of the literals (number, string, etc.)
-//        if (!function.getSymbolType().isLiteral() && args.size() >= 1) {
-//            setArgs(function, args);
-//            function.setName(portName);
-//            setExpr(ctx, function);
-//        }else{
-//            function = getExpr(args.get(0));
-//            function.setSymbolType(SymbolType.PORT);
-//            function.setName(portName);
-//            setExpr(ctx, function);
-//
-//            int line = ctx.mfCall().mfName().MFNAME().getSymbol().getLine();
-//            int col = ctx.mfCall().mfName().MFNAME().getSymbol().getCharPositionInLine();
-//
-////            if(!function.getType().equals(mfName)){
-////                throw new RuntimeException(line + ":" + col + " Literal expression is "
-////                        + function.getType() + ", but should be " + mfName);
-////            }
-//        }
     }
 
     protected void setArgs(SFunc function, List<ShiroParser.ExprContext> args){
