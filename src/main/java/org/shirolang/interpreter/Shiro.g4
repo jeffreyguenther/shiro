@@ -127,8 +127,12 @@ portAssignment
     :	path '(' mfparams ')' NEWLINE
     ;
 
-inLineExpr
+anonExpr
     : expr NEWLINE
+    ;
+
+inLineExpr
+    : anonExpr
     | nodeProduction
     | portDeclInit NEWLINE
     | portAssignment

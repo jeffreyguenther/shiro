@@ -37,6 +37,7 @@ public class InlineGraphBuilder extends GraphBuilder {
     private SFunc lastFuncProcessed;
     private final SGraph defaultGraph;
     private boolean isInLine;
+    private boolean isAnonExpr;
 
 
     public InlineGraphBuilder(Library lib) {
@@ -45,12 +46,13 @@ public class InlineGraphBuilder extends GraphBuilder {
         defaultGraph = library.getDefaultGraph();
         scope.push(defaultGraph);
         isInLine = false;
+        isAnonExpr = false;
     }
 
     /**
      * Store the tree of multi-functions associated with the parse tree
      *
-     * @param node parse tree node to associate expresssion with
+     * @param node parse tree node to associate expression with
      * @param expr expression to associate with parse tree node
      */
     @Override
@@ -68,6 +70,23 @@ public class InlineGraphBuilder extends GraphBuilder {
 
     public SFunc getLastLine() {
         return lastFuncProcessed;
+    }
+
+    @Override
+    public void enterAndExpr(@NotNull ShiroParser.AndExprContext ctx) {
+        isAnonExpr = true;
+    }
+
+    @Override
+    public void exitAnonExpr(@NotNull ShiroParser.AnonExprContext ctx) {
+        isAnonExpr = false;
+
+        defaultGraph.addPort(getExpr(ctx.expr()));
+    }
+
+    @Override
+    public void exitAddExpr(ShiroParser.AddExprContext ctx) {
+        super.exitAddExpr(ctx);
     }
 
     @Override

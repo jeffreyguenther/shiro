@@ -1,0 +1,4 @@
+port a Double(11.0)
+port b Double(2.0)
+port c Power(a, b)
+c + b

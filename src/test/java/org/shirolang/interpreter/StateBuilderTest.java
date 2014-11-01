@@ -32,7 +32,7 @@ import org.shirolang.base.SState;
 import java.io.IOException;
 
 /**
- *
+ * Test the state builder
  */
 public class StateBuilderTest extends ShiroBaseTest{
     @Test
