@@ -29,73 +29,30 @@ import org.shirolang.values.SDouble;
 import org.shirolang.values.SInteger;
 
 /**
- *
- * @author jeffreyguenther
+ * Represents the binary operator "*"
  */
-public class SMultiply extends SBinaryFunction{
+public class SMultiply extends SBinaryArithmeticFunction{
 
     public SMultiply() {
         super();
-        // setup args
-        args.setKeyForIndex("a", 0);
-        args.setKeyForIndex("b", 1);
-        
-        results.add(null);
+        setupBinaryArithmeticArgs();
     }
     
     public SMultiply(SFunc a, SFunc b){
         this();
-        args.add(a);
-        args.add(b);
+        setBinaryArgs(a, b);
     }
 
     @Override
     public void evaluate() {
-        SFunc lhs = args.get(0).getResult();
-        SFunc rhs = args.get(1).getResult();
+        SFunc lhs = getArg(0).getResult();
+        SFunc rhs = getArg(1).getResult();
         
-        // Only allow doubles to be added     
-        if(lhs.isDouble() && rhs.isDouble()){
-            Double l = ((SDouble) lhs).getValue();
-            Double r = ((SDouble) rhs).getValue();
-            Double sum = l * r;
-            
-            SDouble s = new SDouble(sum);
-            s.evaluate();
-            
-            results.set(s, 0);
-        }else if(lhs.isInteger() && rhs.isInteger()){
-            Integer l = ((SInteger) lhs).getValue();
-            Integer r = ((SInteger) rhs).getValue();
-            Integer sum = l * r;
-            
-            SInteger s = new SInteger(sum);
-            s.evaluate();
-            
-            results.set(s, 0);
-        }else if (lhs.isDouble() && rhs.isInteger()){
-            Double l = ((SDouble) lhs).getValue();
-            Integer r = ((SInteger) rhs).getValue();
-            Double sum = l * r;
-
-            SDouble s = new SDouble(sum);
-            s.evaluate();
-
-            results.set(s, 0);
-        }else if (lhs.isInteger() && rhs.isDouble()){
-            Integer l = ((SInteger) lhs).getValue();
-            Double r = ((SDouble) rhs).getValue();
-            Double sum = l * r;
-
-            SDouble s = new SDouble(sum);
-            s.evaluate();
-
-            results.set(s, 0);
-        }else{
-            // identify which argument is not a double
-            throw new RuntimeException("Only Doubles and Integers can be multiplied. Instead we found " 
-                    + lhs.getType() + " and " + rhs.getType());
-        }
+        computeBinaryArithmetic(lhs, rhs, "multiplied",
+                (a, b) -> a * b,
+                (a, b) -> a * b,
+                (a, b) -> a * b,
+                (a, b) -> a * b);
     }
 
     @Override

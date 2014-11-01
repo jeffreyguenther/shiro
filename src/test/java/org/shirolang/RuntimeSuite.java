@@ -33,17 +33,14 @@ import org.shirolang.interpreter.InterpreterSuite;
 import org.shirolang.interpreter.ShiroRuntimeTest;
 
 /**
- *
- * @author jeffreyguenther
+ * Tests the components of the runtime.
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
     SIndexedMapTest.class,
     MathSuite.class,
     SymbolTypeTest.class,
-    SNodeTest.class,
     InterpreterSuite.class
 })
 public class RuntimeSuite {
-    
 }

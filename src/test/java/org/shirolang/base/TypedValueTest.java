@@ -21,27 +21,31 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package org.shirolang.interpreter;
+package org.shirolang.base;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.shirolang.base.SGraphTest;
-import org.shirolang.base.SNodeTest;
+import org.junit.Assert;
+import org.junit.Test;
+import org.shirolang.values.SDouble;
+import org.shirolang.values.SString;
 
 /**
- * Runs the test for the interpreter
+ *
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
-        DefinitionCollectorTest.class,
-        GraphBuilderTest.class,
-        LibraryTest.class,
-        NameManagerTest.class,
-        NodeInstantiatorTest.class,
-        ShiroRuntimeTest.class,
-        SGraphTest.class,
-        SNodeTest.class,
-        StateBuilderTest.class
-})
-public class InterpreterSuite {
+public class TypedValueTest {
+    @Test
+    public void doesTypeMatch(){
+        TypedValue tv = new TypedValue("Double");
+        SDouble d = new SDouble(12.34);
+
+        tv.setValue(d);
+        Assert.assertTrue(tv.doesTypeMatch(d));
+        Assert.assertTrue(tv.doesTypeMatch(d.getType()));
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void doesTypeMatchFail(){
+        TypedValue tv = new TypedValue("Double");
+        SString s = new SString("sf");
+        tv.setValue(s);
+    }
 }

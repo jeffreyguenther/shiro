@@ -28,9 +28,12 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.shirolang.exceptions.OptionNotFoundException;
 import org.shirolang.exceptions.PathNotFoundException;
+import org.shirolang.functions.finance.SSimpleInterest;
 import org.shirolang.values.*;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -422,7 +425,6 @@ public class SNodeTest {
         SInteger i = new SInteger("b", 11);
         n.addPort(i);
         SIdent id = new SIdent(n, "b");
-//        n.addPort(id);
         SInteger i2 = new SInteger();
         i2.appendArg(id);
         n.addPort(i2);
@@ -433,6 +435,42 @@ public class SNodeTest {
         expected.add(i2);
 
         Assert.assertEquals(expected, n.getPorts());
+    }
 
+    @Test
+    public void resolvePathIndices(){
+        SNode n = new SNode();
+        SDouble p = new SDouble("p", 100.0);
+        SDouble r = new SDouble("r", 0.05);
+        SDouble t = new SDouble("t", 1.0);
+
+        SSimpleInterest interest = new SSimpleInterest();
+        interest.setName("eval");
+        interest.setArg(SSimpleInterest.PRINCIPAL, p);
+        interest.setArg(SSimpleInterest.RATE, r);
+        interest.setArg(SSimpleInterest.DURATION, t);
+        n.addPort(interest);
+
+        List<String> parts = new ArrayList<>();
+        parts.add("eval");
+        Path path = new Path(parts, 0);
+        SIdent id = new SIdent(n, path);
+
+        List<String> parts2 = new ArrayList<>();
+        parts2.add("eval");
+        Path path2 = new Path(parts2, "value");
+        SIdent id2 = new SIdent(n, path2);
+
+        p.evaluate();
+        r.evaluate();
+        t.evaluate();
+        interest.evaluate();
+        id.evaluate();
+        id2.evaluate();
+
+        SDouble resInterest = (SDouble) id.getResult();
+        SDouble resValue = (SDouble) id2.getResult();
+        Assert.assertEquals(5.0, resInterest.getValue(), 1e-15);
+        Assert.assertEquals(105.0, resValue.getValue(), 1e-15);
     }
 }

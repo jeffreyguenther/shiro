@@ -27,10 +27,10 @@ package org.shirolang.functions.math;
 import org.shirolang.base.SFuncBase;
 
 /**
- *
- * @author jeffreyguenther
+ * Represents the base of a unary operator
  */
 public abstract class SUnaryFunction extends SFuncBase{
+    protected static final String A = "a";
 
     @Override
     public int getMaxArgs() {

@@ -13,20 +13,20 @@ import org.shirolang.base.SFunc;
 import org.shirolang.functions.math.SBinaryFunction;
 
 /**
- *
- * @author jeffreyguenther
+ * Represents a multi-function to map a list of values
  */
 public class SMap extends SBinaryFunction{
     
     public SMap(SFunc list, SFunc func){
-        args.add(list);
-        args.add(func);
+        // TODO fix me
+//        args.add(list);
+//        args.add(func);
     }
 
     @Override
     public void evaluate() {
-        SList list = (SList) args.get(0);
-        SFunc func = args.get(1);
+        SList list = (SList) getArg(0);
+        SFunc func = getArg(1);
         
         List<SFunc> rs = new ArrayList<>();
         List<SFunc> rawValues = list.getValue();
@@ -37,8 +37,9 @@ public class SMap extends SBinaryFunction{
             SFunc r = func.getArg();
             rs.add(r);
         }
-        
-        results.add(new SList(rs));
+
+        //FIXME
+//        results.add(new SList(rs));
     }
 
     @Override

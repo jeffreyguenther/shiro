@@ -29,50 +29,44 @@ import org.shirolang.values.SDouble;
 import org.shirolang.values.SInteger;
 
 /**
- *
- * @author jeffreyguenther
+ *  Represents the binary operator "%" (modulo)
  */
-public class SModulo extends SBinaryFunction{
+public class SModulo extends SBinaryArithmeticFunction{
 
     public SModulo() {
         super();
-        // setup args
-        args.setKeyForIndex("a", 0);
-        args.setKeyForIndex("b", 1);
-        
-        results.add(null);
+        setupBinaryArithmeticArgs();
     }
     
-    public SModulo(SFunc a, SFunc b){
+    public SModulo(SFunc a, SFunc b) {
         this();
-        args.add(a);
-        args.add(b);
+        setBinaryArgs(a, b);
     }
 
     @Override
     public void evaluate() {
-        SFunc lhs = args.get(0).getResult();
-        SFunc rhs = args.get(1).getResult();
+        SFunc lhs = getArg(0).getResult();
+        SFunc rhs = getArg(1).getResult();
         
         // Only allow doubles to be added     
         if(lhs.isDouble() && rhs.isDouble()){
             Double l = ((SDouble) lhs).getValue();
             Double r = ((SDouble) rhs).getValue();
-            Double sum = l % r;
+            Double result = l % r;
             
-            SDouble s = new SDouble(sum);
+            SDouble s = new SDouble(result);
             s.evaluate();
-            
-            results.set(s, 0);
+
+            returnDouble(s);
         }else if(lhs.isInteger() && lhs.isInteger()){
             Integer l = ((SInteger) lhs).getValue();
             Integer r = ((SInteger) rhs).getValue();
-            Integer sum = l % r;
+            Integer result = l % r;
             
-            SInteger s = new SInteger(sum);
+            SInteger s = new SInteger(result);
             s.evaluate();
-            
-            results.set(s, 0);
+
+            returnInteger(s);
         }else{
             // identify which argument is not a double
             throw new RuntimeException("Only Doubles and Integers can be moduloed.");

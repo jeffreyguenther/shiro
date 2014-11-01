@@ -27,10 +27,7 @@ package org.shirolang.values;
 import java.util.Collections;
 import java.util.List;
 
-import org.shirolang.base.SFunc;
-import org.shirolang.base.SFuncBase;
-import org.shirolang.base.Scope;
-import org.shirolang.base.SymbolType;
+import org.shirolang.base.*;
 import org.shirolang.exceptions.PathNotFoundException;
 
 /**
@@ -81,16 +78,38 @@ public class SIdent extends SFuncBase{
     public Path getValue(){
         return value;
     }
-    
+
+    /**
+     * Gets the type of the port referenced by the identifier
+     * @return the type of the port
+     * @throws PathNotFoundException
+     */
+    public String getReferencedPortType() throws PathNotFoundException {
+        SFunc func = scope.resolvePath(value);
+        return func.getType();
+    }
+
     @Override
     public void evaluate() {
 
         if(!isSelector()) {
             try {
+                /**
+                 * Because an identifier simply resolves a path to
+                 * a particular part, the type of it's return
+                 * should be set to the type of the node it finds.
+                 */
+                SFunc func = scope.resolvePath(value);
                 if(!results.isEmpty()){
-                    results.set(scope.resolvePath(value), 0);
+                    TypedValue v = results.get(0);
+                    v.setAcceptedTypes(func.getType());
+                    v.setValue(func);
+
+                    results.set(v, 0);
                 }else {
-                    results.add(scope.resolvePath(value));
+                    TypedValue v = new TypedValue(func.getType(), func);
+
+                    results.add(v);
                 }
 
             } catch (PathNotFoundException e) {

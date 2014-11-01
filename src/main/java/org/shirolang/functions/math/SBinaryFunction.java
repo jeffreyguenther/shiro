@@ -24,13 +24,38 @@
 
 package org.shirolang.functions.math;
 
+import org.shirolang.base.SFunc;
 import org.shirolang.base.SFuncBase;
+import org.shirolang.base.TypedValue;
+import org.shirolang.values.SDouble;
+import org.shirolang.values.SInteger;
 
 /**
- *
- * @author jeffreyguenther
+ * Represent the common methods and fields of a binary multi-function
  */
 public abstract class SBinaryFunction extends SFuncBase{
+    protected static final String A = "a";
+    protected static final String B = "b";
+
+    public SBinaryFunction(){
+        super();
+    }
+
+    protected void setBinaryArgs(SFunc a, SFunc b){
+        setArg(A, a);
+        setArg(B, b);
+    }
+
+    protected void setupBinaryLogicArgs(){
+        // setup args
+        args.setKeyForIndex(A, 0);
+        args.add(new TypedValue("Boolean"));
+
+        args.setKeyForIndex(B, 1);
+        args.add(new TypedValue("Boolean"));
+
+        results.add(new TypedValue("Boolean"));
+    }
 
     @Override
     public int getMaxArgs() {

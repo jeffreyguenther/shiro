@@ -340,12 +340,11 @@ public class ShiroExpressionListener extends ShiroBaseListener {
         }
 
         // todo add argument type checking
-        // todo add support for argument maps
 
         // append the args to the function
-        for (ShiroParser.ExprContext arg : args) {
-            SFunc exp = getExpr(arg);
-            function.appendArg(exp);
+        for (int i = 0; i < args.size(); i++) {
+            SFunc exp = getExpr(args.get(i));
+            function.setArg(i, exp);
         }
     }
 

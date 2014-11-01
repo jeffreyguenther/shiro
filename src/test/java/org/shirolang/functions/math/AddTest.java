@@ -1,15 +1,3 @@
-package org.shirolang.functions.math;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import org.junit.Test;
-import org.shirolang.base.SFunc;
-import org.shirolang.base.SGraph;
-import org.shirolang.values.SDouble;
-import org.shirolang.values.SIdent;
-import org.shirolang.values.SInteger;
-import org.shirolang.values.SString;
-
 /*
  * The MIT License
  *
@@ -34,14 +22,25 @@ import org.shirolang.values.SString;
  * THE SOFTWARE.
  */
 
+package org.shirolang.functions.math;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.junit.Test;
+import org.shirolang.base.SFunc;
+import org.shirolang.base.SGraph;
+import org.shirolang.values.SDouble;
+import org.shirolang.values.SIdent;
+import org.shirolang.values.SInteger;
+import org.shirolang.values.SString;
+
 /**
- *
- * Test the Shiro add method
+ * Test the Add multi-function
  */
 public class AddTest {
     @Test
     public void getType(){
-        SAdd a = new SAdd(null, null);
+        SAdd a = new SAdd();
         assertEquals("Should be 'Add'", "Add", a.getType());
     }
     

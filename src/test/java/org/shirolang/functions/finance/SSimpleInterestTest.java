@@ -21,27 +21,16 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package org.shirolang.interpreter;
+package org.shirolang.functions.finance;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.shirolang.base.SGraphTest;
-import org.shirolang.base.SNodeTest;
+import org.junit.Test;
 
 /**
- * Runs the test for the interpreter
+ *
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
-        DefinitionCollectorTest.class,
-        GraphBuilderTest.class,
-        LibraryTest.class,
-        NameManagerTest.class,
-        NodeInstantiatorTest.class,
-        ShiroRuntimeTest.class,
-        SGraphTest.class,
-        SNodeTest.class,
-        StateBuilderTest.class
-})
-public class InterpreterSuite {
+public class SSimpleInterestTest {
+    @Test
+    public void constructor(){
+        SSimpleInterest si = new SSimpleInterest();
+    }
 }

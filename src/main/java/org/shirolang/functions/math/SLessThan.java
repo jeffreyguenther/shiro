@@ -26,59 +26,30 @@ package org.shirolang.functions.math;
 
 import org.shirolang.base.SFunc;
 import static org.shirolang.base.SType.LESSTHAN;
-import org.shirolang.values.SBoolean;
-import org.shirolang.values.SDouble;
-import org.shirolang.values.SInteger;
+
+import org.shirolang.base.TypedValue;
 
 /**
- *
- * @author jeffreyguenther
+ * Represents the binary operator "&lt;"
  */
-public class SLessThan extends SBinaryFunction{
+public class SLessThan extends SBinaryComparisonFunction {
 
     public SLessThan() {
         super();
-        // setup args
-        args.setKeyForIndex("a", 0);
-        args.setKeyForIndex("b", 1);
-        
-        results.add(null);
+        setupBinaryComparison();
     }
     
     public SLessThan(SFunc a, SFunc b){
         this();
-        args.add(a);
-        args.add(b);
+        setBinaryArgs(a, b);
     }
 
     @Override
     public void evaluate() {
-        SFunc lhs = args.get(0).getResult();
-        SFunc rhs = args.get(1).getResult();
-        
-        // Only allow doubles to be added     
-        if(lhs.isDouble() && rhs.isDouble()){
-            Double l = ((SDouble) lhs).getValue();
-            Double r = ((SDouble) rhs).getValue();
-            Boolean gt = l < r;
-            
-            SBoolean s = new SBoolean(gt);
-            s.evaluate();
-            
-            results.set(s, 0);
-        }else if(lhs.isInteger() && lhs.isInteger()){
-            Integer l = ((SInteger) lhs).getValue();
-            Integer r = ((SInteger) rhs).getValue();
-            Boolean gt = l < r;
-            
-            SBoolean s = new SBoolean(gt);
-            s.evaluate();
-            
-            results.set(s, 0);
-        }else{
-            // identify which argument is not a double
-            throw new RuntimeException("Only Doubles and Integers can be compared.");
-        }
+        SFunc lhs = getArg(0).getResult();
+        SFunc rhs = getArg(1).getResult();
+
+        compute(lhs, rhs, (a, b) -> a < b, (a, b) -> a < b);
     }
 
     @Override

@@ -25,31 +25,29 @@
 package org.shirolang.functions.math;
 
 import org.shirolang.base.SFunc;
+import org.shirolang.base.TypedValue;
 import org.shirolang.values.SDouble;
 import org.shirolang.values.SInteger;
 
 /**
- *
- * @author jeffreyguenther
+ * Represents the unary negation "-" operator
  */
 public class SNegative extends SUnaryFunction{
 
     public SNegative() {
         super();
-        // setup args
-        args.setKeyForIndex("a", 0);
-        
-        results.add(null);
+        args.setKeyForIndex(A, 0);
+        args.add(new TypedValue("Integer", "Double"));
     }
     
     public SNegative(SFunc a){
         this();
-        args.add(a);
+        setArg(A, a);
     }
 
     @Override
     public void evaluate() {
-        SFunc lhs = args.get(0).getResult();
+        SFunc lhs = getArg(0).getResult();
      
         if(lhs.isInteger()){
             Integer l = ((SInteger) lhs).getValue();
@@ -57,16 +55,18 @@ public class SNegative extends SUnaryFunction{
             
             SInteger s = new SInteger(product);
             s.evaluate();
-            
-            results.set(s, 0);
+
+            results.add(new TypedValue("Integer"));
+            setResult(0, s);
         }else if(lhs.isDouble()){
             Double d = ((SDouble) lhs).getValue();
             Double product = -1 * d;
             
             SDouble s = new SDouble(product);
             s.evaluate();
-            
-            results.set(s, 0);
+
+            results.add(new TypedValue("Double"));
+            setResult(0, s);
         }else{
             // identify which argument is not a double
             throw new RuntimeException("Only Integers and Doubles can be made negative. "

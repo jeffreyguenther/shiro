@@ -26,35 +26,30 @@ package org.shirolang.functions.math;
 
 import org.shirolang.base.SFunc;
 import static org.shirolang.base.SType.AND;
+
+import org.shirolang.base.TypedValue;
 import org.shirolang.values.SBoolean;
 
 /**
- *
- * @author jeffreyguenther
+ * Represents the binary "&amp;&amp;" operator
  */
 public class SAnd extends SBinaryFunction{
 
     public SAnd() {
         super();
-        // setup args
-        args.setKeyForIndex("a", 0);
-        args.setKeyForIndex("b", 1);
-        
-        results.add(null);
+        setupBinaryLogicArgs();
     }
     
     public SAnd(SFunc a, SFunc b){
         this();
-        args.add(a);
-        args.add(b);
+        setBinaryArgs(a, b);
     }
 
     @Override
     public void evaluate() {
-        SFunc lhs = args.get(0).getResult();
-        SFunc rhs = args.get(1).getResult();
-        
-        // Only allow doubles to be added     
+        SFunc lhs = getArg(0).getResult();
+        SFunc rhs = getArg(1).getResult();
+
         if(lhs.isBoolean() && rhs.isBoolean()){
             Boolean l = ((SBoolean) lhs).getValue();
             Boolean r = ((SBoolean) rhs).getValue();
@@ -63,10 +58,10 @@ public class SAnd extends SBinaryFunction{
             SBoolean s = new SBoolean(sum);
             s.evaluate();
             
-            results.set(s, 0);
+            setResult(0, s);
         }else{
             // identify which argument is not a double
-            throw new RuntimeException("Only Booleans can be used with And.");
+            throw new RuntimeException("Only Booleans can be compared with And.");
         }
     }
 

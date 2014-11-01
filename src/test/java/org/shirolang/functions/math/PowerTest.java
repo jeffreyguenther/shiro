@@ -1,14 +1,3 @@
-package org.shirolang.functions.math;
-
-import java.util.List;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import org.junit.Test;
-import org.shirolang.base.SFunc;
-import org.shirolang.values.SDouble;
-import org.shirolang.values.SInteger;
-import org.shirolang.values.SString;
-
 /*
  * The MIT License
  *
@@ -33,9 +22,19 @@ import org.shirolang.values.SString;
  * THE SOFTWARE.
  */
 
+package org.shirolang.functions.math;
+
+import java.util.List;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.junit.Test;
+import org.shirolang.base.SFunc;
+import org.shirolang.values.SDouble;
+import org.shirolang.values.SInteger;
+import org.shirolang.values.SString;
+
 /**
- *
- * @author jeffreyguenther
+ * Tests the power multi-function
  */
 public class PowerTest {
     @Test

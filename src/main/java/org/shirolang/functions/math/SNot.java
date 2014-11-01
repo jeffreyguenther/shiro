@@ -25,30 +25,30 @@
 package org.shirolang.functions.math;
 
 import org.shirolang.base.SFunc;
+import org.shirolang.base.TypedValue;
 import org.shirolang.values.SBoolean;
 
 /**
- *
- * @author jeffreyguenther
+ * Represents the negate unary operator "!"
  */
 public class SNot extends SUnaryFunction{
 
     public SNot() {
         super();
         // setup args
-        args.setKeyForIndex("a", 0);
-        
-        results.add(null);
+        args.setKeyForIndex(A, 0);
+        args.add(new TypedValue("Boolean"));
+        results.add(new TypedValue("Boolean"));
     }
     
     public SNot(SFunc a){
         this();
-        args.add(a);
+        setArg(A, a);
     }
 
     @Override
     public void evaluate() {
-        SFunc lhs = args.get(0).getResult();
+        SFunc lhs = getArg(0).getResult();
              
         if(lhs.isBoolean()){
             Boolean l = ((SBoolean) lhs).getValue();
@@ -56,8 +56,8 @@ public class SNot extends SUnaryFunction{
             
             SBoolean s = new SBoolean(bool);
             s.evaluate();
-            
-            results.set(s, 0);
+
+            setResult(0, s);
         }else{
             // identify which argument is not a double
             throw new RuntimeException("Only Booleans can be negated.");

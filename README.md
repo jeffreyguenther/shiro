@@ -6,13 +6,13 @@ Shiro is a data flow programming language designed to be embedded into applicati
 Getting Started
 ===============
 
-Shiro is implemented in Java. [Gradle](http://www.gradle.org/) is used as the build system and dependency manager. The interpreter depends on [ANTLR 4.2](http://www.antlr.org/) to generate the parser, lexer and parse tree event listeners. `build.gradle` is setup to automatically generate the Java code at compile time. You can use gradle from the commandline or use Netbeans or Eclipse, as both IDE's support gradle projects. With Netbeans, change the Build Script Evaluation Strategy to "IDEA plugin based."
+Shiro is implemented in Java. [Gradle](http://www.gradle.org/) is used as the build system and dependency manager. The interpreter depends on [ANTLR 4.3](http://www.antlr.org/) to generate the parser, lexer and parse tree event listeners. `build.gradle` is setup to automatically generate the Java code at compile time. You can use gradle from the commandline or use Netbeans or Eclipse, as both IDE's support gradle projects. With Netbeans, change the Build Script Evaluation Strategy to "IDEA plugin based."
 
 You can run the Shiro interpreter using this command within the shiro subdirectory
 
     $ gradle run
 
-This will start the **Shiro Viewer** application that allows you to load and run Shiro code. Currently, you cannot run execute Shiro code from the commandline.
+This will start the **Shiro Playground** application that allows you to load and run Shiro code. Currently, you cannot run execute Shiro code from the commandline.
 
 To create an executable for your OS, use the javafx-gradle plugin:
 
@@ -42,7 +42,7 @@ This project is the result of research being conducted at [Simon Fraser Universi
 #### People
 * [Jeffrey Guenther](http://jeffreyguenther.com) - Design and Implementer
 * [Chris Shaw](http://www.sfu.ca/~shaw/) - PhD Supervisor
-* [Robert Woodbury](http://www.siat.sfu.ca/faculty/profile/rob-woodbury) - PhD Commitee member
+* [Robert Woodbury](http://www.siat.sfu.ca/faculty/profile/rob-woodbury) - PhD Committee member
 * [Siniša Kolarić](http://www.sfu.ca/~skolaric/) - Research Group Colleague
 * [Ankit Gupta](http://www.linkedin.com/pub/ankit-gupta/37/b7b/851) - Research Group Colleague
 

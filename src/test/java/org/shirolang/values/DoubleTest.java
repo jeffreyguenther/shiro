@@ -106,6 +106,7 @@ public class DoubleTest {
 
         SDouble d = new SDouble();
         d.setSymbolType(SymbolType.PORT);
+
         d.appendArg(id);
         g.addPort(d);
 
@@ -130,6 +131,7 @@ public class DoubleTest {
 
         SDouble d = new SDouble();
         d.setSymbolType(SymbolType.PORT);
+
         d.appendArg(id);
         g.addPort(d);
 

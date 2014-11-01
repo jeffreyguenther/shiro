@@ -77,14 +77,6 @@ public class SGraphTest {
         Assert.assertTrue(g.getPorts().contains(d));
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void addPortException(){
-        SGraph g = new SGraph();
-
-        SDouble d = new SDouble();
-        g.addPort(d);
-    }
-
     @Test
     public void getPort(){
         SGraph g = new SGraph();

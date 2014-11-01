@@ -25,34 +25,29 @@
 package org.shirolang.functions.math;
 
 import org.shirolang.base.SFunc;
+import org.shirolang.base.SType;
 import org.shirolang.values.SDouble;
 import org.shirolang.values.SInteger;
 
 /**
- *
- * @author jeffreyguenther
+ * Represents the binary operator for power. Note, powers are not supported in expressions.
  */
-public class SPower extends SBinaryFunction{
+public class SPower extends SBinaryArithmeticFunction{
 
     public SPower() {
         super();
-        // setup args
-        args.setKeyForIndex("a", 0);
-        args.setKeyForIndex("b", 1);
-        
-        results.add(null);
+        setupBinaryArithmeticArgs();
     }
     
     public SPower(SFunc a, SFunc b){
         this();
-        args.add(a);
-        args.add(b);
+        setBinaryArgs(a, b);
     }
 
     @Override
     public void evaluate() {
-        SFunc lhs = args.get(0).getResult();
-        SFunc rhs = args.get(1).getResult();
+        SFunc lhs = getArg(0).getResult();
+        SFunc rhs = getArg(1).getResult();
 
         if(lhs.isDouble() && rhs.isDouble()){
             Double l = ((SDouble) lhs).getValue();
@@ -61,8 +56,8 @@ public class SPower extends SBinaryFunction{
             
             SDouble s = new SDouble(product);
             s.evaluate();
-            
-            results.set(s, 0);
+
+            returnDouble(s);
         }else if(lhs.isInteger() && rhs.isInteger()){
             Integer l = ((SInteger) lhs).getValue();
             Integer r = ((SInteger) rhs).getValue();
@@ -70,8 +65,8 @@ public class SPower extends SBinaryFunction{
             
             SInteger s = new SInteger(product);
             s.evaluate();
-            
-            results.set(s, 0);
+
+            returnInteger(s);
         }else if (lhs.isDouble() && rhs.isInteger()){
             Double l = ((SDouble) lhs).getValue();
             Integer r = ((SInteger) rhs).getValue();
@@ -80,7 +75,7 @@ public class SPower extends SBinaryFunction{
             SDouble s = new SDouble(product);
             s.evaluate();
 
-            results.set(s, 0);
+            returnDouble(s);
         }else if (lhs.isInteger() && rhs.isDouble()){
             Integer l = ((SInteger) lhs).getValue();
             Double r = ((SDouble) rhs).getValue();
@@ -89,15 +84,14 @@ public class SPower extends SBinaryFunction{
             SDouble s = new SDouble(product);
             s.evaluate();
 
-            results.set(s, 0);
+            returnDouble(s);
         }else{
-            // identify which argument is not a double
             throw new RuntimeException("Only Doubles and Integers can be used with exponents.");
         }
     }
 
     @Override
     public String getType() {
-        return "Power";
+        return SType.POWER;
     }
 }

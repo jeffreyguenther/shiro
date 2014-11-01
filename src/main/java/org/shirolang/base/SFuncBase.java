@@ -32,14 +32,18 @@ import org.shirolang.values.Path;
 import org.shirolang.values.SIdent;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * A base class to handle the common requirements
  * of implementing multi-functions.
  */
 public abstract class SFuncBase implements SFunc {
-    protected SIndexedMap<SFunc> args;
-    protected SIndexedMap<SFunc> results; 
+    protected SIndexedMap<TypedValue> args;
+    protected SIndexedMap<TypedValue> results;
     protected BooleanProperty isActive;
 
     protected StringProperty name;
@@ -55,36 +59,100 @@ public abstract class SFuncBase implements SFunc {
         symbolType = SymbolType.PORT;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public SFunc getArg() {
-        return args.get(0);
+        return args.get(0).getValue();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public SFunc getArg(String name) {
-        return args.get(name);
+        return args.get(name).getValue();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public SFunc getArg(Integer i) {
-        return args.get(i);
+        return args.get(i).getValue();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<SFunc> getArgs() {
-        return args.getAll();
+        // note the null filter. Because arguments can be stored without a value, some maybe null.
+        // We need to filter these out.
+        return args.values.stream().map(a -> a.getValue()).filter(Objects::nonNull).collect(toList());
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Set<String>> getArgTypes() {
+        return args.values.stream().map(a -> a.getAcceptedTypes()).collect(toList());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Set<String> getAcceptedTypes(int argIndex) {
+        return args.get(argIndex).getAcceptedTypes();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Set<String> getAcceptedType(String name) {
+        return args.get(name).getAcceptedTypes();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean doesExpectedTypeMatch(int argIndex, SFunc value) {
+        return args.get(argIndex).doesTypeMatch(value);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean doesExpectedTypeMatch(String argName, SFunc value) {
+        return args.get(argName).doesTypeMatch(value);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<String> getArgKeys() {
         return args.getKeys();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean hasArgs() {
-        return !args.isEmpty();
+        return !args.values.stream().map(a -> a.getValue()).anyMatch(Objects::isNull);
+//        return !args.isEmpty();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<SFunc> getDependencies() {
         return getArgs();
@@ -117,19 +185,68 @@ public abstract class SFuncBase implements SFunc {
         return getResult(0);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public SFunc getResult(Integer i) {
-        return results.get(i);
+        return results.get(i).getValue();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public SFunc getResult(String name) {
-        return results.get(name);
+        return results.get(name).getValue();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<SFunc> getResults() {
-        return results.getAll();
+        return results.values.stream().map(r -> r.getValue()).collect(toList());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<Set<String>> getResultTypes() {
+        return results.values.stream().map(r -> r.getAcceptedTypes()).collect(toList());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Set<String> getReturnedType(int resultIndex) {
+        return results.get(resultIndex).getAcceptedTypes();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Set<String> getReturnedType(String resultName) {
+        return results.get(resultName).getAcceptedTypes();
+    }
+
+    /**
+     {@inheritDoc}
+    **/
+    @Override
+    public void setResult(String name, SFunc value) {
+        results.get(name).setValue(value);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setResult(Integer resultIndex, SFunc value) {
+        results.get(resultIndex).setValue(value);
     }
 
     @Override
@@ -154,19 +271,19 @@ public abstract class SFuncBase implements SFunc {
 
     @Override
     public void setArg(String name, SFunc v){
-        args.set(v, name);
+        args.get(name).setValue(v);
     }
     
     @Override
     public void setArg(Integer i, SFunc v){
-        args.set(v, i);
+        args.get(i).setValue(v);
     }
-    
+
     @Override
-    public void appendArg(SFunc v){
-        args.add(v);
+    public void appendArg(SFunc arg) {
+        args.add(new TypedValue(arg.getType(), arg));
     }
-    
+
     private boolean isType(String t){
         return getType().equals(t);
     }
@@ -237,7 +354,7 @@ public abstract class SFuncBase implements SFunc {
      * @param values
      * @return
      */
-    private String printIndexMap(SIndexedMap<SFunc> values){
+    private String printIndexMap(SIndexedMap<TypedValue> values){
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < values.size(); i++) {
             // if there is a key associated with the index
@@ -247,7 +364,7 @@ public abstract class SFuncBase implements SFunc {
                 sb.append(key).append(":");
             }
 
-            SFunc func = values.get(i);
+            SFunc func = values.get(i).getValue();
             SymbolType type = func.getSymbolType();
             if(func == this){
                 func.setSymbolType(SymbolType.LITERAL);

@@ -32,13 +32,12 @@ import org.shirolang.values.SBoolean;
 import org.shirolang.values.SDouble;
 
 /**
- *
- * @author jeffreyguenther
+ * Test the Not multi-function
  */
 public class NotTest {
     @Test
     public void getType(){
-        SNot a = new SNot(null);
+        SNot a = new SNot();
         assertEquals("Should be 'Not'", "Not", a.getType());
     }
     

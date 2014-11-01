@@ -86,11 +86,12 @@ public class GraphBuilder extends ShiroExpressionListener {
                                 throw new RuntimeException(keys.get(i).getText() + " cannot be found in " + producedNode.getFullName());
                             }
 
-                            if(!port.hasArgs()){
-                                port.appendArg(getExpr(values.get(i)));
-                            }else{
+//                            if(!port.hasArgs()){
+//
+//                                port.appendArg(getExpr(values.get(i)));
+//                            }else{
                                 port.setArg(0, getExpr(values.get(i)));
-                            }
+//                            }
 
                         }
                     }

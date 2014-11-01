@@ -151,7 +151,7 @@ public class Library {
 
     /**
      * Instantiate a graph object from a parse tree
-     * Note: the graph is not stored in the libary.
+     * Note: the graph is not stored in the library after it is created.
      * You must store it yourself
      * @param tree parse tree of graph to instantiate
      * @param name name of graph
@@ -167,10 +167,8 @@ public class Library {
         return g;
     }
 
-
-
     /**
-     * Registers a function factory with the library. This is done to add
+     * Registers a function factory with the library. Use this method to add
      * a custom type to the Shiro runtime.
      * @param name name of the multi-function you are adding
      * @param f factory being associated with the name
@@ -287,14 +285,28 @@ public class Library {
         states.put(state.getName(), state);
     }
 
+    /**
+     * Gets the states stored in the library
+     * @return the map of states
+     */
     public Map<String, SState> getStates(){
         return states;
     }
 
+    /**
+     * Determines if the library has user defined states
+     * @return true if there are no state definitions stored in the
+     * library, otherwise false
+     */
     public boolean hasUserDefinedStates(){
         return !alternativeDefs.isEmpty();
     }
 
+    /**
+     * Determines if the library has user defined graphs
+     * @return true if there are no graph definitions stored in the
+     * library, otherwise false
+     */
     public boolean hasUserDefinedGraphs(){
         return !graphDefs.isEmpty();
     }
@@ -349,7 +361,4 @@ public class Library {
             throw new RuntimeException("Something crazy happened and an internal type is already defined!");
         }
     }
-
-
-
 }

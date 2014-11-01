@@ -27,6 +27,7 @@ package org.shirolang.values;
 import org.shirolang.base.SFunc;
 import org.shirolang.base.SFuncBase;
 import org.shirolang.base.SymbolType;
+import org.shirolang.base.TypedValue;
 
 /**
  * A base class to  help speed writing functional representations of values.
@@ -35,18 +36,16 @@ import org.shirolang.base.SymbolType;
  * these functions simply pass through the value. To add support for 
  * additional types to Shiro, extend this class and register it as a type with
  * runtime.
- * @author jeffreyguenther
  * @param <T>
  */
 public abstract class SValue<T> extends SFuncBase{
     private final T v;
-    private boolean notEvaluated;
     
     public SValue(T f) {
         super();
         this.v = f;
         symbolType = SymbolType.LITERAL;
-        notEvaluated = true;
+        args.add(new TypedValue(getType()));
     }
 
     public SValue(String name, T v){
@@ -57,36 +56,40 @@ public abstract class SValue<T> extends SFuncBase{
 
     @Override
     public void evaluate() {
-       // because values are repeated
+        if (getSymbolType().isLiteral()
+                || (getSymbolType().isPort() && !hasArgs())) {
+            if (results.isEmpty()) {
+                TypedValue v = new TypedValue(this.getType(), this);
 
-//       if(notEvaluated){
+                results.add(v);
+            } else {
+                TypedValue v = results.get(0);
+                v.setAcceptedTypes(this.getType());
+                v.setValue(this);
 
-           if(getSymbolType().isLiteral()
-                   || (getSymbolType().isPort() & !hasArgs())){
-               if(results.isEmpty()){
-                   results.add(this);
-               }else{
-                   results.set(this, 0);
-               }
+                results.set(v, 0);
+            }
 
-           }else{
-               SFunc arg = args.get(0);
-               SFunc result = arg.getResult();
-               if(result.getType().equals(this.getType())){
-                   if(results.isEmpty()){
-                       results.add(result);
-                   }else{
-                        results.set(result, 0);
-                   }
-               }else{
-                   throw new RuntimeException("Types don't match in " + toString() + ". The type of the result 0 of arg 0 is " + result.getType() + ". "
-                   + getType() + " was expected.");
-               }
-           }
+        } else {
+            SFunc arg = getArg(0);
+            SFunc result = arg.getResult();
+            if (result.getType().equals(this.getType())) {
+                if (results.isEmpty()) {
+                    TypedValue v = new TypedValue(result.getType(), result);
 
-//           notEvaluated = false;
-//       }
+                    results.add(v);
+                } else {
+                    TypedValue v = results.get(0);
+                    v.setAcceptedTypes(result.getType());
+                    v.setValue(result);
 
+                    results.set(v, 0);
+                }
+            } else {
+                throw new RuntimeException("Types don't match in " + toString() + ". The type of the result 0 of arg 0 is " + result.getType() + ". "
+                        + getType() + " was expected.");
+            }
+        }
     }
     
     public T getValue(){

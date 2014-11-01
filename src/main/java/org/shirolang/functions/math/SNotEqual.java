@@ -34,62 +34,28 @@ import org.shirolang.values.SString;
 
 /**
  *
- * @author jeffreyguenther
  */
-public class SNotEqual extends SBinaryFunction{
+public class SNotEqual extends SBinaryComparisonFunction{
 
     public SNotEqual() {
         super();
-        // setup args
-        args.setKeyForIndex("a", 0);
-        args.setKeyForIndex("b", 1);
-        
-        results.add(null);
+        setupBinaryComparison();
     }
     
     public SNotEqual(SFunc a, SFunc b){
         this();
-        args.add(a);
-        args.add(b);
+        setBinaryArgs(a, b);
     }
 
     @Override
     public void evaluate() {
-        SFunc lhs = args.get(0).getResult();
-        SFunc rhs = args.get(1).getResult();
-        
-        // Only allow doubles to be added     
-        if(lhs.isDouble() && rhs.isDouble()){
-            Double l = ((SDouble) lhs).getValue();
-            Double r = ((SDouble) rhs).getValue();
-            Boolean gt = !l.equals(r);
-            
-            SBoolean s = new SBoolean(gt);
-            s.evaluate();
-            
-            results.set(s, 0);
-        }else if(lhs.isInteger() && lhs.isInteger()){
-            Integer l = ((SInteger) lhs).getValue();
-            Integer r = ((SInteger) rhs).getValue();
-            Boolean gt = !Objects.equals(l, r);
-            
-            SBoolean s = new SBoolean(gt);
-            s.evaluate();
-            
-            results.set(s, 0);
-        }else if(lhs.isString() && rhs.isString()){
-            String l = ((SString) lhs).getValue();
-            String r = ((SString) rhs).getValue();
-            Boolean gt = !l.equals(r);
-            
-            SBoolean s = new SBoolean(gt);
-            s.evaluate();
-            
-            results.set(s, 0);
-        }else{
-            // identify which argument is not a double
-            throw new RuntimeException("Only Doubles, Integers, and Strings can be compared.");
-        }
+        SFunc lhs = getArg(0).getResult();
+        SFunc rhs = getArg(1).getResult();
+
+        compute(lhs, rhs,
+                (a, b) -> !a.equals(b),
+                (a, b) -> !a.equals(b),
+                (a, b) -> !a.equals(b));
     }
 
     @Override

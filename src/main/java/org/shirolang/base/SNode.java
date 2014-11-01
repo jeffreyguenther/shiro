@@ -84,7 +84,7 @@ public class SNode extends SFuncBase implements Scope{
     }
 
     /**
-     * Initialize variables. This is a work around to using this() in
+     * Initializes variables. This is a work around to using this() in
      * a constructor with super
      * @param type type of node
      * @param name name of node ( the same as the type for prototype instances)
@@ -123,7 +123,7 @@ public class SNode extends SFuncBase implements Scope{
     }
 
     /**
-     * Get the scope of the node
+     * Gets the scope of the node
      * @return the scope of the node
      */
     public Scope getScope() {
@@ -131,12 +131,20 @@ public class SNode extends SFuncBase implements Scope{
     }
 
     /**
-     * Set the parent scope
-     *
-     * @param enclosingScope
+     * Sets the parent scope
+     * @param enclosingScope the scope the node is enclosed within
      */
     public void setScope(Scope enclosingScope) {
         this.parentScope = enclosingScope;
+    }
+
+    /**
+     * Adds a port to the node
+     * @param port the port to be added
+     */
+    public void addPort(SFunc port){
+        port.setFullName(Path.createFullName(fullName.get(), port.getName()));
+        ports.put(port.getName(), port);
     }
 
     /**
@@ -180,6 +188,7 @@ public class SNode extends SFuncBase implements Scope{
     /**
      * Sets the node's default option.
      * @param name name of node or port to add as default
+     * @throws OptionNotFoundException
      */
     public void setDefaultOption(String name) throws OptionNotFoundException {
         SFunc option = options.get(name);
@@ -287,6 +296,7 @@ public class SNode extends SFuncBase implements Scope{
      *
      * @param name name of symbol to add active
      * @return the symbol add active, returns null if name is not found
+     * @throws OptionNotFoundException
      */
     public SFunc setActiveOption(String name) throws OptionNotFoundException {
         SFunc activeItem = options.get(name);
@@ -438,6 +448,16 @@ public class SNode extends SFuncBase implements Scope{
                 String portName = path.getCurrentPathHead();
                 portReferenced = ports.get(portName);
 
+                if(path.hasIndex()){
+                    if(path.hasIntegerIndex()){
+                        portReferenced = portReferenced.getResult(path.getIndex());
+                    }
+
+                    if(path.hasStringIndex()){
+                        portReferenced = portReferenced.getResult(path.getIndexKey());
+                    }
+                }
+
                 // reset the path for future use
                 path.resetPathHead();
             }
@@ -472,14 +492,5 @@ public class SNode extends SFuncBase implements Scope{
     @Override
     public boolean isRoot() {
         return false;
-    }
-
-    public void addPort(SFunc port){
-//        if(!port.getSymbolType().isPort()){
-//            throw new RuntimeException("Found " + port.getSymbolType() + " Only SFuncs of SymbolType.PORT can be added to nodes.");
-//        }
-
-        port.setFullName(Path.createFullName(fullName.get(), port.getName()));
-        ports.put(port.getName(), port);
     }
 }
