@@ -35,12 +35,13 @@ import org.shirolang.base.SGraph;
 import org.shirolang.base.SNode;
 import org.shirolang.base.SType;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
  * Tests parse tree listener to instantiate inline graphs
  */
-public class InlineGraphBuilderTest {
+public class InlineGraphBuilderTest extends ShiroBaseTest{
     private static ParseTree buildParseTree(String expr){
         ShiroLexer lex = new ShiroLexer(new ANTLRInputStream(expr));
         // parse
@@ -137,5 +138,41 @@ public class InlineGraphBuilderTest {
 
         Assert.assertEquals(1, graph.getNodes().size());
         Assert.assertEquals(13, graph.getPorts().size());
+    }
+
+    @Test
+    public void inLineExpression() throws IOException {
+        ParseTree tree = parse("graph_inline_expression.sro").shiro();
+
+        ParseTreeWalker walker = new ParseTreeWalker();
+
+        DefinitionCollector definitionCollector = new DefinitionCollector();
+        walker.walk(definitionCollector, tree);
+
+        lib.addGraphDefs(definitionCollector.getGraphs());
+        lib.addNodeDefs(definitionCollector.getNodeDefinitions());
+
+        InlineGraphBuilder inline = new InlineGraphBuilder(lib);
+
+        walker.walk(inline, tree);
+
+        inline.setPass(GraphBuilder.SECOND_PASS);
+        walker.walk(inline, tree);
+
+        SGraph g = lib.getDefaultGraph();
+
+        Assert.assertEquals(8, g.getPorts().size());
+
+        SFunc a = g.getPort("a");
+        Assert.assertNotNull(a);
+
+        SFunc b = g.getPort("b");
+        Assert.assertNotNull(b);
+
+        SFunc c = g.getPort("c");
+        Assert.assertNotNull(c);
+
+        g.evaluate();
+        System.out.println(g.toConsole());
     }
 }

@@ -176,13 +176,23 @@ public abstract class SFuncBase implements SFunc {
     public SFunc getResult() {
         if(isIdent()){
             SIdent id = (SIdent) this;
-            if(!id.isReference()){
-                return id.getResult(0).getResult();
-            }else{
+            if (id.isReference()) {
                 return getResult(0);
+            } else {
+
+                return id.getResult(0).getResult();
             }
         }
         return getResult(0);
+    }
+
+    private boolean isPrimitive(SIdent id){
+        SFunc result = id.getResult(0);
+        if(result.getSymbolType().isLiteral() || (!result.hasArgs() && result.getSymbolType().isPort())){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     /**

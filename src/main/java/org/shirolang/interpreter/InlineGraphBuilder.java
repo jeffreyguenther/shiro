@@ -81,7 +81,9 @@ public class InlineGraphBuilder extends GraphBuilder {
     public void exitAnonExpr(@NotNull ShiroParser.AnonExprContext ctx) {
         isAnonExpr = false;
 
-        defaultGraph.addPort(getExpr(ctx.expr()));
+        if(pass == SECOND_PASS){
+            defaultGraph.addAnonymousPort(getExpr(ctx.expr()));
+        }
     }
 
     @Override

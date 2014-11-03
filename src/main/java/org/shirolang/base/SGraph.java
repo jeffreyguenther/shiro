@@ -122,7 +122,17 @@ public class SGraph implements Scope, Consoleable{
      */
     public Set<SFunc> getPorts(){
         HashSet<SFunc> allPorts = new HashSet<>(ports.values());
+
+        for(SFunc named: ports.values()){
+            allPorts.addAll(named.getDependencies());
+        }
+
         allPorts.addAll(anonymousPorts);
+
+        for(SFunc anon : anonymousPorts){
+            allPorts.addAll(anon.getDependencies());
+        }
+
         for(SNode n: getNodes()){
             allPorts.addAll(n.getPorts());
         }
