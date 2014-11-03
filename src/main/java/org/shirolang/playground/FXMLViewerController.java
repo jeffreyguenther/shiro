@@ -116,6 +116,8 @@ public class FXMLViewerController {
             .supplyTask(this::computeHighlightingAsync)
             .awaitLatest(textChanges)
             .subscribe(this::applyHighlighting);
+
+        errorLabel.visibleProperty().bind(model.hasErrorProperty());
 }
 
     @FXML

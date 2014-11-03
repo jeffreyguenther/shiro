@@ -25,6 +25,8 @@
 package org.shirolang.interpreter;
 
 import com.google.common.collect.Sets;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.util.Pair;
@@ -58,12 +60,14 @@ public class ShiroRuntime{
 
     private StringProperty errorMesages;
     private StringProperty output;
+    private BooleanProperty hasErrors;
 
 
     public ShiroRuntime() {
         library = new Library();
         errorMesages = new SimpleStringProperty("");
         output = new SimpleStringProperty("");
+        hasErrors = new SimpleBooleanProperty(false);
     }
 
     /**
@@ -80,10 +84,19 @@ public class ShiroRuntime{
     /**
      * "Standard out for the runtime." Runtime messages are appended
      * to the property as the it runs
-     * @return
+     * @return the string property containing the content of standard out
      */
     public StringProperty outputProperty(){
         return output;
+    }
+
+    /**
+     * Indicates whether runtime has errors or not.
+     * @return the boolean property with value true if there are errors, otherwise
+     * false
+     */
+    public BooleanProperty hasErrorProperty(){
+        return hasErrors;
     }
 
 
