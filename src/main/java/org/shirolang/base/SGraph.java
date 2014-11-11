@@ -23,7 +23,7 @@
 
 package org.shirolang.base;
 
-import org.shirolang.SFuncAction;
+import org.shirolang.interpreter.SFuncAction;
 import org.shirolang.dag.DAGraph;
 import org.shirolang.dag.DependencyRelation;
 import org.shirolang.dag.GraphNode;

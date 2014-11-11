@@ -22,24 +22,14 @@
  * THE SOFTWARE.
  */
 
-package org.shirolang;
-
-import java.util.Set;
+package org.shirolang.interpreter;
 
 import org.shirolang.base.SFunc;
-import org.shirolang.dag.GraphNode;
-import org.shirolang.dag.NodeAction;
 
 /**
  *
  * @author jeffreyguenther
  */
-public class SFuncAction implements NodeAction<SFunc>{
-
-    @Override
-    public void doAction(SFunc node, Set<GraphNode<SFunc>> deps) {
-        if(node.isActive()) {
-            node.evaluate();
-        }
-    }
+public interface FunctionFactory {
+    public SFunc create();
 }

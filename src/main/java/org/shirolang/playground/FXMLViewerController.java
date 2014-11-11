@@ -28,10 +28,12 @@
  */
 package org.shirolang.playground;
 
+import javafx.collections.ListChangeListener;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
@@ -48,6 +50,10 @@ import org.fxmisc.richtext.*;
 import org.reactfx.EventStream;
 import org.shirolang.interpreter.ShiroLexer;
 import org.shirolang.interpreter.ShiroRuntime;
+import org.shirolang.playground.editors.DoubleViz;
+import org.shirolang.playground.editors.IntegerViz;
+import org.shirolang.values.SDouble;
+import org.shirolang.values.SInteger;
 
 import java.io.*;
 import java.time.Duration;
@@ -118,11 +124,17 @@ public class FXMLViewerController {
             .subscribe(this::applyHighlighting);
 
         errorLabel.visibleProperty().bind(model.hasErrorProperty());
-}
+
+        model.mapCallBack("Double", d -> new DoubleViz((SDouble) d));
+        model.mapCallBack("Integer", i -> new IntegerViz((SInteger) i));
+
+    }
 
     @FXML
     private void handleRun(ActionEvent event) {
         run();
+        canvas.getChildren().clear();
+        model.nodes.forEach( n -> canvas.getChildren().add(n));
     }
 
     public void stop(){

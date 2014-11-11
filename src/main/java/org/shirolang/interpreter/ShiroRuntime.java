@@ -29,6 +29,10 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.Node;
+import javafx.util.Callback;
 import javafx.util.Pair;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -40,12 +44,11 @@ import org.shirolang.base.SNode;
 import org.shirolang.base.SState;
 import org.shirolang.dag.DAGraph;
 import org.shirolang.exceptions.OptionNotFoundException;
+import org.shirolang.playground.editors.DoubleViz;
+import org.shirolang.values.SDouble;
 
 import javax.naming.ldap.PagedResultsControl;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static java.util.stream.Collectors.toList;
 
@@ -62,12 +65,22 @@ public class ShiroRuntime{
     private StringProperty output;
     private BooleanProperty hasErrors;
 
+    private Map<String, Callback<SFunc, Node>> visualCallBacks;
+
+    public ObservableList<Node> nodes;
 
     public ShiroRuntime() {
         library = new Library();
         errorMesages = new SimpleStringProperty("");
         output = new SimpleStringProperty("");
         hasErrors = new SimpleBooleanProperty(false);
+
+        visualCallBacks = new HashMap<>();
+        nodes = FXCollections.observableArrayList();
+    }
+
+    public void mapCallBack(String type, Callback<SFunc, Node> cb ){
+        visualCallBacks.put(type, cb);
     }
 
     /**
@@ -182,6 +195,18 @@ public class ShiroRuntime{
                sendToOutput(graph.toConsole());
            }
        }
+
+
+        // for each type in the runtime
+        for(String type: library.getTypeNames()){
+            List<SFunc> collect = library.getDefaultGraph().getPorts().stream().filter(p -> p.getType().equals(type)).collect(toList());
+            for (SFunc sFunc : collect) {
+                Callback<SFunc, Node> callback = visualCallBacks.get(type);
+                if(callback != null) {
+                    nodes.add(callback.call(sFunc));
+                }
+            }
+        }
 
         return output.get();
     }

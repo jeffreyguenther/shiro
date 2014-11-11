@@ -25,7 +25,6 @@ package org.shirolang.interpreter;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
-import org.shirolang.FunctionFactory;
 import org.shirolang.base.*;
 import org.shirolang.exceptions.GraphNotFoundException;
 import org.shirolang.exceptions.NameUsedException;
