@@ -89,4 +89,17 @@ public class DefinitionCollectorTest extends ShiroBaseTest{
         Assert.assertTrue(l.getNodeDefinitions().containsKey("Invest"));
         Assert.assertTrue(l.getNodeDefinitions().containsKey("InterestRates"));
     }
+
+    @Test
+    public void collectedNestedNodes() throws IOException {
+        ShiroParser parser = parse("nodes_nested.sro");
+        ParseTree tree = parser.shiro();
+
+        ParseTreeWalker walker = new ParseTreeWalker();
+        DefinitionCollector collector = new DefinitionCollector();
+        walker.walk(collector, tree);
+
+        Assert.assertTrue(collector.getNodeDefinitions().containsKey("A"));
+        Assert.assertTrue(collector.getNodeDefinitions().containsKey("A.B"));
+    }
 }

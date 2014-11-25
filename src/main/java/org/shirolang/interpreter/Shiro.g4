@@ -5,8 +5,10 @@ grammar Shiro;
 //public static final int COMMENTS = 2;
 //}
 
-shiro : statement* EOF
+shiro : useStatement* statement* EOF
 	  ;
+
+useStatement: INCLUDE FILENAME NEWLINE;
 
 statement
     :
@@ -78,6 +80,7 @@ activeSelector
 
 nodeInternal
     :   (portstmt
+        | OPTION? nodestmt
         | NEWLINE)*
     ;
 
@@ -153,6 +156,8 @@ expr :  '(' expr ')'						  #parensExpr
 	 |  STRING_LITERAL                        #stringExpr
 	 ;
 
+INCLUDE: 'include';
+
 STATE: 'state';
 
 SELECT: '@';
@@ -191,9 +196,9 @@ BOOLEAN_LITERAL
     : 'true' | 'false'
     ;
 
-//STRING_LITERAL
-  //  :	'"' .*?'"'
-    //;
+FILENAME
+      : '"' ~[\\/ ]+ '"'
+      ;
 
 STRING_LITERAL : '"' (~'"'|'\\"')* '"'  ;
 
