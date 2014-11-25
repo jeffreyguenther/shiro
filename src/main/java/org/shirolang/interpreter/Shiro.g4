@@ -8,7 +8,7 @@ grammar Shiro;
 shiro : useStatement* statement* EOF
 	  ;
 
-useStatement: INCLUDE FILENAME NEWLINE;
+useStatement: INCLUDE STRING_LITERAL NEWLINE;
 
 statement
     :
@@ -196,9 +196,11 @@ BOOLEAN_LITERAL
     : 'true' | 'false'
     ;
 
+/*
 FILENAME
       : '"' ~[\\/ ]+ '"'
       ;
+ */
 
 STRING_LITERAL : '"' (~'"'|'\\"')* '"'  ;
 

@@ -41,6 +41,7 @@ public class DefinitionCollector extends ShiroBaseListener {
     private Map<String, ParseTree> graphs;
     private List<ParseTree> inLineStatements;
     private boolean locked;
+    private String path;
 
     public DefinitionCollector() {
         super();
@@ -49,6 +50,7 @@ public class DefinitionCollector extends ShiroBaseListener {
         graphs = new HashMap<>();
         inLineStatements = new ArrayList<>();
         locked = false;
+        path = "";
     }
 
     /**
@@ -86,19 +88,27 @@ public class DefinitionCollector extends ShiroBaseListener {
 
     @Override
     public void enterNodestmt(@NotNull ShiroParser.NodestmtContext ctx) {
-        // The locked flag is used to prevent nested nodes from being captured
-        // as individual trees. Nested nodes will be children of their root
-        // node
-        if(!locked){
-            String name = ctx.MFNAME().getText();
-            defs.put(name, ctx);
-            locked = true;
+        String name = ctx.MFNAME().getText();
+
+        if(path.isEmpty()){
+            path = path.concat(name);
+        }else{
+            path = path.concat(".").concat(name);
         }
+
+        defs.put(path, ctx);
+
     }
 
     @Override
     public void exitNodestmt(@NotNull ShiroParser.NodestmtContext ctx) {
-        locked = false;
+        // remove current name from string
+        int lastDot = path.lastIndexOf(".");
+        if(lastDot > 0) {
+            path = path.substring(0, lastDot);
+        }else{
+            path = "";
+        }
     }
 
     @Override

@@ -23,26 +23,32 @@
 
 package org.shirolang.interpreter;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.shirolang.base.SGraphTest;
-import org.shirolang.base.SNodeTest;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
- * Runs the test for the interpreter
+ * Tests the code importer
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
-        DefinitionCollectorTest.class,
-        GraphBuilderTest.class,
-        CodeImporterTest.class,
-        LibraryTest.class,
-        NameManagerTest.class,
-        NodeInstantiatorTest.class,
-        ShiroRuntimeTest.class,
-        SGraphTest.class,
-        SNodeTest.class,
-        StateBuilderTest.class
-})
-public class InterpreterSuite {
+public class CodeImporterTest extends ShiroBaseTest{
+    @Test
+    public void includeCode() throws IOException {
+        // should have dependencies:
+            // graph_with_includes.sro -> a_include.sro
+            // graph_with_includes.sro -> b_include.sro
+            // graph_with_includes.sro -> geom.sro
+
+        Library lib = new Library();
+        Path path = Paths.get(getClass().getResource("graph_with_includes.sro").getPath());
+        CodeImporter codeImporter = new CodeImporter(lib, path);
+        ParseTreeWalker walker = new ParseTreeWalker();
+        walker.walk(codeImporter, parse("graph_with_includes.sro").shiro());
+
+        Assert.assertEquals(3, codeImporter.getSourceFiles().size());
+    }
+
 }

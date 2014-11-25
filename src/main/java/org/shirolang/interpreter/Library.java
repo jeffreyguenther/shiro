@@ -23,6 +23,10 @@
 
 package org.shirolang.interpreter;
 
+import org.antlr.v4.runtime.ANTLRFileStream;
+import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.shirolang.base.*;
@@ -30,7 +34,10 @@ import org.shirolang.exceptions.GraphNotFoundException;
 import org.shirolang.exceptions.NameUsedException;
 import org.shirolang.functions.math.*;
 import org.shirolang.values.*;
+import org.shirolang.values.Path;
 
+import java.io.IOException;
+import java.nio.file.*;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -58,6 +65,9 @@ public class Library {
     private Map<String, ParseTree> graphDefs;
     private Map<String, ParseTree> alternativeDefs;
 
+    // Cache the results of a file being parsed
+    private Map<java.nio.file.Path, ParseResult> parseCache;
+
     /**
      * Creates a library
      * When the library is created, it loads all of the internal
@@ -74,6 +84,8 @@ public class Library {
         nodeDefs = new HashMap<>();
         graphDefs = new HashMap<>();
         alternativeDefs = new HashMap<>();
+
+        parseCache = new HashMap<>();
 
         // load basic multi-functions
         loadRuntimeFunctions();
@@ -359,5 +371,97 @@ public class Library {
         } catch (NameUsedException e) {
             throw new RuntimeException("Something crazy happened and an internal type is already defined!");
         }
+    }
+
+    /**
+     * Gets an instance of the Shiro lexer
+     * @param input code to be lexed
+     * @return a {@code ShiroLexer} initialized with the source
+     */
+    public ShiroLexer getLexer(CharStream input){
+        ShiroLexer lexer = new ShiroLexer(input);
+//        lexer.addErrorListener(new DescriptiveErrorListener(this));
+        return lexer;
+    }
+
+    /**
+     * Lex the code
+     * @param code code to be lexex
+     * @return stream of tokens
+     */
+    public CommonTokenStream lex(String code){
+        return new CommonTokenStream(getLexer(new ANTLRInputStream(code)));
+    }
+
+    /**
+     * Lex the code at the given path
+     * @param path path of the source code
+     * @return stream of tokens
+     * @throws IOException
+     */
+    public CommonTokenStream lex(java.nio.file.Path path) throws IOException {
+        return new CommonTokenStream(getLexer(new ANTLRFileStream(path.toRealPath().toString())));
+    }
+
+    /**
+     * Creates an instance of {@code ShiroParser} initialized with the token stream
+     * @param tokens the token stream
+     * @return instance of Shiro parser
+     */
+    public ShiroParser getParser(CommonTokenStream tokens){
+        ShiroParser parser = new ShiroParser(tokens);
+//        parser.addErrorListener(new DescriptiveErrorListener(this));
+        parser.setBuildParseTree(true);
+        return parser;
+    }
+
+    /**
+     * Parses the token stream
+     * @param tokens tokens to be parsed
+     * @return the parse tree of the token stream
+     */
+    public ParseTree parse(CommonTokenStream tokens){
+        return getParser(tokens).shiro();
+    }
+
+    /**
+     * Saves the result of a parse
+     * @param path path to file that was parsed
+     * @param tokens tokens representing the file
+     * @param tree the parse tree created by the parser
+     * @return The parse result that is stored
+     */
+    public ParseResult saveParseResult(java.nio.file.Path path, CommonTokenStream tokens, ParseTree tree){
+        ParseResult parseResult = new ParseResult(tokens, tree);
+        parseCache.put(path, parseResult);
+        return parseResult;
+    }
+
+    /**
+     * Gets the cached parse tree for the source at the given path
+     * @param path the path to lookup
+     * @return parse tree for the source at the path
+     */
+    public ParseTree getParseTree(java.nio.file.Path path){
+        ParseResult result = parseCache.get(path);
+
+        if(result != null){
+            return result.getParseTree();
+        }
+        return null;
+    }
+
+    /**
+     * Gets the cached token stream for the source at the path
+     * @param path the path to the source to retrieve from teh cache
+     * @return the token stream of the source at {@code path}
+     */
+    public CommonTokenStream getTokens(java.nio.file.Path path){
+        ParseResult result = parseCache.get(path);
+
+        if(result != null){
+            return result.getTokens();
+        }
+        return null;
     }
 }

@@ -44,10 +44,7 @@ import org.shirolang.base.SNode;
 import org.shirolang.base.SState;
 import org.shirolang.dag.DAGraph;
 import org.shirolang.exceptions.OptionNotFoundException;
-import org.shirolang.playground.editors.DoubleViz;
-import org.shirolang.values.SDouble;
 
-import javax.naming.ldap.PagedResultsControl;
 import java.util.*;
 
 import static java.util.stream.Collectors.toList;
@@ -115,6 +112,9 @@ public class ShiroRuntime{
 
     public String executeStatement(String input){
         library.reset();
+
+        // resolve dependencies
+
         // lex
         ShiroLexer lex = new ShiroLexer(new ANTLRInputStream(input));
         // parse
@@ -197,7 +197,7 @@ public class ShiroRuntime{
        }
 
 
-        // for each type in the runtime
+        // Render each type
         for(String type: library.getTypeNames()){
             List<SFunc> collect = library.getDefaultGraph().getPorts().stream().filter(p -> p.getType().equals(type)).collect(toList());
             for (SFunc sFunc : collect) {

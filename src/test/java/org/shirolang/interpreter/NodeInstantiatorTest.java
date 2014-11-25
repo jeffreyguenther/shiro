@@ -33,7 +33,7 @@ import org.shirolang.base.SNode;
 import java.io.IOException;
 
 /**
- *
+ * Tests node instantiation
  */
 public class NodeInstantiatorTest extends ShiroBaseTest {
     @Test
@@ -58,7 +58,30 @@ public class NodeInstantiatorTest extends ShiroBaseTest {
 
     }
     @Test
-    public void produceNestedNode(){
-        Assert.fail("nested nodes not yet implemented");
+    public void produceNestedNode() throws IOException {
+        Library l = new Library();
+
+        ShiroParser parse = parse("nodes_nested.sro");
+        ParseTree shiro = parse.shiro();
+
+        DefinitionCollector c = new DefinitionCollector();
+
+        ParseTreeWalker walker = new ParseTreeWalker();
+        walker.walk(c, shiro);
+
+        NodeInstantiator produceNode = new NodeInstantiator(l, l.getDefaultGraph());
+        walker.walk(produceNode, c.getNodeDefinitions().get("A"));
+
+        NodeInstantiator b = new NodeInstantiator(l, l.getDefaultGraph());
+        walker.walk(b, c.getNodeDefinitions().get("A.B"));
+
+        SNode createdNode = produceNode.getCreatedNode();
+        Assert.assertEquals("A", createdNode.getName());
+
+        SNode bNode = b.getCreatedNode();
+        Assert.assertEquals("^.B", bNode.getFullName());
+        Assert.assertEquals("B", bNode.getType());
+
+        // TODO Might have to add full type field to show the objects full type definition
     }
 }

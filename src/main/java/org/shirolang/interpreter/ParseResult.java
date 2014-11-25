@@ -23,26 +23,28 @@
 
 package org.shirolang.interpreter;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.shirolang.base.SGraphTest;
-import org.shirolang.base.SNodeTest;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.tree.ParseTree;
 
 /**
- * Runs the test for the interpreter
+ *  Represent the result of a parsed file
+ *  Used to avoid re-parsing when evaluating a file
+ *  after dependencies are resolved
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
-        DefinitionCollectorTest.class,
-        GraphBuilderTest.class,
-        CodeImporterTest.class,
-        LibraryTest.class,
-        NameManagerTest.class,
-        NodeInstantiatorTest.class,
-        ShiroRuntimeTest.class,
-        SGraphTest.class,
-        SNodeTest.class,
-        StateBuilderTest.class
-})
-public class InterpreterSuite {
+public class ParseResult {
+    private final CommonTokenStream tokens;
+    private final ParseTree parseTree;
+
+    public ParseResult(CommonTokenStream tokens, ParseTree parseTree) {
+        this.tokens = tokens;
+        this.parseTree = parseTree;
+    }
+
+    public CommonTokenStream getTokens() {
+        return tokens;
+    }
+
+    public ParseTree getParseTree() {
+        return parseTree;
+    }
 }
