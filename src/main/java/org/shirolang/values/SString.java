@@ -28,7 +28,7 @@ import org.shirolang.base.SType;
 
 /**
  *
- * @author jeffreyguenther
+ * Represents a string in Shiro
  */
 public class SString extends SValue<String>{
 

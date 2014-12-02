@@ -63,7 +63,7 @@ public class ShiroRuntimeTest{
 
     @Test
     public void executePath(){
-//        Assert.assertEquals("a was not found", rt.executeStatement("a\n"));
+        Assert.assertEquals("a was not found", rt.executeStatement("a\n"));
 
         rt.executeStatement("port a Double(12.3)\n");
         Assert.assertEquals("12.3", rt.executeStatement("a\n"));
