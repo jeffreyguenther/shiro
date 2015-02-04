@@ -28,7 +28,9 @@
  */
 package org.shirolang.playground;
 
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -48,6 +50,7 @@ import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.Token;
 import org.fxmisc.richtext.*;
 import org.reactfx.EventStream;
+import org.shirolang.base.SState;
 import org.shirolang.interpreter.ShiroLexer;
 import org.shirolang.interpreter.ShiroRuntime;
 import org.shirolang.playground.editors.DoubleViz;
@@ -57,8 +60,7 @@ import org.shirolang.values.SInteger;
 
 import java.io.*;
 import java.time.Duration;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -100,9 +102,9 @@ public class FXMLViewerController {
     private ToggleButton btnFreeForm;
 
     private ShiroRuntime model;
-//    private Map<StateDefinition, Canvas> layers;
+    private Map<String, Canvas> layers;
     private File currentFile;
-//    private Map<StateDefinition, WritableImage> snapshots;
+    private Map<String, WritableImage> snapshots;
     private Group lightTable;
     private MoveContext moveContext;
     private ImageView selectedTile;
@@ -111,6 +113,14 @@ public class FXMLViewerController {
 
     public void initialize() {
         model = new ShiroRuntime();
+        layers = new HashMap<>();
+        addEventHandlersToList();
+        altsList.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        currentFile = null;
+        snapshots = new HashMap<>();
+        lightTable = new Group();
+        moveContext = new MoveContext();
+        selectedTile = null;
         console.textProperty().bind(model.outputProperty());
 
         // setup the code area
@@ -128,13 +138,33 @@ public class FXMLViewerController {
         model.mapCallBack("Double", d -> new DoubleViz((SDouble) d));
         model.mapCallBack("Integer", i -> new IntegerViz((SInteger) i));
 
+        errorLabel.visibleProperty().bind(model.hasErrorProperty());
+        model.hasErrorProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
+            if (newValue) {
+                codeArea.setStyle("-fx-border-color:red;");
+            } else {
+                codeArea.setStyle("-fx-border-color:null;");
+            }
+        });
+
+        tileSizes.valueProperty().addListener( (ObservableValue<? extends Number> observable, Number oldValue, Number newValue) -> {
+            if(btnGrid.isSelected()){
+                gallery.getChildren().clear();
+
+                for(WritableImage img: snapshots.values()){
+                    gallery.getChildren().add(createImageTile(img, newValue.doubleValue()));
+                }
+            }else{
+                lightTable = createLightTable(tileSizes.getValue());
+                lightTableScrollPane.setContent(lightTable);
+            }
+        });
+
     }
 
     @FXML
     private void handleRun(ActionEvent event) {
         run();
-        canvas.getChildren().clear();
-        model.nodes.forEach( n -> canvas.getChildren().add(n));
     }
 
     public void stop(){
@@ -142,8 +172,43 @@ public class FXMLViewerController {
     }
 
     public void run() {
-       model.executeStatement(codeArea.getText());
-       model.evaluate();
+        altsList.getItems().clear();
+        gallery.getChildren().clear();
+        lightTable.getChildren().clear();
+        snapshots.clear();
+        layers.clear();
+
+        if (currentFile == null) {
+            FileChooser save = new FileChooser();
+            save.setInitialFileName("Code.sro");
+            save.setTitle("Save as .sro");
+            currentFile = save.showSaveDialog(root.getScene().getWindow());
+            save();
+        }
+
+        // once the file is saved....
+        if (currentFile != null) {
+
+            model.executeStatement(codeArea.getText());
+
+            model.nodes.entrySet().forEach(e -> {
+                String stateName = e.getKey();
+                Set<Node> nodes = e.getValue();
+
+                altsList.getItems().add(stateName);
+
+                Canvas c = createCanvas();
+                c.getDrawing().getChildren().addAll(nodes);
+                layers.put(stateName, c);
+
+                WritableImage snapshot = c.snapshot(null, null);
+                snapshots.put(stateName, snapshot);
+                gallery.getChildren().add(createImageTile(snapshot, tileSizes.getValue()));
+
+            });
+        }
+
+        altsList.getSelectionModel().select(0); // select the first alternative in the list
     }
 
     private void appendToConsole(String s) {
@@ -169,19 +234,19 @@ public class FXMLViewerController {
     private Group createLightTable(double size) {
         Group g = new Group();
 
-//        g.setOnMousePressed(this::handleTilePressed);
-//        g.setOnMouseDragged(this::handleTileDragged);
-//        g.setOnMouseReleased(this::handleTileReleased);
-//
-//        double x = 0;
-//        for (WritableImage img : snapshots.values()) {
-//            ImageView tile = createImageTile(img, size);
-//            tile.relocate(x, 0);
-//            tile.setOnMousePressed(this::handleTileSelected);
-//            g.getChildren().add(tile);
-//
-//            x = x + size + 10;
-//        }
+        g.setOnMousePressed(this::handleTilePressed);
+        g.setOnMouseDragged(this::handleTileDragged);
+        g.setOnMouseReleased(this::handleTileReleased);
+
+        double x = 0;
+        for (WritableImage img : snapshots.values()) {
+            ImageView tile = createImageTile(img, size);
+            tile.relocate(x, 0);
+            tile.setOnMousePressed(this::handleTileSelected);
+            g.getChildren().add(tile);
+
+            x = x + size + 10;
+        }
 
         return g;
     }
@@ -223,7 +288,6 @@ public class FXMLViewerController {
             try (FileWriter writer = new FileWriter(currentFile)) {
                 writer.write(codeArea.getText());
                 writer.flush();
-                appendToConsole("Saved\n");
             } catch (IOException ex) {
                 Logger.getLogger(FXMLViewerController.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -283,289 +347,60 @@ public class FXMLViewerController {
 
     @FXML
     private void layoutAsGrid(ActionEvent event) {
-//        lightTableScrollPane.setContent(gallery);
-//
-//        gallery.getChildren().clear();
-//        for (WritableImage img : snapshots.values()) {
-//            gallery.getChildren().add(createImageTile(img, tileSizes.getValue()));
-//        }
+        lightTableScrollPane.setContent(gallery);
+
+        gallery.getChildren().clear();
+        for (WritableImage img : snapshots.values()) {
+            gallery.getChildren().add(createImageTile(img, tileSizes.getValue()));
+        }
     }
 
     @FXML
     private void handleFreeFormLayout(ActionEvent event) {
-//        if (lightTable.getChildren().isEmpty()) {
-//            lightTable = createLightTable(tileSizes.getValue());
-//        }
-//        lightTableScrollPane.setContent(lightTable);
+        if (lightTable.getChildren().isEmpty()) {
+            lightTable = createLightTable(tileSizes.getValue());
+        }
+        lightTableScrollPane.setContent(lightTable);
     }
 
-//    private void addEventHandlersToList() {
-//        altsList.getSelectionModel().getSelectedItems().addListener((ListChangeListener.Change<? extends String> c) -> {
-//            if (c.getList().size() > 1) {
-//                handleMultipleSelectedAltChange(c.getList());
-//            } else if (c.getList().size() == 1) {
-//                handleSingleSelectedAltChange(c.getList().get(0));
-//            }
-//        });
-//    }
-//
-//    public void handleSingleSelectedAltChange(String altName) {
-//        StateDefinition s = model.getState(altName);
-//
-//        Canvas c = layers.get(s);
-//        ObservableList<Node> children = canvas.getChildren();
-//        children.clear();
-//        children.add(c);
-//    }
-//
-//    public void handleMultipleSelectedAltChange(List<? extends String> alts) {
-//        ObservableList<Node> children = canvas.getChildren();
-//        children.clear();
-//
-//        for (String s : alts) {
-//            Canvas c = renderState(model.getState(s));
-//            children.add(c);
-//        }
-//    }
-//
-//    /**
-//     * Add the appropriate geometry to the canvas.
-//     *
-//     * @param s
-//     * @return
-//     */
-//    private Canvas renderState(StateDefinition s) {
-//        // evaluate the parametric system
-//        model.update(s);
-//        Graph g = model.getGraph(s.getGraphDef());
-//
-//        // look up the state's Canvas
-//        Canvas c = layers.get(s);
-//
-//        // draw the geometry on the canvas
-//        updateCanvas(g, c.getDrawing());
-//
-//        return c;
-//    }
-//
-//    /**
-//     * Create a Canvas and setup the event handlers
-//     *
-//     * @return Canvas object with event handlers add
-//     */
-//    private Canvas createCanvas() {
-//        Canvas c = new Canvas();
-//        return c;
-//    }
-//
-//    /**
-//     * Draw geometry on canvas
-//     *
-//     * @param canvas Group to add geometry to
-//     */
-//    public void updateCanvas(Graph graph, Group canvas) {
-//        // get geometry from parametric system
-//        canvas.getChildren().clear();
-//
-//        // for each line in the model
-//        for (shiro.Node n : model.getNodesOfType(graph, "Line")) {
-//            // create a line object and render
-//            Line l = getLine(n);
-//            canvas.getChildren().add(l);
-//        }
-//
-//        for (shiro.Node n : model.getNodesOfType(graph, "Rectangle")) {
-//            Rectangle r = getRect(n);
-//            canvas.getChildren().add(r);
-//        }
-//
-//        for (shiro.Node n : model.getNodesOfType(graph, "Circle")) {
-//            Circle c = getCircle(n);
-//            canvas.getChildren().add(c);
-//        }
-//
-//        for (shiro.Node n : model.getNodesOfType(graph,"Arc")) {
-//            Arc ac = getArc(n);
-//            canvas.getChildren().add(ac);
-//        }
-//
-//        for (shiro.Node n : model.getNodesOfType(graph, "Group")) {
-//            Group g = getGroup(n);
-//            canvas.getChildren().add(g);
-//        }
-//
-////        for (shiro.Node n : model.getNodesOfType("Image")) {
-////            ImageView image = getImage(n);
-////            canvas.getChildren().add(image);
-////        }
-//
-//        for (shiro.Node n : model.getNodesOfType(graph, "Layer")) {
-//            Group g = getLayer(n);
-//            canvas.getChildren().add(g);
-//        }
-//
-//        for(shiro.Node n: model.getNodesOfType(graph, "TableView")){
-//            BorderPane bp = getTableView(n);
-//            canvas.getChildren().add(bp);
-//        }
-//
-//        for(shiro.Node n: model.getNodesOfType(graph, "GraphView")){
-//           Group graphView = getGraphView(n);
-//            canvas.getChildren().add(graphView);
-//        }
-//
-//        for(shiro.Node n: model.getNodesOfType(graph, "RecursiveForm")){
-//            Group form = getRecursiveForm(n);
-//            canvas.getChildren().add(form);
-//        }
-        
+    private void addEventHandlersToList() {
+        altsList.getSelectionModel().getSelectedItems().addListener((ListChangeListener.Change<? extends String> c) -> {
+            if (c.getList().size() > 1) {
+                handleMultipleSelectedAltChange(c.getList());
+            } else if (c.getList().size() == 1) {
+                handleSingleSelectedAltChange(c.getList().get(0));
+            }
+        });
+    }
 
-//        // for each point in the model
-//        for (shiro.Node n : model.getNodesOfType("Point")) {
-//            // if the node active, render it
-//            if (n.isActive()) {
-//                canvas.getChildren().add(getPoint(n));
-//            }
-//        }
-//    }
+    public void handleSingleSelectedAltChange(String altName) {
+        Canvas c = layers.get(altName);
+        ObservableList<Node> children = canvas.getChildren();
+        children.clear();
+        children.add(c);
+        System.out.println("Single Selection");
+    }
 
-//    public Group getPoint(shiro.Node n) {
-//        Port ePort = n.getSelectedEvaluatedPort();
-//        Value point = ePort.getValueForIndex(0);
-//        Point2D tPoint = (Point2D) point.getValue();
-//
-//        Group p = ui.createPoint(tPoint.getX(), tPoint.getY(), Color.BLACK);
-//        p.setUserData(n.getFullName());
-//        return p;
-//    }
-//    /**
-//     * Create a Line to
-//     *
-//     * @param n
-//     * @return
-//     */
-//    public Line getLine(shiro.Node n) {
-//        Port ePort = n.getActiveEvalPort();
-//        Value line = ePort.getValueForIndex(0);
-//
-//        Line lTemp = (Line) line.getValue();
-//
-//        Line l = new Line();
-//        l.setStartX(lTemp.getStartX());
-//        l.setStartY(lTemp.getStartY());
-//        l.setEndX(lTemp.getEndX());
-//        l.setEndY(lTemp.getEndY());
-//
-//        return l;
-//    }
-//
-//    public Rectangle getRect(shiro.Node n) {
-//        Port ePort = n.getActiveEvalPort();
-//        Value rect = ePort.getValueForIndex(0);
-//
-//        Rectangle rTemp = (Rectangle) rect.getValue();
-//
-//        Rectangle r = new Rectangle();
-//        r.setX(rTemp.getX());
-//        r.setY(rTemp.getY());
-//        r.setWidth(rTemp.getWidth());
-//        r.setHeight(rTemp.getHeight());
-//        r.setStroke(rTemp.getStroke());
-//        r.setStrokeWidth(rTemp.getStrokeWidth());
-//        r.setFill(rTemp.getFill());
-//
-//        return r;
-//    }
-//
-//    public Circle getCircle(shiro.Node n) {
-//        Port ePort = n.getActiveEvalPort();
-//        Value circle = ePort.getValueForIndex(0);
-//
-//        Circle cTemp = (Circle) circle.getValue();
-//
-//        Circle c = new Circle();
-//        c.setRadius(cTemp.getRadius());
-//        c.setCenterX(cTemp.getCenterX());
-//        c.setCenterY(cTemp.getCenterY());
-//        c.setStroke(cTemp.getStroke());
-//        c.setStrokeWidth(cTemp.getStrokeWidth());
-//        c.setFill(cTemp.getFill());
-//
-//        return c;
-//    }
-//
-//    public Arc getArc(shiro.Node n) {
-//        Port ePort = n.getActiveEvalPort();
-//        Value arc = ePort.getValueForIndex(0);
-//
-//        Arc cTemp = (Arc) arc.getValue();
-//
-//        Arc c = new Arc();
-//        c.setRadiusX(cTemp.getRadiusX());
-//        c.setRadiusY(cTemp.getRadiusY());
-//        c.setCenterX(cTemp.getCenterX());
-//        c.setCenterY(cTemp.getCenterY());
-//        c.setStartAngle(cTemp.getStartAngle());
-//        c.setLength(cTemp.getLength());
-//        c.setStroke(cTemp.getStroke());
-//        c.setStrokeWidth(cTemp.getStrokeWidth());
-//        c.setFill(cTemp.getFill());
-//        c.setType(cTemp.getType());
-//
-//        return c;
-//    }
-//
-//    public Group getGroup(shiro.Node n){
-//        Port ePort = n.getActiveEvalPort();
-//        Value rawGroup = ePort.getValueForIndex(0);
-//
-//        Group g = (Group) rawGroup.getValue();
-//
-//        return g;
-//    }
-//
-//    public ImageView getImage(shiro.Node n){
-//        Port ePort = n.getActiveEvalPort();
-//        Value rawImage = ePort.getValueForIndex(0);
-//
-//        return (ImageView) rawImage.getValue();
-//    }
-//
-//    public Group getLayer(shiro.Node n){
-//        Port ePort = n.getActiveEvalPort();
-//        Value rawGroup = ePort.getValueForIndex(0);
-//
-//        Group g = (Group) rawGroup.getValue();
-//
-//        return g;
-//    }
-//
-//    public BorderPane getTableView(shiro.Node n){
-//        Port ePort = n.getActiveEvalPort();
-//        Value rawTableGroup = ePort.getValueForIndex(0);
-//
-//        BorderPane g = (BorderPane) rawTableGroup.getValue();
-//
-//        return g;
-//    }
-//
-//    public Group getGraphView(shiro.Node n){
-//        Port ePort = n.getActiveEvalPort();
-//        Value rawGraphView = ePort.getValueForIndex(0);
-//
-//        Group g = (Group) rawGraphView.getValue();
-//
-//        return g;
-//    }
-//
-//    public Group getRecursiveForm(shiro.Node n){
-//        Port ePort = n.getActiveEvalPort();
-//        Value rawGraphView = ePort.getValueForIndex(0);
-//
-//        Group g = (Group) rawGraphView.getValue();
-//
-//        return g;
-//    }
+    public void handleMultipleSelectedAltChange(List<? extends String> alts) {
+        ObservableList<Node> children = canvas.getChildren();
+        children.clear();
+
+        for (String s : alts) {
+            Canvas c = layers.get(s);
+            children.add(c);
+        }
+        System.out.println("Multiple Selection");
+    }
+
+    /**
+     * Create a Canvas and setup the event handlers
+     *
+     * @return Canvas object with event handlers set
+     */
+    private Canvas createCanvas() {
+        Canvas c = new Canvas();
+        return c;
+    }
 
     private Task<StyleSpans<Collection<String>>> computeHighlightingAsync(){
         String code = codeArea.getText();
@@ -585,7 +420,6 @@ public class FXMLViewerController {
         int lastEnd = 0;
 
         ShiroLexer lex = new ShiroLexer(new ANTLRInputStream(text));
-        // parse
 
         for(Token t: lex.getAllTokens()){
             spansBuilder.add(Collections.emptyList(), t.getStartIndex() - lastEnd);

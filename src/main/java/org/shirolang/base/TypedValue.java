@@ -30,7 +30,7 @@ import java.util.Set;
 
 /**
  * Represents an argument and result of a multi-function.
- * Has a field to indicate what time should be expected
+ * Has a field to indicate what types should be expected
  */
 public class TypedValue {
     private Set<String> acceptedTypes;

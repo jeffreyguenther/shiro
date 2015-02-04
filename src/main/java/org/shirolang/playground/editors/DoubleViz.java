@@ -41,9 +41,5 @@ public class DoubleViz extends Region {
         Text t = new Text(10, 100, "" + d.getValue());
         t.setFont(new Font(20));
         getChildren().add(t);
-
-//        TextField tf = new TextField("" + d.getValue());
-//        tf.setOnMouseClicked((e) -> System.out.println("I've been clicked"));
-//                getChildren().add(tf);
     }
 }

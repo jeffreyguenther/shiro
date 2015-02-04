@@ -31,6 +31,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableMap;
 import javafx.scene.Node;
 import javafx.util.Callback;
 import javafx.util.Pair;
@@ -64,7 +65,7 @@ public class ShiroRuntime{
 
     private Map<String, Callback<SFunc, Node>> visualCallBacks;
 
-    public ObservableList<Node> nodes;
+    public ObservableMap<String, Set<Node>> nodes;
 
     public ShiroRuntime() {
         library = new Library();
@@ -73,7 +74,7 @@ public class ShiroRuntime{
         hasErrors = new SimpleBooleanProperty(false);
 
         visualCallBacks = new HashMap<>();
-        nodes = FXCollections.observableArrayList();
+        nodes = FXCollections.observableHashMap();
     }
 
     public void mapCallBack(String type, Callback<SFunc, Node> cb ){
@@ -194,19 +195,21 @@ public class ShiroRuntime{
                graph.evaluate();
                sendToOutput(graph.toConsole());
            }
+
+           // render the current state using the callbacks
+           Set<Node> visualized = new HashSet<>();
+           for(String type: library.getTypeNames()){
+               List<SFunc> collect = graph.getPorts().stream().filter(p -> p.getType().equals(type)).collect(toList());
+
+               for (SFunc sFunc : collect) {
+                   Callback<SFunc, Node> callback = visualCallBacks.get(type);
+                   if(callback != null) {
+                       visualized.add(callback.call(sFunc));
+                   }
+               }
+           }
+           nodes.put(state.getName(), visualized);
        }
-
-
-        // Render each type
-        for(String type: library.getTypeNames()){
-            List<SFunc> collect = library.getDefaultGraph().getPorts().stream().filter(p -> p.getType().equals(type)).collect(toList());
-            for (SFunc sFunc : collect) {
-                Callback<SFunc, Node> callback = visualCallBacks.get(type);
-                if(callback != null) {
-                    nodes.add(callback.call(sFunc));
-                }
-            }
-        }
 
         return output.get();
     }
@@ -242,6 +245,15 @@ public class ShiroRuntime{
                 // realize nodes
         // build dependency graph
         // evaluate
+    }
+
+    /**
+     * Gets all of the states known by the runtime
+     * Delegates the to Library.getStates()
+     * @return the set of states
+     */
+    public Set<SState> getStates(){
+        return new HashSet<>(library.getStates().values());
     }
 
     /**
