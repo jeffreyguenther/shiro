@@ -41,7 +41,7 @@ import java.util.logging.Logger;
 
 /**
  * Imports code referenced by the file being run.
- * It searches the standard library stored as a resource
+ * It searches the standard library stored as a resource in the jar
  * then the current directory (.) and a lib directory (./lib)
  */
 public class CodeImporter extends ShiroBaseListener{
@@ -71,7 +71,6 @@ public class CodeImporter extends ShiroBaseListener{
         if(!importedFile.endsWith(".sro")){
             importedFile = importedFile + ".sro";
         }
-
 
         Path standardLib = Paths.get(stdLib + importedFile);
         Path sourceAtRoot = parentDirectory.resolve(importedFile);

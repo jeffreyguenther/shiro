@@ -147,7 +147,8 @@ public class Library {
      * Looks in the node definitions
      * @param p type of the node to create
      * @param g graph where the node should be stored
-     * @return an instance of the Snode of the given type
+     * @param name name of the instance
+     * @return an instance of the SNode of the given type
      */
     public SFunc instantiateNode(SGraph g, Path p, String name){
         // TODO handle the instantiation of nested nodes
@@ -386,7 +387,7 @@ public class Library {
 
     /**
      * Lex the code
-     * @param code code to be lexex
+     * @param code code to be lexed
      * @return stream of tokens
      */
     public CommonTokenStream lex(String code){

@@ -44,8 +44,14 @@ import org.shirolang.base.SGraph;
 import org.shirolang.base.SNode;
 import org.shirolang.base.SState;
 import org.shirolang.dag.DAGraph;
+import org.shirolang.dag.DependencyRelation;
+import org.shirolang.dag.GraphNode;
+import org.shirolang.dag.TopologicalSort;
 import org.shirolang.exceptions.OptionNotFoundException;
 
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 import static java.util.stream.Collectors.toList;
@@ -111,28 +117,19 @@ public class ShiroRuntime{
     }
 
 
-    public String executeStatement(String input){
+    public String executeFile(Path file) throws IOException {
         library.reset();
 
-        // resolve dependencies
+        return eval(file, library.lex(file));
+    }
 
-        // lex
-        ShiroLexer lex = new ShiroLexer(new ANTLRInputStream(input));
-        // parse
-        ShiroParser parser = new ShiroParser(new CommonTokenStream(lex));
-        parser.setBuildParseTree(true);
-        ParseTree tree = parser.shiro();
+    private String eval(Path rootPath, CommonTokenStream tokens){
+        List<Path> dependencies = resolveDependencies(rootPath, tokens);
+        loadDependencies(dependencies);
+        loadMainCode(rootPath);
 
         ParseTreeWalker walker = new ParseTreeWalker();
-        // walk to get definitions
-        // store the definitions in the library as it goes
-        DefinitionCollector definitionCollector = new DefinitionCollector();
-        walker.walk(definitionCollector, tree);
-
-        library.addGraphDefs(definitionCollector.getGraphs());
-        library.addNodeDefs(definitionCollector.getNodeDefinitions());
-        library.addAlternativeDefs(definitionCollector.getAlternativeDefinitions());
-
+        ParseTree tree = library.getParseTree(rootPath);
         InlineGraphBuilder inline = new InlineGraphBuilder(library);
         walker.walk(inline, tree);
 
@@ -171,7 +168,7 @@ public class ShiroRuntime{
 
         if(!library.hasUserDefinedGraphs() && !library.hasUserDefinedStates()){
             SState defaultState = library.getDefaultState();
-            defaultState.setGraph(library.DEFAULT_GRAPH_NAME);
+            defaultState.setGraph(Library.DEFAULT_GRAPH_NAME);
 
         }else if (!library.hasUserDefinedStates()){ // has a graph (includes default), but no states
             // generate the states to evaluate the graphs
@@ -179,39 +176,51 @@ public class ShiroRuntime{
             sStates.stream().forEach(s -> library.addState(s));
         }
 
-       for(SState state: library.getStates().values()){
-           String graphName = state.getGraph();
-           SGraph graph = library.getGraph(graphName);
+        for(SState state: library.getStates().values()){
+            String graphName = state.getGraph();
+            SGraph graph = library.getGraph(graphName);
 
-           // only evaluate states that have a graph defined
-           if (!state.getSubjunctTable().isEmpty()) {
-               try {
-                   graph.evaluate(state.getSubjunctTable());
-                   sendToOutput(graph.toConsole());
-               } catch (OptionNotFoundException e) {
-                   throw new RuntimeException("Error during evaluation: " + e.getMessage());
-               }
-           } else {
-               graph.evaluate();
-               sendToOutput(graph.toConsole());
-           }
+            // only evaluate states that have a graph defined
+            if (!state.getSubjunctTable().isEmpty()) {
+                try {
+                    graph.evaluate(state.getSubjunctTable());
+                    sendToOutput(graph.toConsole());
+                } catch (OptionNotFoundException e) {
+                    throw new RuntimeException("Error during evaluation: " + e.getMessage());
+                }
+            } else {
+                graph.evaluate();
+                sendToOutput(graph.toConsole());
+            }
 
-           // render the current state using the callbacks
-           Set<Node> visualized = new HashSet<>();
-           for(String type: library.getTypeNames()){
-               List<SFunc> collect = graph.getPorts().stream().filter(p -> p.getType().equals(type)).collect(toList());
+            // render the current state using the callbacks
+            Set<Node> visualized = new HashSet<>();
+            for(String type: library.getTypeNames()){
+                List<SFunc> collect = graph.getPorts().stream().filter(p -> p.getType().equals(type)).collect(toList());
 
-               for (SFunc sFunc : collect) {
-                   Callback<SFunc, Node> callback = visualCallBacks.get(type);
-                   if(callback != null) {
-                       visualized.add(callback.call(sFunc));
-                   }
-               }
-           }
-           nodes.put(state.getName(), visualized);
-       }
+                for (SFunc sFunc : collect) {
+                    Callback<SFunc, Node> callback = visualCallBacks.get(type);
+                    if(callback != null) {
+                        visualized.add(callback.call(sFunc));
+                    }
+                }
+            }
+            nodes.put(state.getName(), visualized);
+        }
 
         return output.get();
+    }
+
+    public String executeStatement(String input){
+        library.reset();
+
+        // create a dummy file path for the program
+        Path rootPath = Paths.get("root.sro");
+
+        // lex
+        CommonTokenStream tokens = library.lex(input);
+
+        return eval(rootPath, tokens);
     }
 
     /**
@@ -287,5 +296,69 @@ public class ShiroRuntime{
             }
         }
         return states;
+    }
+
+    /**
+     * Resolves the file dependencies for the given Shiro program
+     * @param rootFile path to the the Shiro program to resolve
+     * @param tokens tokens for the Shiro program
+     * @return list of files in dependency order
+     */
+    private List<java.nio.file.Path> resolveDependencies(java.nio.file.Path rootFile, CommonTokenStream tokens){
+        // lookup path in cache to see if it has already been parsed
+        ParseTree tree = library.getParseTree(rootFile);
+        if(tree == null){
+            tree = library.parse(tokens);
+            library.saveParseResult(rootFile, tokens, tree);
+        }
+
+        CodeImporter codeImporter = new CodeImporter(library, rootFile);
+        ParseTreeWalker walker = new ParseTreeWalker();
+        walker.walk(codeImporter, tree);
+
+        DAGraph<java.nio.file.Path> graph = new DAGraph<>();
+        for (DependencyRelation<Path> dep : codeImporter.getSourceFiles()) {
+            graph.addDependency(graph.getNodeForValue(dep.getDependent(), null), graph.getNodeForValue(dep.getDependedOn(), null));
+        }
+
+        TopologicalSort<java.nio.file.Path> topoSort = new TopologicalSort<>(graph);
+        List<GraphNode<Path>> topologicalOrdering = topoSort.getTopologicalOrdering();
+        List<java.nio.file.Path> sortedPaths = topologicalOrdering.stream().map(GraphNode::getValue).collect(toList());
+        sortedPaths.remove(rootFile);
+
+        return sortedPaths;
+    }
+
+    private void loadDependencies(List<java.nio.file.Path> deps){
+        for(java.nio.file.Path p: deps){
+
+            ParseTree parseTree = library.getParseTree(p);
+
+            // walk to get definitions
+            // store the definitions in the library as it goes
+            ParseTreeWalker walker = new ParseTreeWalker();
+            DefinitionCollector definitionCollector = new DefinitionCollector();
+            walker.walk(definitionCollector, parseTree);
+
+            library.addNodeDefs(definitionCollector.getNodeDefinitions());
+        }
+    }
+
+    /**
+     * Loads the nodes, graphs, and states defined in the Shiro program
+     * @param p path to the Shiro program to be loaded
+     */
+    private void loadMainCode(Path p){
+        ParseTree parseTree = library.getParseTree(p);
+
+        // walk to get definitions
+        // store the definitions in the library as it goes
+        ParseTreeWalker walker = new ParseTreeWalker();
+        DefinitionCollector definitionCollector = new DefinitionCollector();
+        walker.walk(definitionCollector, parseTree);
+
+        library.addGraphDefs(definitionCollector.getGraphs());
+        library.addNodeDefs(definitionCollector.getNodeDefinitions());
+        library.addAlternativeDefs(definitionCollector.getAlternativeDefinitions());
     }
 }

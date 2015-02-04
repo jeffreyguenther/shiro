@@ -28,6 +28,7 @@
  */
 package org.shirolang.playground;
 
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -59,11 +60,13 @@ import org.shirolang.values.SDouble;
 import org.shirolang.values.SInteger;
 
 import java.io.*;
+import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -109,6 +112,7 @@ public class FXMLViewerController {
     private MoveContext moveContext;
     private ImageView selectedTile;
     private ExecutorService executor;
+    private Boolean needsSave;
 
 
     public void initialize() {
@@ -126,7 +130,14 @@ public class FXMLViewerController {
         // setup the code area
         executor = Executors.newSingleThreadExecutor();
         codeArea.setParagraphGraphicFactory(LineNumberFactory.get(codeArea));
+        codeArea.textProperty().addListener((observable, oldValue, newValue) -> {
+            needsSave = true;
+        });
+
+
         EventStream<PlainTextChange> textChanges = codeArea.plainTextChanges();
+
+        textChanges.successionEnds(Duration.ofMillis(500)).subscribe(plainTextChange -> save());
 
         textChanges.successionEnds(Duration.ofMillis(500))
             .supplyTask(this::computeHighlightingAsync)
@@ -180,32 +191,41 @@ public class FXMLViewerController {
 
         if (currentFile == null) {
             FileChooser save = new FileChooser();
-            save.setInitialFileName("Code.sro");
+            save.setInitialFileName("my_program.sro");
             save.setTitle("Save as .sro");
             currentFile = save.showSaveDialog(root.getScene().getWindow());
+            save();
+        }
+
+        if(needsSave){
             save();
         }
 
         // once the file is saved....
         if (currentFile != null) {
 
-            model.executeStatement(codeArea.getText());
+            try {
+                model.executeFile(Paths.get(currentFile.getPath()));
 
-            model.nodes.entrySet().forEach(e -> {
-                String stateName = e.getKey();
-                Set<Node> nodes = e.getValue();
+                model.nodes.entrySet().forEach(e -> {
+                    String stateName = e.getKey();
+                    Set<Node> nodes = e.getValue();
 
-                altsList.getItems().add(stateName);
+                    altsList.getItems().add(stateName);
 
-                Canvas c = createCanvas();
-                c.getDrawing().getChildren().addAll(nodes);
-                layers.put(stateName, c);
+                    Canvas c = createCanvas();
+                    c.getDrawing().getChildren().addAll(nodes);
+                    layers.put(stateName, c);
 
-                WritableImage snapshot = c.snapshot(null, null);
-                snapshots.put(stateName, snapshot);
-                gallery.getChildren().add(createImageTile(snapshot, tileSizes.getValue()));
+                    WritableImage snapshot = c.snapshot(null, null);
+                    snapshots.put(stateName, snapshot);
+                    gallery.getChildren().add(createImageTile(snapshot, tileSizes.getValue()));
 
-            });
+                });
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         altsList.getSelectionModel().select(0); // select the first alternative in the list
@@ -288,6 +308,7 @@ public class FXMLViewerController {
             try (FileWriter writer = new FileWriter(currentFile)) {
                 writer.write(codeArea.getText());
                 writer.flush();
+                needsSave = false;
             } catch (IOException ex) {
                 Logger.getLogger(FXMLViewerController.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -378,7 +399,7 @@ public class FXMLViewerController {
         ObservableList<Node> children = canvas.getChildren();
         children.clear();
         children.add(c);
-        System.out.println("Single Selection");
+//        System.out.println("Single Selection");
     }
 
     public void handleMultipleSelectedAltChange(List<? extends String> alts) {
@@ -389,7 +410,7 @@ public class FXMLViewerController {
             Canvas c = layers.get(s);
             children.add(c);
         }
-        System.out.println("Multiple Selection");
+//        System.out.println("Multiple Selection");
     }
 
     /**

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
 <?import org.fxmisc.richtext.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
@@ -29,7 +30,7 @@
   ~ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
   -->
 
-<BorderPane fx:id="root" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.shirolang.playground.FXMLViewerController">
+<BorderPane fx:id="root" prefHeight="960.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.shirolang.playground.FXMLViewerController">
   <bottom>
     <TextArea fx:id="console" editable="false" minHeight="50.0" prefHeight="137.0" prefWidth="810.0" visible="true" wrapText="true" />
   </bottom>
