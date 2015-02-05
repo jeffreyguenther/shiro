@@ -86,21 +86,16 @@ public class GraphBuilder extends ShiroExpressionListener {
                                 throw new RuntimeException(keys.get(i).getText() + " cannot be found in " + producedNode.getFullName());
                             }
 
-//                            if(!port.hasArgs()){
-//
-//                                port.appendArg(getExpr(values.get(i)));
-//                            }else{
-                                port.setArg(0, getExpr(values.get(i)));
-//                            }
-
+                            port.setArg(0, getExpr(values.get(i)));
                         }
                     }
 
                     if(assignment.mfparams() != null ){
                         List<ShiroParser.ExprContext> exprs = assignment.mfparams().expr();
-                        // for each function
-                            // get the port at the same index
-                            // add the ports args to the same expression
+                        for (int i = 0; i < exprs.size(); i++) {
+                            SFunc port = producedNode.getPort(i);
+                            port.setArg(0, getExpr(exprs.get(i)));
+                        }
                     }
                 }
 

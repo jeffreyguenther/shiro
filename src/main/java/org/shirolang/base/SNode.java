@@ -57,6 +57,8 @@ public class SNode extends SFuncBase implements Scope{
     private Map<String, SNode> nestedNodes;
     // ports mapped localname -> Port
     private Map<String, SFunc> ports;
+    private Map<Integer, String> portNameByIndex;
+    private int portIndex;
 
     /**
      * Creates a new node with it's name and
@@ -118,6 +120,8 @@ public class SNode extends SFuncBase implements Scope{
 
         // create map for the node's ports
         ports = new HashMap<>();
+        portNameByIndex = new HashMap<>();
+        portIndex = 0;
 
         symbolType = SymbolType.NODE;
     }
@@ -145,6 +149,9 @@ public class SNode extends SFuncBase implements Scope{
     public void addPort(SFunc port){
         port.setFullName(Path.createFullName(fullName.get(), port.getName()));
         ports.put(port.getName(), port);
+        portNameByIndex.put(portIndex, port.getName());
+        // increment so it's ready for the next time add is called
+        portIndex++;
     }
 
     /**
@@ -163,6 +170,16 @@ public class SNode extends SFuncBase implements Scope{
      */
     public SFunc getPort(String name){
         return ports.get(name);
+    }
+
+    /**
+     * Gets port by index
+     * Ports are assigned indices in the order they are added to the node, starting with 0
+     * @param index of port to return
+     * @return the port for the given index
+     */
+    public SFunc getPort(int index){
+        return getPort(portNameByIndex.get(index));
     }
 
     public Set<SFunc> getPorts(){

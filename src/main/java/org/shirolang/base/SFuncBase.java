@@ -375,15 +375,17 @@ public abstract class SFuncBase implements SFunc {
             }
 
             SFunc func = values.get(i).getValue();
-            SymbolType type = func.getSymbolType();
-            if(func == this){
-                func.setSymbolType(SymbolType.LITERAL);
+            if(func != null) {
+                SymbolType type = func.getSymbolType();
+                if (func == this) {
+                    func.setSymbolType(SymbolType.LITERAL);
+                }
+
+                String toConsole = func.toConsole();
+                func.setSymbolType(type);
+
+                sb.append(toConsole).append(", ");
             }
-
-            String toConsole = func.toConsole();
-            func.setSymbolType(type);
-
-            sb.append(toConsole).append(", ");
         }
 
         if(!sb.toString().isEmpty()){

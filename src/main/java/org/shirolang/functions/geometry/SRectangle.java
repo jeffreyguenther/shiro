@@ -23,7 +23,12 @@
 
 package org.shirolang.functions.geometry;
 
+import javafx.scene.shape.Rectangle;
+import org.shirolang.base.SFunc;
 import org.shirolang.base.SFuncBase;
+import org.shirolang.base.TypedValue;
+import org.shirolang.functions.color.SColor;
+import org.shirolang.values.SDouble;
 
 /**
  * Represents a rectangle
@@ -31,27 +36,56 @@ import org.shirolang.base.SFuncBase;
 public class SRectangle extends SFuncBase{
     public SRectangle(){
         super();
+        args.setKeyForIndex("originX", 0);
+        args.add(new TypedValue("Double"));
+
+        args.setKeyForIndex("originY", 1);
+        args.add(new TypedValue("Double"));
+
+        args.setKeyForIndex("rotate", 2);
+        args.add(new TypedValue("Double"));
+
+        args.setKeyForIndex("width", 3);
+        args.add(new TypedValue("Double"));
+
+        args.setKeyForIndex("height", 4);
+        args.add(new TypedValue("Double"));
+
+        args.setKeyForIndex("stroke", 5);
+        args.add(new TypedValue("Color"));
+
+        args.setKeyForIndex("strokeWeight", 6);
+        args.add(new TypedValue("Double"));
+
+        args.setKeyForIndex("fill", 7);
+        args.add(new TypedValue("Color"));
+
+        args.setKeyForIndex("arcHeight", 8);
+        args.add(new TypedValue("Double"));
+
+        args.setKeyForIndex("arcWidth", 9);
+        args.add(new TypedValue("Double"));
+
+        results.add(new TypedValue(getType()));
     }
 
     @Override
     public void evaluate() {
-
+//        setResult(0, this);
     }
 
     @Override
     public int getMaxArgs() {
-        return 0;
+        return 10;
     }
 
     @Override
     public int getMinArgs() {
-        return 0;
+        return 10;
     }
 
     @Override
     public String getType() {
         return "Rectangle";
     }
-
-
 }
