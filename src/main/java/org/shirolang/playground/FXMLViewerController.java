@@ -35,16 +35,18 @@ import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.*;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import org.antlr.v4.runtime.ANTLRInputStream;
@@ -52,10 +54,12 @@ import org.antlr.v4.runtime.Token;
 import org.fxmisc.richtext.*;
 import org.reactfx.EventStream;
 import org.shirolang.base.SState;
+import org.shirolang.functions.geometry.SRectangle;
 import org.shirolang.interpreter.ShiroLexer;
 import org.shirolang.interpreter.ShiroRuntime;
 import org.shirolang.playground.editors.DoubleViz;
 import org.shirolang.playground.editors.IntegerViz;
+import org.shirolang.playground.editors.RectangleViz;
 import org.shirolang.values.SDouble;
 import org.shirolang.values.SInteger;
 
@@ -146,8 +150,8 @@ public class FXMLViewerController {
 
         errorLabel.visibleProperty().bind(model.hasErrorProperty());
 
-        model.mapCallBack("Double", d -> new DoubleViz((SDouble) d));
-        model.mapCallBack("Integer", i -> new IntegerViz((SInteger) i));
+        model.mapCallBack("Rectangle", r -> new RectangleViz((SRectangle) r));
+//        model.mapCallBack("Integer", i -> new IntegerViz((SInteger) i));
 
         errorLabel.visibleProperty().bind(model.hasErrorProperty());
         model.hasErrorProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
@@ -207,6 +211,8 @@ public class FXMLViewerController {
             try {
                 model.executeFile(Paths.get(currentFile.getPath()));
 
+
+
                 model.nodes.entrySet().forEach(e -> {
                     String stateName = e.getKey();
                     Set<Node> nodes = e.getValue();
@@ -215,6 +221,8 @@ public class FXMLViewerController {
 
                     Canvas c = createCanvas();
                     c.getDrawing().getChildren().addAll(nodes);
+                    Scene s = new Scene(c);
+
                     layers.put(stateName, c);
 
                     WritableImage snapshot = c.snapshot(null, null);
@@ -399,7 +407,6 @@ public class FXMLViewerController {
         ObservableList<Node> children = canvas.getChildren();
         children.clear();
         children.add(c);
-//        System.out.println("Single Selection");
     }
 
     public void handleMultipleSelectedAltChange(List<? extends String> alts) {
@@ -410,7 +417,6 @@ public class FXMLViewerController {
             Canvas c = layers.get(s);
             children.add(c);
         }
-//        System.out.println("Multiple Selection");
     }
 
     /**

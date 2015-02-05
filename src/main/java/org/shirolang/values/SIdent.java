@@ -174,7 +174,6 @@ public class SIdent extends SFuncBase{
 //            r.setSymbolType(SymbolType.LITERAL);
 //            String output = r.toConsole();
 //            r.setSymbolType(prev);
-
             String output = value.toString();
 
             return output;

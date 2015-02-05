@@ -8,6 +8,7 @@ package org.shirolang.playground;
 
 import javafx.beans.value.ObservableValue;
 import javafx.geometry.Bounds;
+import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.layout.Pane;
 
@@ -21,12 +22,9 @@ public class Canvas extends Pane{
     public Canvas() {
         drawing = new Group();
         this.getChildren().add(drawing);
-        
-        drawing.layoutBoundsProperty().addListener(
-                (ObservableValue<? extends Bounds> ov, Bounds t, Bounds t1) -> {
-                    setMinSize(t1.getMaxX(), t1.getMaxY());
-        });
-        
+
+        setPadding(new Insets(10));
+        setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
     }
     
     /***

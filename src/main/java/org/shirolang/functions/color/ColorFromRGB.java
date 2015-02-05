@@ -75,8 +75,9 @@ public class ColorFromRGB extends SFuncBase {
             throw new RuntimeException("Arg:3, Found " + a.getType() + ". Expected " + String.join(",", getAcceptedTypes(3)));
         }
 
-        Color result = Color.color(r.getValue(), g.getValue(), b.getValue(), a.getValue() );
+        Color result = Color.rgb(r.getValue(), g.getValue(), b.getValue(), a.getValue() );
         SColor color = new SColor(result);
+        color.evaluate();
         setResult(0, color);
     }
 
@@ -87,11 +88,11 @@ public class ColorFromRGB extends SFuncBase {
 
     @Override
     public int getMaxArgs() {
-        return 3;
+        return 4;
     }
 
     @Override
     public int getMinArgs() {
-        return 3;
+        return 4;
     }
 }
