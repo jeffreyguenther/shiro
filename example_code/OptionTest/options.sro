@@ -1,0 +1,26 @@
+include "geom.sro"
+
+node StrokeWidths begin
+	option input small Double (25.0)
+	option input large Double( 55.0)
+end
+
+
+graph aSketch begin
+	StrokeWidths -> s  
+	Geometry.Rectangle -> r(originX: 40.0, originY: 100.0, width: 100.0, height: 400.0)
+	r.strokeWeight(s.active)
+end
+
+
+
+state small begin
+	Graph aSketch
+	s[small]
+end
+
+
+state large begin
+	Graph aSketch
+	s[large]
+end
