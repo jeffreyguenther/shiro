@@ -23,46 +23,32 @@
 
 package org.shirolang.playground.editors;
 
-import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Line;
 import org.shirolang.functions.color.SColor;
-import org.shirolang.functions.geometry.SRectangle;
+import org.shirolang.functions.geometry.SLine;
 import org.shirolang.values.SDouble;
 
 /**
  *
  */
-public class RectangleViz extends Rectangle {
-    public RectangleViz(SRectangle rect ){
-        super();
+public class LineViz extends Line{
+    public LineViz(SLine l) {
+        SDouble startX = (SDouble) l.getArg("startX").getResult();
+        setStartX(startX.getValue());
 
-        SDouble originX = (SDouble) rect.getArg("originX").getResult();
-        setX(originX.getValue());
+        SDouble originY = (SDouble) l.getArg("startY").getResult();
+        setStartY(originY.getValue());
 
-        SDouble originY = (SDouble) rect.getArg("originY").getResult();
-        setY(originY.getValue());
+        SDouble endX = (SDouble) l.getArg("endX").getResult();
+        setEndX(endX.getValue());
 
-        SDouble rotate = (SDouble) rect.getArg("rotate").getResult();
-        setRotate(rotate.getValue());
+        SDouble endY = (SDouble) l.getArg("endY").getResult();
+        setEndY(endY.getValue());
 
-        SDouble width = (SDouble) rect.getArg("width").getResult();
-        setWidth(width.getValue());
-
-        SDouble height = (SDouble) rect.getArg("height").getResult();
-        setHeight(height.getValue());
-
-        SColor stroke = (SColor) rect.getArg("stroke").getResult();
+        SColor stroke = (SColor) l.getArg("stroke").getResult();
         setStroke(stroke.getValue());
 
-        SDouble strokeWeight = (SDouble) rect.getArg("strokeWeight").getResult();
+        SDouble strokeWeight = (SDouble) l.getArg("strokeWeight").getResult();
         setStrokeWidth(strokeWeight.getValue());
-
-        SColor fill = (SColor) rect.getArg("fill").getResult();
-        setFill(fill.getValue());
-
-        SDouble arcHeight = (SDouble) rect.getArg("arcHeight").getResult();
-        setArcHeight(arcHeight.getValue());
-
-        SDouble arcWidth = (SDouble) rect.getArg("arcWidth").getResult();
-        setArcHeight(arcWidth.getValue());
     }
 }

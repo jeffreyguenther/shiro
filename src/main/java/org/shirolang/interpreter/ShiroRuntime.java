@@ -124,6 +124,9 @@ public class ShiroRuntime{
     }
 
     private String eval(Path rootPath, CommonTokenStream tokens){
+        output.set("");
+        nodes.clear();
+
         List<Path> dependencies = resolveDependencies(rootPath, tokens);
         loadDependencies(dependencies);
         loadMainCode(rootPath);
@@ -202,8 +205,11 @@ public class ShiroRuntime{
                     Callback<SFunc, Node> callback = visualCallBacks.get(type);
                     if(callback != null) {
                         visualized.add(callback.call(sFunc));
+                        System.out.println("rendering " + type);
                     }
                 }
+
+
             }
             nodes.put(state.getName(), visualized);
         }
@@ -292,6 +298,7 @@ public class ShiroRuntime{
                     for (Pair<String, String> entry : table) {
                         state.addActiveNode(entry.getKey(), entry.getValue());
                     }
+                    states.add(state);
                 }
             }
         }

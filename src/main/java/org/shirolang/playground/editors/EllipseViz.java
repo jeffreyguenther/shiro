@@ -23,46 +23,38 @@
 
 package org.shirolang.playground.editors;
 
-import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Ellipse;
 import org.shirolang.functions.color.SColor;
-import org.shirolang.functions.geometry.SRectangle;
+import org.shirolang.functions.geometry.SEllipse;
 import org.shirolang.values.SDouble;
 
 /**
  *
  */
-public class RectangleViz extends Rectangle {
-    public RectangleViz(SRectangle rect ){
-        super();
+public class EllipseViz extends Ellipse {
+    public EllipseViz(SEllipse ellipse){
+        SDouble originX = (SDouble) ellipse.getArg("centerX").getResult();
+        setCenterX(originX.getValue());
 
-        SDouble originX = (SDouble) rect.getArg("originX").getResult();
-        setX(originX.getValue());
+        SDouble originY = (SDouble) ellipse.getArg("centerY").getResult();
+        setCenterY(originY.getValue());
 
-        SDouble originY = (SDouble) rect.getArg("originY").getResult();
-        setY(originY.getValue());
-
-        SDouble rotate = (SDouble) rect.getArg("rotate").getResult();
+        SDouble rotate = (SDouble) ellipse.getArg("rotate").getResult();
         setRotate(rotate.getValue());
 
-        SDouble width = (SDouble) rect.getArg("width").getResult();
-        setWidth(width.getValue());
+        SDouble radiusX = (SDouble) ellipse.getArg("radiusX").getResult();
+        setRadiusX(radiusX.getValue());
 
-        SDouble height = (SDouble) rect.getArg("height").getResult();
-        setHeight(height.getValue());
+        SDouble radiusY = (SDouble) ellipse.getArg("radiusY").getResult();
+        setRadiusY(radiusY.getValue());
 
-        SColor stroke = (SColor) rect.getArg("stroke").getResult();
+        SColor stroke = (SColor) ellipse.getArg("stroke").getResult();
         setStroke(stroke.getValue());
 
-        SDouble strokeWeight = (SDouble) rect.getArg("strokeWeight").getResult();
+        SDouble strokeWeight = (SDouble) ellipse.getArg("strokeWeight").getResult();
         setStrokeWidth(strokeWeight.getValue());
 
-        SColor fill = (SColor) rect.getArg("fill").getResult();
+        SColor fill = (SColor) ellipse.getArg("fill").getResult();
         setFill(fill.getValue());
-
-        SDouble arcHeight = (SDouble) rect.getArg("arcHeight").getResult();
-        setArcHeight(arcHeight.getValue());
-
-        SDouble arcWidth = (SDouble) rect.getArg("arcWidth").getResult();
-        setArcHeight(arcWidth.getValue());
     }
 }

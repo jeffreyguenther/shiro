@@ -99,6 +99,7 @@ public class Library {
 
     public void reset() {
         nameManager.reset();
+        parseCache.clear();
 
         states.clear();
         graphs.clear();
@@ -391,7 +392,7 @@ public class Library {
             registerFunction("Ellipse", () -> new SEllipse());
             registerFunction("Text", () -> new SText());
 //            registerFunction("Image", () -> new SImage());
-//            registerFunction("Line", () -> new SLine());
+            registerFunction("Line", () -> new SLine());
         }catch (NameUsedException e) {
             throw new RuntimeException("Something crazy happened and an internal type is already defined!");
         }

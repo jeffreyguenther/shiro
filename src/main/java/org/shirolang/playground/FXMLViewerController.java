@@ -28,49 +28,46 @@
  */
 package org.shirolang.playground;
 
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.SnapshotParameters;
 import javafx.scene.control.*;
 import javafx.scene.effect.DropShadow;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.Token;
 import org.fxmisc.richtext.*;
 import org.reactfx.EventStream;
-import org.shirolang.base.SState;
+import org.shirolang.functions.geometry.SEllipse;
+import org.shirolang.functions.geometry.SLine;
 import org.shirolang.functions.geometry.SRectangle;
+import org.shirolang.functions.geometry.SText;
 import org.shirolang.interpreter.ShiroLexer;
 import org.shirolang.interpreter.ShiroRuntime;
-import org.shirolang.playground.editors.DoubleViz;
-import org.shirolang.playground.editors.IntegerViz;
+import org.shirolang.playground.editors.EllipseViz;
+import org.shirolang.playground.editors.LineViz;
 import org.shirolang.playground.editors.RectangleViz;
-import org.shirolang.values.SDouble;
-import org.shirolang.values.SInteger;
+import org.shirolang.playground.editors.TextViz;
 
 import java.io.*;
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.*;
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.function.Consumer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -138,7 +135,6 @@ public class FXMLViewerController {
             needsSave = true;
         });
 
-
         EventStream<PlainTextChange> textChanges = codeArea.plainTextChanges();
 
         textChanges.successionEnds(Duration.ofMillis(500)).subscribe(plainTextChange -> save());
@@ -151,7 +147,9 @@ public class FXMLViewerController {
         errorLabel.visibleProperty().bind(model.hasErrorProperty());
 
         model.mapCallBack("Rectangle", r -> new RectangleViz((SRectangle) r));
-//        model.mapCallBack("Integer", i -> new IntegerViz((SInteger) i));
+        model.mapCallBack("Ellipse", e -> new EllipseViz((SEllipse) e));
+        model.mapCallBack("Text", t -> new TextViz((SText) t));
+        model.mapCallBack("Line", l -> new LineViz((SLine) l));
 
         errorLabel.visibleProperty().bind(model.hasErrorProperty());
         model.hasErrorProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
@@ -210,8 +208,6 @@ public class FXMLViewerController {
 
             try {
                 model.executeFile(Paths.get(currentFile.getPath()));
-
-
 
                 model.nodes.entrySet().forEach(e -> {
                     String stateName = e.getKey();

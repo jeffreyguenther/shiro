@@ -23,46 +23,38 @@
 
 package org.shirolang.playground.editors;
 
-import javafx.scene.shape.Rectangle;
-import org.shirolang.functions.color.SColor;
-import org.shirolang.functions.geometry.SRectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
+import org.shirolang.functions.geometry.SText;
 import org.shirolang.values.SDouble;
+import org.shirolang.values.SString;
 
 /**
  *
  */
-public class RectangleViz extends Rectangle {
-    public RectangleViz(SRectangle rect ){
+public class TextViz extends Text {
+    public TextViz(SText t){
         super();
 
-        SDouble originX = (SDouble) rect.getArg("originX").getResult();
+        SDouble originX = (SDouble) t.getArg("originX").getResult();
         setX(originX.getValue());
 
-        SDouble originY = (SDouble) rect.getArg("originY").getResult();
+        SDouble originY = (SDouble) t.getArg("originY").getResult();
         setY(originY.getValue());
 
-        SDouble rotate = (SDouble) rect.getArg("rotate").getResult();
+        SDouble rotate = (SDouble) t.getArg("rotate").getResult();
         setRotate(rotate.getValue());
 
-        SDouble width = (SDouble) rect.getArg("width").getResult();
-        setWidth(width.getValue());
+        SString text = (SString) t.getArg("text").getResult();
+        setText(text.getValue());
 
-        SDouble height = (SDouble) rect.getArg("height").getResult();
-        setHeight(height.getValue());
+        SString font = (SString) t.getArg("font").getResult();
+        SDouble size = (SDouble) t.getArg("size").getResult();
+        SString weight = (SString) t.getArg("weight").getResult();
 
-        SColor stroke = (SColor) rect.getArg("stroke").getResult();
-        setStroke(stroke.getValue());
+        setFont(Font.font(font.getValue(), FontWeight.findByName(weight.getValue()), size.getValue()));
 
-        SDouble strokeWeight = (SDouble) rect.getArg("strokeWeight").getResult();
-        setStrokeWidth(strokeWeight.getValue());
-
-        SColor fill = (SColor) rect.getArg("fill").getResult();
-        setFill(fill.getValue());
-
-        SDouble arcHeight = (SDouble) rect.getArg("arcHeight").getResult();
-        setArcHeight(arcHeight.getValue());
-
-        SDouble arcWidth = (SDouble) rect.getArg("arcWidth").getResult();
-        setArcHeight(arcWidth.getValue());
+        System.out.println("Setting up a text element.");
     }
 }
