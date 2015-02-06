@@ -7,6 +7,7 @@ node Geometry begin
         output color ColorFromRGB(red, green, blue, alpha)
     end
 
+    /**
     node HSBColor begin
         input hue Double // 0 - 360 deg
         input saturation Double // 0 - 100%
@@ -14,6 +15,7 @@ node Geometry begin
         input alpha Double(1.0)
         output color ColorFromHSB(hue, saturation, brightness, alpha)
     end
+    */
 
     // convert color to gray scale
 
@@ -23,43 +25,51 @@ node Geometry begin
         input rotate Double(0.0)
         input width Double
         input height Double
-        input stroke Color
-        input strokeWeight Double
-        input fill Color
+        input stroke ColorFromRGB(0, 0, 0, 1.0)
+        input strokeWeight Double(1.0)
+        input fill ColorFromRGB(255, 255, 255, 1.0)
         input arcHeight Double(0.0)
         input arcWidth Double(0.0)
+        eval rect Rectangle(originX, originY, rotate, width, height, stroke, strokeWeight, fill, arcHeight, arcWidth)
     end
 
+
     node Ellipse begin
-        input originX Double
-        input originY Double
+        input centerX Double
+        input centerY Double
         input rotate Double(0.0)
         input radiusX Double
         input radiusY Double
-        input stroke Color
-        input strokeWeight Double
-        input fill Color
+        input stroke ColorFromRGB(0, 0, 0, 1.0)
+        input strokeWeight Double(1.0)
+        input fill ColorFromRGB(255, 255, 255, 1.0)
+        eval update Ellipse(centerX, centerY, rotate, radiusX, radiusY, stroke, strokeWeight, fill)
     end
+
 
     node Text begin
         input originX Double(0.0)
         input originY Double(0.0)
         input rotate Double(0.0)
-        input text String
+        input text String("Something")
         input font String("System")
         input size Double(12.0)
         input weight String("normal")
+        eval update Text(originX, originY, rotate, text, font, size, weight)
     end
+
 
     node Line begin
         input startX Double
         input startY Double
         input endX Double
         input endY Double
-        input stroke Color
-        input strokeWeight Double
+        input stroke ColorFromRGB(0, 0, 0, 1.0)
+        input strokeWeight Double(1.0)
+        eval update Line(startX, startY, endX, endY, stroke, strokeWeight)
     end
 
+    /**
     node Group begin
         input originX Double
         input originY Double
@@ -76,4 +86,5 @@ node Geometry begin
         input originX Double
         input originY Double
     end
+    */
 end
