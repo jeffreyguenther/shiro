@@ -1,0 +1,16 @@
+"This is a string"          //String literal
+1                           //Integer
+2.1                         //Double
+-1                          //Negative integer
+-0.111232                   //Negative double
+true                        //true boolean
+false                       //false boolean
+[0, "green", 5, false]      //list
+[0..2] by 0.2               //range {x | 2 =< x >= 0} incremented by 0.2
+(0..2] by 0.2               //range {x | 2 =< x > 0} incremented by 0.2
+(0..2) by 0.2               //range {x | 2 < x > 0} incremented by 0.2
+[0..2) by 0.2               //range {x | 2 < x >= 0} incremented by 0.2
+
+@Box.length                 //path literal
+~Box.length                 //reference
+{x: "Hello", w: "world", z: [100, 100, 100]} // literal, constant node

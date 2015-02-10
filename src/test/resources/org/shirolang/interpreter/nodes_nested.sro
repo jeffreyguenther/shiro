@@ -1,0 +1,4 @@
+node A begin
+    node B begin
+    end
+end

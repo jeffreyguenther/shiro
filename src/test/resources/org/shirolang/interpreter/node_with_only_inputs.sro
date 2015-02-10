@@ -1,0 +1,5 @@
+node Box begin
+    input length Double
+    input width Double
+    input height Double
+end

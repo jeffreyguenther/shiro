@@ -1,0 +1,32 @@
+node Box begin
+     input length Double
+     input width Double
+     input height Double
+     eval update Multiply(length, width)
+     output area Double(update)
+     output name String("Box")
+end
+
+node Lengths[short] begin
+    option output short Double (10.0)
+    option output long Double (1200.0)
+end
+
+graph box_calc begin
+    Lengths -> l
+
+    Box -> b
+    b.length(l.active)
+    b.width(20.0)
+    b.height(7.0)
+end
+
+
+state s1 begin
+    Graph box_calc
+end
+
+state s2 begin
+    Graph box_calc
+    l[long]
+end

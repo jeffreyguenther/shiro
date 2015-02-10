@@ -1,0 +1,19 @@
+node Math begin
+    node DegreeToRadians begin
+        input angle Double
+        output radians Double
+    end
+
+    node RadiansToDegrees begin
+        input angle Double
+        output degrees Double
+    end
+
+    // sin
+    // cosine
+    // tangent
+
+    // sine inverse
+    // cosine inverse
+    // tangent inverse
+end

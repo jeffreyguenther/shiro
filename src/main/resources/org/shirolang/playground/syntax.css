@@ -1,0 +1,23 @@
+.ident{
+    -fx-fill: rgb(0, 0, 0);
+    -fx-font-weight: bold;
+}
+
+.node-type{
+    -fx-fill: rgb(55, 26, 148);
+    -fx-font-weight: bold;
+}
+
+.mf{
+    -fx-fill: rgb(227, 36, 0);
+    -fx-font-weight: bold;
+}
+
+.begin-end{
+    -fx-fill: rgb(217, 80, 0);
+}
+
+.code-area {
+    -fx-font-family: "Helvetica";
+    -fx-background-color: #eee;
+}

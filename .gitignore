@@ -21,4 +21,9 @@ scenicView.properties
 .settings
 .project
 
-src/generated-sources/**
+
+*.iml
+.idea/
+src/generated/**
+
+src/test/java/org/shirolang/functions/math/AddTest.java

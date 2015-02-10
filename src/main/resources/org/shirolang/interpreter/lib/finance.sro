@@ -1,0 +1,18 @@
+node Finance begin
+    node SimpleInterest begin
+        input principal Double
+        input rate Double
+        input time Double
+        output interest Double(principal * rate * time)
+        output accrued Double(principal + interest)
+    end
+
+    node CompoundInterest begin
+        input principal Double
+        input rate Double
+        input time Double
+        // evaluate using only ports
+        output interest Double
+        output accrued Double
+    end
+end

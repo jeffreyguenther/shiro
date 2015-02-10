@@ -1,4 +1,0 @@
-state DiagonalLine begin
-    Graph line
-    endPoint[P1]
-end

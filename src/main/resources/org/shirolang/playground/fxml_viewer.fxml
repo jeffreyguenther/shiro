@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import org.fxmisc.richtext.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.input.*?>
+<?import javafx.scene.layout.*?>
+
+<!--
+  ~ Copyright (c) 2012-2014 Jeffrey Guenther
+  ~
+  ~ Permission is hereby granted, free of charge, to any person obtaining
+  ~ a copy of this software  and associated documentation files (the
+  ~ "Software"), to deal in the Software without restriction,  including
+  ~ without limitation the rights to use, copy, modify, merge, publish,
+  ~ distribute,  sublicense, and/or sell copies of the Software, and to
+  ~ permit persons to whom the Software is furnished to do so, subject to
+  ~ the following conditions:
+  ~
+  ~ The above copyright notice and this permission notice shall be
+  ~ included in all copies or substantial portions of the Software.
+  ~
+  ~ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+  ~ EXPRESS OR IMPLIED, INCLUDING BUT  NOT LIMITED TO THE WARRANTIES OF
+  ~ MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+  ~ IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+  ~ CLAIM, DAMAGES OR  OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+  ~ TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+  ~ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+  -->
+
+<BorderPane fx:id="root" prefHeight="960.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.shirolang.playground.FXMLViewerController">
+  <bottom>
+    <TextArea fx:id="console" editable="false" minHeight="50.0" prefHeight="137.0" prefWidth="810.0" visible="true" wrapText="true" />
+  </bottom>
+  <center>
+    <SplitPane dividerPositions="0.5" focusTraversable="true" prefHeight="160.0" prefWidth="200.0">
+      <items>
+        <VBox maxWidth="500.0" prefHeight="-1.0" prefWidth="-1.0">
+          <children>
+            <AnchorPane id="AnchorPane" maxWidth="-1.0" minHeight="-1.0" prefHeight="-1.0">
+              <children>
+                <Button fx:id="run" defaultButton="false" mnemonicParsing="false" onAction="#handleRun" text="Run" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="10.0" />
+                <Label fx:id="errorLabel" layoutX="58.0" layoutY="13.0" text="Has errors" textFill="#cc0000" />
+              </children>
+            </AnchorPane>
+                  <CodeArea fx:id="codeArea" VBox.vgrow="ALWAYS" />
+          </children>
+          <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" />
+          </padding>
+        </VBox>
+        <TabPane prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE">
+          <tabs>
+            <Tab closable="false" text="Canvas">
+              <content>
+                        <VBox>
+                           <children>
+                              <HBox layoutX="10.0" layoutY="10.0" VBox.vgrow="ALWAYS">
+                                 <children>
+                                    <ScrollPane layoutX="10.0" layoutY="10.0" pannable="true" prefViewportHeight="466.0" HBox.hgrow="ALWAYS">
+                                       <content>
+                                <Pane fx:id="canvas" prefHeight="-1.0" prefWidth="-1.0" styleClass="canvas" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.topAnchor="10.0" />
+                                       </content>
+                                       <HBox.margin>
+                                          <Insets right="5.0" />
+                                       </HBox.margin>
+                                    </ScrollPane>
+                          <ListView id="" fx:id="altsList" editable="false" maxWidth="-Infinity" prefHeight="-1.0" prefWidth="100.0" />
+                                 </children>
+                                 <padding>
+                                    <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                                 </padding>
+                              </HBox>
+                           </children>
+                        </VBox>
+              </content>
+            </Tab>
+            <Tab closable="false" text="Light Table">
+              <content>
+                <VBox id="VBox" alignment="CENTER" spacing="5.0">
+                  <children>
+                    <ToolBar>
+                      <items>
+                        <ToggleButton fx:id="btnGrid" mnemonicParsing="false" onAction="#layoutAsGrid" selected="true" text="Grid">
+                          <toggleGroup>
+                            <ToggleGroup fx:id="layouts" />
+                          </toggleGroup>
+                        </ToggleButton>
+                        <ToggleButton fx:id="btnFreeForm" mnemonicParsing="false" onAction="#handleFreeFormLayout" text="Freeform" toggleGroup="$layouts" />
+                      </items>
+                    </ToolBar>
+                    <ScrollPane id="ScrollPane" fx:id="lightTableScrollPane" pannable="true" prefViewportHeight="488.0" prefViewportWidth="346.0" VBox.vgrow="ALWAYS">
+                      <content>
+                        <FlowPane fx:id="gallery" hgap="10.0" prefHeight="-1.0" prefWidth="-1.0" prefWrapLength="1200.0" vgap="10.0">
+                          <padding>
+                            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                          </padding>
+                        </FlowPane>
+                      </content>
+                    </ScrollPane>
+                              <ToolBar prefHeight="60.0" prefWidth="372.0" VBox.vgrow="NEVER">
+                                <items>
+                                    <Label text="Tile Size" />
+                                    <Slider fx:id="tileSizes" majorTickUnit="100.0" max="600.0" min="200.0" minorTickCount="4" prefHeight="48.0" prefWidth="300.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="200.0">
+                                       <opaqueInsets>
+                                          <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                       </opaqueInsets>
+                                       <padding>
+                                          <Insets top="10.0" />
+                                       </padding></Slider>
+                                </items>
+                              </ToolBar>
+                  </children>
+                </VBox>
+              </content>
+            </Tab>
+          </tabs>
+        </TabPane>
+      </items>
+    </SplitPane>
+  </center>
+  <top>
+    <MenuBar useSystemMenuBar="true">
+      <menus>
+        <Menu mnemonicParsing="false" text="File">
+          <items>
+            <MenuItem mnemonicParsing="true" onAction="#handleFileOpen" text="Open…">
+              <accelerator>
+                <KeyCodeCombination alt="UP" code="O" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
+              </accelerator>
+            </MenuItem>
+            <MenuItem mnemonicParsing="true" onAction="#handleSave" text="Save">
+              <accelerator>
+                <KeyCodeCombination alt="UP" code="S" control="UP" meta="UP" shift="UP" shortcut="DOWN" />
+              </accelerator>
+            </MenuItem>
+            <MenuItem mnemonicParsing="false" onAction="#handleSaveAs" text="Save As…" />
+          </items>
+        </Menu>
+      </menus>
+    </MenuBar>
+  </top>
+</BorderPane>
