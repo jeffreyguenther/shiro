@@ -3,8 +3,8 @@ node Invest begin
 	input principle Double(5000)
 	input duration Double
 	eval update SimpleInterest(rate, principle, duration)
-	output interest(update[0])
-	output value(update[1])
+	output interest Double (update[0])
+	output value Double (update[1])
 end
 
 port aList Array(1, 2, 3, 4)

@@ -1,0 +1,12 @@
+include "geom"
+
+node Faces begin
+	option input helvetica String("Helvetica")
+	option input comic String ("Comic Sans")
+end
+
+
+Faces -> f
+Geometry.Text -> t
+t.text("Hello world!")
+t.font(f.active)

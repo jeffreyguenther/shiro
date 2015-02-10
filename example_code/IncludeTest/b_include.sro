@@ -1,0 +1,4 @@
+node B begin
+    input in Double
+    output value Double(in)
+end
