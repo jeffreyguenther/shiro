@@ -1,4 +1,4 @@
-wirnode Point begin
+node Point begin
     input x Value
     input y Value
     eval update Point(x[0], y[0])
