@@ -30,10 +30,10 @@ import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.fxmisc.richtext.*;
 import org.reactfx.EventStream;
+import org.reactfx.util.Try;
 import org.shirolang.interpreter.ShiroLexer;
 import org.shirolang.interpreter.ShiroParser;
 
@@ -117,9 +117,9 @@ public class ShiroPlaygroundParser extends Application {
         }
     }
 
-    private void applyHighlighting(StyleSpans<Collection<String>> highlighting) {
-        if(highlighting.getSpanCount() > 0) {
-            codeArea.setStyleSpans(0, highlighting);
+    private void applyHighlighting(Try<StyleSpans<Collection<String>>> highlighting) {
+        if(highlighting.get().getSpanCount() > 0) {
+            codeArea.setStyleSpans(0, highlighting.get());
         }
     }
 

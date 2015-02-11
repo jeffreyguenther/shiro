@@ -1,12 +1,16 @@
 include "geom"
 
 node Faces begin
-	option input helvetica String("Helvetica")
-	option input comic String ("Comic Sans")
+    option input helvetica String("Helvetica")
+    option input comic String ("Comic Sans MS")
 end
 
-
-Faces -> f
-Geometry.Text -> t
-t.text("Hello world!")
-t.font(f.active)
+graph atester begin
+    Faces -> f
+    Geometry.Text -> t
+    t.originX(100.00)
+	t.originY(75.0)
+    t.text("Hello world!")
+    t.font(f.active)
+    t.size(100.0)
+end

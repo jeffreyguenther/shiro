@@ -6,7 +6,7 @@ Shiro is a data flow programming language designed to be embedded into applicati
 Getting Started
 ===============
 
-Shiro is implemented in Java. [Gradle](http://www.gradle.org/) is used as the build system and dependency manager. The interpreter depends on [ANTLR 4.3](http://www.antlr.org/) to generate the parser, lexer and parse tree event listeners. `build.gradle` is setup to automatically generate the Java code at compile time. You can use gradle from the commandline or use Netbeans or Eclipse, as both IDE's support gradle projects. With Netbeans, change the Build Script Evaluation Strategy to "IDEA plugin based."
+Shiro is implemented in Java. [Gradle](http://www.gradle.org/) is used as the build system and dependency manager. The interpreter depends on [ANTLR 4.5](http://www.antlr.org/) to generate the parser, lexer and parse tree event listeners. `build.gradle` is setup to automatically generate the Java code at compile time. You can use gradle from the commandline or use Netbeans or Eclipse, as both IDE's support gradle projects. With Netbeans, change the Build Script Evaluation Strategy to "IDEA plugin based."
 
 You can run the Shiro interpreter using this command within the shiro subdirectory
 
@@ -16,7 +16,7 @@ This will start the **Shiro Playground** application that allows you to load and
 
 To create an executable for your OS, use the javafx-gradle plugin:
 
-    $ gradle jfxdeploy
+    $ gradle jfxDeploy
 The executable bundle will be found in `build/distributions/bundles`
 
 A helpful command to remember if you just want to regenerate the parser, lexer, and listeners is:
@@ -32,7 +32,7 @@ Because this code is being developed for my thesis, I'm responsible for its desi
 
 * Give feedback on both the implementation and the language syntax
 * Help create a REPL for a better commandline experience
-* Help write multi-functions for the standard library
+* Help write functions for the standard library
   This is one of the biggest and most important parts of the project after the basic language design is complete. We need a good library of multi-functions to make the language helpful to people in a variety of domains.
 
 Acknowledgements

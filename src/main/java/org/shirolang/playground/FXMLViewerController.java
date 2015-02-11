@@ -51,6 +51,7 @@ import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.Token;
 import org.fxmisc.richtext.*;
 import org.reactfx.EventStream;
+import org.reactfx.util.Try;
 import org.shirolang.functions.geometry.SEllipse;
 import org.shirolang.functions.geometry.SLine;
 import org.shirolang.functions.geometry.SRectangle;
@@ -470,7 +471,7 @@ public class FXMLViewerController {
         }
     }
 
-    private void applyHighlighting(StyleSpans<Collection<String>> highlighting) {
-        codeArea.setStyleSpans(0, highlighting);
+    private void applyHighlighting(Try<StyleSpans<Collection<String>>> highlighting) {
+        codeArea.setStyleSpans(0, highlighting.get());
     }
 }

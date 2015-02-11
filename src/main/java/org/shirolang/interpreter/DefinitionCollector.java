@@ -111,6 +111,7 @@ public class DefinitionCollector extends ShiroBaseListener {
         }
     }
 
+
     @Override
     public void enterGraphDecl(@NotNull ShiroParser.GraphDeclContext ctx) {
         graphs.put(ctx.IDENT().getText(), ctx);
