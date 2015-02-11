@@ -5,7 +5,7 @@ node Faces begin
     option input comic String ("Comic Sans MS")
 end
 
-graph atester begin
+graph typefaces begin
     Faces -> f
     Geometry.Text -> t
     t.originX(100.00)

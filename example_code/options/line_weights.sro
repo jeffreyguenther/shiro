@@ -12,13 +12,10 @@ graph aSketch begin
 	r.strokeWeight(s.active)
 end
 
-
-
 state small begin
 	Graph aSketch
 	s[small]
 end
-
 
 state large begin
 	Graph aSketch
