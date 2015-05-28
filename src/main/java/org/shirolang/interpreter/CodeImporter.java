@@ -29,8 +29,8 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.shirolang.dag.DependencyRelation;
 
+import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -56,7 +56,7 @@ public class CodeImporter extends ShiroBaseListener{
         this.sourceFile = source;
         this.parentDirectory = source.getParent();
         this.lib = lib;
-        stdLib = CodeImporter.class.getResource("lib/").getPath();
+        stdLib = CodeImporter.class.getResource("lib" + File.separator).getPath();
     }
 
     public Set<DependencyRelation<Path>> getSourceFiles() {
