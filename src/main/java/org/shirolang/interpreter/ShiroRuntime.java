@@ -217,6 +217,11 @@ public class ShiroRuntime{
         return output.get();
     }
 
+    /**
+     * Executes a string containing a Shiro program
+     * @param input a string of Shiro code
+     * @return the console output after the evaluation
+     */
     public String executeStatement(String input){
         library.reset();
 
@@ -336,6 +341,11 @@ public class ShiroRuntime{
         return sortedPaths;
     }
 
+    /**
+     * Parses code at a list of paths and recursively gathers all of
+     * the node definitions
+     * @param deps the list of paths from which to gather the nodes
+     */
     private void loadDependencies(List<java.nio.file.Path> deps){
         for(java.nio.file.Path p: deps){
 

@@ -35,7 +35,7 @@ import org.shirolang.values.SPath;
 import java.util.List;
 
 /**
- *
+ * An ANTLR expression listener used to build Graph instances.
  */
 public class GraphBuilder extends ShiroExpressionListener {
 
@@ -72,7 +72,6 @@ public class GraphBuilder extends ShiroExpressionListener {
                 SGraph g = (SGraph) scope.peek();
                 SNode producedNode = (SNode) library.instantiateNode(g, p, nodeName);
 
-                // TODO add support for argument maps
                 ShiroParser.NodeAssignmentContext assignment = ac.nodeAssignment();
                 if(assignment != null){
                     if( assignment.argMap() != null ){

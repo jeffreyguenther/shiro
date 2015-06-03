@@ -33,7 +33,7 @@ import org.shirolang.exceptions.OptionNotFoundException;
 import org.shirolang.values.Path;
 
 /**
- * Listener used to realize node parse trees
+ * An ANTLR listener used to realize node parse trees
  *
  * @author jeffreyguenther
  */

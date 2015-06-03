@@ -27,7 +27,7 @@ package org.shirolang.interpreter;
 import org.shirolang.base.SFunc;
 
 /**
- *
+ * Functional interface used to instantiate multi-functions by type
  * @author jeffreyguenther
  */
 public interface FunctionFactory {

@@ -27,7 +27,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 /**
- *  Represent the result of a parsed file
+ *  Represents the result of a parsed file
  *  Used to avoid re-parsing when evaluating a file
  *  after dependencies are resolved
  */

@@ -31,7 +31,7 @@ import org.shirolang.dag.GraphNode;
 import org.shirolang.dag.NodeAction;
 
 /**
- *
+ * A NodeAction that evaluates multi-function
  * @author jeffreyguenther
  */
 public class SFuncAction implements NodeAction<SFunc>{
