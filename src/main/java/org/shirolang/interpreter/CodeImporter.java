@@ -31,6 +31,8 @@ import org.shirolang.dag.DependencyRelation;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -48,7 +50,7 @@ public class CodeImporter extends ShiroBaseListener{
     private Set<DependencyRelation<Path>> sourceFiles;
     private Path parentDirectory;
     private Path sourceFile;
-    private String stdLib;
+    private URL stdLib;
     private Library lib;
 
     public CodeImporter(Library lib, Path source){
@@ -56,7 +58,8 @@ public class CodeImporter extends ShiroBaseListener{
         this.sourceFile = source;
         this.parentDirectory = source.getParent();
         this.lib = lib;
-        stdLib = CodeImporter.class.getResource("lib" + File.separator).getPath();
+        stdLib = CodeImporter.class.getResource("lib");
+
     }
 
     public Set<DependencyRelation<Path>> getSourceFiles() {
@@ -72,11 +75,12 @@ public class CodeImporter extends ShiroBaseListener{
             importedFile = importedFile + ".sro";
         }
 
-        Path standardLib = Paths.get(stdLib + importedFile);
-        Path sourceAtRoot = parentDirectory.resolve(importedFile);
-        Path sourceInLib = parentDirectory.resolve("lib").resolve(importedFile);
+        try{
+            Path standardLib = Paths.get(stdLib.toURI()).resolve(importedFile);
+            Path sourceAtRoot = parentDirectory.resolve(importedFile);
+            Path sourceInLib = parentDirectory.resolve("lib").resolve(importedFile);
 
-        try {
+
             if(Files.exists(standardLib)){
                 sourceFiles.add(new DependencyRelation<>(sourceFile, standardLib));
                 sourceFiles.addAll(getSourceDependencies(standardLib));
@@ -91,6 +95,8 @@ public class CodeImporter extends ShiroBaseListener{
             }
         } catch (IOException ex) {
             Logger.getLogger(CodeImporter.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (URISyntaxException e) {
+            Logger.getLogger(CodeImporter.class.getName()).log(Level.SEVERE, null, e);
         }
     }
 
