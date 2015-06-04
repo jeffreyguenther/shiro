@@ -34,6 +34,7 @@ import org.shirolang.exceptions.GraphNotFoundException;
 import org.shirolang.exceptions.NameUsedException;
 import org.shirolang.exceptions.PortNotFoundException;
 import org.shirolang.functions.color.ColorFromRGB;
+import org.shirolang.functions.color.SColor;
 import org.shirolang.functions.geometry.*;
 import org.shirolang.functions.math.*;
 import org.shirolang.values.*;
@@ -93,10 +94,12 @@ public class Library {
         // load basic multi-functions
         loadRuntimeFunctions();
         loadGraphicsFunctions();
-        graphs.put(DEFAULT_GRAPH_NAME, new SGraph(DEFAULT_GRAPH_NAME));
-
+        createDefaultGraph();
     }
 
+    /**
+     * Clears the library and adds the default graph to the library
+     */
     public void reset() {
         nameManager.reset();
         parseCache.clear();
@@ -108,6 +111,13 @@ public class Library {
         nodeDefs.clear();
         graphDefs.clear();
         alternativeDefs.clear();
+        createDefaultGraph();
+    }
+
+    /**
+     * Adds the default graph to the library of graphs
+     */
+    private void createDefaultGraph(){
         graphs.put(DEFAULT_GRAPH_NAME, new SGraph(DEFAULT_GRAPH_NAME));
     }
 
@@ -164,6 +174,11 @@ public class Library {
     public SFunc instantiateNode(SGraph g, Path p, String name){
         // TODO handle the instantiation of nested nodes
         ParseTree nodeDef = nodeDefs.get(p.getPath());
+
+        if(nodeDef == null){
+            throw new RuntimeException(p.getPath() + " cannot be found");
+        }
+
         NodeInstantiator nodeProducer = new NodeInstantiator(this, g);
         ParseTreeWalker walker = new ParseTreeWalker();
         walker.walk(nodeProducer, nodeDef);
@@ -387,6 +402,7 @@ public class Library {
 
     private void loadGraphicsFunctions(){
         try{
+            registerFunction("Color", () -> new SColor());
             registerFunction("ColorFromRGB", () -> new ColorFromRGB());
             registerFunction("Rectangle", () -> new SRectangle());
             registerFunction("Ellipse", () -> new SEllipse());

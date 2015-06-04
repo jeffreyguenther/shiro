@@ -1,0 +1,3 @@
+port a Double(3.0 + 4.0)
+port b Add(121.0,  a)
+port c Double(a * b)

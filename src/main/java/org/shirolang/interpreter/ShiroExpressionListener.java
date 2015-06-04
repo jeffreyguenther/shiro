@@ -330,16 +330,14 @@ public class ShiroExpressionListener extends ShiroBaseListener {
     protected void setArgs(SFunc function, List<ShiroParser.ExprContext> args){
         // check to see if the right number of exprs came back
         if (args.size() < function.getMinArgs()) {
-            throw new RuntimeException("Expected at least " + function.getMinArgs()
+            throw new RuntimeException(function.getFullName() + ":" + function.getType() + " expected at least " + function.getMinArgs()
                     + " arguments to be provided.");
         }
 
         if (args.size() > function.getMaxArgs()) {
-            throw new RuntimeException("Expected at most " + function.getMinArgs()
+            throw new RuntimeException(function.getFullName() + ":" + function.getType() + " expected at most " + function.getMinArgs()
                     + " arguments to be provided.");
         }
-
-        // todo add argument type checking
 
         // append the args to the function
         for (int i = 0; i < args.size(); i++) {

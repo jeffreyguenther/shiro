@@ -96,7 +96,7 @@ public class SIdent extends SFuncBase{
             try {
                 /**
                  * Because an identifier simply resolves a path to
-                 * a particular part, the type of it's return
+                 * a particular port, the type of it's return
                  * should be set to the type of the node it finds.
                  */
                 SFunc func = scope.resolvePath(value);

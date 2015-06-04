@@ -186,7 +186,6 @@ public class SNode extends SFuncBase implements Scope{
         Set<SFunc> allPorts = new HashSet<>();
         for(SFunc f: ports.values()){
             if(f.isActive()) {
-                allPorts.addAll(f.getDependencies());
                 allPorts.add(f);
             }
         }
@@ -421,7 +420,7 @@ public class SNode extends SFuncBase implements Scope{
         // todo handle node evaluation.
         // This is where we will deal with the mechanics of having a
         // node evaluate itself when it's not attached to a graph.
-        // this will happen when a node is passes as a lambda
+        // this will happen when a node is passed as a lambda
     }
 
     @Override

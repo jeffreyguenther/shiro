@@ -126,7 +126,7 @@ public abstract class SValue<T> extends SFuncBase{
 
     @Override
     public String toString() {
-       return "" + v;
+       return getFullName() + ":" + v ;
     }
 
     @Override

@@ -8,11 +8,16 @@ node Finance begin
     end
 
     node CompoundInterest begin
-        input principal Double
-        input rate Double
-        input time Double
-        // evaluate using only ports
-        output interest Double
-        output accrued Double
+       input principal Double
+       input rate Double
+       input time Double
+       input noOfCompounds Double
+
+       port compoundInterest Add(1, rate / noOfCompounds)
+       port iFactor Power(compoundInterest, time * noOfCompounds)
+
+       // evaluate using only ports
+       output interest Double //(principal - (principal * iFactor))
+       output accrued Double //(principal * iFactor)
     end
 end

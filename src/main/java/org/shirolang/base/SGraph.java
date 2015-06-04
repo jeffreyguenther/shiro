@@ -23,7 +23,6 @@
 
 package org.shirolang.base;
 
-import org.shirolang.interpreter.SFuncAction;
 import org.shirolang.dag.DAGraph;
 import org.shirolang.dag.DependencyRelation;
 import org.shirolang.dag.GraphNode;
@@ -31,6 +30,7 @@ import org.shirolang.dag.TopologicalSort;
 import org.shirolang.exceptions.OptionNotFoundException;
 import org.shirolang.exceptions.PathNotFoundException;
 import org.shirolang.interpreter.Consoleable;
+import org.shirolang.interpreter.SFuncAction;
 import org.shirolang.values.Path;
 import org.shirolang.values.SIdent;
 
@@ -121,22 +121,43 @@ public class SGraph implements Scope, Consoleable{
      * @return the add of named ports in the graph
      */
     public Set<SFunc> getPorts(){
-        HashSet<SFunc> allPorts = new HashSet<>(ports.values());
+        HashSet<SFunc> allPorts = new HashSet<>();
 
-        for(SFunc named: ports.values()){
-            allPorts.addAll(named.getDependencies());
-        }
-
+        // Get all of the top level ports
+        allPorts.addAll(ports.values());
         allPorts.addAll(anonymousPorts);
-
-        for(SFunc anon : anonymousPorts){
-            allPorts.addAll(anon.getDependencies());
-        }
-
         for(SNode n: getNodes()){
             allPorts.addAll(n.getPorts());
         }
+
+        // Get all the dependencies
+        HashSet<SFunc> others = new HashSet<>();
+        for(SFunc f: allPorts){
+            others.addAll(collectDependencies(f));
+        }
+
+        allPorts.addAll(others);
         return allPorts;
+    }
+
+    /**
+     * Walk the graph to collect the ports depended on
+     * @param port port to collect dependences
+     * @return set containing all of the functions depended on
+     */
+    private Set<SFunc> collectDependencies(SFunc port){
+        Set<SFunc> deps = new HashSet<>();
+
+        for(SFunc arg : port.getDependencies()){
+            deps.add(arg);
+
+            // if the arg is not a named port
+            if(arg.getName().isEmpty()){
+                deps.addAll(collectDependencies(arg));
+            }
+        }
+
+        return deps;
     }
 
     /**
@@ -176,7 +197,6 @@ public class SGraph implements Scope, Consoleable{
                     addDependency(f, arg);
                 }
 
-
                 if (f.getSymbolType().isLiteral()) {
                     addDependency(f, null);
                 }
@@ -189,6 +209,13 @@ public class SGraph implements Scope, Consoleable{
 
         TopologicalSort<SFunc> sorter = new TopologicalSort<>(graph);
         List<GraphNode<SFunc>> topologicalOrdering = sorter.getTopologicalOrdering();
+
+        System.out.println("--------new list -----------");
+        for (GraphNode<SFunc> gn : topologicalOrdering) {
+            SFunc func = gn.getValue();
+            System.out.println(func.toString());
+        }
+        System.out.println("--------end list -----------");
 
         // loop through all ports to update them.
         for (GraphNode<SFunc> gn : topologicalOrdering) {
@@ -263,7 +290,9 @@ public class SGraph implements Scope, Consoleable{
         if (b == null) {
             GraphNode<SFunc> aNode = graph.getNodeForValue(a, graphNodeAction);
             graph.addDependency(aNode, null);
+            System.out.println(a.toString());
         } else {
+            System.out.println(a.toString() + "->" + b.toString());
             graph.addDependency(graph.getNodeForValue(a, graphNodeAction),
                     graph.getNodeForValue(b, graphNodeAction));
         }

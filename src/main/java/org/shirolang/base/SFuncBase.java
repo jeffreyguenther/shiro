@@ -31,9 +31,7 @@ import javafx.beans.property.StringProperty;
 import org.shirolang.values.Path;
 import org.shirolang.values.SIdent;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 import static java.util.stream.Collectors.toList;
 

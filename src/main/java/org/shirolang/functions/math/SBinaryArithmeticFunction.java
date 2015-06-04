@@ -101,4 +101,9 @@ public abstract class SBinaryArithmeticFunction extends SBinaryFunction {
                     + lhs.getType() + " and " + rhs.getType() + " were found.");
         }
     }
+
+    @Override
+    public String toString() {
+        return hashCode() + ":" + getName() + ":" + getType();
+    }
 }
