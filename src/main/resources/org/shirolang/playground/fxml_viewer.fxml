@@ -35,9 +35,9 @@
     <TextArea fx:id="console" editable="false" minHeight="50.0" prefHeight="137.0" prefWidth="810.0" visible="true" wrapText="true" />
   </bottom>
   <center>
-    <SplitPane dividerPositions="0.5" focusTraversable="true" prefHeight="160.0" prefWidth="200.0">
+    <SplitPane dividerPositions="0.39436619718309857" focusTraversable="true" prefHeight="160.0" prefWidth="200.0">
       <items>
-        <VBox maxWidth="500.0" prefHeight="-1.0" prefWidth="-1.0">
+        <VBox prefHeight="-1.0" prefWidth="-1.0">
           <children>
             <AnchorPane id="AnchorPane" maxWidth="-1.0" minHeight="-1.0" prefHeight="-1.0">
               <children>
