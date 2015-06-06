@@ -47,7 +47,7 @@ configurations {
 sourceSets{
     main{
         java{
-            srcDirs 'src/main/java', 'src/antlr/java'
+            srcDirs 'src/main/java', 'src/generated/java'
         }
     }
 }
@@ -72,7 +72,7 @@ dependencies {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.1'
+    gradleVersion = '2.4'
 }
 
 tasks.withType(JavaCompile) {
