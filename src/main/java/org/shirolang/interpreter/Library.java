@@ -33,6 +33,7 @@ import org.shirolang.base.*;
 import org.shirolang.exceptions.GraphNotFoundException;
 import org.shirolang.exceptions.NameUsedException;
 import org.shirolang.exceptions.PortNotFoundException;
+import org.shirolang.functions.color.ColorFromHSB;
 import org.shirolang.functions.color.ColorFromRGB;
 import org.shirolang.functions.color.SColor;
 import org.shirolang.functions.geometry.*;
@@ -404,11 +405,14 @@ public class Library {
         try{
             registerFunction("Color", () -> new SColor());
             registerFunction("ColorFromRGB", () -> new ColorFromRGB());
+            registerFunction("ColorFromHSB", () -> new ColorFromHSB());
+            registerFunction("ColorToGrayscale", () -> new ColorFromHSB());
+
             registerFunction("Rectangle", () -> new SRectangle());
             registerFunction("Ellipse", () -> new SEllipse());
-            registerFunction("Text", () -> new SText());
-//            registerFunction("Image", () -> new SImage());
+            registerFunction("Arc", () -> new SArc());
             registerFunction("Line", () -> new SLine());
+            registerFunction("Text", () -> new SText());
         }catch (NameUsedException e) {
             throw new RuntimeException("Something crazy happened and an internal type is already defined!");
         }

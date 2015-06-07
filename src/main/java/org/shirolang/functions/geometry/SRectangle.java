@@ -71,7 +71,6 @@ public class SRectangle extends SFuncBase{
 
     @Override
     public void evaluate() {
-//        setResult(0, this);
     }
 
     @Override

@@ -52,16 +52,10 @@ import org.antlr.v4.runtime.Token;
 import org.fxmisc.richtext.*;
 import org.reactfx.EventStream;
 import org.reactfx.util.Try;
-import org.shirolang.functions.geometry.SEllipse;
-import org.shirolang.functions.geometry.SLine;
-import org.shirolang.functions.geometry.SRectangle;
-import org.shirolang.functions.geometry.SText;
+import org.shirolang.functions.geometry.*;
 import org.shirolang.interpreter.ShiroLexer;
 import org.shirolang.interpreter.ShiroRuntime;
-import org.shirolang.playground.editors.EllipseViz;
-import org.shirolang.playground.editors.LineViz;
-import org.shirolang.playground.editors.RectangleViz;
-import org.shirolang.playground.editors.TextViz;
+import org.shirolang.playground.editors.*;
 
 import java.io.*;
 import java.nio.file.Paths;
@@ -149,6 +143,7 @@ public class FXMLViewerController {
 
         model.mapCallBack("Rectangle", r -> new RectangleViz((SRectangle) r));
         model.mapCallBack("Ellipse", e -> new EllipseViz((SEllipse) e));
+        model.mapCallBack("Arc", a -> new ArcViz((SArc) a));
         model.mapCallBack("Text", t -> new TextViz((SText) t));
         model.mapCallBack("Line", l -> new LineViz((SLine) l));
 

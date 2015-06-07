@@ -30,23 +30,23 @@ import org.shirolang.values.SDouble;
 import org.shirolang.values.SInteger;
 
 /**
- * Creates a color from an rgba quad
+ * Creates a color from an hsba quad
  */
-public class ColorFromRGB extends SFuncBase {
+public class ColorFromHSB extends SFuncBase {
 
-    public ColorFromRGB(){
+    public ColorFromHSB(){
         super();
-        args.setKeyForIndex("r", 0);
-        args.add(new TypedValue("Integer"));
+        args.setKeyForIndex("hue", 0);
+        args.add(TypedValue.asDouble());
 
-        args.setKeyForIndex("g", 1);
-        args.add(new TypedValue("Integer"));
+        args.setKeyForIndex("saturation", 1);
+        args.add(TypedValue.asDouble());
 
-        args.setKeyForIndex("b", 2);
-        args.add(new TypedValue("Integer"));
+        args.setKeyForIndex("brightness", 2);
+        args.add(TypedValue.asDouble());
 
         args.setKeyForIndex("alpha", 3);
-        args.add(new TypedValue("Double"));
+        args.add(TypedValue.asDouble());
 
         results.setKeyForIndex("color", 0);
         results.add(new TypedValue("Color"));
@@ -54,28 +54,29 @@ public class ColorFromRGB extends SFuncBase {
 
     @Override
     public void evaluate() {
-        SInteger r = (SInteger) getArg("r").getResult();
-        SInteger g = (SInteger) getArg("g").getResult();
-        SInteger b = (SInteger) getArg("b").getResult();
-        SDouble a = (SDouble) getArg("a").getResult();
+        SDouble hue = (SDouble) getArg("hue").getResult();
+        SDouble sat = (SDouble) getArg("g").getResult();
+        SDouble brightness = (SDouble) getArg("b").getResult();
+        SDouble alpha = (SDouble) getArg("a").getResult();
 
-        if( !doesExpectedTypeMatch(0, r)) {
-            throw new RuntimeException("Arg:0, Found " + r.getType() + ". Expected " + String.join(",", getAcceptedTypes(0)));
+        if( !doesExpectedTypeMatch(0, hue)) {
+            throw new RuntimeException("Arg:0, Found " + hue.getType() + ". Expected " + String.join(",", getAcceptedTypes(0)));
         }
 
-        if( !doesExpectedTypeMatch(1, g)){
-            throw new RuntimeException("Arg:1, Found " + g.getType() + ". Expected " + String.join(",", getAcceptedTypes(1)));
+        if( !doesExpectedTypeMatch(1, sat)){
+            throw new RuntimeException("Arg:1, Found " + sat.getType() + ". Expected " + String.join(",", getAcceptedTypes(1)));
         }
 
-        if (!doesExpectedTypeMatch(2, b)){
-            throw new RuntimeException("Arg:2,Found " + b.getType() + ". Expected " + String.join(",", getAcceptedTypes(2)));
+        if (!doesExpectedTypeMatch(2, brightness)){
+            throw new RuntimeException("Arg:2,Found " + brightness.getType() + ". Expected " + String.join(",", getAcceptedTypes(2)));
         }
 
-        if (!doesExpectedTypeMatch(3, a)){
-            throw new RuntimeException("Arg:3, Found " + a.getType() + ". Expected " + String.join(",", getAcceptedTypes(3)));
+        if (!doesExpectedTypeMatch(3, alpha)){
+            throw new RuntimeException("Arg:3, Found " + alpha.getType() + ". Expected " + String.join(",", getAcceptedTypes(3)));
         }
 
-        Color result = Color.rgb(r.getValue(), g.getValue(), b.getValue(), a.getValue() );
+
+        Color result = Color.hsb(hue.getValue(), sat.getValue(), brightness.getValue(), alpha.getValue());
         SColor color = new SColor(result);
         color.evaluate();
         setResult(0, color);
@@ -83,7 +84,7 @@ public class ColorFromRGB extends SFuncBase {
 
     @Override
     public String getType() {
-        return "ColorFromRGB";
+        return "ColorFromHSB";
     }
 
     @Override

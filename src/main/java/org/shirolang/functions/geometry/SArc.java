@@ -21,51 +21,67 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package org.shirolang.functions.color;
+package org.shirolang.functions.geometry;
 
-import javafx.scene.paint.Color;
-import org.shirolang.base.SFunc;
 import org.shirolang.base.SFuncBase;
 import org.shirolang.base.TypedValue;
 
 /**
- * Converts a Shiro color to grayscale
+ * Represents an ellipse in Shiro
  */
-public class ColorToGrayscale extends SFuncBase{
-    public ColorToGrayscale(){
-        args.setKeyForIndex("color", 0);
-        args.add(new TypedValue("Color"));;
+public class SArc extends SFuncBase{
+    public SArc(){
+        super();
 
-        results.setKeyForIndex("grey", 0);
-        results.add(new TypedValue("Color"));
+        args.setKeyForIndex("centerX", 0);
+        args.add(TypedValue.asDouble());
+
+        args.setKeyForIndex("centerY", 1);
+        args.add(TypedValue.asDouble());
+
+        args.setKeyForIndex("radiusX", 2);
+        args.add(TypedValue.asDouble());
+
+        args.setKeyForIndex("radiusY", 3);
+        args.add(TypedValue.asDouble());
+
+        args.setKeyForIndex("length", 4);
+        args.add(TypedValue.asDouble());
+
+        args.setKeyForIndex("startAngle", 5);
+        args.add(TypedValue.asDouble());
+
+        args.setKeyForIndex("arcType", 6);
+        args.add(TypedValue.asString());
+
+        args.setKeyForIndex("fill", 7);
+        args.add(new TypedValue("Color"));
+
+        args.setKeyForIndex("stroke", 8);
+        args.add(new TypedValue("Color"));
+
+        args.setKeyForIndex("strokeWeight", 9);
+        args.add(new TypedValue("Double"));
+
+        results.add(new TypedValue(getType()));
     }
 
     @Override
     public void evaluate() {
-        SColor color = (SColor) getArg("color").getResult();
-
-        if( !doesExpectedTypeMatch(0, color)){
-            throw new RuntimeException("Arg:0, Found " + color.getType() + ". Expected " + String.join(",", getAcceptedTypes(0)));
-        }
-
-        Color gray = color.getValue().grayscale();
-        SColor asGrey = new SColor(gray);
-        asGrey.evaluate();
-        setResult(0, asGrey);
     }
 
     @Override
     public int getMaxArgs() {
-        return 1;
+        return 10;
     }
 
     @Override
     public int getMinArgs() {
-        return 1;
+        return 10;
     }
 
     @Override
     public String getType() {
-        return "ColorToGrayscale";
+        return "Arc";
     }
 }
