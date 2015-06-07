@@ -9,7 +9,7 @@ graph typefaces begin
     Faces -> f
     Geometry.Text -> t
     t.originX(100.00)
-	t.originY(75.0)
+    t.originY(75.0)
     t.text("Hello world!")
     t.font(f.active)
     t.size(100.0)
