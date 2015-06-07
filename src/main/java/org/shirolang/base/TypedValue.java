@@ -25,7 +25,6 @@ package org.shirolang.base;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -36,6 +35,17 @@ public class TypedValue {
     private Set<String> acceptedTypes;
     private SFunc value;
 
+    public static TypedValue asDouble(){
+        return new TypedValue("Double");
+    }
+
+    public static TypedValue asInteger(){
+        return new TypedValue("Integer");
+    }
+
+    public static TypedValue asString(){
+        return new TypedValue("String");
+    }
 
     public TypedValue(String... types){
         acceptedTypes = convertArrayToSet(types);
