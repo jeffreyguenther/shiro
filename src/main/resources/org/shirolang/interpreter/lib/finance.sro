@@ -16,8 +16,7 @@ node Finance begin
        port compoundInterest Add(1, rate / noOfCompounds)
        port iFactor Power(compoundInterest, time * noOfCompounds)
 
-       // evaluate using only ports
-       output interest Double //(principal - (principal * iFactor))
-       output accrued Double //(principal * iFactor)
+       output interest Double(principal - (principal * iFactor))
+       output accrued Double(principal * iFactor)
     end
 end
