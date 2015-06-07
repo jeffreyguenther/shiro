@@ -210,12 +210,12 @@ public class SGraph implements Scope, Consoleable{
         TopologicalSort<SFunc> sorter = new TopologicalSort<>(graph);
         List<GraphNode<SFunc>> topologicalOrdering = sorter.getTopologicalOrdering();
 
-        System.out.println("--------new list -----------");
+//        System.out.println("--------new list -----------");
         for (GraphNode<SFunc> gn : topologicalOrdering) {
             SFunc func = gn.getValue();
-            System.out.println(func.toString());
+//            System.out.println(func.toString());
         }
-        System.out.println("--------end list -----------");
+//        System.out.println("--------end list -----------");
 
         // loop through all ports to update them.
         for (GraphNode<SFunc> gn : topologicalOrdering) {
@@ -290,9 +290,9 @@ public class SGraph implements Scope, Consoleable{
         if (b == null) {
             GraphNode<SFunc> aNode = graph.getNodeForValue(a, graphNodeAction);
             graph.addDependency(aNode, null);
-            System.out.println(a.toString());
+//            System.out.println(a.toString());
         } else {
-            System.out.println(a.toString() + "->" + b.toString());
+//            System.out.println(a.toString() + "->" + b.toString());
             graph.addDependency(graph.getNodeForValue(a, graphNodeAction),
                     graph.getNodeForValue(b, graphNodeAction));
         }
