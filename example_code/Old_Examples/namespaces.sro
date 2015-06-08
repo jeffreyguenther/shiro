@@ -1,0 +1,63 @@
+// Scope Rules
+
+node A
+
+  port apple Double(100.01)
+
+  node B
+    port banana Double( apple)
+    E -> e
+    e.extraExtra(apple) // works b/c e is instantiated in the scope of B
+
+    node C
+      port cookie Double(apple + banana)
+    end
+  end
+
+  B->b // uses internal B
+
+  node E
+    port extraExtra Double(apple + banana) // gives path not found error b/c E is a sibling of B
+    Z -> z
+    Z.X -> x
+    B -> b // uses the internal B
+  end
+end
+
+node Z
+
+  node X
+    B -> // uses the global B
+  end
+
+end
+
+node B
+
+end
+
+
+// this refers to the node itself
+A -> a // instance of entire node A
+A.B -> b // instance of node B
+A.B.C -> c // instance of node C
+A.E -> e // instance of the node E
+
+E -> e // error node doesn't exist
+
+// if I want to use A.B without the prefix
+use A.* // All of A's definitions are now in the global namespace
+// equivalent to
+// use A
+// use A.B
+// use A.E
+A -> a // works
+B -> b // works
+C -> c // doesn't work because it's not yet imported
+B.C -> c // does work because the runtime now knows where to find C
+
+// Straight file includes that act like giant append are much simpler to implement
+// What I have described here might be useful in some cases, but it makes things
+// much more complicated. That said, creating nested nodes could require some very
+// long definition paths. What I've described above will reduce the typing,
+// but requires more from the runtime.

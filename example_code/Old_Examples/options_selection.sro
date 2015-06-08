@@ -1,0 +1,28 @@
+node B[a]
+  option port a Double(30020.2)
+  option port b String("dog")
+end
+
+node A[b]
+  option B -> b
+  option port c Double(20.2)
+end
+
+A[b]
+
+A[b]
+  b[b]
+end
+
+OR
+
+A[b].b[b]
+
+graph g
+  B -> b // b created with default option a
+end
+
+state testing
+  Graph g
+  b[b]
+end

@@ -1,0 +1,42 @@
+
+/* An imperative apporach:
+	fib(n){
+		if n  == 0{
+			return 0
+		}else if n == 1{
+			return 1
+		}else{
+			return fib(n - 2) + fib(n-1)
+		}
+	}
+*/
+
+node Fibonacci begin
+	input n Integer
+	
+	// ConditionalReturn
+	/*
+		0: whether to return value or not
+		1: value to return if true
+		2: value to return if false
+	*/
+	port zeroFilter ConditionalReturn(n == 0, 0, 0)
+	port oneFilter ConditionalReturn(n == 1, 1, 0)
+	// pass a node reference, in this case a prototype, into the node for conditional execution
+	// n is passed as the first arg to the prototype
+	port fibFilter ConditionalReturnNode(n > 1, n, Fibonnacci, 0)
+
+	// Sums the arguments passed
+	output sum AddN(zeroFilter, oneFilter, fibFilter)
+
+	/*
+		It should be possible to generalize the ConditionalReturn multi-function
+		to handle node references for both cases. There might also be need
+		for a syntactical shorthand for specifying single values as anonymous nodes that way only one ConditionalReturn multi-function is required.
+	*/
+end
+
+graph Fib5 begin
+	Fibonacci -> fib(n: 5)
+	fib.sum // outputs 12
+end
