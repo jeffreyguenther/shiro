@@ -13,6 +13,37 @@ The Shiro runtime is designed to be used as the computational engine for
 applications like parametric CAD tools, vector editors, and spreadsheets. The
 runtime provides an API for managing and manipulating the runtime.
 
+#### Examples
+In `examples`, you'll find folders with example Shiro programs.
+
+* Color_Schemes - shows how to create a color scheme
+	* `ColorScheme_OnColor.sro` creates alternatives on individual colors
+	* `ColorScheme_OnScheme.sro` creates alternatives of the entire scheme
+
+* Data_Analysis - example of processing a CSV file and viewing the result in a table
+	* `poverty.sro` analysis of the world's population in poverty
+
+* Drawing - shows how to draw
+	* `Costume_Selection.sro` shows how to render differty costumes for a character
+	* `FlowerOfLife.sro` uses traces of the Flower of Life, a patterns of circles to create images
+	* `LineExample.sro` shows a basic example of creating an alternative for the endpoint of a line
+	* `shapes.sor` is collage of the shapes you can draw in Shiro
+
+* Finance - financial calculations
+	* `compund_interest.sro` demonstrates `CompoundInterest` node
+	* `Invesment.sro` shows how to compare two investment products
+
+* Logo - create alternative versions of a logo
+	* 'EverClean_logo.sro' defines a design for a logo
+
+* Old_Examples - examples written in the old syntax to be ported
+
+* Syntax_Examples
+	* Includes - demonstrates the use of `include`
+	* Options - desmonstrates the use of `option`
+	* Recursion - demonstrates how to do recursion
+	* `arthimetic.sro` demonstrates basic arithmetic
+
 
 Development
 ===========
