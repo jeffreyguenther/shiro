@@ -1,0 +1,34 @@
+node Image begin
+	input path String
+	eval update Image(path)
+	output img Image(update)
+end
+
+node Layer begin
+	input layers Array
+	eval update Layer(layers)
+end
+
+node Costumes begin
+	option Image -> bball( path: "Costume_Selection/basketball.png")
+	option Image -> tux( path: "Costume_Selection/tux.png")
+	end
+end
+
+graph costumeSelection begin
+	Image -> character(path: "Costume_Selection/character.png")
+
+	Costumes -> costumes
+	Layer -> l
+	l.layers(character.img, costumes.active.img)
+end
+
+state Tux begin
+	Graph costumeSelection
+	costumes[tux]
+end
+
+state Bball begin
+	Graph costumeSelection
+	costumes[bbal]
+end

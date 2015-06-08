@@ -1,0 +1,222 @@
+include "geom"
+
+node Point begin
+    input x Double
+    input y Double
+end
+
+node Petal1[outer] begin
+    option Point -> outer(x: 0.0, y: 135.0)
+    option Point -> inner(x: 180.0, y: 45.0)
+    option Point -> bigger(x: 135.0, y: 180.0)
+    option Point -> bowtie(x: 315.0, y: 45.0)
+end
+
+node Petal2[outer] begin
+    option Point -> outer(x: 315.0, y: 90.0)
+    option Point -> inner(x: 135.0, y: 90.0)
+    option Point -> bigger(x: 45.0, y: 0.0)
+    option Point -> bowtie(x: 45.0, y: 270.0)
+end
+
+node Petal3[outer] begin
+    option Point -> outer(x: 225.0, y: 135.0)
+    option Point -> inner(x: 135.0, y: 45.0)
+    option Point -> bigger(x: 45.0, y: 180.0)
+    option Point -> bowtie(x: 0.0, y: 45.0)
+end
+
+node Petal4[outer] begin
+    option Point -> outer(x: 180.0, y: 135.0)
+    option Point -> inner(x: 0.0, y: 45.0)
+    option Point -> bigger(x: 315.0, y: 180.0)
+    option Point -> bowtie(x: 135.0, y: 45.0)
+end
+
+node Petal5[outer] begin
+   option Point -> outer(x: 135.0, y: 90.0)
+   option Point -> inner(x: 315.0, y: 90.0)
+   option Point -> bigger(x: 315.0, y: 0.0)
+   option Point -> bowtie(x: 225.0, y: 270.0)
+end
+
+node Petal6[outer] begin
+    option Point -> outer(x: 45.0, y: 135.0)
+    option Point -> inner(x: 315.0, y: 45.0)
+    option Point -> bigger(x: 225.0, y: 180.0)
+    option Point -> bowtie(x: 180.0, y:45.0)
+end
+
+graph patterns begin
+    // Define petal subjuntive nodes
+    Petal1 -> petal1
+    Petal2 -> petal2
+    Petal3 -> petal3
+    Petal4 -> petal4
+    Petal5 -> petal5
+    Petal6 -> petal6
+
+    port stroke ColorFromRGB(0, 0, 255, 1.0)
+    port fill ColorFromRGB(255, 255, 255, 0.0)
+    port arcType String("open")
+
+    // define center of flower
+    // draw outline
+    Ellipse -> outline
+    outline.centerX(200.0)
+    outline.centery(200.0)
+    outline.radiusX(200.0)
+    outline.radiusY(200.0)
+    outline.stroke(stroke)
+    outline.fill(fill)
+
+    Ellipse -> c1
+    c1.centerX(270.7)
+    c1.centerY(129.3)
+    c1.radiusX(100.0)
+    c1.radiusY(100.0)
+    c1.stroke(stroke)
+    c1.fill(fill)
+
+    Arc -> a1
+    a1.startAngle(petal1.active.x)
+    a1.length(petal1.active.y)
+    a1.radiusX(100.0)
+    a1.radiusY(100.0)
+    a1.centerX(270.7)
+    a1.centerY(100.0)
+    a1.stroke(stroke)
+    a1.arcType(arcType)
+
+    Ellipse -> c2
+    c2.centerX(300.0)
+    c2.centerY(200.0)
+    c2.radiusX(100.0)
+    c2.radiusY(100.0)
+    c2.stroke(stroke)
+    c2.fill(fill)
+
+    Arc -> a2
+    a2.startAngle(petal2.active.x)
+    a2.endAngle(petal2.active.y)
+    a2.radiusX(100.0)
+    a2.radiusY(100.0)
+    a2.centerX(300.0)
+    a2.centerY(200.0)
+    a2.stroke(stroke)
+    a2.arcType(arcType)
+
+    Ellipse -> c3
+    c3.centerX(270.7)
+    c3.centerY(270.7)
+    c3.radiusX(100)
+    c3.radiusY(100)
+    c3.stroke(stroke)
+    c3.fill(fill)
+
+    Arc -> a3
+    a3.startAngle(petal3.active.x)
+    a3.endAngle(petal3.active.y)
+    a3.radiusX(100)
+    a3.radiusX(100)
+    a3.centerX(270.7)
+    a3.centerY(270.7)
+    a3.stroke(stroke)
+    a3.arcType(arcType)
+
+    Ellipse -> c4
+    c4.centerX(129.3)
+    c4.centerY(270.7)
+    c4.radiusX(100.0)
+    c4.radiusY(100.0)
+    c4.stroke(stroke)
+    c4.fill(fill)
+
+    Arc -> a4
+    a4.startAngle(petal4.active.x)
+    a4.length(petal4.active.y)
+    a4.radiusX(100.0)
+    a4.radiusY(100.0)
+    a4.centerX(129.3)
+    a4.centerY(270.7)
+    a4.stroke(stroke)
+    a4.arcType(arcType)
+
+    Ellipse -> c5
+    c5.centerX(100.0)
+    c5.centerY(200.0)
+    c5.radiusX(100.0)
+    c5.radiusY(100.0)
+    c5.stroke(stroke)
+    c5.fill(fill)
+
+    Arc -> a5
+    a5.startAngle(petal5.active.x)
+    a5.length(petal5.active.y)
+    a5.radiusX(100.0)
+    a5.radiusY(100.0)
+    a5.centerX(100.0)
+    a5.centerY(200.0)
+    a5.stroke(stroke)
+    a5.arcType(arcType)
+
+    Ellipse -> c6
+    c6.centerX(129.3)
+    c6.centerY(129.3)
+    c6.radiusX(100.0)
+    c6.radiusY(100.0)
+    c6.stroke(stroke)
+    c6.fill(fill)
+
+    Arc -> a6
+    a6.startAngle(petal6.active.x)
+    a6.length(petal6.active.y)
+    a6.radiusX(100.0)
+    a6.radiusY(100.0)
+    a6.centerX(129.3)
+    a6.centerY(129.3)
+    a6.stroke(stroke)
+    a6.arcType(arcType)
+end
+
+
+state outlinePetal begin
+    Graph patterns
+    petal1[outer]
+    petal2[outer]
+    petal3[outer]
+    petal4[outer]
+    petal5[outer]
+    petal6[outer]
+end
+
+state littleCenter begin
+    Graph patterns
+    petal1[inner]
+    petal2[inner]
+    petal3[inner]
+    petal4[inner]
+    petal5[inner]
+    petal6[inner]
+end
+
+state bigCenter begin
+    Graph patterns
+    petal1[bigger]
+    petal2[bigger]
+    petal3[bigger]
+    petal4[bigger]
+    petal5[bigger]
+    petal6[bigger]
+end
+
+
+state bowtie begin
+    Graph patterns
+    petal1[bowtie]
+    petal2[bowtie]
+    petal3[bowtie]
+    petal4[bowtie]
+    petal5[bowtie]
+    petal6[bowtie]
+end
