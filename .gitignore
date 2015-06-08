@@ -25,5 +25,3 @@ scenicView.properties
 *.iml
 .idea/
 src/generated/**
-
-src/test/java/org/shirolang/functions/math/AddTest.java
