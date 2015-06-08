@@ -97,7 +97,10 @@ language the polish it is needed.
 Acknowledgements
 -----------------
 
-This project is the result of research being conducted at [Simon Fraser University](http://www.sfu.ca/)'s [School of Interactive Arts and Technology](http://www.siat.sfu.ca/) in the [CZSaw Research Group](http://czsaw.iat.sfu.ca/) and 
+This project is the result of research being conducted at 
+[Simon Fraser University](http://www.sfu.ca/)'s 
+[School of Interactive Arts and Technology](http://www.siat.sfu.ca/) in the 
+[CZSaw Research Group](http://czsaw.iat.sfu.ca/) and 
 the [Computational Design Group](http://www.computationaldesign.ca/). 
 
 #### People
