@@ -189,6 +189,10 @@ public class SNode extends SFuncBase implements Scope{
                 allPorts.add(f);
             }
         }
+
+        for(SNode nested: nestedNodes.values()){
+            allPorts.addAll(nested.getPorts());
+        }
         return allPorts;
     }
 

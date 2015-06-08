@@ -81,7 +81,12 @@ activeSelector
 nodeInternal
     :   (portstmt
         | OPTION? nodestmt
+        | optionalNodeProduction
         | NEWLINE)*
+    ;
+
+optionalNodeProduction
+    :   OPTION? nodeProduction
     ;
 
 portDecl

@@ -26,11 +26,14 @@ package org.shirolang.interpreter;
 import java.util.ArrayList;
 import java.util.List;
 import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.shirolang.base.SFunc;
 import org.shirolang.base.SGraph;
 import org.shirolang.base.SNode;
 import org.shirolang.exceptions.OptionNotFoundException;
 import org.shirolang.values.Path;
+import org.shirolang.values.SIdent;
 
 /**
  * An ANTLR listener used to realize node parse trees
@@ -97,61 +100,62 @@ public class NodeInstantiator extends ShiroExpressionListener {
         }
     }
 
-//    @Override
-//    public void enterSubjunctDeclNodeProd(ShiroParser.SubjunctDeclNodeProdContext ctx) {
-//        // create node
-//        String name = ctx.type.getText();
-//        String newName = ctx.instanceName.getText();
-//
-//        // store the current node
-//        createdNode = runtime.produceNodeWithName(graph, name, newName);
-//        createdNode.setParentScope(scope.peek());
-//
-//        // add the created node to subjunctive node, so the scope tree is preserved
-//        Node parentNode = (Node) scope.peek();
-//        parentNode.addOption(createdNode);
-//        scope.push(createdNode);
-//
-//    }
-//
-//    @Override
-//    public void exitSubjunctDeclNodeProd(ShiroParser.SubjunctDeclNodeProdContext ctx) {
-//        scope.pop();
-//    }
+    @Override
+    public void exitOptionalNodeProduction(ShiroParser.OptionalNodeProductionContext ctx) {
 
-//    @Override
-//    public void exitNodeProduction(ShiroParser.NodeProductionContext ctx) {
-//        // get the path of LHS of production operator
-//        Path leftHandSide = (Path) getExpr(ctx.path());
-//
-//        // for each activation
-//        for (ShiroParser.ActivationContext ac : ctx.activation()) {
-//            String nodeName = ac.nodeName.getText();
-//
-//            // need to differentiate between creating nodes and subjunctive nodes
-//            Symbol producedSymbol = runtime.produceSymbolFromName(graph, leftHandSide.getPath(), nodeName);
-//            Node producedNode = (Node) producedSymbol;
-//
-//            Scope currentScope = scope.peek();
-//            if(!currentScope.isRoot()){
-//               Node inNode = (Node) currentScope;
-//               inNode.addNestedNode(producedNode);
-//            }
-//
-//            producedNode.setParentScope(currentScope);
-//            graph.addNode(producedNode);
-//
-//            //TODO types of errors to handle
-//            // leftside is not found. do a lower case check to inform the user
-//
-//            if (ac.activeObject != null) {
-//                String updatePort = ac.activeObject.getText();
-//                producedNode.setActiveOption(updatePort);
-//            }
-//        }
-//    }
-    
-    
+        //  get the path of LHS of production operator
+        SIdent lhs = (SIdent) getExpr(ctx.nodeProduction().path());
+        Path p = lhs.getValue();
+
+        SNode parentNode = (SNode) scope.peek();
+        // for each activation
+        for (ShiroParser.ActivationContext ac : ctx.nodeProduction().activation()) {
+            String nodeName = ac.nodeName.getText();
+
+            SNode producedNode = (SNode) library.instantiateNode(graph, p, nodeName);
+
+            ShiroParser.NodeAssignmentContext assignment = ac.nodeAssignment();
+            if(assignment != null){
+                if( assignment.argMap() != null ){
+                    List<Token> keys = assignment.argMap().keys;
+                    List<ShiroParser.ExprContext> values = assignment.argMap().values;
+
+                    for(int i = 0; i < keys.size(); i++){
+                        SFunc port = producedNode.getPort(keys.get(i).getText());
+
+                        if(port == null){
+                            throw new RuntimeException(keys.get(i).getText() + " cannot be found in " + producedNode.getFullName());
+                        }
+
+                        port.setArg(0, getExpr(values.get(i)));
+                    }
+                }
+
+                if(assignment.mfparams() != null ){
+                    List<ShiroParser.ExprContext> exprs = assignment.mfparams().expr();
+                    for (int i = 0; i < exprs.size(); i++) {
+                        SFunc port = producedNode.getPort(i);
+                        port.setArg(0, getExpr(exprs.get(i)));
+                    }
+                }
+            }
+
+            if (ac.activeObject != null) {
+                String updatePort = ac.activeObject.getText();
+                try {
+                    producedNode.setActiveOption(updatePort);
+                } catch (OptionNotFoundException e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+
+            if(ctx.OPTION() == null){
+                parentNode.addNestedNode(producedNode);
+            }else{
+                parentNode.addOption(producedNode);
+            }
+        }
+    }
     
     @Override
     public void exitPortDeclInit(ShiroParser.PortDeclInitContext ctx) {
