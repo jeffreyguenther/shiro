@@ -1,0 +1,137 @@
+node Value1 begin
+    port r ColorFromRGB(22, 0, 0)
+	option output red Color(r)
+
+	port g ColorFromRGB(0, 22, 0)
+	option output green color(g)
+end
+
+node Value2 begin
+    port r ColorFromRGB(100, 0, 0)
+	option output red Color(r)
+
+	port g ColorFromRGB(0, 100, 0)
+	option output green Color(g)
+end
+
+node Value3 begin
+    port r ColorFromRGB(150, 0, 0)
+	option output red Color(r)
+
+	port g ColorFromRGB(0, 150, 0)
+	option output green Color(g)
+end
+
+node Value4 begin
+    port r ColorFromRGB(200, 0, 0)
+	option output red Color(r)
+
+	port g ColorFromRGB(0, 200, 0)
+	option output green Color(g)
+end
+
+node BlackAndWhite begin
+	input color Color
+	eval corrector Grayscale(color)
+	output bw Color(corrector)
+end
+
+// node to represent palette of swatches
+node Palette begin
+	input sideLength Double(50.0)
+	input x Double
+	input y Double
+
+	input color1 Color
+	input color2 Color
+	input color3 Color
+	input color4 Color
+
+	// create the swatches
+	Rectangle -> r1
+	r1.originX(0.0)
+	r1.originY(0.0)
+	r1.width(sideLength)
+	r1.height(sideLength)
+	r1.fill(color1)
+
+	Rectangle -> r2
+	r2.originX(50.0)
+	r2.originY(0.0)
+	r2.width(sideLength)
+	r2.height(sideLength)
+	r2.color(color2)
+
+	Rectangle -> r3
+	r3.originX(100.0)
+	r3.originY(0.0)
+	r3.width(sideLength)
+	r3.height(sideLength)
+	r3.color(color3)
+
+	Rectangle -> r4
+	r4.originX(150)
+	r4.originY(0)
+	r4.width(sideLength)
+	r4.height(sideLength)
+	r4.color(color4)
+
+	// put all the rectangles in a group so they can moved as a unit
+	Group -> g
+	g.originX(x)
+	g.originY(y)
+	g.position(position[0])
+	g.children(r1.rect[0], r2.rect[0], r3.rect[0], r4.rect[0])
+end
+
+// Compute the colors
+graph colors begin
+	BlackAndWhite -> bw1
+	BlackAndWhite -> bw2
+	BlackAndWhite -> bw3
+	BlackAndWhite -> bw4
+	Palette -> colorPalette
+	Palette -> bwPalette
+	Value1 -> value1
+	Value2 -> value2
+	Value3 -> value3
+	Value4 -> value4
+
+	colorPalette.x(0)
+    colorPalette.y(0)
+	colorPalette.color1(value1.active)
+	colorPalette.color2(value2.active)
+	colorPalette.color3(value3.active)
+	colorPalette.color4(value4.active)
+	
+	// convert the colors to black and white
+	bw1.color(value1.active)
+	bw2.color(value2.active)
+	bw3.color(value3.active)
+	bw4.color(value4.active)
+
+	// show the BW colors on their own palette
+	bwPalette.x(0)
+	bwPalette.y(50)
+	bwPalette.position(p2.point)
+	bwPalette.color1(bw1.bw)
+	bwPalette.color2(bw2.bw)
+	bwPalette.color3(bw3.bw)
+	bwPalette.color4(bw4.bw)
+end
+
+state redPalette begin
+	Graph colors
+	value1[red]
+	value2[red]
+	value3[red]
+	value4[red]
+end
+
+state greenPalette begin
+	Graph colors
+	value1[green]
+	value2[green]
+	value3[green]
+	value4[green]
+end

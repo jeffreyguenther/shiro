@@ -1,0 +1,119 @@
+node Colors begin
+	input value1 Color
+	input value2 Color
+	input value3 Color
+	input value4 Color
+end
+
+node ColorSchemes begin
+    port r1 ColorFromRGB(22, 0, 0)
+    port r2 ColorFromRGB(100, 0, 0)
+    port r3 ColorFromRGB(150, 0, 0)
+    port r4 ColorFromRGB(200, 0, 0)
+
+	option Colors -> red
+	red.value1(r1)
+	red.value2(r2)
+	red.value3(r3)
+    red.value4(r4)
+
+	port g1 ColorFromRGB(0, 22, 0)
+	port g2 ColorFromRGB(0, 100, 0)
+	port g3 ColorFromRGB(0, 150, 0)
+	port g4 ColorFromRGB(0, 200, 0)
+
+	option Colors -> green
+	green.value1(g1)
+	green.value2(g2)
+	green.value3(g3)
+	green.value4(g4)
+end
+
+node Palette begin
+	input sideLength Double(50.0)
+	input x Double
+	input y Double
+
+	input color1 Color
+	input color2 Color
+	input color3 Color
+	input color4 Color
+
+	Rectangle -> r1
+	r1.originX(0.0)
+	r1.originY(0.0)
+	r1.width(sideLength)
+	r1.height(sideLength)
+	r1.fill(color1)
+
+	Rectangle -> r2
+	r2.originX(50.0)
+	r2.originY(0.0)
+	r2.width(sideLength)
+	r2.height(sideLength)
+	r2.color(color2)
+
+	Rectangle -> r3
+	r3.originX(100.0)
+	r3.originY(0.0)
+	r3.width(sideLength)
+	r3.height(sideLength)
+	r3.color(color3)
+
+	Rectangle -> r4
+	r4.originX(150)
+	r4.originY(0)
+	r4.width(sideLength)
+	r4.height(sideLength)
+	r4.color(color4)
+
+	Group -> g
+	g.originX(x)
+	g.originY(y)
+	g.children(r1.rect[0], r2.rect[0], r3.rect[0], r4.rect[0])
+end
+
+node BlackAndWhite begin
+	input color Color
+	eval corrector Grayscale(color)
+	output bw Color(corrector)
+end
+
+graph colors begin
+	BlackAndWhite -> bw1
+	BlackAndWhite -> bw2
+	BlackAndWhite -> bw3
+	BlackAndWhite -> bw4
+	Palette -> colorPalette
+	Palette -> bwPalette
+	ColorSchemes -> colors
+
+	colorPalette.x(0)
+	colorPalette.y(0)
+	colorPalette.color1(colors.active.value1)
+	colorPalette.color2(colors.active.value2)
+	colorPalette.color3(colors.active.value3)
+	colorPalette.color4(colors.active.value4)
+
+	bw1.color(colors.active.value1)
+	bw2.color(colors.active.value2)
+	bw3.color(colors.active.value3)
+	bw4.color(colors.active.value4)
+
+	bwPalette.x(0)
+	bwPalette.y(50)
+	bwPalette.color1(bw1.bw[0])
+	bwPalette.color2(bw2.bw[0])
+	bwPalette.color3(bw3.bw[0])
+	bwPalette.color4(bw4.bw[0])
+end
+
+state redPalette begin
+	Graph colors
+	colors[red]
+end
+
+state greenPalette begin
+	Graph colors
+	colors[green]
+end
