@@ -57,20 +57,22 @@ graph patterns begin
     Petal6 -> petal6
 
     port stroke ColorFromRGB(0, 0, 255, 1.0)
-    port fill ColorFromRGB(255, 255, 255, 0.0)
+    port arcStroke ColorFromRGB(0, 0, 0, 1.0)
+    port arcStrokeWeight Double(4.0)
+    port fill ColorFromRGB(0, 0, 0, 0.0)
     port arcType String("open")
 
     // define center of flower
     // draw outline
     Ellipse -> outline
     outline.centerX(200.0)
-    outline.centery(200.0)
+    outline.centerY(200.0)
     outline.radiusX(200.0)
     outline.radiusY(200.0)
     outline.stroke(stroke)
     outline.fill(fill)
 
-    Ellipse -> c1
+    /*Ellipse -> c1
     c1.centerX(270.7)
     c1.centerY(129.3)
     c1.radiusX(100.0)
@@ -84,9 +86,11 @@ graph patterns begin
     a1.radiusX(100.0)
     a1.radiusY(100.0)
     a1.centerX(270.7)
-    a1.centerY(100.0)
-    a1.stroke(stroke)
+    a1.centerY(129.3)
+    a1.stroke(arcStroke)
     a1.arcType(arcType)
+    a1.fill(fill)
+    a1.strokeWeight(arcStrokeWeight)
 
     Ellipse -> c2
     c2.centerX(300.0)
@@ -98,31 +102,35 @@ graph patterns begin
 
     Arc -> a2
     a2.startAngle(petal2.active.x)
-    a2.endAngle(petal2.active.y)
+    a2.length(petal2.active.y)
     a2.radiusX(100.0)
     a2.radiusY(100.0)
     a2.centerX(300.0)
     a2.centerY(200.0)
-    a2.stroke(stroke)
+    a2.stroke(arcStroke)
     a2.arcType(arcType)
+    a2.fill(fill)
+    a2.strokeWeight(arcStrokeWeight)
 
     Ellipse -> c3
     c3.centerX(270.7)
     c3.centerY(270.7)
-    c3.radiusX(100)
-    c3.radiusY(100)
+    c3.radiusX(100.0)
+    c3.radiusY(100.0)
     c3.stroke(stroke)
     c3.fill(fill)
 
     Arc -> a3
     a3.startAngle(petal3.active.x)
-    a3.endAngle(petal3.active.y)
-    a3.radiusX(100)
-    a3.radiusX(100)
+    a3.length(petal3.active.y)
+    a3.radiusX(100.0)
+    a3.radiusY(100.0)
     a3.centerX(270.7)
     a3.centerY(270.7)
-    a3.stroke(stroke)
+    a3.stroke(arcStroke)
     a3.arcType(arcType)
+    a3.fill(fill)
+    a3.strokeWeight(arcStrokeWeight)
 
     Ellipse -> c4
     c4.centerX(129.3)
@@ -139,8 +147,10 @@ graph patterns begin
     a4.radiusY(100.0)
     a4.centerX(129.3)
     a4.centerY(270.7)
-    a4.stroke(stroke)
+    a4.stroke(arcStroke)
     a4.arcType(arcType)
+    a4.fill(fill)
+    a4.strokeWeight(arcStrokeWeight)
 
     Ellipse -> c5
     c5.centerX(100.0)
@@ -157,8 +167,10 @@ graph patterns begin
     a5.radiusY(100.0)
     a5.centerX(100.0)
     a5.centerY(200.0)
-    a5.stroke(stroke)
+    a5.stroke(arcStroke)
     a5.arcType(arcType)
+    a5.fill(fill)
+    a5.strokeWeight(arcStrokeWeight)
 
     Ellipse -> c6
     c6.centerX(129.3)
@@ -175,10 +187,11 @@ graph patterns begin
     a6.radiusY(100.0)
     a6.centerX(129.3)
     a6.centerY(129.3)
-    a6.stroke(stroke)
+    a6.stroke(arcStroke)
     a6.arcType(arcType)
+    a6.fill(fill)
+    a6.strokeWeight(arcStrokeWeight)
 end
-
 
 state outlinePetal begin
     Graph patterns
