@@ -2,9 +2,6 @@ include "a_include.sro"
 include "b_include.sro"
 
 A -> a(1.0)
-//a.in(1.0)
-
 B -> b(2.2)
-// b.in(2.2)
 
 port sum Add(a.value, b.value)
