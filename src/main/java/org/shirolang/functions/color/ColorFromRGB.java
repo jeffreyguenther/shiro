@@ -57,7 +57,7 @@ public class ColorFromRGB extends SFuncBase {
         SInteger r = (SInteger) getArg("r").getResult();
         SInteger g = (SInteger) getArg("g").getResult();
         SInteger b = (SInteger) getArg("b").getResult();
-        SDouble a = (SDouble) getArg("a").getResult();
+        SDouble a = (SDouble) getArg("alpha").getResult();
 
         if( !doesExpectedTypeMatch(0, r)) {
             throw new RuntimeException("Arg:0, Found " + r.getType() + ". Expected " + String.join(",", getAcceptedTypes(0)));
