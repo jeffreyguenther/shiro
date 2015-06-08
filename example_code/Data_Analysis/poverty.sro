@@ -1,0 +1,46 @@
+include "gui"
+include "data"
+
+node GetBelowAveragePoverty begin
+	input table Table
+
+	Average -> a
+	a.table(table)
+	a.column("Percentage")
+
+	FilterTable -> aboveAverage
+	aboveAverage.table(table)
+	aboveAverage.column("Percentage")
+	aboveAverage.operator("<")
+	aboveAverage.toMatch(a.average)
+
+	SelectColumn -> sc
+	sc.table(aboveAverage.matches)
+	sc.column("Country")
+
+	output countriesAboveAverage Table(sc.table)
+end
+
+graph poverty begin
+	ReadCSV -> read
+	read.path("PovertyAnalysis/Poverty.csv")
+
+	FilterTable -> filter2010
+	filter2010.table(read.table)
+	filter2010.column("Date")
+	filter2010.operator("==")
+	filter2010.toMatch("2010")
+
+	GetBelowAveragePoverty -> belowAveragein2010
+	belowAveragein2010.table(filter2010.matches)
+
+	TableView -> viewer
+	viewer.table(belowAveragein2010.countriesAboveAverage)
+	viewer.tableName("Countries Below Average Poverty in 2010")
+	viewer.originX(100.0)
+	viewer.originY(100.0)
+end
+
+state povertyAnalysis begin
+	Graph poverty
+end
