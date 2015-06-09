@@ -23,8 +23,45 @@
 
 package org.shirolang.functions.geometry;
 
+import org.shirolang.base.SFuncBase;
+import org.shirolang.base.TypedValue;
+
 /**
- *
+ * Represent a group
  */
-public class SGroup {
+public class SGroup extends SFuncBase{
+    public SGroup(){
+        args.setKeyForIndex("originX", 0);
+        args.add(TypedValue.asDouble());
+
+        args.setKeyForIndex("originY", 1);
+        args.add(TypedValue.asDouble());
+
+        args.setKeyForIndex("rotate", 2);
+        args.add(TypedValue.asDouble());
+
+        args.setKeyForIndex("children", 3);
+        args.add(new TypedValue("List"));
+
+        results.add(new TypedValue(getType()));
+    }
+
+    @Override
+    public void evaluate() {
+    }
+
+    @Override
+    public int getMaxArgs() {
+        return 4;
+    }
+
+    @Override
+    public int getMinArgs() {
+        return 4;
+    }
+
+    @Override
+    public String getType() {
+        return "Group";
+    }
 }

@@ -85,14 +85,15 @@ node Text begin
     eval update Text(originX, originY, rotate, text, font, size, weight)
 end
 
-/**
 node Group begin
     input originX Double
     input originY Double
     input rotate Double(0.0)
     input children List
+    eval update Group(originX, originY, rotate, children)
 end
 
+/**
 node Layer begin
     input shapes List
 end

@@ -414,6 +414,7 @@ public class Library {
             registerFunction("Arc", () -> new SArc());
             registerFunction("Line", () -> new SLine());
             registerFunction("Text", () -> new SText());
+            registerFunction("Group", ()-> new SGroup());
         }catch (NameUsedException e) {
             throw new RuntimeException("Something crazy happened and an internal type is already defined!");
         }
