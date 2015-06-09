@@ -16,12 +16,11 @@ node Investment[simple] begin
 	input principal Double
 	input rate Double
 	input time Double
+	
+	option SimpleInterest -> simple(rate: rate, principal: principal, time: time)
+        option CompundedMonthly -> monthly(rate: rate, principal: principal, time: time)
 
-	option simple -> SimpleInterest(rate: rate, principal: principal, time: time)
-
-	option monthly -> CompundedMonthly(rate: rate, principal: principal, time: time)
-
-	output newValue Double(active)
+	output newValue Double(active.newValue)
 end
 
 node InvestmentLength[threeYear] begin
@@ -39,21 +38,22 @@ graph earnMoney begin
 	InvestmentLength -> time
 	InterestRate -> rate
 
-	retirement.interestRate(rate.active)
-	retirement.principle(10000.0)
+	retirement.rate(rate.active)
+	retirement.principal(10000.0)
 	retirement.time(time.active)
 end
 
-state ProductA begin
+state productA begin
 	Graph earnMoney
 	retirement[simple]
 	time[threeYear]
 	rate[productA]
 end
 
-state ProductB begin
+state productB begin
 	Graph earnMoney
 	retirement[monthly]
 	time[threeYear]
 	rate[productB]
 end
+
