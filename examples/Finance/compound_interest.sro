@@ -1,6 +1,6 @@
 include "finance"
 
-Finance.CompoundInterest -> i
+CompoundInterest -> i
 i.principal(100.0)
 i.noOfCompounds(2.0)
 i.rate(0.1)

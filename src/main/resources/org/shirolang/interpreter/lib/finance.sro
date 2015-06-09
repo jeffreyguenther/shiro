@@ -1,22 +1,27 @@
-node Finance begin
-    node SimpleInterest begin
-        input principal Double
-        input rate Double
-        input time Double
-        output interest Double(principal * rate * time)
-        output accrued Double(principal + interest)
-    end
+/*
+*
+* Finance nodes
+*
+*/
 
-    node CompoundInterest begin
-       input principal Double
-       input rate Double
-       input time Double
-       input noOfCompounds Double
-
-       port compoundInterest Add(1, rate / noOfCompounds)
-       port iFactor Power(compoundInterest, time * noOfCompounds)
-
-       output interest Double(principal - (principal * iFactor))
-       output accrued Double(principal * iFactor)
-    end
+node SimpleInterest begin
+    input principal Double
+    input rate Double
+    input time Double
+    output interest Double(principal * rate * time)
+    output accrued Double(principal + interest)
 end
+
+node CompoundInterest begin
+   input principal Double
+   input rate Double
+   input time Double
+   input noOfCompounds Double
+
+   port compoundInterest Add(1, rate / noOfCompounds)
+   port iFactor Power(compoundInterest, time * noOfCompounds)
+
+   output interest Double(principal - (principal * iFactor))
+   output accrued Double(principal * iFactor)
+end
+
