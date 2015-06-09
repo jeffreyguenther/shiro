@@ -36,8 +36,8 @@ import java.util.Map;
  * @param <T>
  */
 public class SIndexedMap<T> {
-    Map<String, Integer> keyToIndexMap;
-    Map<Integer, String> indexToKeyMap;
+    private Map<String, Integer> keyToIndexMap;
+    private Map<Integer, String> indexToKeyMap;
     List<T> values;
 
     public SIndexedMap() {
@@ -58,12 +58,21 @@ public class SIndexedMap<T> {
 
     /**
      * Gets the key for an index
-     * @param i
+     * @param i index to retrieve
      * @return the key for the index. It returns null if no
      * key has been associated with the index
      */
     public String getKey(Integer i){
         return indexToKeyMap.get(i);
+    }
+
+    /**
+     * Gets the key for the index
+     * @param key the key to return.
+     * @return It returns null if no index has been associated with the key
+     */
+    public Integer getIndex(String key){
+        return keyToIndexMap.get(key);
     }
 
     /**

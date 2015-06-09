@@ -24,21 +24,90 @@
 
 package org.shirolang.values;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.shirolang.base.SFunc;
+import org.shirolang.base.SType;
+import org.shirolang.base.TypedValue;
 
 /**
- *
+ * Defines a list
  * @author jeffreyguenther
  */
 public class SList extends SValue<List<SFunc>>{
     
+    public SList(){
+        super(new ArrayList<>());
+        args.clear();
+    }
+
     public SList(List<SFunc> l){
         super(l);
     }
 
+    public SList(String name, List<SFunc> l){
+        super(name, l);
+    }
+
+    @Override
+    public void setArg(Integer i, SFunc v) {
+        setArgItem(i, v);
+        setListItem(i, v);
+    }
+
+    @Override
+    public void setArg(String name, SFunc v) {
+        Integer i = args.getIndex(name);
+        setArgItem(i, v);
+        setListItem(i, v);
+    }
+
+    /**
+     * Sets the multi-function arg
+     * @param i index of the arg
+     * @param v value of the arg
+     */
+    private void setArgItem(Integer i, SFunc v){
+        if(i > args.size() - 1){
+            TypedValue typedValue = new TypedValue(v.getType());
+            typedValue.setValue(v);
+            args.add(typedValue);
+        }else{
+            args.get(i).setValue(v);
+        }
+    }
+
+    /**
+     * Sets the list arg
+     * @param i index of the list element
+     * @param v value to store in the list
+     */
+    private void setListItem(Integer i, SFunc v){
+        if(i > super.v.size() - 1) {
+            super.v.add(v);
+        }else{
+            super.v.set(i, v);
+        }
+    }
+
+    @Override
+    public void appendArg(SFunc arg) {
+        super.appendArg(arg);
+        getValue().add(arg);
+    }
+
     @Override
     public String getType() {
-        return "List";
+        return SType.LIST;
+    }
+
+    @Override
+    public int getMinArgs() {
+        return 0;
+    }
+
+    @Override
+    public int getMaxArgs() {
+        return Integer.MAX_VALUE;
     }
 }

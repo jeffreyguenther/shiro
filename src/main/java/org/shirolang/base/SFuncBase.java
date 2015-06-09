@@ -322,6 +322,11 @@ public abstract class SFuncBase implements SFunc {
     }
 
     @Override
+    public boolean isList() {
+        return isType(SType.LIST);
+    }
+
+    @Override
     public SymbolType getSymbolType(){
         return symbolType;
     }

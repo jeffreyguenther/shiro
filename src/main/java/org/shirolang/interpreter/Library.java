@@ -378,6 +378,7 @@ public class Library {
             registerFunction(SType.IDENT, () -> new SIdent());
             registerFunction(SType.INTEGER, () -> new SInteger());
             registerFunction(SType.STRING, () -> new SString());
+            registerFunction(SType.LIST, () -> new SList());
 
             registerFunction(SType.ADD, () -> new SAdd());
             registerFunction(SType.AND, () -> new SAnd());

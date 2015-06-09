@@ -268,6 +268,12 @@ public interface SFunc extends Consoleable {
     boolean isBoolean();
 
     /**
+     * Determines if the multi-function represent a list
+     * @return if true, the multi-functions' type is a "List"
+     */
+    boolean isList();
+
+    /**
      * Gets the symbol type of the multi-function
      * This method is used internally to distinguish nodes, ports, and literals
      * @return the internal type of the multi-function

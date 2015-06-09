@@ -24,10 +24,7 @@
 
 package org.shirolang.values;
 
-import org.shirolang.base.SFunc;
-import org.shirolang.base.SFuncBase;
-import org.shirolang.base.SymbolType;
-import org.shirolang.base.TypedValue;
+import org.shirolang.base.*;
 
 /**
  * A base class to  help speed writing functional representations of values.
@@ -39,17 +36,17 @@ import org.shirolang.base.TypedValue;
  * @param <T>
  */
 public abstract class SValue<T> extends SFuncBase{
-    private final T v;
+    protected final T v;
     
-    public SValue(T f) {
+    public SValue(T value) {
         super();
-        this.v = f;
+        this.v = value;
         symbolType = SymbolType.LITERAL;
         args.add(new TypedValue(getType()));
     }
 
-    public SValue(String name, T v){
-        this(v);
+    public SValue(String name, T value){
+        this(value);
         symbolType = SymbolType.PORT;
         setFullName(name);
     }
@@ -57,7 +54,8 @@ public abstract class SValue<T> extends SFuncBase{
     @Override
     public void evaluate() {
         if (getSymbolType().isLiteral()
-                || (getSymbolType().isPort() && !hasArgs())) {
+                || (getSymbolType().isPort() && !hasArgs())
+                || (getType().equals(SType.LIST))) {
             if (results.isEmpty()) {
                 TypedValue v = new TypedValue(this.getType(), this);
 
