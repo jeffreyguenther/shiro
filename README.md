@@ -11,19 +11,20 @@ Usage
 
 The Shiro runtime is designed to be used as the computational engine for
 applications like parametric CAD tools, vector editors, and spreadsheets. The
-runtime provides an API for managing and manipulating the runtime.
+runtime provides an API for manipulating the runtime.
 
 #### Examples
-In `examples`, you'll find folders with example Shiro programs. Check examples run.
+In `examples`, you'll find folders with example Shiro programs. Checked examples
+run in **Shiro Playground**.
 
 * Color_Schemes - shows how to create a color scheme
 	* [ ] `ColorScheme_OnColor.sro` creates alternatives on individual colors
-	* [ ] `ColorScheme_OnScheme.sro` creates alternatives of the entire scheme
+	* [ ] `ColorScheme_OnScheme.sro` creates alternatives on the entire scheme
 
 * Data_Analysis - example of processing a CSV file and viewing the result in a table
 	* [ ] `poverty.sro` analysis of the world's population in poverty
 
-* Drawing - shows how to draw
+* Drawing - shows how to draw in Shiro
 	* [ ] `Costume_Selection.sro` shows how to render differty costumes for a character
 	* [x] `FlowerOfLife.sro` uses traces of the Flower of Life, a patterns of circles to create images
 	* [x] `LineExample.sro` shows a basic example of creating an alternative for the endpoint of a line
@@ -104,7 +105,7 @@ This project is the result of research being conducted at
 the [Computational Design Group](http://www.computationaldesign.ca/). 
 
 #### People
-* [Jeffrey Guenther](http://jeffreyguenther.com) - Design and Implementer
+* [Jeffrey Guenther](http://jeffreyguenther.com) - Designer and Implementer
 * [Robert Woodbury](http://www.siat.sfu.ca/faculty/profile/rob-woodbury) - PhD Committee member
 * [Chris Shaw](http://www.sfu.ca/~shaw/) - PhD Supervisor
 * [Siniša Kolarić](http://www.sfu.ca/~skolaric/) - Research Group Colleague
