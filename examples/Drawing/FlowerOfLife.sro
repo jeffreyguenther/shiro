@@ -72,7 +72,7 @@ graph patterns begin
     outline.stroke(stroke)
     outline.fill(fill)
 
-    /*Ellipse -> c1
+    Ellipse -> c1
     c1.centerX(270.7)
     c1.centerY(129.3)
     c1.radiusX(100.0)
