@@ -167,16 +167,7 @@ public class SIdent extends SFuncBase{
         }else if(isSelector()){
             return value.getPath();
         }else{
-//            SFunc r = getResult();
-//
-//            // convert the output to a literal
-//            SymbolType prev = r.getSymbolType();
-//            r.setSymbolType(SymbolType.LITERAL);
-//            String output = r.toConsole();
-//            r.setSymbolType(prev);
-            String output = value.toString();
-
-            return output;
+            return value.toString();
         }
     }
 }
