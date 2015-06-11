@@ -17,14 +17,14 @@ runtime provides an API for managing and manipulating the runtime.
 In `examples`, you'll find folders with example Shiro programs. Check examples run.
 
 * Color_Schemes - shows how to create a color scheme
-	* [] `ColorScheme_OnColor.sro` creates alternatives on individual colors
-	* [] `ColorScheme_OnScheme.sro` creates alternatives of the entire scheme
+	* [ ] `ColorScheme_OnColor.sro` creates alternatives on individual colors
+	* [ ] `ColorScheme_OnScheme.sro` creates alternatives of the entire scheme
 
 * Data_Analysis - example of processing a CSV file and viewing the result in a table
-	* [] `poverty.sro` analysis of the world's population in poverty
+	* [ ] `poverty.sro` analysis of the world's population in poverty
 
 * Drawing - shows how to draw
-	* [] `Costume_Selection.sro` shows how to render differty costumes for a character
+	* [ ] `Costume_Selection.sro` shows how to render differty costumes for a character
 	* [x] `FlowerOfLife.sro` uses traces of the Flower of Life, a patterns of circles to create images
 	* [x] `LineExample.sro` shows a basic example of creating an alternative for the endpoint of a line
 	* [x] `shapes.sro` is collage of the shapes you can draw in Shiro
@@ -34,14 +34,14 @@ In `examples`, you'll find folders with example Shiro programs. Check examples r
 	* [x] `Investment.sro` shows how to compare two investment products
 
 * Logo - create alternative versions of a logo
-	* [] 'EverClean_logo.sro' defines a design for a logo
+	* [ ] 'EverClean_logo.sro' defines a design for a logo
 
 * Old_Examples - examples written in the old syntax to be ported
 
 * Syntax_Examples - short snippets demonstrating bits of the syntax
 	* [x] Includes - demonstrates the use of `include`
 	* [x] Options - desmonstrates the use of `option`
-	* [] Recursion - demonstrates how to do recursion
+	* [ ] Recursion - demonstrates how to do recursion
 	* [x] `arthimetic.sro` demonstrates basic arithmetic
 
 
