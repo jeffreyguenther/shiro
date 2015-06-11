@@ -36,8 +36,7 @@ import java.util.Set;
 
 /**
  * Specifies a node in a subjunctive dependency graph. A node is simply a
- * reference to a collection of ports.
- *
+ * reference to a collection of ports
  *
  */
 public class SNode extends SFuncBase implements Scope{
@@ -97,7 +96,6 @@ public class SNode extends SFuncBase implements Scope{
         this.type = type;
         // add the enclosing scope
         this.parentScope = scope;
-        // add the parent's full
 
         // add the parent's full name based on the scope
         if (scope != null) {
@@ -163,8 +161,8 @@ public class SNode extends SFuncBase implements Scope{
     }
 
     /**
-     * Gets a port by name
-     * @param name name of the port get
+     * Gets a port by it's local name
+     * @param name local name of the port
      * @return the port with the passed name. Returns null if a port with the given
      * name is not found.
      */
@@ -190,6 +188,7 @@ public class SNode extends SFuncBase implements Scope{
             }
         }
 
+        // get the ports of the tree of nested nodes
         for(SNode nested: nestedNodes.values()){
             allPorts.addAll(nested.getPorts());
         }
@@ -237,16 +236,16 @@ public class SNode extends SFuncBase implements Scope{
      * @param option option to be added
      */
     public void addOption(SFunc option) {
+        if(option.getName().isEmpty()){
+            throw new RuntimeException(option + " has no name. Cannot add an option with an empty name");
+        }
+
         // add the option to the appropriate collection
         if (option.getSymbolType().isNode()) {
             SNode n = (SNode) option;
             addNestedNode(n);
         } else { // option is a port
            addPort(option);
-        }
-
-        if(option.getName().isEmpty()){
-            throw new RuntimeException(option + " has no name. Cannot add an option with an empty name");
         }
 
         options.put(option.getName(), option);
