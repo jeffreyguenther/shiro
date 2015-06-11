@@ -438,8 +438,7 @@ public class Path {
     /**
      * Create a path from a string.
      * For example, "Area.length" will be turned into a path
-     * object representing it. It should be noted that scope of
-     * the path is null.
+     * object representing it.
      * @param path the string to be turned into a path object
      * @return path created from the string
      */
@@ -451,11 +450,10 @@ public class Path {
     /**
      * Create a path from a string and make it a reference
      * For example, "Area.length" will be turned into a path
-     * object representing it. It should be noted that scope of
-     * the path is null.
+     * object representing it.
      * @param path the string to be turned into a path object
      * @return path created from the string that has it's isReference
-     * flag add to true
+     * flag set to true
      */
     public static Path createReference(String path){
         Path p = create(path);
@@ -466,11 +464,10 @@ public class Path {
     /**
      * Create a path from a string and make it a selector
      * For example, "Area.length" will be turned into a path
-     * object representing it. It should be noted that scope of
-     * the path is null.
+     * object representing it.
      * @param path the string to be turned into a path object
      * @return path created from the string that has it's isSelector
-     * flag add to true
+     * flag set to true
      */
     public static Path createSelector(String path){
         Path p = create(path);
