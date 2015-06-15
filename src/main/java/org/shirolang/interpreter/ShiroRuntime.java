@@ -32,6 +32,7 @@ import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
+import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.util.Callback;
 import javafx.util.Pair;
@@ -48,6 +49,9 @@ import org.shirolang.dag.DependencyRelation;
 import org.shirolang.dag.GraphNode;
 import org.shirolang.dag.TopologicalSort;
 import org.shirolang.exceptions.OptionNotFoundException;
+import org.shirolang.functions.geometry.SGroup;
+import org.shirolang.playground.editors.GroupViz;
+import org.shirolang.values.SList;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -197,21 +201,40 @@ public class ShiroRuntime{
             }
 
             // render the current state using the callbacks
-            Set<Node> visualized = new HashSet<>();
+//            Set<Node> visualized = new HashSet<>();
+            Map<SFunc, Node> visualized = new HashMap<>();
             for(String type: library.getTypeNames()){
                 List<SFunc> collect = graph.getPorts().stream().filter(p -> p.getType().equals(type)).collect(toList());
 
                 for (SFunc sFunc : collect) {
-                    Callback<SFunc, Node> callback = visualCallBacks.get(type);
-                    if(callback != null) {
-                        visualized.add(callback.call(sFunc));
-                        System.out.println("rendering " + type);
+                    if (!type.equals("Group")) {
+                        Callback<SFunc, Node> callback = visualCallBacks.get(type);
+                        if (callback != null) {
+//                        visualized.add(callback.call(sFunc));
+                            visualized.computeIfAbsent(sFunc, callback::call);
+                            System.out.println("rendering " + type);
+                        }
+
+                    } else { // if the type is a "Group"
+                        // Render the group
+                        SGroup group = (SGroup) sFunc;
+                        Callback<SFunc, Node> groupCallback = visualCallBacks.get("Group");
+                        GroupViz groupViz = (GroupViz) groupCallback.call(group);
+
+                        // Render each of the children
+                        SList args = (SList) group.getArg("children").getResult();
+                        List<SFunc> shapes = args.getValue().stream().map((id) -> id.getResult()).collect(toList());
+                        shapes.forEach((s) ->{
+                            Callback<SFunc, Node> callback = visualCallBacks.get(s.getType());
+                            groupViz.getChildren().add(visualized.computeIfAbsent(s, callback::call));
+                            visualized.remove(s);
+                        });
+
+                        visualized.put(sFunc, groupViz);
                     }
                 }
-
-
             }
-            nodes.put(state.getName(), visualized);
+            nodes.put(state.getName(), new HashSet<>(visualized.values()));
         }
 
         return output.get();

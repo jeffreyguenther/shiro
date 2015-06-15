@@ -1,5 +1,7 @@
+/*
+Demonstrates a recursion in Shiro using a classic example - the sum of the nth fibonacci numbers
 
-/* An imperative apporach:
+An imperative approach:
 	fib(n){
 		if n  == 0{
 			return 0
@@ -35,7 +37,7 @@ node Fibonacci begin
 		for a syntactical shorthand for specifying single values as anonymous nodes that way only one ConditionalReturn multi-function is required.
 	*/
 end
-
+h
 graph Fib5 begin
 	Fibonacci -> fib(n: 5)
 	fib.sum // outputs 12

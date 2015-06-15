@@ -146,6 +146,7 @@ public class FXMLViewerController {
         model.mapCallBack("Arc", a -> new ArcViz((SArc) a));
         model.mapCallBack("Text", t -> new TextViz((SText) t));
         model.mapCallBack("Line", l -> new LineViz((SLine) l));
+        model.mapCallBack("Group", g -> new GroupViz((SGroup) g));
 
         errorLabel.visibleProperty().bind(model.hasErrorProperty());
         model.hasErrorProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {

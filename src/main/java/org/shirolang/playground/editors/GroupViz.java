@@ -21,47 +21,28 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package org.shirolang.functions.geometry;
+package org.shirolang.playground.editors;
 
-import org.shirolang.base.SFuncBase;
-import org.shirolang.base.TypedValue;
+import javafx.scene.Group;
+import javafx.scene.shape.Rectangle;
+import org.shirolang.functions.color.SColor;
+import org.shirolang.functions.geometry.SGroup;
+import org.shirolang.functions.geometry.SRectangle;
+import org.shirolang.values.SDouble;
+import org.shirolang.values.SList;
 
 /**
- * Represent a JavaFX Group in Shiro
+ *
  */
-public class SGroup extends SFuncBase{
-    public SGroup(){
-        args.setKeyForIndex("originX", 0);
-        args.add(TypedValue.asDouble());
+public class GroupViz extends Group {
+    public GroupViz(SGroup group){
+        super();
 
-        args.setKeyForIndex("originY", 1);
-        args.add(TypedValue.asDouble());
+        SDouble originX = (SDouble) group.getArg("originX").getResult();
+        SDouble originY = (SDouble) group.getArg("originY").getResult();
+        relocate(originX.getValue(), originY.getValue());
 
-        args.setKeyForIndex("rotate", 2);
-        args.add(TypedValue.asDouble());
-
-        args.setKeyForIndex("children", 3);
-        args.add(new TypedValue("List"));
-
-        results.add(new TypedValue(getType()));
-    }
-
-    @Override
-    public void evaluate() {
-    }
-
-    @Override
-    public int getMaxArgs() {
-        return 4;
-    }
-
-    @Override
-    public int getMinArgs() {
-        return 4;
-    }
-
-    @Override
-    public String getType() {
-        return "Group";
+        SDouble rotate = (SDouble) group.getArg("rotate").getResult();
+        setRotate(rotate.getValue());
     }
 }

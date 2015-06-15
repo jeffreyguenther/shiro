@@ -1,3 +1,5 @@
+include "geom"
+
 node Colors begin
 	input value1 Color
 	input value2 Color
@@ -70,7 +72,7 @@ node Palette begin
 	Group -> g
 	g.originX(x)
 	g.originY(y)
-	g.children(r1.rect[0], r2.rect[0], r3.rect[0], r4.rect[0])
+	g.children(r1.rect, r2.rect, r3.rect, r4.rect)
 end
 
 node BlackAndWhite begin

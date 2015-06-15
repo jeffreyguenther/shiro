@@ -125,7 +125,20 @@ path 	:	(parts+=IDENT | parts+=MFNAME | THIS)('.' (parts+=MFNAME | parts+=IDENT)
         |   REF IDENT('.' IDENT)*
         |   SELECT IDENT('.' IDENT)*
 	;
-	
+
+newpath
+    :       (REF| SELECT)? pathSegment ('.' pathSegment accessor*)*
+    ;
+
+pathSegment
+        :       IDENT
+        |       ('inputs'|'outputs') outputAccessor=accessor
+        ;
+
+accessor
+    : LSQUARE pathIndex RSQUARE
+    ;
+
 pathIndex
 	    :	index=(NUMBER
         |   STRING_LITERAL)
@@ -159,6 +172,7 @@ expr :  '(' expr ')'						  #parensExpr
 	 |	NUMBER 								  #numExpr
 	 |  BOOLEAN_LITERAL						  #boolExpr
 	 |  STRING_LITERAL                        #stringExpr
+	 |  MFNAME                                #mfExpr
 	 ;
 
 INCLUDE: 'include';
