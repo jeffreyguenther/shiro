@@ -161,24 +161,33 @@ end
 Point -> p
 
 ~p returns a reference to the node
-p returns the value at result 0 for the node, which in this case does not exist
+p returns the value at result 0 for the node
+p.outputs[0] are equivalent b/c the path terminates on a port, the result 0 is returned.
+p.outputs["sum"] also gives the same result
+p[0] is an invalid path
+p["sum"] is also invalid
+p.outputs["sum"].outputs[2] returns the result at position 2 of the port called sum
+p.outputs["sum"][2] is invalid
 
 Point -> p(x: 3.32) creates an instance of p and sets the value of the input port named x
 p.inputs["x"](3.32) sets the value of the input port named x
 p.x(3.32) sets the value of x at arg 0
 p.x(argName: 3.33) sets the value of x at argName
 
-p.outputs[0] returns the value of result 0 of sum
+p.outputs[0] returns the value of result 0 of sum `p.outputs[0].outputs[0]` is the result
 p.outputs["sum"] returns the value of result 0 of sum
 
 p.x.inputs[0] returns the value at arg 0
 p.x.inputs["argName"] returns the value at "argName"
+p.inputs[0](3.32)
+p.inputs[0](argName: 3.33) sets argName
+p.inputs["x"](3.32) sets arg 0
+p.inputs[0](argName: 3.33) sets argName
 
 p.x returns the value at result 0 of x
 p.x["name"] returns that value at result named "name" of x
 p.x.outputs["name"] returns the value at result named "name" of x
-p.x[0] returns the value at result 0 of x
-p.x.outputs[0] returns the value at result of x
+p.x.outputs[0] returns the value at result 0 of x
 ```
 
 In side the node:
@@ -205,7 +214,7 @@ Given the definition:
 node Options begin
 	option a Double(10.0)
 	option b Double(11.0)
-	outout result (active)
+	output result (active)
 end	
 
 Options -> o
@@ -228,3 +237,44 @@ port sum Add(o.result, 3.0)
 ```
 As far as I can tell, there isn't a need for `this`. I'm not aware of a situation
 where a port would need to be disambiguated this way.
+
+Do we need the input and output keywords? Can a path simply be a path and leave
+determining whether assignments are legal to logic in the assignment?
+
+Another idea, given the definition:
+
+```
+// Multiply (a, b) = <value>
+
+node Point begin
+	input x Double
+	input y Double
+	output sum Double(x + y)
+end
+Point -> p
+~p returns a reference to the node
+p returns the value at result 0 for the node, which in this case does not exist
+
+Point -> p(x: 3.32) creates an instance of p and sets the value of the input port named x
+p.["x"](3.32) sets the value of the input port named x
+p.x(3.32) sets the value of x at arg 0
+p.x(argName: 3.33) sets the value of x at argName
+
+p[0] returns the value of result 0 of sum
+p["sum"] returns the value of result 0 of sum
+
+p.x[0] returns the value at results 0
+p.x["argName"] returns the value at "argName"
+
+p.x returns the value at result 0 of x
+p.x["name"] returns that value at result named "name" of x
+p.x["name"] returns the value at result named "name" of x
+p.x[0] returns the value at result 0 of x
+p.x.outputs[0] returns the value at result of x
+```
+
+In order to access the inputs of a multi-function, you need to use the name or
+use the index. The downside of this approach is inputs and outputs would need to
+use a common set of indices. I think this is confusing. I'm not sure this is a good idea.
+I like the cleanliness of being able to distinguish an input from an output or
+an argument from a result.

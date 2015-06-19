@@ -72,3 +72,15 @@ graph evaluation.
 If I keep the execution of `i` isolated from the rest of the graph, things are
 cleaner. It is also possible to keep dependencies in the graph only between
 ports which is what we want. We don't want dependencies between nodes. 
+
+If want to implement a type that takes a multi-function reference as an argument,
+what type do I put in the arg?
+
+First, the type of the multi-function only matters if the runtime enforces
+the type of the arguments, which is a good idea because that's why we have types
+in the first place.
+
+Second, the only place type declarations really matter is in multi-functions.
+
+Type checks can be done on a per-argment basis inside the multi-function. Errors can
+be handled assignment time to allow the runtime to give nice errors.
