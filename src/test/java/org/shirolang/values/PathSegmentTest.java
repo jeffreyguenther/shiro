@@ -10,13 +10,13 @@ public class PathSegmentTest {
     @Test
     public void constructors(){
         PathSegment simpleSegment = new PathSegment("x");
-        Assert.assertEquals("Should be OUTPUT", SegmentType.PLAIN, simpleSegment.getType());
+        Assert.assertEquals("Should be OUTPUT", SegmentType.SIMPLE, simpleSegment.getType());
         Assert.assertFalse("Should not have index", simpleSegment.getIndex().isPresent());
         Assert.assertEquals("Should have the key", "x", simpleSegment.getKey().get());
         Assert.assertEquals("x", simpleSegment.toString());
 
-        PathSegment plainSegment = new PathSegment(SegmentType.PLAIN, "a");
-        Assert.assertEquals("Should be PLAIN", SegmentType.PLAIN, plainSegment.getType());
+        PathSegment plainSegment = new PathSegment(SegmentType.SIMPLE, "a");
+        Assert.assertEquals("Should be SIMPLE", SegmentType.SIMPLE, plainSegment.getType());
         Assert.assertFalse("Should not have an index", plainSegment.getIndex().isPresent());
         Assert.assertEquals("Should have the key \"a\"", "a", plainSegment.getKey().get());
         Assert.assertEquals("a", plainSegment.toString());

@@ -1,17 +1,17 @@
 package org.shirolang.values;
 
 /**
- *
+ * Describes th types of segments
  */
 public enum SegmentType {
-    PLAIN, INPUT, OUTPUT;
+    SIMPLE, INPUT, OUTPUT;
 
     /**
      * Checks if the segment type is plain
      * @return true if the segment type is plain
      */
     public boolean isPlain(){
-        return this.equals(PLAIN);
+        return this.equals(SIMPLE);
     }
 
     /**
@@ -27,6 +27,6 @@ public enum SegmentType {
      * @return true if the segment type is output
      */
     public boolean isOutput(){
-        return this.equals(PLAIN);
+        return this.equals(OUTPUT);
     }
 }

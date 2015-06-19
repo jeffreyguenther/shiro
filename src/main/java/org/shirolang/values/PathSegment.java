@@ -25,7 +25,7 @@ public class PathSegment {
     }
 
     public PathSegment(String key){
-        type = SegmentType.PLAIN;
+        type = SegmentType.SIMPLE;
         this.key = key;
     }
 
@@ -41,10 +41,19 @@ public class PathSegment {
         return Optional.ofNullable(key);
     }
 
+    /**
+     * Convert a string to a path segment
+     * @param segment the string to converted
+     * @return returns a SIMPLE
+     */
+    public static PathSegment toPathSegment(String segment){
+        return new PathSegment(segment);
+    }
+
     @Override
     public String toString() {
         switch(type){
-            case PLAIN:
+            case SIMPLE:
                 return key;
             case INPUT:
                 return "inputs[" + accessorValue() + "]";
