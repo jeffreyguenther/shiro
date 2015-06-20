@@ -73,4 +73,25 @@ public class PathSegment {
             throw new RuntimeException("Path segment has neither a key or index. It's lost in space.");
         }
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        PathSegment that = (PathSegment) o;
+
+        if (type != that.type) return false;
+        if (key != null ? !key.equals(that.key) : that.key != null) return false;
+        return !(index != null ? !index.equals(that.index) : that.index != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = type.hashCode();
+        result = 31 * result + (key != null ? key.hashCode() : 0);
+        result = 31 * result + (index != null ? index.hashCode() : 0);
+        return result;
+    }
 }
