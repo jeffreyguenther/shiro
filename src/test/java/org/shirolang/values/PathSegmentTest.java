@@ -45,4 +45,12 @@ public class PathSegmentTest {
         Assert.assertEquals("Should have the key", "x", keyOutputSegment.getKey().get());
         Assert.assertEquals("outputs[\"x\"]", keyOutputSegment.toString());
     }
+
+    @Test
+    public void equals(){
+        PathSegment a = new PathSegment("a");
+        PathSegment b = new PathSegment(SegmentType.SIMPLE, "a");
+
+        Assert.assertEquals("Should be equal", a, b);
+    }
 }

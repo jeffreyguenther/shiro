@@ -29,35 +29,31 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import static java.util.stream.Collectors.toList;
+
 /**
- * Represents a path in Shiro. A path is an identifier in Shiro. 
- * It can be used to identify node definitions (Point), ports within
- * node definitions (Point.x), and port values (x[0] or x["first"]).
+ * Represents a path in Shiro. A path is a qualified identifier in Shiro.
+ * It can be used to identify port values (p.x.outputs[0] or x.inputs["first"]).
  * 
- * A path is represented as a list of strings instead of a string like 
- * "Area.length". This is done to reduce the amount of string processing required
+ * A path is represented as a list of {@code PathSegments} instead of a string like
+ * "area.length". This is done to reduce the amount of string processing required
  * when working with paths.
  * 
- * A path has a "path head." The path head refers to the string the pathHead index
+ * A path has a "path head." The path head refers to the path segment the pathHead index
  * points to. You can non-destructively pop(or increment) the head of path to 
  * move the path head down the list of strings that represent the path. 
  * This allows the path to be shortened as each part of the path is processed 
  * without losing the path as a whole. For example:
  * <code>
- * Path p = new Path("Area", "Length");
- * System.out.println(p.getCurrentPathHead()); // "Area"
- * p.popPathHead()
- * System.out.println(p.getCurrentPathHead()); // "Length"
+ * Path p = new Path("area", "Length");
+ * System.out.println(p.getCurrentHead()); // "area"
+ * p.popHead()
+ * System.out.println(p.getCurrentHead()); // "length"
  * </code>
- *
- * @author jeffreyguenther
  */
 public class Path {
-
-    private List<String> path;      // Strings that make up the path
-    private String indexKey = null; // A port index name
-    private int index = -1;         // A port index number
-    private int pathHead;           // index of the path head
+    private List<PathSegment> path;         // Strings that make up the path
+    private int pathHead;                   // index of the path head
     private boolean isReference = false;    // indicates whether the path should be treated as a reference(pointer)
     private boolean isSelector = false;
 
@@ -73,49 +69,23 @@ public class Path {
     }
 
     /**
-     * Create a path
+     * Creates a path of simple path segments
      *
      * @param path list of strings making up the path
      */
     public Path(List<String> path) {
-        this.path = path;
+        this.path = path.stream().map(PathSegment::toPathSegment).collect(toList());
         this.pathHead = 0;
     }
 
     /**
-     * Create a path
-     *
-     * @param path list of strings making up the path
-     * @param index path index; a nonnegative number
+     * Adds the current segment to the path
+     * Delegates to Collection.add
+     * @param segment the segement to add to the path
+     * @return whether the element was added to the collection
      */
-    public Path(List<String> path, int index) {
-        this(path);
-        this.index = index;
-    }
-
-    /**
-     * Create a path
-     *
-     * @param path list of strings that make up the path
-     * @param key index key; a nonempty string
-     */
-    public Path(List<String> path, String key) {
-        this(path);
-        this.indexKey = key;
-    }
-
-    /**
-     * *
-     * Determine if a path points to a port index. A path that points to a port
-     * will be have only one element or the path offset will have been
-     * incremented such that only one element remains in the list of path
-     * strings.
-     *
-     * @return true if it is a port, otherwise false
-     */
-    public boolean isPathToPortIndex() {
-        // determine if the current path head is a port
-        return (path.size() - pathHead) == 1 && (index > -1 || indexKey != null);
+    public boolean addSegment(PathSegment segment){
+        return path.add(segment);
     }
 
     /**
@@ -123,7 +93,7 @@ public class Path {
      *
      * @return
      */
-    public boolean isEmpty() {
+    public boolean hasSegments() {
         // if the path head and length are equal then the path head is 1
         // greater than the length of the list and is therefore empty
         return pathHead == path.size();
@@ -145,30 +115,11 @@ public class Path {
     }
 
     /**
-     * Get the index of path
+     * Gets the path segments
      *
-     * @return the integer index if it has one, otherwise -1
+     * @return a list of path segments
      */
-    public int getIndex() {
-        return index;
-    }
-
-    /**
-     * *
-     * Get the string index of the path
-     *
-     * @return the string index of path if it has one, otherwise null
-     */
-    public String getIndexKey() {
-        return indexKey;
-    }
-
-    /**
-     * Get path as a list of strings
-     *
-     * @return a list of strings that make up the path
-     */
-    public List<String> getPathParts() {
+    public List<PathSegment> getSegments() {
         return path;
     }
 
@@ -180,7 +131,7 @@ public class Path {
      */
     public String getPath() {
         StringBuilder sb = new StringBuilder();
-        for (String s : path) {
+        for (PathSegment s : path) {
             sb.append(".").append(s);
         }
         sb.replace(0, 1, "");
@@ -194,7 +145,7 @@ public class Path {
      *
      * @return the current path offset
      */
-    public int getPathHead() {
+    public int getHead() {
         return pathHead;
     }
 
@@ -206,7 +157,7 @@ public class Path {
      */
     public void setPathHead(int pathOffset) {
         if(pathOffset > path.size() - 1 || pathOffset < 0){
-            throw new RuntimeException("Path offset is outside range of path. "
+            throw new IllegalArgumentException("Path offset is outside range of path. "
                     + "Range is " + 0 + "-" + (path.size() - 1) + " inclusive.");
         }
         
@@ -219,7 +170,7 @@ public class Path {
      *
      * @return first element of the path as calculated by the offset
      */
-    public String getCurrentPathHead() {
+    public PathSegment getCurrentHead() {
         return path.get(pathHead);
     }
 
@@ -229,7 +180,7 @@ public class Path {
      *
      * @return the current offset value
      */
-    public int popPathHead() {
+    public int popHead() {
         return ++pathHead;
     }
 
@@ -239,39 +190,9 @@ public class Path {
      *
      * @return the current offset value
      */
-    public int resetPathHead() {
+    public int resetHead() {
         pathHead = 0;
         return pathHead;
-    }
-
-    /**
-     * *
-     * Determine if the path has a string index
-     *
-     * @return true if is a string, false if not a string
-     */
-    public boolean hasStringIndex() {
-        // if the indexKey is a string
-        return indexKey != null && index == -1;
-    }
-
-    /**
-     * *
-     * Determine if the path has an integer index
-     *
-     * @return true if an integer, false otherwise
-     */
-    public boolean hasIntegerIndex() {
-        // if the indexKey is not a string, but index is an integer
-        return indexKey == null && index != -1;
-    }
-    
-    /**
-     * Determines if path has an index
-     * @return true if the path has an integer or string index, otherwise false
-     */
-    public boolean hasIndex(){
-        return hasIntegerIndex() || hasStringIndex();
     }
 
     /**
@@ -317,61 +238,36 @@ public class Path {
     /**
      * Return return a string of the path
      *
-     * @return ( <list of path strings>, Index: <index>, Key: <indexKey>)
+     * @return (<list of path strings>)
      */
     @Override
     public String toString() {
-        return "(" + path.toString() + ", Index:" + index + ", Key:" + indexKey + ")";
+        return "(" + path.toString() + ")";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Path path1 = (Path) o;
+
+        if (pathHead != path1.pathHead) return false;
+        if (isReference != path1.isReference) return false;
+        if (isSelector != path1.isSelector) return false;
+        return path.equals(path1.path);
+
     }
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 53 * hash + Objects.hashCode(this.path);
-        hash = 53 * hash + Objects.hashCode(this.indexKey);
-        hash = 53 * hash + this.index;
-        hash = 53 * hash + this.pathHead;
-        return hash;
+        int result = path.hashCode();
+        result = 31 * result + pathHead;
+        result = 31 * result + (isReference ? 1 : 0);
+        result = 31 * result + (isSelector ? 1 : 0);
+        return result;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final Path other = (Path) obj;
-        if (!Objects.equals(this.path, other.path)) {
-            return false;
-        }
-        if (!Objects.equals(this.indexKey, other.indexKey)) {
-            return false;
-        }
-        if (this.index != other.index) {
-            return false;
-        }
-        if (this.pathHead != other.pathHead) {
-            return false;
-        }
-        return true;
-    }
-
-//    @Override
-//    public String toCode() {
-//        StringBuilder sb = new StringBuilder();
-//        sb.append(getPath());
-//        
-//        if(hasIntegerIndex()){
-//            sb.append("[").append(getIndex()).append("]");
-//        }else if(hasStringIndex()){
-//            sb.append("[\"").append(getIndexKey()).append("\"]");
-//        }
-//        
-//        return sb.toString();
-//    }
-    
     /**
      * Extracts the name of a port from a full path name.
      * Given a full name like "Area.length", the results is "length"
@@ -423,21 +319,8 @@ public class Path {
     }
     
     /**
-     * Creates a path for port with the passed node as scope
-     * @param node scope of the port
-     * @param port name of the port
-     * @return path representing the port
-     */
-//    public static Path createPathForPort(Node node, String port){
-//        List<String> pathParts = new ArrayList<>();
-//            pathParts.add(node.getName());
-//            pathParts.add(port);
-//        return new Path(node, pathParts);
-//    }
-    
-    /**
      * Create a path from a string.
-     * For example, "Area.length" will be turned into a path
+     * For example, "area.length" will be turned into a path
      * object representing it.
      * @param path the string to be turned into a path object
      * @return path created from the string
@@ -449,7 +332,7 @@ public class Path {
 
     /**
      * Create a path from a string and make it a reference
-     * For example, "Area.length" will be turned into a path
+     * For example, "area.length" will be turned into a path
      * object representing it.
      * @param path the string to be turned into a path object
      * @return path created from the string that has it's isReference
@@ -463,7 +346,7 @@ public class Path {
 
     /**
      * Create a path from a string and make it a selector
-     * For example, "Area.length" will be turned into a path
+     * For example, "area.length" will be turned into a path
      * object representing it.
      * @param path the string to be turned into a path object
      * @return path created from the string that has it's isSelector
