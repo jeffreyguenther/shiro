@@ -10,7 +10,7 @@ public enum SegmentType {
      * Checks if the segment type is plain
      * @return true if the segment type is plain
      */
-    public boolean isPlain(){
+    public boolean isSimple(){
         return this.equals(SIMPLE);
     }
 

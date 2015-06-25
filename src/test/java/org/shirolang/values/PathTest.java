@@ -38,27 +38,56 @@ public class PathTest {
     @Test
     public void constructors(){
         Path p1 = new Path();
-        Assert.assertTrue(p1.hasSegments());
+        Assert.assertFalse(p1.hasSegmentsLeft());
         Assert.assertEquals("path head should be 0", 0, p1.getHead());
 
-        Path p2 = new Path("Hello", "World");
-        Assert.assertFalse(p2.hasSegments());
+        Path p2 = new Path("hello", "world");
+        Assert.assertTrue(p2.hasSegmentsLeft());
         Assert.assertEquals("path head should be 0", 0, p2.getHead());
-        Assert.assertEquals("should be 'Hello.World'", "Hello.World", p2.getPath());
+        Assert.assertEquals("should be 'Hello.World'", "hello.world", p2.getPath());
+    }
+
+    @Test
+    public void addSegment(){
+        Path p = new Path();
+        PathSegment segment = new PathSegment("a");
+        p.addSegment(segment);
+
+        Assert.assertEquals(1, p.getSegments().size());
+        Assert.assertEquals("a", p.getSegmentAtHead().getKey().get());
     }
 
     @Test
     public void movePathHead(){
         Path p = new Path("a", "b", "c", "d", "e", "f");
-        Assert.assertEquals("a", p.getCurrentHead().getKey().get());
-        p.popHead();
-        Assert.assertEquals("b", p.getCurrentHead().getKey().get());
+        Assert.assertEquals("a", p.getSegmentAtHead().getKey().get());
+        p.advanceHead(); // move to b
+        Assert.assertEquals("b", p.getSegmentAtHead().getKey().get());
         Assert.assertEquals(1, p.getHead());
-        p.popHead();
-        p.popHead();
+
+        p.advanceHead(); //move to c
+        p.advanceHead(); // move to d
+        Assert.assertFalse(p.atSecondLast());
+
+        p.advanceHead(); // move to e
+        Assert.assertTrue(p.atSecondLast());
+
         p.resetHead();
-        Assert.assertEquals("a", p.getCurrentHead().getKey().get());
+        Assert.assertEquals("a", p.getSegmentAtHead().getKey().get());
         Assert.assertEquals(0, p.getHead());
+    }
+
+    @Test
+    public void setHead(){
+        Path p = new Path("a", "b", "c", "d", "e", "f");
+        p.setHead(4);
+        Assert.assertEquals("e", p.getSegmentAtHead().getKey().get());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void setHeadOutOfBounds(){
+        Path p = new Path("a", "b", "c", "d", "e", "f");
+        p.setHead(7);
     }
 
     @Test
@@ -131,6 +160,14 @@ public class PathTest {
         Assert.assertFalse(p.isSelector());
         p.makeSelector();
         Assert.assertTrue(p.isSelector());
+    }
+
+    @Test
+    public void referencesPortValue(){
+        Path p = new Path();
+        Assert.assertFalse(p.doesReferencePortValue());
+        p.setReferencesPortValue(true);
+        Assert.assertTrue(p.doesReferencePortValue());
     }
 
     @Test(expected = RuntimeException.class)

@@ -27,7 +27,6 @@ package org.shirolang.values;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 import static java.util.stream.Collectors.toList;
 
@@ -35,27 +34,28 @@ import static java.util.stream.Collectors.toList;
  * Represents a path in Shiro. A path is a qualified identifier in Shiro.
  * It can be used to identify port values (p.x.outputs[0] or x.inputs["first"]).
  * 
- * A path is represented as a list of {@code PathSegments} instead of a string like
+ * A path is represented as a list of {@code PathSegment}s instead of a string like
  * "area.length". This is done to reduce the amount of string processing required
  * when working with paths.
  * 
- * A path has a "path head." The path head refers to the path segment the pathHead index
+ * A path has a "path head." The path head refers to the path segment the head index
  * points to. You can non-destructively pop(or increment) the head of path to 
  * move the path head down the list of strings that represent the path. 
  * This allows the path to be shortened as each part of the path is processed 
  * without losing the path as a whole. For example:
  * <code>
  * Path p = new Path("area", "Length");
- * System.out.println(p.getCurrentHead()); // "area"
- * p.popHead()
- * System.out.println(p.getCurrentHead()); // "length"
+ * System.out.println(p.getSegmentAtHead()); // "area"
+ * p.advanceHead()
+ * System.out.println(p.getSegmentAtHead()); // "length"
  * </code>
  */
 public class Path {
     private List<PathSegment> path;         // Strings that make up the path
-    private int pathHead;                   // index of the path head
+    private int head;                       // index of the path head
     private boolean isReference = false;    // indicates whether the path should be treated as a reference(pointer)
-    private boolean isSelector = false;
+    private boolean isSelector = false;     // indicates whether the path should be treated as a selector, or path literal
+    private boolean referencesPortValue = false; //indicates whether the path terminates with port values
 
     /**
      * Default constructor
@@ -63,25 +63,28 @@ public class Path {
     public Path() {
         this(Collections.emptyList());
     }
-    
+
+    /**
+     * Create a path from a splat of strings
+     * @param parts the segments of the path
+     */
     public Path(String...parts){
         this(Arrays.asList(parts));
     }
 
     /**
-     * Creates a path of simple path segments
-     *
+     * Creates a path of simple string path segments
      * @param path list of strings making up the path
      */
     public Path(List<String> path) {
         this.path = path.stream().map(PathSegment::toPathSegment).collect(toList());
-        this.pathHead = 0;
+        this.head = 0;
     }
 
     /**
      * Adds the current segment to the path
      * Delegates to Collection.add
-     * @param segment the segement to add to the path
+     * @param segment the segment to add to the path
      * @return whether the element was added to the collection
      */
     public boolean addSegment(PathSegment segment){
@@ -91,12 +94,12 @@ public class Path {
     /**
      * Determines if the path has any more elements
      *
-     * @return
+     * @return true if the path has more segments, otherwise false
+     * Will return true if the head is at the end of the list of segments.
+     * Only when it's advanced past the end of the path will it return false
      */
-    public boolean hasSegments() {
-        // if the path head and length are equal then the path head is 1
-        // greater than the length of the list and is therefore empty
-        return pathHead == path.size();
+    public boolean hasSegmentsLeft() {
+        return head < path.size();
     }
 
     /**
@@ -105,13 +108,13 @@ public class Path {
      * <code>update["value"]</code> will return true. 
      * 
      * A path that points to a node will also be at the end of a path. 
-     * For example, the path <code>Area.length</code> when the pathHead points 
+     * For example, the path <code>Area.length</code> when the head points
      * to the last element in the list will also return true.
      *
      * @return true if the path is at the end, otherwise false
      */
     public boolean isAtEnd() {
-        return pathHead == path.size() - 1;
+        return head == path.size() - 1;
     }
 
     /**
@@ -146,53 +149,47 @@ public class Path {
      * @return the current path offset
      */
     public int getHead() {
-        return pathHead;
+        return head;
     }
 
     /**
-     * *
      * Set the path offset. See getter explanation for how it is used.
-     *
      * @param pathOffset
      */
-    public void setPathHead(int pathOffset) {
+    public void setHead(int pathOffset) {
         if(pathOffset > path.size() - 1 || pathOffset < 0){
             throw new IllegalArgumentException("Path offset is outside range of path. "
                     + "Range is " + 0 + "-" + (path.size() - 1) + " inclusive.");
         }
         
-        this.pathHead = pathOffset;
+        this.head = pathOffset;
     }
 
     /**
-     * *
-     * Based on the current offset, get the head of the path
+     * Gets the path segment referred to by the path head
      *
-     * @return first element of the path as calculated by the offset
+     * @return path segment at the path head
      */
-    public PathSegment getCurrentHead() {
-        return path.get(pathHead);
+    public PathSegment getSegmentAtHead() {
+        return path.get(head);
     }
 
     /**
-     * *
      * Increment the path offset
      *
      * @return the current offset value
      */
-    public int popHead() {
-        return ++pathHead;
+    public int advanceHead() {
+        return ++head;
     }
 
     /**
-     * *
-     * Reset the path offset to zero
-     *
+     * Resets the path head to the start of the path, index 0.
      * @return the current offset value
      */
     public int resetHead() {
-        pathHead = 0;
-        return pathHead;
+        head = 0;
+        return head;
     }
 
     /**
@@ -208,7 +205,7 @@ public class Path {
     }
 
     /**
-     * Returns whether the path is a reference
+     * Gets whether the path is a reference
      * @return true if the path is a reference, otherwise false
      */
     public boolean isReference() {
@@ -216,7 +213,7 @@ public class Path {
     }
 
     /**
-     * Make the path a selector
+     * Makes the path a selector
      * This method is used to represent paths like "@a" and "@Point.x"
      */
     public void makeSelector(){
@@ -228,7 +225,7 @@ public class Path {
     }
 
     /**
-     * Returns whether the path is a selector
+     * Gets whether the path is a selector
      * @return true if the path is a selector, otherwise false
      */
     public boolean isSelector(){
@@ -236,8 +233,40 @@ public class Path {
     }
 
     /**
-     * Return return a string of the path
-     *
+     * Returns whether the path references a port value
+     * @return true it references a port value, otherwise false
+     */
+    public boolean doesReferencePortValue() {
+        return referencesPortValue;
+    }
+
+    /**
+     * Sets whether the path references a port value
+     * @param referencesPortValue whether the path references a port value
+     */
+    public void setReferencesPortValue(boolean referencesPortValue) {
+        this.referencesPortValue = referencesPortValue;
+    }
+
+    /**
+     * Gets the last element in the path
+     * @return the last path segment in the path
+     */
+    public PathSegment getLast(){
+        return path.get(path.size() - 1);
+    }
+
+    /**
+     * Determines if path is at second last segment
+     * Uses <code>head == (path.size() - 2)</code> to calculate
+     * @return true if the head is at second last position, otherwise fase
+     */
+    public boolean atSecondLast(){
+        return head == (path.size() - 2);
+    }
+
+    /**
+     * Gets a string representation of the path
      * @return (<list of path strings>)
      */
     @Override
@@ -252,7 +281,7 @@ public class Path {
 
         Path path1 = (Path) o;
 
-        if (pathHead != path1.pathHead) return false;
+        if (head != path1.head) return false;
         if (isReference != path1.isReference) return false;
         if (isSelector != path1.isSelector) return false;
         return path.equals(path1.path);
@@ -262,7 +291,7 @@ public class Path {
     @Override
     public int hashCode() {
         int result = path.hashCode();
-        result = 31 * result + pathHead;
+        result = 31 * result + head;
         result = 31 * result + (isReference ? 1 : 0);
         result = 31 * result + (isSelector ? 1 : 0);
         return result;
@@ -305,16 +334,16 @@ public class Path {
     }
     
     /***
-     * Create the node's full name
-     * @param parentFullName the node's parent's full name
-     * @param nodeName name of the node
-     * @return the node's full name
+     * Create the fully qualified name for port or node
+     * @param parentFullName the parent scope's full name
+     * @param name name of the port or node
+     * @return the fully qualified name
      */
-    public static String createFullName(String parentFullName, String nodeName) {
+    public static String createFullName(String parentFullName, String name) {
         if("".equals(parentFullName)){
-           return nodeName;
+           return name;
         }else{
-            return parentFullName + "." + nodeName;
+            return parentFullName + "." + name;
         }
     }
     
