@@ -24,7 +24,8 @@
 package org.shirolang.interpreter;
 
 /**
- *
+ * Marks a Shiro symbol as having a method to output
+ * a console representation.
  */
 public interface Consoleable {
     String toConsole();
