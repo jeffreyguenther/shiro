@@ -235,11 +235,11 @@ public class SGraph implements Scope, Consoleable{
 
         if(path.isAtEnd()){
             // check the nodes
-            funcReferenced = nodes.get(path.getSegmentAtHead());
+            funcReferenced = nodes.get(path.getSegmentAtHead().getKey().get());
 
             // check the ports
             if(funcReferenced == null){
-                funcReferenced = ports.get(path.getSegmentAtHead());
+                funcReferenced = ports.get(path.getSegmentAtHead().getKey().get());
             }
         }else{ // recursively examine the node
             PathSegment head = path.getSegmentAtHead();

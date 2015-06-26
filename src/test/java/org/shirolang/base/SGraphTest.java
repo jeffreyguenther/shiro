@@ -171,17 +171,4 @@ public class SGraphTest {
 
         Assert.assertSame(d, id.getResult());
     }
-
-    @Test
-    public void toConsole(){
-        SGraph g = new SGraph("blue");
-        SDouble d = new SDouble("a", 12.4);
-        SInteger i = new SInteger("b", 3);
-        SAdd add = new SAdd(d, i);
-
-        g.addPort(add);
-        g.evaluate();
-        String expected = "#<blue [#<Add args:[a:#<Double args:[], results:[12.4]>, b:#<Integer args:[], results:[3]>], results:[15.4]> => a#<Double args:[], results:[12.4]>, #<Add args:[a:#<Double args:[], results:[12.4]>, b:#<Integer args:[], results:[3]>], results:[15.4]> => b#<Integer args:[], results:[3]>, a#<Double args:[], results:[12.4]>b#<Integer args:[], results:[3>]>";
-        Assert.assertEquals(expected, g.toConsole());
-    }
 }

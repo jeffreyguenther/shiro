@@ -602,7 +602,7 @@ public class SNode extends SFuncBase implements Scope{
             }
         }
 
-        // since we didn't find anything pop up one level in the scope tree.
+        // since we didn't find anything, pop up one level in the scope tree.
         if(!path.isAtEnd() && portReferenced == null && parentScope != null) {
             path.resetHead();
             portReferenced = parentScope.resolvePath(path);
