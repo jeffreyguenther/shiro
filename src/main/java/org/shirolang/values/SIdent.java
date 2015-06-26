@@ -36,11 +36,10 @@ import org.shirolang.exceptions.PathNotFoundException;
  * 
  * When it is evaluated it resolves its path object to
  * a SFunc.
- * @author jeffreyguenther
  */
 public class SIdent extends SFuncBase{
     private Scope scope;
-    private Path value;
+    private Path path;
     
     public SIdent(){
         this(null, "");
@@ -53,30 +52,30 @@ public class SIdent extends SFuncBase{
     public SIdent(Scope scope, Path s) {
         super();
         this.scope = scope;
-        value = s;
+        path = s;
     }
     
-    public void setValue(Path s){
-        value = s;
+    public void setPath(Path s){
+        path = s;
     }
     
     /**
-     * Sets the value of the identifier to
+     * Sets the path of the identifier to
      * path represented by the string. The
      * string is converted into path object
      * before being stored.
      * @param path path the identifier points to
      */
-    public void setValue(String path){
-        value = Path.create(path);
+    public void setPath(String path){
+        this.path = Path.create(path);
     }
     
     public void setScope(Scope s){
         this.scope = s;
     }
 
-    public Path getValue(){
-        return value;
+    public Path getPath(){
+        return path;
     }
 
     /**
@@ -85,43 +84,62 @@ public class SIdent extends SFuncBase{
      * @throws PathNotFoundException
      */
     public String getReferencedPortType() throws PathNotFoundException {
-        SFunc func = scope.resolvePath(value);
+        SFunc func = scope.resolvePath(path);
         return func.getType();
     }
 
     @Override
     public void evaluate() {
+        try {
+            SFunc func = scope.resolvePath(path);
 
-        if(!isSelector()) {
-            try {
-                /**
-                 * Because an identifier simply resolves a path to
-                 * a particular port, the type of it's return
-                 * should be set to the type of the node it finds.
-                 */
-                SFunc func = scope.resolvePath(value);
-                if(!results.isEmpty()){
-                    TypedValue v = results.get(0);
-                    v.setAcceptedTypes(func.getType());
-                    v.setValue(func);
+            // return result 0 by default
+            SFunc val = func.getResult();
 
-                    results.set(v, 0);
-                }else {
-                    TypedValue v = new TypedValue(func.getType(), func);
-
-                    results.add(v);
+            // port value
+            if(path.doesReferencePortValue()) {
+                val = func.get(path.getLast());
+                if (val == null) {
+                    throw new RuntimeException("The path tried to access a port value and failed. " + path + " can't be resolved.");
                 }
-
-            } catch (PathNotFoundException e) {
-                throw new RuntimeException(e.getMessage());
             }
+
+            // selector
+            if(path.isSelector()){
+                val = this;
+            }
+
+            // reference value
+            if(path.isReference()){
+                val = func;
+            }
+
+            /**
+             * Because an identifier simply resolves a path to
+             * a particular port, the type of it's return
+             * should be set to the type of the node it finds.
+             */
+            if(!results.isEmpty()){
+                TypedValue v = results.get(0);
+                v.setAcceptedTypes(val.getType());
+                v.setValue(val);
+
+                results.set(v, 0);
+            }else {
+                TypedValue v = new TypedValue(val.getType(), val);
+
+                results.add(v);
+            }
+
+        } catch (PathNotFoundException e) {
+            throw new RuntimeException(e.getMessage());
         }
     }
 
     @Override
     public List<SFunc> getDependencies() {
         try {
-            return Collections.singletonList(scope.resolvePath(value));
+            return Collections.singletonList(scope.resolvePath(path));
         } catch (PathNotFoundException e) {
             throw new RuntimeException(e.getMessage());
         }
@@ -129,12 +147,18 @@ public class SIdent extends SFuncBase{
 
     @Override
     public String getType() {
-        return "Ident";
+        if(isSelector()){
+            return SType.SELECTOR;
+        }else if(isReference()){
+            return SType.REFERENCE;
+        }else{
+            return SType.IDENT;
+        }
     }
 
     @Override
     public String toString() {
-        return value.toString();
+        return path.toString();
     }
 
     @Override
@@ -148,11 +172,11 @@ public class SIdent extends SFuncBase{
     }
 
     public boolean isReference(){
-        return value.isReference();
+        return path.isReference();
     }
 
     public boolean isSelector(){
-        return value.isSelector();
+        return path.isSelector();
     }
 
     @Override
@@ -165,9 +189,9 @@ public class SIdent extends SFuncBase{
         if(isReference()){
             return getResult().toConsole();
         }else if(isSelector()){
-            return value.getPath();
+            return path.getPath();
         }else{
-            return value.toString();
+            return path.toString();
         }
     }
 }

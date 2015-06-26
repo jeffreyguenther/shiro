@@ -38,7 +38,7 @@ public class SList extends SValue<List<SFunc>>{
     
     public SList(){
         super(new ArrayList<>());
-        args.clear();
+        inputs.clear();
     }
 
     public SList(List<SFunc> l){
@@ -50,14 +50,14 @@ public class SList extends SValue<List<SFunc>>{
     }
 
     @Override
-    public void setArg(Integer i, SFunc v) {
+    public void setInput(Integer i, SFunc v) {
         setArgItem(i, v);
         setListItem(i, v);
     }
 
     @Override
-    public void setArg(String name, SFunc v) {
-        Integer i = args.getIndex(name);
+    public void setInput(String name, SFunc v) {
+        Integer i = inputs.getIndex(name);
         setArgItem(i, v);
         setListItem(i, v);
     }
@@ -68,12 +68,12 @@ public class SList extends SValue<List<SFunc>>{
      * @param v value of the arg
      */
     private void setArgItem(Integer i, SFunc v){
-        if(i > args.size() - 1){
+        if(i > inputs.size() - 1){
             TypedValue typedValue = new TypedValue(v.getType());
             typedValue.setValue(v);
-            args.add(typedValue);
+            inputs.add(typedValue);
         }else{
-            args.get(i).setValue(v);
+            inputs.get(i).setValue(v);
         }
     }
 
@@ -91,8 +91,8 @@ public class SList extends SValue<List<SFunc>>{
     }
 
     @Override
-    public void appendArg(SFunc arg) {
-        super.appendArg(arg);
+    public void appendInput(SFunc arg) {
+        super.appendInput(arg);
         getValue().add(arg);
     }
 

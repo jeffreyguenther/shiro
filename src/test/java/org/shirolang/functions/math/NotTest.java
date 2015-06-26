@@ -81,8 +81,8 @@ public class NotTest {
         SBoolean a = new SBoolean(true);
         SNot result = new SNot(a);
         
-        assertTrue(result.hasArgs());
-        assertTrue(result.getArgs().contains(a));
+        assertTrue(result.hasInputs());
+        assertTrue(result.getInputs().contains(a));
     }
     
     @Test

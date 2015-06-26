@@ -45,8 +45,8 @@ public class SModulo extends SBinaryArithmeticFunction{
 
     @Override
     public void evaluate() {
-        SFunc lhs = getArg(0).getResult();
-        SFunc rhs = getArg(1).getResult();
+        SFunc lhs = getInput(0).getResult();
+        SFunc rhs = getInput(1).getResult();
         
         // Only allow doubles to be added     
         if(lhs.isDouble() && rhs.isDouble()){

@@ -180,8 +180,8 @@ public class NotEqualTest {
         SString b = new SString("A1");
         SNotEqual result = new SNotEqual(a, b);
         
-        assertTrue(result.hasArgs());
-        List<SFunc> args = result.getArgs();
+        assertTrue(result.hasInputs());
+        List<SFunc> args = result.getInputs();
         assertTrue(args.contains(a));
         assertTrue(args.contains(b));
     }

@@ -35,34 +35,34 @@ public class RectangleViz extends Rectangle {
     public RectangleViz(SRectangle rect ){
         super();
 
-        SDouble originX = (SDouble) rect.getArg("originX").getResult();
+        SDouble originX = (SDouble) rect.getInput("originX").getResult();
         setX(originX.getValue());
 
-        SDouble originY = (SDouble) rect.getArg("originY").getResult();
+        SDouble originY = (SDouble) rect.getInput("originY").getResult();
         setY(originY.getValue());
 
-        SDouble rotate = (SDouble) rect.getArg("rotate").getResult();
+        SDouble rotate = (SDouble) rect.getInput("rotate").getResult();
         setRotate(rotate.getValue());
 
-        SDouble width = (SDouble) rect.getArg("width").getResult();
+        SDouble width = (SDouble) rect.getInput("width").getResult();
         setWidth(width.getValue());
 
-        SDouble height = (SDouble) rect.getArg("height").getResult();
+        SDouble height = (SDouble) rect.getInput("height").getResult();
         setHeight(height.getValue());
 
-        SColor stroke = (SColor) rect.getArg("stroke").getResult();
+        SColor stroke = (SColor) rect.getInput("stroke").getResult();
         setStroke(stroke.getValue());
 
-        SDouble strokeWeight = (SDouble) rect.getArg("strokeWeight").getResult();
+        SDouble strokeWeight = (SDouble) rect.getInput("strokeWeight").getResult();
         setStrokeWidth(strokeWeight.getValue());
 
-        SColor fill = (SColor) rect.getArg("fill").getResult();
+        SColor fill = (SColor) rect.getInput("fill").getResult();
         setFill(fill.getValue());
 
-        SDouble arcHeight = (SDouble) rect.getArg("arcHeight").getResult();
+        SDouble arcHeight = (SDouble) rect.getInput("arcHeight").getResult();
         setArcHeight(arcHeight.getValue());
 
-        SDouble arcWidth = (SDouble) rect.getArg("arcWidth").getResult();
+        SDouble arcWidth = (SDouble) rect.getInput("arcWidth").getResult();
         setArcHeight(arcWidth.getValue());
     }
 }

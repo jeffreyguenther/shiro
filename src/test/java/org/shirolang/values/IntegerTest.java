@@ -59,13 +59,13 @@ public class IntegerTest {
     @Test
     public void getArgs(){
         SInteger s = new SInteger(2);
-        assertTrue(s.getArgs().isEmpty());
+        assertTrue(s.getInputs().isEmpty());
     }
     
     @Test
     public void hasArgs(){
         SInteger s = new SInteger(-1);
-        assertFalse(s.hasArgs());
+        assertFalse(s.hasInputs());
     }
     
     @Test

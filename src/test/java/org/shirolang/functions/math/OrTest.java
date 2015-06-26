@@ -104,8 +104,8 @@ public class OrTest {
         SBoolean b = new SBoolean(true);
         SOr truetrue = new SOr(a, b);
         
-        assertTrue(truetrue.hasArgs());
-        List<SFunc> args = truetrue.getArgs();
+        assertTrue(truetrue.hasInputs());
+        List<SFunc> args = truetrue.getInputs();
         assertTrue(args.contains(a));
         assertTrue(args.contains(b));
     }

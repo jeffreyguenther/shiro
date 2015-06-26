@@ -102,9 +102,9 @@ public class ModuloTest {
         SString s = new SString("5");
         SModulo product = new SModulo(s, a);
         
-        assertTrue(product.hasArgs());
-        assertTrue(product.getArgs().contains(a));
-        assertTrue(product.getArgs().contains(s));
+        assertTrue(product.hasInputs());
+        assertTrue(product.getInputs().contains(a));
+        assertTrue(product.getInputs().contains(s));
     }
     
     @Test

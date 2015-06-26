@@ -23,14 +23,8 @@
 
 package org.shirolang.functions.geometry;
 
-import javafx.scene.text.Font;
-import javafx.scene.text.FontPosture;
-import javafx.scene.text.FontWeight;
-import javafx.scene.text.Text;
 import org.shirolang.base.SFuncBase;
 import org.shirolang.base.TypedValue;
-import org.shirolang.values.SDouble;
-import org.shirolang.values.SString;
 
 /**
  * Represents a block of text on the canvas
@@ -39,26 +33,26 @@ public class SText extends SFuncBase {
     public SText(){
         super();
 
-        args.setKeyForIndex("originX", 0);
-        args.add(new TypedValue("Double"));
+        inputs.setKeyForIndex("originX", 0);
+        inputs.add(new TypedValue("Double"));
 
-        args.setKeyForIndex("originY", 1);
-        args.add(new TypedValue("Double"));
+        inputs.setKeyForIndex("originY", 1);
+        inputs.add(new TypedValue("Double"));
 
-        args.setKeyForIndex("rotate", 2);
-        args.add(new TypedValue("Double"));
+        inputs.setKeyForIndex("rotate", 2);
+        inputs.add(new TypedValue("Double"));
 
-        args.setKeyForIndex("text", 3);
-        args.add(new TypedValue("String"));
+        inputs.setKeyForIndex("text", 3);
+        inputs.add(new TypedValue("String"));
 
-        args.setKeyForIndex("font", 4);
-        args.add(new TypedValue("String"));
+        inputs.setKeyForIndex("font", 4);
+        inputs.add(new TypedValue("String"));
 
-        args.setKeyForIndex("size", 5);
-        args.add(new TypedValue("Double"));
+        inputs.setKeyForIndex("size", 5);
+        inputs.add(new TypedValue("Double"));
 
-        args.setKeyForIndex("weight", 6);
-        args.add(new TypedValue("String"));
+        inputs.setKeyForIndex("weight", 6);
+        inputs.add(new TypedValue("String"));
 
         results.add(new TypedValue(getType()));
     }

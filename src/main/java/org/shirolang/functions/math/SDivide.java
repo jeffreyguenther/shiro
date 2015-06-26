@@ -25,7 +25,6 @@
 package org.shirolang.functions.math;
 
 import org.shirolang.base.SFunc;
-import org.shirolang.base.TypedValue;
 import org.shirolang.values.SDouble;
 import org.shirolang.values.SInteger;
 
@@ -46,8 +45,8 @@ public class SDivide extends SBinaryArithmeticFunction {
 
     @Override
     public void evaluate() {
-        SFunc lhs = getArg(0).getResult();
-        SFunc rhs = getArg(1).getResult();
+        SFunc lhs = getInput(0).getResult();
+        SFunc rhs = getInput(1).getResult();
 
         if(lhs.isDouble() && rhs.isDouble()){
             Double l = ((SDouble) lhs).getValue();

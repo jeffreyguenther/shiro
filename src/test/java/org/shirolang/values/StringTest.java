@@ -72,13 +72,13 @@ public class StringTest {
     @Test
     public void getArgs(){
         SString s = new SString("Hello");
-        assertTrue(s.getArgs().isEmpty());
+        assertTrue(s.getInputs().isEmpty());
     }
     
     @Test
     public void hasArgs(){
         SString s = new SString("Hello");
-        assertFalse(s.hasArgs());
+        assertFalse(s.hasInputs());
     }
     
     @Test

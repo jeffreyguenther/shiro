@@ -27,8 +27,6 @@ package org.shirolang.functions.math;
 import org.shirolang.base.SFunc;
 import static org.shirolang.base.SType.GREATERTHAN;
 
-import org.shirolang.base.TypedValue;
-
 /**
  * Represents the binary operator "&gt;"
  */
@@ -46,8 +44,8 @@ public class SGreaterThan extends SBinaryComparisonFunction {
 
     @Override
     public void evaluate() {
-        SFunc lhs = getArg(0).getResult();
-        SFunc rhs = getArg(1).getResult();
+        SFunc lhs = getInput(0).getResult();
+        SFunc rhs = getInput(1).getResult();
 
         compute(lhs, rhs, (a, b) -> a > b, (a, b) -> a > b);
     }

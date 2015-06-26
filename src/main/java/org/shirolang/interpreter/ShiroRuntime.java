@@ -30,13 +30,10 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.util.Callback;
 import javafx.util.Pair;
-import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
@@ -65,10 +62,7 @@ import static java.util.stream.Collectors.toList;
  * It is the main class for the library.
  */
 public class ShiroRuntime{
-
     private Library library;
-    private DAGraph<SFunc> graph = new DAGraph<>();
-
     private StringProperty errorMesages;
     private StringProperty output;
     private BooleanProperty hasErrors;
@@ -222,7 +216,7 @@ public class ShiroRuntime{
                         GroupViz groupViz = (GroupViz) groupCallback.call(group);
 
                         // Render each of the children
-                        SList args = (SList) group.getArg("children").getResult();
+                        SList args = (SList) group.getInput("children").getResult();
                         List<SFunc> shapes = args.getValue().stream().map((id) -> id.getResult()).collect(toList());
                         shapes.forEach((s) ->{
                             Callback<SFunc, Node> callback = visualCallBacks.get(s.getType());

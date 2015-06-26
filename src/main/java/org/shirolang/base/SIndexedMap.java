@@ -67,6 +67,15 @@ public class SIndexedMap<T> {
     }
 
     /**
+     * Determines if index map using the key
+     * @param key key to find
+     * @return true if the key is used, otherwise false
+     */
+    public boolean hasKey(String key){
+        return keyToIndexMap.containsKey(key);
+    }
+
+    /**
      * Gets the key for the index
      * @param key the key to return.
      * @return It returns null if no index has been associated with the key

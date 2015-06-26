@@ -44,11 +44,11 @@ public abstract class SBinaryComparisonFunction extends SBinaryFunction{
 
     protected void setupBinaryComparison(){
         // name the arguments
-        args.setKeyForIndex(A, 0);
-        args.add(new TypedValue("Integer", "Double"));
+        inputs.setKeyForIndex(A, 0);
+        inputs.add(new TypedValue("Integer", "Double"));
 
-        args.setKeyForIndex(B, 1);
-        args.add(new TypedValue("Integer", "Double"));
+        inputs.setKeyForIndex(B, 1);
+        inputs.add(new TypedValue("Integer", "Double"));
 
         results.add(new TypedValue("Boolean"));
     }
@@ -65,7 +65,7 @@ public abstract class SBinaryComparisonFunction extends SBinaryFunction{
             SBoolean s = new SBoolean(gt);
             s.evaluate();
 
-            setResult(0, s);
+            setOutput(0, s);
         }else if(lhs.isInteger() && lhs.isInteger()){
             Integer l = ((SInteger) lhs).getValue();
             Integer r = ((SInteger) rhs).getValue();
@@ -74,7 +74,7 @@ public abstract class SBinaryComparisonFunction extends SBinaryFunction{
             SBoolean s = new SBoolean(gt);
             s.evaluate();
 
-            setResult(0, s);
+            setOutput(0, s);
         }else if(lhs.isString() && rhs.isString()){
             String l = ((SString) lhs).getValue();
             String r = ((SString) rhs).getValue();
@@ -83,7 +83,7 @@ public abstract class SBinaryComparisonFunction extends SBinaryFunction{
             SBoolean s = new SBoolean(gt);
             s.evaluate();
 
-            setResult(0, s);
+            setOutput(0, s);
         }else{
             throw new RuntimeException("Only Doubles, Integers, and Strings can be compared.");
         }
@@ -100,7 +100,7 @@ public abstract class SBinaryComparisonFunction extends SBinaryFunction{
             SBoolean s = new SBoolean(gt);
             s.evaluate();
 
-            setResult(0, s);
+            setOutput(0, s);
         }else if(lhs.isInteger() && lhs.isInteger()){
             Integer l = ((SInteger) lhs).getValue();
             Integer r = ((SInteger) rhs).getValue();
@@ -109,7 +109,7 @@ public abstract class SBinaryComparisonFunction extends SBinaryFunction{
             SBoolean s = new SBoolean(gt);
             s.evaluate();
 
-            setResult(0, s);
+            setOutput(0, s);
         }else{
             throw new RuntimeException("Only Doubles and Integers can be compared.");
         }

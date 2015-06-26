@@ -31,17 +31,17 @@ import org.shirolang.base.TypedValue;
  */
 public class SGroup extends SFuncBase{
     public SGroup(){
-        args.setKeyForIndex("originX", 0);
-        args.add(TypedValue.asDouble());
+        inputs.setKeyForIndex("originX", 0);
+        inputs.add(TypedValue.asDouble());
 
-        args.setKeyForIndex("originY", 1);
-        args.add(TypedValue.asDouble());
+        inputs.setKeyForIndex("originY", 1);
+        inputs.add(TypedValue.asDouble());
 
-        args.setKeyForIndex("rotate", 2);
-        args.add(TypedValue.asDouble());
+        inputs.setKeyForIndex("rotate", 2);
+        inputs.add(TypedValue.asDouble());
 
-        args.setKeyForIndex("children", 3);
-        args.add(new TypedValue("List"));
+        inputs.setKeyForIndex("children", 3);
+        inputs.add(new TypedValue("List"));
 
         results.add(new TypedValue(getType()));
     }

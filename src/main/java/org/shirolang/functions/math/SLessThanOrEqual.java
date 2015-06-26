@@ -27,11 +27,6 @@ package org.shirolang.functions.math;
 import org.shirolang.base.SFunc;
 import static org.shirolang.base.SType.LESSTHAN_OR_EQUAL;
 
-import org.shirolang.base.TypedValue;
-import org.shirolang.values.SBoolean;
-import org.shirolang.values.SDouble;
-import org.shirolang.values.SInteger;
-
 /**
  * Represents the binary operator "&lt;="
  */
@@ -49,8 +44,8 @@ public class SLessThanOrEqual extends SBinaryComparisonFunction {
 
     @Override
     public void evaluate() {
-        SFunc lhs = getArg(0).getResult();
-        SFunc rhs = getArg(1).getResult();
+        SFunc lhs = getInput(0).getResult();
+        SFunc rhs = getInput(1).getResult();
 
         compute(lhs, rhs, (a, b) -> a <= b, (a, b) -> a <= b);
     }

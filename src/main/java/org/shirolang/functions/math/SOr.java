@@ -25,8 +25,6 @@
 package org.shirolang.functions.math;
 
 import org.shirolang.base.SFunc;
-import org.shirolang.base.SType;
-import org.shirolang.base.TypedValue;
 import org.shirolang.values.SBoolean;
 
 /**
@@ -46,8 +44,8 @@ public class SOr extends SBinaryFunction{
 
     @Override
     public void evaluate() {
-        SFunc lhs = getArg(0).getResult();
-        SFunc rhs = getArg(1).getResult();
+        SFunc lhs = getInput(0).getResult();
+        SFunc rhs = getInput(1).getResult();
         
         // Only allow doubles to be added     
         if(lhs.isBoolean() && rhs.isBoolean()){
@@ -58,7 +56,7 @@ public class SOr extends SBinaryFunction{
             SBoolean s = new SBoolean(sum);
             s.evaluate();
 
-            setResult(0, s);
+            setOutput(0, s);
         }else{
             // identify which argument is not a double
             throw new RuntimeException("Only Booleans can be used with Or.");

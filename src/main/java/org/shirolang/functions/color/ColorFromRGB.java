@@ -36,17 +36,17 @@ public class ColorFromRGB extends SFuncBase {
 
     public ColorFromRGB(){
         super();
-        args.setKeyForIndex("r", 0);
-        args.add(new TypedValue("Integer"));
+        inputs.setKeyForIndex("r", 0);
+        inputs.add(new TypedValue("Integer"));
 
-        args.setKeyForIndex("g", 1);
-        args.add(new TypedValue("Integer"));
+        inputs.setKeyForIndex("g", 1);
+        inputs.add(new TypedValue("Integer"));
 
-        args.setKeyForIndex("b", 2);
-        args.add(new TypedValue("Integer"));
+        inputs.setKeyForIndex("b", 2);
+        inputs.add(new TypedValue("Integer"));
 
-        args.setKeyForIndex("alpha", 3);
-        args.add(new TypedValue("Double"));
+        inputs.setKeyForIndex("alpha", 3);
+        inputs.add(new TypedValue("Double"));
 
         results.setKeyForIndex("color", 0);
         results.add(new TypedValue("Color"));
@@ -54,10 +54,10 @@ public class ColorFromRGB extends SFuncBase {
 
     @Override
     public void evaluate() {
-        SInteger r = (SInteger) getArg("r").getResult();
-        SInteger g = (SInteger) getArg("g").getResult();
-        SInteger b = (SInteger) getArg("b").getResult();
-        SDouble a = (SDouble) getArg("alpha").getResult();
+        SInteger r = (SInteger) getInput("r").getResult();
+        SInteger g = (SInteger) getInput("g").getResult();
+        SInteger b = (SInteger) getInput("b").getResult();
+        SDouble a = (SDouble) getInput("alpha").getResult();
 
         if( !doesExpectedTypeMatch(0, r)) {
             throw new RuntimeException("Arg:0, Found " + r.getType() + ". Expected " + String.join(",", getAcceptedTypes(0)));
@@ -78,7 +78,7 @@ public class ColorFromRGB extends SFuncBase {
         Color result = Color.rgb(r.getValue(), g.getValue(), b.getValue(), a.getValue() );
         SColor color = new SColor(result);
         color.evaluate();
-        setResult(0, color);
+        setOutput(0, color);
     }
 
     @Override

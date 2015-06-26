@@ -42,7 +42,7 @@ public abstract class SValue<T> extends SFuncBase{
         super();
         this.v = value;
         symbolType = SymbolType.LITERAL;
-        args.add(new TypedValue(getType()));
+        inputs.add(new TypedValue(getType()));
     }
 
     public SValue(String name, T value){
@@ -54,7 +54,7 @@ public abstract class SValue<T> extends SFuncBase{
     @Override
     public void evaluate() {
         if (getSymbolType().isLiteral()
-                || (getSymbolType().isPort() && !hasArgs())
+                || (getSymbolType().isPort() && !hasInputs())
                 || (getType().equals(SType.LIST))) {
             if (results.isEmpty()) {
                 TypedValue v = new TypedValue(this.getType(), this);
@@ -69,7 +69,7 @@ public abstract class SValue<T> extends SFuncBase{
             }
 
         } else {
-            SFunc arg = getArg(0);
+            SFunc arg = getInput(0);
             SFunc result = arg.getResult();
             if (result.getType().equals(this.getType())) {
                 if (results.isEmpty()) {

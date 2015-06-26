@@ -21,8 +21,8 @@ public class CSV2TableMFunc extends SFuncBase {
     public CSV2TableMFunc(){
         super();
 
-        args.setKeyForIndex(PATH, 0);
-        args.add(new TypedValue("String"));
+        inputs.setKeyForIndex(PATH, 0);
+        inputs.add(new TypedValue("String"));
 
         results.setKeyForIndex(TABLE, 0);
         results.add(new TypedValue("Table"));
@@ -30,7 +30,7 @@ public class CSV2TableMFunc extends SFuncBase {
 
     @Override
     public void evaluate(){
-        SFunc path = getArg(PATH).getResult();
+        SFunc path = getInput(PATH).getResult();
 
         String p = ((SString) path).getValue();
 
@@ -63,7 +63,7 @@ public class CSV2TableMFunc extends SFuncBase {
         STable tableOut = new STable(table);
         tableOut.evaluate();
 
-       setResult(TABLE, tableOut);
+       setOutput(TABLE, tableOut);
     }
 
     @Override

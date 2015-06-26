@@ -9,7 +9,6 @@ package org.shirolang.values;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.shirolang.base.SFunc;
 import org.shirolang.base.SGraph;
 import org.shirolang.base.SymbolType;
 
@@ -59,13 +58,13 @@ public class DoubleTest {
      @Test
     public void getArgs(){
         SDouble s = new SDouble(2.0);
-        assertTrue(s.getArgs().isEmpty());
+        assertTrue(s.getInputs().isEmpty());
     }
     
     @Test
     public void hasArgs(){
         SDouble s = new SDouble(-1.1);
-        assertFalse(s.hasArgs());
+        assertFalse(s.hasInputs());
     }
     
     @Test
@@ -107,7 +106,7 @@ public class DoubleTest {
         SDouble d = new SDouble();
         d.setSymbolType(SymbolType.PORT);
 
-        d.appendArg(id);
+        d.appendInput(id);
         g.addPort(d);
 
         g.evaluate();
@@ -132,7 +131,7 @@ public class DoubleTest {
         SDouble d = new SDouble();
         d.setSymbolType(SymbolType.PORT);
 
-        d.appendArg(id);
+        d.appendInput(id);
         g.addPort(d);
 
         g.evaluate();

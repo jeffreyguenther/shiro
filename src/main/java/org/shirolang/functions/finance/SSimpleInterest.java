@@ -42,14 +42,14 @@ public class SSimpleInterest extends SFuncBase {
         super();
 
         // name the function's arguments
-        args.setKeyForIndex(RATE, 0);
-        args.add(new TypedValue("Double"));
+        inputs.setKeyForIndex(RATE, 0);
+        inputs.add(new TypedValue("Double"));
 
-        args.setKeyForIndex(PRINCIPAL, 1);
-        args.add(new TypedValue("Double"));
+        inputs.setKeyForIndex(PRINCIPAL, 1);
+        inputs.add(new TypedValue("Double"));
 
-        args.setKeyForIndex(DURATION, 2);
-        args.add(new TypedValue("Double"));
+        inputs.setKeyForIndex(DURATION, 2);
+        inputs.add(new TypedValue("Double"));
 
         // name the function's results
         results.setKeyForIndex(INTEREST, 0);
@@ -61,9 +61,9 @@ public class SSimpleInterest extends SFuncBase {
 
     @Override
     public void evaluate() {
-        SFunc rate = getArg(RATE).getResult();
-        SFunc principal = getArg(PRINCIPAL).getResult();
-        SFunc duration = getArg(DURATION).getResult();
+        SFunc rate = getInput(RATE).getResult();
+        SFunc principal = getInput(PRINCIPAL).getResult();
+        SFunc duration = getInput(DURATION).getResult();
 
         Double r = ((SDouble) rate).getValue();
         Double p = ((SDouble) principal).getValue();
@@ -78,8 +78,8 @@ public class SSimpleInterest extends SFuncBase {
         iOut.evaluate();
         valueOut.evaluate();
 
-        setResult(INTEREST, iOut);
-        setResult(VALUE, valueOut);
+        setOutput(INTEREST, iOut);
+        setOutput(VALUE, valueOut);
     }
 
     @Override

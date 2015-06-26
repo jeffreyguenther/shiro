@@ -29,6 +29,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import org.shirolang.values.Path;
+import org.shirolang.values.PathSegment;
 import org.shirolang.values.SIdent;
 
 import java.util.*;
@@ -40,63 +41,76 @@ import static java.util.stream.Collectors.toList;
  * of implementing multi-functions.
  */
 public abstract class SFuncBase implements SFunc {
-    protected SIndexedMap<TypedValue> args;
+    protected SIndexedMap<TypedValue> inputs;
     protected SIndexedMap<TypedValue> results;
     protected BooleanProperty isActive;
 
     protected StringProperty name;
     protected StringProperty fullName;
     protected SymbolType symbolType;
+    protected Access access;
 
     public SFuncBase() {
-        args = new SIndexedMap<>();
+        inputs = new SIndexedMap<>();
         results = new SIndexedMap<>();
         isActive = new SimpleBooleanProperty(true);
+
         name = new SimpleStringProperty("");
         fullName = new SimpleStringProperty("");
         symbolType = SymbolType.PORT;
+        access = Access.READWRITE;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public SFunc getArg() {
-        return args.get(0).getValue();
+    public SFunc getInput() {
+        return getInput(0);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public SFunc getArg(String name) {
-        return args.get(name).getValue();
+    public SFunc getInput(String name) {
+        if(inputs.hasKey(name)){
+            return inputs.get(name).getValue();
+        }else{
+            return null;
+        }
+
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public SFunc getArg(Integer i) {
-        return args.get(i).getValue();
+    public SFunc getInput(Integer i) {
+        if(i >= 0 || i < inputs.size() ){
+            return inputs.get(i).getValue();
+        }else{
+            return null;
+        }
+
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<SFunc> getArgs() {
+    public List<SFunc> getInputs() {
         // note the null filter. Because arguments can be stored without a value, some maybe null.
         // We need to filter these out.
-        return args.values.stream().map(a -> a.getValue()).filter(Objects::nonNull).collect(toList());
+        return inputs.values.stream().map(TypedValue::getValue).filter(Objects::nonNull).collect(toList());
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<Set<String>> getArgTypes() {
-        return args.values.stream().map(a -> a.getAcceptedTypes()).collect(toList());
+    public List<Set<String>> getInputTypes() {
+        return inputs.values.stream().map(a -> a.getAcceptedTypes()).collect(toList());
     }
 
     /**
@@ -104,7 +118,7 @@ public abstract class SFuncBase implements SFunc {
      */
     @Override
     public Set<String> getAcceptedTypes(int argIndex) {
-        return args.get(argIndex).getAcceptedTypes();
+        return inputs.get(argIndex).getAcceptedTypes();
     }
 
     /**
@@ -112,7 +126,7 @@ public abstract class SFuncBase implements SFunc {
      */
     @Override
     public Set<String> getAcceptedType(String name) {
-        return args.get(name).getAcceptedTypes();
+        return inputs.get(name).getAcceptedTypes();
     }
 
     /**
@@ -120,7 +134,7 @@ public abstract class SFuncBase implements SFunc {
      */
     @Override
     public boolean doesExpectedTypeMatch(int argIndex, SFunc value) {
-        return args.get(argIndex).doesTypeMatch(value);
+        return inputs.get(argIndex).doesTypeMatch(value);
     }
 
     /**
@@ -128,24 +142,23 @@ public abstract class SFuncBase implements SFunc {
      */
     @Override
     public boolean doesExpectedTypeMatch(String argName, SFunc value) {
-        return args.get(argName).doesTypeMatch(value);
+        return inputs.get(argName).doesTypeMatch(value);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<String> getArgKeys() {
-        return args.getKeys();
+    public List<String> getInputKeys() {
+        return inputs.getKeys();
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean hasArgs() {
-        return !args.values.stream().map(a -> a.getValue()).anyMatch(Objects::isNull);
-//        return !args.isEmpty();
+    public boolean hasInputs() {
+        return !inputs.values.stream().map(a -> a.getValue()).anyMatch(Objects::isNull);
     }
 
     /**
@@ -153,7 +166,7 @@ public abstract class SFuncBase implements SFunc {
      */
     @Override
     public List<SFunc> getDependencies() {
-        return getArgs();
+        return getInputs();
     }
 
     /**
@@ -170,26 +183,58 @@ public abstract class SFuncBase implements SFunc {
      * This method ensure that identifiers return the correct value.
      * @return the first value of the results.
      */
-    @Override
-    public SFunc getResult() {
+    public SFunc getResolvedResult(){
         if(isIdent()){
             SIdent id = (SIdent) this;
             if (id.isReference()) {
-                return getResult(0);
+                return getOutput(0);
             } else {
 
-                return id.getResult(0).getResult();
+                return id.getOutput(0).getResult();
             }
         }
-        return getResult(0);
+        return getOutput(0);
     }
 
-    private boolean isPrimitive(SIdent id){
-        SFunc result = id.getResult(0);
-        if(result.getSymbolType().isLiteral() || (!result.hasArgs() && result.getSymbolType().isPort())){
-            return true;
+    /** {@inheritDoc} */
+    @Override
+    public SFunc get(PathSegment segment) {
+        if (segment.getType().isInput()){
+            if(segment.getKey().isPresent()){
+                return getInput(segment.getKey().get());
+            }else if (segment.getIndex().isPresent()){
+                return getInput(segment.getIndex().get());
+            }
+        }else if(segment.getType().isOutput() || segment.getType().isSimple()){
+            if(segment.getKey().isPresent()){
+                return getOutput(segment.getKey().get());
+            }else if (segment.getIndex().isPresent()){
+                return getOutput(segment.getIndex().get());
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    public SFunc getResult() {
+       return getOutput(0);
+    }
+
+    private static boolean isPrimitive(SIdent id){
+        SFunc result = id.getOutput(0);
+        return result.getSymbolType().isLiteral() || (!result.hasInputs() && result.getSymbolType().isPort());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public SFunc getOutput(Integer i) {
+        if(i >= 0 || i < results.size() ){
+            return results.get(i).getValue();
         }else{
-            return false;
+            return null;
         }
     }
 
@@ -197,39 +242,35 @@ public abstract class SFuncBase implements SFunc {
      * {@inheritDoc}
      */
     @Override
-    public SFunc getResult(Integer i) {
-        return results.get(i).getValue();
+    public SFunc getOutput(String name) {
+        if(results.hasKey(name)){
+            return results.get(name).getValue();
+        }else {
+            return null;
+        }
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public SFunc getResult(String name) {
-        return results.get(name).getValue();
+    public List<SFunc> getOutputs() {
+        return results.values.stream().map(TypedValue::getValue).collect(toList());
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<SFunc> getResults() {
-        return results.values.stream().map(r -> r.getValue()).collect(toList());
+    public List<Set<String>> getOutputTypes() {
+        return results.values.stream().map(TypedValue::getAcceptedTypes).collect(toList());
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<Set<String>> getResultTypes() {
-        return results.values.stream().map(r -> r.getAcceptedTypes()).collect(toList());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Set<String> getReturnedType(int resultIndex) {
+    public Set<String> getOutputType(int resultIndex) {
         return results.get(resultIndex).getAcceptedTypes();
     }
 
@@ -237,7 +278,7 @@ public abstract class SFuncBase implements SFunc {
      * {@inheritDoc}
      */
     @Override
-    public Set<String> getReturnedType(String resultName) {
+    public Set<String> getOutputType(String resultName) {
         return results.get(resultName).getAcceptedTypes();
     }
 
@@ -245,7 +286,7 @@ public abstract class SFuncBase implements SFunc {
      {@inheritDoc}
     **/
     @Override
-    public void setResult(String name, SFunc value) {
+    public void setOutput(String name, SFunc value) {
         results.get(name).setValue(value);
     }
 
@@ -253,20 +294,37 @@ public abstract class SFuncBase implements SFunc {
      * {@inheritDoc}
      */
     @Override
-    public void setResult(Integer resultIndex, SFunc value) {
+    public void setOutput(Integer resultIndex, SFunc value) {
         results.get(resultIndex).setValue(value);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public List<String> getResultKeys() {
+    public void appendOutput(SFunc arg) {
+        inputs.add(new TypedValue(arg.getType(), arg));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<String> getOutputKeys() {
         return results.getKeys();
     }
-    
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isActive(){
         return isActive.get();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setActive(boolean b) {
         isActive.set(b);
@@ -278,18 +336,18 @@ public abstract class SFuncBase implements SFunc {
     }
 
     @Override
-    public void setArg(String name, SFunc v){
-        args.get(name).setValue(v);
+    public void setInput(String name, SFunc v){
+        inputs.get(name).setValue(v);
     }
     
     @Override
-    public void setArg(Integer i, SFunc v){
-        args.get(i).setValue(v);
+    public void setInput(Integer i, SFunc v){
+        inputs.get(i).setValue(v);
     }
 
     @Override
-    public void appendArg(SFunc arg) {
-        args.add(new TypedValue(arg.getType(), arg));
+    public void appendInput(SFunc arg) {
+        inputs.add(new TypedValue(arg.getType(), arg));
     }
 
     private boolean isType(String t){
@@ -326,14 +384,36 @@ public abstract class SFuncBase implements SFunc {
         return isType(SType.LIST);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public SymbolType getSymbolType(){
         return symbolType;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setSymbolType(SymbolType type){
         this.symbolType = type;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Access getAccess() {
+        return access;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setAccess(Access access) {
+        this.access = access;
     }
 
     public StringProperty nameProperty(){
@@ -407,7 +487,7 @@ public abstract class SFuncBase implements SFunc {
 
         // if there is name for the element
         // write it out
-        sb.append(printIndexMap(args)).append("], ");
+        sb.append(printIndexMap(inputs)).append("], ");
 
         sb.append("results:[");
 

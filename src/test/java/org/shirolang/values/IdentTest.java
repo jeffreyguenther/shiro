@@ -27,7 +27,6 @@ package org.shirolang.values;
 import org.junit.Assert;
 import org.junit.Test;
 import org.shirolang.base.SGraph;
-import org.shirolang.base.SNode;
 import org.shirolang.functions.math.SAdd;
 
 import static org.junit.Assert.*;
@@ -64,7 +63,7 @@ public class IdentTest {
         
         SIdent id = new SIdent(g, "d");
         
-        assertEquals(0, id.getArgs().size());
+        assertEquals(0, id.getInputs().size());
     }
     
     @Test
@@ -74,7 +73,7 @@ public class IdentTest {
         g.addPort( d);
         
         SIdent id = new SIdent(g, "d");
-        assertFalse(id.hasArgs());
+        assertFalse(id.hasInputs());
     }
     
     @Test
@@ -152,8 +151,8 @@ public class IdentTest {
 
         SDouble a = new SDouble(34.1);
         SAdd sum = new SAdd();
-        sum.setArg(0, a);
-        sum.setArg(1, id);
+        sum.setInput(0, a);
+        sum.setInput(1, id);
         sum.setName("sum");
         g.addPort(sum);
 
@@ -163,7 +162,7 @@ public class IdentTest {
         SIdent sumResult = new SIdent(g, "sum");
         sumResult.evaluate();
 
-        Assert.assertSame(sum, sumResult.getResult(0));
+        Assert.assertSame(sum, sumResult.getOutput(0));
 
         SDouble s = (SDouble) sumResult.getResult();
         System.out.println(s.getValue());

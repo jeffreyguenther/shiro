@@ -23,12 +23,8 @@
 
 package org.shirolang.functions.geometry;
 
-import javafx.scene.shape.Rectangle;
-import org.shirolang.base.SFunc;
 import org.shirolang.base.SFuncBase;
 import org.shirolang.base.TypedValue;
-import org.shirolang.functions.color.SColor;
-import org.shirolang.values.SDouble;
 
 /**
  * Represents a rectangle
@@ -36,35 +32,35 @@ import org.shirolang.values.SDouble;
 public class SRectangle extends SFuncBase{
     public SRectangle(){
         super();
-        args.setKeyForIndex("originX", 0);
-        args.add(new TypedValue("Double"));
+        inputs.setKeyForIndex("originX", 0);
+        inputs.add(new TypedValue("Double"));
 
-        args.setKeyForIndex("originY", 1);
-        args.add(new TypedValue("Double"));
+        inputs.setKeyForIndex("originY", 1);
+        inputs.add(new TypedValue("Double"));
 
-        args.setKeyForIndex("rotate", 2);
-        args.add(new TypedValue("Double"));
+        inputs.setKeyForIndex("rotate", 2);
+        inputs.add(new TypedValue("Double"));
 
-        args.setKeyForIndex("width", 3);
-        args.add(new TypedValue("Double"));
+        inputs.setKeyForIndex("width", 3);
+        inputs.add(new TypedValue("Double"));
 
-        args.setKeyForIndex("height", 4);
-        args.add(new TypedValue("Double"));
+        inputs.setKeyForIndex("height", 4);
+        inputs.add(new TypedValue("Double"));
 
-        args.setKeyForIndex("stroke", 5);
-        args.add(new TypedValue("Color"));
+        inputs.setKeyForIndex("stroke", 5);
+        inputs.add(new TypedValue("Color"));
 
-        args.setKeyForIndex("strokeWeight", 6);
-        args.add(new TypedValue("Double"));
+        inputs.setKeyForIndex("strokeWeight", 6);
+        inputs.add(new TypedValue("Double"));
 
-        args.setKeyForIndex("fill", 7);
-        args.add(new TypedValue("Color"));
+        inputs.setKeyForIndex("fill", 7);
+        inputs.add(new TypedValue("Color"));
 
-        args.setKeyForIndex("arcHeight", 8);
-        args.add(new TypedValue("Double"));
+        inputs.setKeyForIndex("arcHeight", 8);
+        inputs.add(new TypedValue("Double"));
 
-        args.setKeyForIndex("arcWidth", 9);
-        args.add(new TypedValue("Double"));
+        inputs.setKeyForIndex("arcWidth", 9);
+        inputs.add(new TypedValue("Double"));
 
         results.add(new TypedValue(getType()));
     }

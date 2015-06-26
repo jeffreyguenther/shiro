@@ -95,11 +95,6 @@ public class SGraphTest {
     }
 
     @Test
-    public void resolvePathToNodePrototype(){
-        Assert.fail();
-    }
-
-    @Test
     public void resolvePathToNodeInstance() throws PathNotFoundException {
         SGraph g = new SGraph();
         SNode n = new SNode("Type", "maturityScore");
@@ -172,10 +167,9 @@ public class SGraphTest {
         d.evaluate();
 
         SIdent id = new SIdent(g, "num");
-
         id.evaluate();
-        Assert.assertSame(d, id.getResult());
 
+        Assert.assertSame(d, id.getResult());
     }
 
     @Test

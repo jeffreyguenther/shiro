@@ -25,8 +25,6 @@
 package org.shirolang.functions.math;
 
 import org.shirolang.base.SFunc;
-import org.shirolang.values.SDouble;
-import org.shirolang.values.SInteger;
 
 /**
  * Represents the binary operator "-"
@@ -45,8 +43,8 @@ public class SSubtract extends SBinaryArithmeticFunction{
 
     @Override
     public void evaluate() {
-        SFunc lhs = getArg(0).getResult();
-        SFunc rhs = getArg(1).getResult();
+        SFunc lhs = getInput(0).getResult();
+        SFunc rhs = getInput(1).getResult();
 
         computeBinaryArithmetic(lhs, rhs, "subtracted",
                 (a, b) -> a - b,

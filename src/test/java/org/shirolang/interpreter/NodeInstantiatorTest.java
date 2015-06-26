@@ -54,7 +54,7 @@ public class NodeInstantiatorTest extends ShiroBaseTest {
         Assert.assertNotNull(createdNode.getPort("height"));
         SFunc update = createdNode.getPort("update");
         Assert.assertNotNull(update);
-        Assert.assertEquals(2, update.getArgs().size());
+        Assert.assertEquals(2, update.getInputs().size());
 
     }
     @Test

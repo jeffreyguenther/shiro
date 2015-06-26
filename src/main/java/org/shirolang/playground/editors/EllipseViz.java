@@ -33,28 +33,28 @@ import org.shirolang.values.SDouble;
  */
 public class EllipseViz extends Ellipse {
     public EllipseViz(SEllipse ellipse){
-        SDouble originX = (SDouble) ellipse.getArg("centerX").getResult();
+        SDouble originX = (SDouble) ellipse.getInput("centerX").getResult();
         setCenterX(originX.getValue());
 
-        SDouble originY = (SDouble) ellipse.getArg("centerY").getResult();
+        SDouble originY = (SDouble) ellipse.getInput("centerY").getResult();
         setCenterY(originY.getValue());
 
-        SDouble rotate = (SDouble) ellipse.getArg("rotate").getResult();
+        SDouble rotate = (SDouble) ellipse.getInput("rotate").getResult();
         setRotate(rotate.getValue());
 
-        SDouble radiusX = (SDouble) ellipse.getArg("radiusX").getResult();
+        SDouble radiusX = (SDouble) ellipse.getInput("radiusX").getResult();
         setRadiusX(radiusX.getValue());
 
-        SDouble radiusY = (SDouble) ellipse.getArg("radiusY").getResult();
+        SDouble radiusY = (SDouble) ellipse.getInput("radiusY").getResult();
         setRadiusY(radiusY.getValue());
 
-        SColor stroke = (SColor) ellipse.getArg("stroke").getResult();
+        SColor stroke = (SColor) ellipse.getInput("stroke").getResult();
         setStroke(stroke.getValue());
 
-        SDouble strokeWeight = (SDouble) ellipse.getArg("strokeWeight").getResult();
+        SDouble strokeWeight = (SDouble) ellipse.getInput("strokeWeight").getResult();
         setStrokeWidth(strokeWeight.getValue());
 
-        SColor fill = (SColor) ellipse.getArg("fill").getResult();
+        SColor fill = (SColor) ellipse.getInput("fill").getResult();
         setFill(fill.getValue());
     }
 }

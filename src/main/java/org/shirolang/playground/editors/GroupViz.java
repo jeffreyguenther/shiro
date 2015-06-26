@@ -24,12 +24,8 @@
 package org.shirolang.playground.editors;
 
 import javafx.scene.Group;
-import javafx.scene.shape.Rectangle;
-import org.shirolang.functions.color.SColor;
 import org.shirolang.functions.geometry.SGroup;
-import org.shirolang.functions.geometry.SRectangle;
 import org.shirolang.values.SDouble;
-import org.shirolang.values.SList;
 
 /**
  *
@@ -38,11 +34,11 @@ public class GroupViz extends Group {
     public GroupViz(SGroup group){
         super();
 
-        SDouble originX = (SDouble) group.getArg("originX").getResult();
-        SDouble originY = (SDouble) group.getArg("originY").getResult();
+        SDouble originX = (SDouble) group.getInput("originX").getResult();
+        SDouble originY = (SDouble) group.getInput("originY").getResult();
         relocate(originX.getValue(), originY.getValue());
 
-        SDouble rotate = (SDouble) group.getArg("rotate").getResult();
+        SDouble rotate = (SDouble) group.getInput("rotate").getResult();
         setRotate(rotate.getValue());
     }
 }

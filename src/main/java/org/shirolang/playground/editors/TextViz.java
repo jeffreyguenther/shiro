@@ -37,21 +37,21 @@ public class TextViz extends Text {
     public TextViz(SText t){
         super();
 
-        SDouble originX = (SDouble) t.getArg("originX").getResult();
+        SDouble originX = (SDouble) t.getInput("originX").getResult();
         setX(originX.getValue());
 
-        SDouble originY = (SDouble) t.getArg("originY").getResult();
+        SDouble originY = (SDouble) t.getInput("originY").getResult();
         setY(originY.getValue());
 
-        SDouble rotate = (SDouble) t.getArg("rotate").getResult();
+        SDouble rotate = (SDouble) t.getInput("rotate").getResult();
         setRotate(rotate.getValue());
 
-        SString text = (SString) t.getArg("text").getResult();
+        SString text = (SString) t.getInput("text").getResult();
         setText(text.getValue());
 
-        SString font = (SString) t.getArg("font").getResult();
-        SDouble size = (SDouble) t.getArg("size").getResult();
-        SString weight = (SString) t.getArg("weight").getResult();
+        SString font = (SString) t.getInput("font").getResult();
+        SDouble size = (SDouble) t.getInput("size").getResult();
+        SString weight = (SString) t.getInput("weight").getResult();
 
         setFont(Font.font(font.getValue(), FontWeight.findByName(weight.getValue()), size.getValue()));
 

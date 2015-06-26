@@ -33,22 +33,22 @@ import org.shirolang.values.SDouble;
  */
 public class LineViz extends Line{
     public LineViz(SLine l) {
-        SDouble startX = (SDouble) l.getArg("startX").getResult();
+        SDouble startX = (SDouble) l.getInput("startX").getResult();
         setStartX(startX.getValue());
 
-        SDouble originY = (SDouble) l.getArg("startY").getResult();
+        SDouble originY = (SDouble) l.getInput("startY").getResult();
         setStartY(originY.getValue());
 
-        SDouble endX = (SDouble) l.getArg("endX").getResult();
+        SDouble endX = (SDouble) l.getInput("endX").getResult();
         setEndX(endX.getValue());
 
-        SDouble endY = (SDouble) l.getArg("endY").getResult();
+        SDouble endY = (SDouble) l.getInput("endY").getResult();
         setEndY(endY.getValue());
 
-        SColor stroke = (SColor) l.getArg("stroke").getResult();
+        SColor stroke = (SColor) l.getInput("stroke").getResult();
         setStroke(stroke.getValue());
 
-        SDouble strokeWeight = (SDouble) l.getArg("strokeWeight").getResult();
+        SDouble strokeWeight = (SDouble) l.getInput("strokeWeight").getResult();
         setStrokeWidth(strokeWeight.getValue());
     }
 }

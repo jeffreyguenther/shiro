@@ -96,8 +96,8 @@ public class NegativeTest {
         SDouble a = new SDouble(2.0);
         SNegative result = new SNegative(a);
         
-        assertTrue(result.hasArgs());
-        assertTrue(result.getArgs().contains(a));
+        assertTrue(result.hasInputs());
+        assertTrue(result.getInputs().contains(a));
     }
     
     @Test

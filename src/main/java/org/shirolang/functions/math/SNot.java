@@ -35,20 +35,20 @@ public class SNot extends SUnaryFunction{
 
     public SNot() {
         super();
-        // setup args
-        args.setKeyForIndex(A, 0);
-        args.add(new TypedValue("Boolean"));
+        // setup inputs
+        inputs.setKeyForIndex(A, 0);
+        inputs.add(new TypedValue("Boolean"));
         results.add(new TypedValue("Boolean"));
     }
     
     public SNot(SFunc a){
         this();
-        setArg(A, a);
+        setInput(A, a);
     }
 
     @Override
     public void evaluate() {
-        SFunc lhs = getArg(0).getResult();
+        SFunc lhs = getInput(0).getResult();
              
         if(lhs.isBoolean()){
             Boolean l = ((SBoolean) lhs).getValue();
@@ -57,7 +57,7 @@ public class SNot extends SUnaryFunction{
             SBoolean s = new SBoolean(bool);
             s.evaluate();
 
-            setResult(0, s);
+            setOutput(0, s);
         }else{
             // identify which argument is not a double
             throw new RuntimeException("Only Booleans can be negated.");

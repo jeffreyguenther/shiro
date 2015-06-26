@@ -24,7 +24,6 @@
 package org.shirolang.functions.color;
 
 import javafx.scene.paint.Color;
-import org.shirolang.base.SFunc;
 import org.shirolang.base.SFuncBase;
 import org.shirolang.base.TypedValue;
 
@@ -33,8 +32,8 @@ import org.shirolang.base.TypedValue;
  */
 public class ColorToGrayscale extends SFuncBase{
     public ColorToGrayscale(){
-        args.setKeyForIndex("color", 0);
-        args.add(new TypedValue("Color"));;
+        inputs.setKeyForIndex("color", 0);
+        inputs.add(new TypedValue("Color"));;
 
         results.setKeyForIndex("grey", 0);
         results.add(new TypedValue("Color"));
@@ -42,7 +41,7 @@ public class ColorToGrayscale extends SFuncBase{
 
     @Override
     public void evaluate() {
-        SColor color = (SColor) getArg("color").getResult();
+        SColor color = (SColor) getInput("color").getResult();
 
         if( !doesExpectedTypeMatch(0, color)){
             throw new RuntimeException("Arg:0, Found " + color.getType() + ". Expected " + String.join(",", getAcceptedTypes(0)));
@@ -51,7 +50,7 @@ public class ColorToGrayscale extends SFuncBase{
         Color gray = color.getValue().grayscale();
         SColor asGrey = new SColor(gray);
         asGrey.evaluate();
-        setResult(0, asGrey);
+        setOutput(0, asGrey);
     }
 
     @Override

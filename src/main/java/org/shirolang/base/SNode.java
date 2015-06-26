@@ -28,11 +28,11 @@ import javafx.util.Pair;
 import org.shirolang.exceptions.OptionNotFoundException;
 import org.shirolang.exceptions.PathNotFoundException;
 import org.shirolang.values.Path;
+import org.shirolang.values.PathSegment;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+
+import static java.util.stream.Collectors.toSet;
 
 /**
  * Specifies a node in a subjunctive dependency graph. A node is simply a
@@ -70,6 +70,7 @@ public class SNode extends SFuncBase implements Scope{
     }
 
     public SNode(String type, String name){
+        super();
         initializeVars(type, name, null);
     }
 
@@ -146,10 +147,26 @@ public class SNode extends SFuncBase implements Scope{
      */
     public void addPort(SFunc port){
         port.setFullName(Path.createFullName(fullName.get(), port.getName()));
-        ports.put(port.getName(), port);
-        portNameByIndex.put(portIndex, port.getName());
-        // increment so it's ready for the next time add is called
-        portIndex++;
+
+        if(port.getAccess().isReadWrite()){
+            // create an input with the port's name
+            inputs.add(new TypedValue(port.getType(), port));
+            inputs.setKeyForIndex(port.getName(), inputs.size() - 1);
+
+        }
+
+        if(port.getAccess().isRead()){
+            // create an output with the port's name
+            results.add(new TypedValue(port.getType(), port));
+            results.setKeyForIndex(port.getName(), inputs.size() - 1);
+        }
+
+        if(port.getAccess().isInternal()){
+            ports.put(port.getName(), port);
+            portNameByIndex.put(portIndex, port.getName());
+            // increment so it's ready for the next time add is called
+            portIndex++;
+        }
     }
 
     /**
@@ -157,7 +174,7 @@ public class SNode extends SFuncBase implements Scope{
      * @return true if the node has ports, otherwise false
      */
     public boolean hasPorts() {
-        return !ports.isEmpty();
+        return !ports.isEmpty() || !inputs.isEmpty() || !results.isEmpty();
     }
 
     /**
@@ -167,7 +184,21 @@ public class SNode extends SFuncBase implements Scope{
      * name is not found.
      */
     public SFunc getPort(String name){
-        return ports.get(name);
+        SFunc port = null;
+        // look in inputs
+        port = getInput(name);
+
+        // look in outputs
+        if(port == null){
+            port = getOutput(name);
+        }
+
+        // look in internal ports
+        if(port == null){
+            port = ports.get(name);
+        }
+
+        return port;
     }
 
     /**
@@ -177,22 +208,39 @@ public class SNode extends SFuncBase implements Scope{
      * @return the port for the given index
      */
     public SFunc getPort(int index){
-        return getPort(portNameByIndex.get(index));
+        SFunc port = null;
+        // look in inputs
+        port = getInput(index);
+
+        // look in outputs
+        if(port == null){
+            port = getOutput(index);
+        }
+
+        // look in internal ports
+        if(port == null){
+            port = getPort(portNameByIndex.get(index));
+        }
+
+        return port;
     }
 
     public Set<SFunc> getPorts(){
-        Set<SFunc> allPorts = new HashSet<>();
-        for(SFunc f: ports.values()){
-            if(f.isActive()) {
-                allPorts.add(f);
-            }
-        }
+        Set<SFunc> inputs = this.inputs.getAll().stream().map(TypedValue::getValue).filter(SFunc::isActive).collect(toSet());
+        Set<SFunc> outputs = results.getAll().stream().map(TypedValue::getValue).filter(SFunc::isActive).collect(toSet());
+        Set<SFunc> internals = ports.values().stream().filter(SFunc::isActive).collect(toSet());
+        Set<SFunc> all = new HashSet<>(inputs.size() + outputs.size() + internals.size());
+
+        all.addAll(inputs);
+        all.addAll(outputs);
+        all.addAll(internals);
 
         // get the ports of the tree of nested nodes
         for(SNode nested: nestedNodes.values()){
-            allPorts.addAll(nested.getPorts());
+//            allPorts.addAll(nested.getPorts());
+            all.addAll(nested.getPorts());
         }
-        return allPorts;
+        return all; //allPorts;
     }
 
     /**
@@ -407,6 +455,8 @@ public class SNode extends SFuncBase implements Scope{
         // Since they both implement SFunc, create
         // one list and update
         Set<SFunc> itemsToUpdate = new HashSet<>();
+        itemsToUpdate.addAll(getInputs());
+        itemsToUpdate.addAll(getOutputs());
         itemsToUpdate.addAll(ports.values());
         itemsToUpdate.addAll(nestedNodes.values());
 
@@ -417,9 +467,6 @@ public class SNode extends SFuncBase implements Scope{
 
     @Override
     public void evaluate() {
-        // LEAVE empty. A node should never be evaluated
-        // Evaluation in shiro happens based on ports.
-
         // todo handle node evaluation.
         // This is where we will deal with the mechanics of having a
         // node evaluate itself when it's not attached to a graph.
@@ -445,60 +492,113 @@ public class SNode extends SFuncBase implements Scope{
     public SFunc resolvePath(Path path) throws PathNotFoundException {
         SFunc portReferenced = null;
 
-        String pathHead = path.getCurrentPathHead();
-        if(pathHead.equals("active") || pathHead.equals("this") || path.isAtEnd()){
-            if(pathHead.equals("active")){
-                // if active refers to a port
-                if(path.isAtEnd()){
-                    portReferenced = activeOption;
-                    path.resetPathHead();
-                }else if (activeOption.getSymbolType().isNode()){ // if active refers to a node
-                    path.popPathHead();
-                    SNode subjunct = (SNode) activeOption;
-                    portReferenced = subjunct.resolvePath(path);
-                }
-            }else {
+        PathSegment head = path.getSegmentAtHead();
+        if (path.isReference()) {
+            if (path.isAtEnd() && getName().equals(head.getKey().get())) {
+                portReferenced = this;
+            }
+        }
 
-                if (pathHead.equals("this")) {
-                    // move up the path
-                    path.popPathHead();
+        // match active
+        if(portReferenced == null && head.isActiveKeyword()) {
+            portReferenced = activeOption;
+            if (portReferenced.getSymbolType().isPort()) {
+                if (path.atSecondLast()) {
+                    path.setReferencesPortValue(true);
                 }
+                path.resetHead();
 
-                String portName = path.getCurrentPathHead();
+            } else if (!path.isAtEnd()) {
+                path.advanceHead();
+                SNode subjunct = (SNode) activeOption;
+                portReferenced = subjunct.resolvePath(path);
+            }
+        }
+
+        if(portReferenced == null && head.isSimple()){
+            String portName = head.getKey().get();
+
+            portReferenced = getInput(portName);
+
+            if(portReferenced == null){
+                portReferenced = getOutput(portName);
+            }
+
+            if(portReferenced == null){
                 portReferenced = ports.get(portName);
-
-                if(path.hasIndex()){
-                    if(path.hasIntegerIndex()){
-                        portReferenced = portReferenced.getResult(path.getIndex());
-                    }
-
-                    if(path.hasStringIndex()){
-                        portReferenced = portReferenced.getResult(path.getIndexKey());
-                    }
-                }
-
-                // reset the path for future use
-                path.resetPathHead();
             }
-        }else{ // check the nested nodes
-            if(hasNestedNodes()){
-                Scope nestedNodeMatch = nestedNodes.get(path.getCurrentPathHead());
-                if (nestedNodeMatch != null) {
-                    // pop the head and search the nested node
-                    path.popPathHead();
-                    portReferenced = nestedNodeMatch.resolvePath(path);
-                }
-            }else{
-                path.resetPathHead();
 
-                portReferenced = parentScope.resolvePath(path);
+            if (portReferenced != null) {
+                path.resetHead();
+
+                if (path.atSecondLast()) {
+                    path.setReferencesPortValue(true);
+
+                }
             }
+        }
+
+        if(portReferenced == null && head.isInput()){
+            // look in the inputs list of ports
+            // look for a named port if there is a key
+            if(head.getKey().isPresent()){
+                String portName = head.getKey().get();
+                // get the input port with the name
+                portReferenced = getInput(portName);
+            }
+
+            // look for the port if there is an index
+            if(head.getIndex().isPresent()){
+                int portIndex = head.getIndex().get();
+                // get the input port with the index
+                portReferenced = getInput(portIndex);
+            }
+        }
+
+        if(portReferenced == null && head.isOutput()){
+            // look in the results list of ports
+            // look for a named port if there is a key
+            if(head.getKey().isPresent()){
+                String portName = head.getKey().get();
+                // get the input port with the name
+                portReferenced = getOutput(portName);
+
+                // check the internal ports
+                if(portReferenced == null) {
+                    portReferenced = ports.get(portName);
+                }
+            }
+
+            // look for the port if there is an index
+            if(head.getIndex().isPresent()){
+                int portIndex = head.getIndex().get();
+
+                // get the input port with the index
+                portReferenced = getInput(portIndex);
+            }
+        }
+
+        if(portReferenced == null && hasNestedNodes()){
+            // check the nested nodes
+            Scope nestedNodeMatch = nestedNodes.get(head.getKey().get());
+            if (nestedNodeMatch != null) {
+                // pop the head and search the nested node
+                if(!path.isReference()) {
+                    path.advanceHead();
+                }
+                portReferenced = nestedNodeMatch.resolvePath(path);
+            }
+        }
+
+        // since we didn't find anything pop up one level in the scope tree.
+        if(!path.isAtEnd() && portReferenced == null && parentScope != null) {
+            path.resetHead();
+            portReferenced = parentScope.resolvePath(path);
         }
 
         if(portReferenced == null){
             throw new PathNotFoundException(path + " was not found.");
         }
-
 
         return portReferenced;
     }

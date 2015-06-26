@@ -37,21 +37,21 @@ public abstract class SBinaryArithmeticFunction extends SBinaryFunction {
 
     protected void returnDouble(SDouble d){
         results.add(new TypedValue("Double"));
-        setResult(0, d);
+        setOutput(0, d);
     }
 
     protected void returnInteger(SInteger i){
         results.add(new TypedValue("Integer"));
-        setResult(0, i);
+        setOutput(0, i);
     }
 
     protected void setupBinaryArithmeticArgs(){
-        // name the args
-        args.setKeyForIndex(A, 0);
-        args.add(new TypedValue("Integer", "Double"));
+        // name the inputs
+        inputs.setKeyForIndex(A, 0);
+        inputs.add(new TypedValue("Integer", "Double"));
 
-        args.setKeyForIndex(B, 1);
-        args.add(new TypedValue("Integer", "Double"));
+        inputs.setKeyForIndex(B, 1);
+        inputs.add(new TypedValue("Integer", "Double"));
     }
 
     protected void computeBinaryArithmetic(SFunc lhs, SFunc rhs,

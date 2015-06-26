@@ -27,7 +27,6 @@ import javafx.scene.paint.Color;
 import org.shirolang.base.SFuncBase;
 import org.shirolang.base.TypedValue;
 import org.shirolang.values.SDouble;
-import org.shirolang.values.SInteger;
 
 /**
  * Creates a color from an hsba quad
@@ -36,17 +35,17 @@ public class ColorFromHSB extends SFuncBase {
 
     public ColorFromHSB(){
         super();
-        args.setKeyForIndex("hue", 0);
-        args.add(TypedValue.asDouble());
+        inputs.setKeyForIndex("hue", 0);
+        inputs.add(TypedValue.asDouble());
 
-        args.setKeyForIndex("saturation", 1);
-        args.add(TypedValue.asDouble());
+        inputs.setKeyForIndex("saturation", 1);
+        inputs.add(TypedValue.asDouble());
 
-        args.setKeyForIndex("brightness", 2);
-        args.add(TypedValue.asDouble());
+        inputs.setKeyForIndex("brightness", 2);
+        inputs.add(TypedValue.asDouble());
 
-        args.setKeyForIndex("alpha", 3);
-        args.add(TypedValue.asDouble());
+        inputs.setKeyForIndex("alpha", 3);
+        inputs.add(TypedValue.asDouble());
 
         results.setKeyForIndex("color", 0);
         results.add(new TypedValue("Color"));
@@ -54,10 +53,10 @@ public class ColorFromHSB extends SFuncBase {
 
     @Override
     public void evaluate() {
-        SDouble hue = (SDouble) getArg("hue").getResult();
-        SDouble sat = (SDouble) getArg("g").getResult();
-        SDouble brightness = (SDouble) getArg("b").getResult();
-        SDouble alpha = (SDouble) getArg("a").getResult();
+        SDouble hue = (SDouble) getInput("hue").getResult();
+        SDouble sat = (SDouble) getInput("g").getResult();
+        SDouble brightness = (SDouble) getInput("b").getResult();
+        SDouble alpha = (SDouble) getInput("a").getResult();
 
         if( !doesExpectedTypeMatch(0, hue)) {
             throw new RuntimeException("Arg:0, Found " + hue.getType() + ". Expected " + String.join(",", getAcceptedTypes(0)));
@@ -79,7 +78,7 @@ public class ColorFromHSB extends SFuncBase {
         Color result = Color.hsb(hue.getValue(), sat.getValue(), brightness.getValue(), alpha.getValue());
         SColor color = new SColor(result);
         color.evaluate();
-        setResult(0, color);
+        setOutput(0, color);
     }
 
     @Override

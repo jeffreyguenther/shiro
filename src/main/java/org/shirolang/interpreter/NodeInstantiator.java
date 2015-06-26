@@ -23,11 +23,8 @@
 
 package org.shirolang.interpreter;
 
-import java.util.ArrayList;
 import java.util.List;
 import org.antlr.v4.runtime.Token;
-import org.antlr.v4.runtime.misc.NotNull;
-import org.antlr.v4.runtime.tree.ParseTree;
 import org.shirolang.base.SFunc;
 import org.shirolang.base.SGraph;
 import org.shirolang.base.SNode;
@@ -105,7 +102,7 @@ public class NodeInstantiator extends ShiroExpressionListener {
 
         //  get the path of LHS of production operator
         SIdent lhs = (SIdent) getExpr(ctx.nodeProduction().path());
-        Path p = lhs.getValue();
+        Path p = lhs.getPath();
 
         SNode parentNode = (SNode) scope.peek();
         // for each activation
@@ -127,7 +124,7 @@ public class NodeInstantiator extends ShiroExpressionListener {
                             throw new RuntimeException(keys.get(i).getText() + " cannot be found in " + producedNode.getFullName());
                         }
 
-                        port.setArg(0, getExpr(values.get(i)));
+                        port.setInput(0, getExpr(values.get(i)));
                     }
                 }
 
@@ -135,7 +132,7 @@ public class NodeInstantiator extends ShiroExpressionListener {
                     List<ShiroParser.ExprContext> exprs = assignment.mfparams().expr();
                     for (int i = 0; i < exprs.size(); i++) {
                         SFunc port = producedNode.getPort(i);
-                        port.setArg(0, getExpr(exprs.get(i)));
+                        port.setInput(0, getExpr(exprs.get(i)));
                     }
                 }
             }

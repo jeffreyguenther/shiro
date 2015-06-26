@@ -23,11 +23,11 @@ public class SelectColumnMFunc extends SFuncBase {
     public SelectColumnMFunc(){
         super();
 
-        args.setKeyForIndex(TABLE, 0);
-        args.add(new TypedValue("Table"));
+        inputs.setKeyForIndex(TABLE, 0);
+        inputs.add(new TypedValue("Table"));
 
-        args.setKeyForIndex(COLUMN, 1);
-        args.add(new TypedValue("String"));
+        inputs.setKeyForIndex(COLUMN, 1);
+        inputs.add(new TypedValue("String"));
 
         results.setKeyForIndex(NEW_TABLE, 0);
         results.add(new TypedValue("Table"));
@@ -35,8 +35,8 @@ public class SelectColumnMFunc extends SFuncBase {
 
     @Override
     public void evaluate() {
-        SFunc table = getArg(TABLE).getResult();
-        SFunc column = getArg(COLUMN).getResult();
+        SFunc table = getInput(TABLE).getResult();
+        SFunc column = getInput(COLUMN).getResult();
 
         Table<Integer, String, Comparable> tableValue = ((STable) table).getValue();
         String columnSelected = ((SString) column).getValue();
@@ -50,7 +50,7 @@ public class SelectColumnMFunc extends SFuncBase {
 
         STable t = new STable(tableMatches);
         t.evaluate();
-        setResult(NEW_TABLE, t);
+        setOutput(NEW_TABLE, t);
     }
 
     @Override

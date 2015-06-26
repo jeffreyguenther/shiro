@@ -1,4 +1,17 @@
 What does a type in Shiro mean?
+
+A multi-function has a name. That is the basis of the type.
+The other parts of the type are it's inputs(args) and outputs.
+
+How do we handle situations where we want multiple types to be accepted as
+arguments to a multi-function?
+
+A function has a signature, its arguments and it's name.
+Is each unique signature a type? No.
+
+It does help choose the version of a multi-function to use.
+
+
 How do we handle situations like:
 
 ```

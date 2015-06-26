@@ -24,11 +24,11 @@ public class ColumnAverageMFunc extends SFuncBase {
     public ColumnAverageMFunc() {
         super();
 
-        args.setKeyForIndex(TABLE, 0);
-        args.add(new TypedValue("Table"));
+        inputs.setKeyForIndex(TABLE, 0);
+        inputs.add(new TypedValue("Table"));
 
-        args.setKeyForIndex(COLUMN, 1);
-        args.add(new TypedValue("String"));
+        inputs.setKeyForIndex(COLUMN, 1);
+        inputs.add(new TypedValue("String"));
 
         results.setKeyForIndex(AVERAGE, 0);
         results.add(new TypedValue("Double"));
@@ -36,8 +36,8 @@ public class ColumnAverageMFunc extends SFuncBase {
 
     @Override
     public void evaluate() {
-        SFunc table = getArg(TABLE).getResult();
-        SFunc column = getArg(COLUMN).getResult();
+        SFunc table = getInput(TABLE).getResult();
+        SFunc column = getInput(COLUMN).getResult();
 
         Table<Integer, String, Comparable> tableValue = ((STable) table).getValue();
         String columnKey = ((SString) column).getValue();
@@ -48,7 +48,7 @@ public class ColumnAverageMFunc extends SFuncBase {
         SDouble av = new SDouble(stats.getAverage());
         av.evaluate();
 
-        setResult(AVERAGE, av);
+        setOutput(AVERAGE, av);
     }
 
     @Override

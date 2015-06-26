@@ -23,7 +23,6 @@
 
 package org.shirolang.functions.geometry;
 
-import javafx.scene.shape.Line;
 import org.shirolang.base.SFuncBase;
 import org.shirolang.base.TypedValue;
 
@@ -33,30 +32,30 @@ import org.shirolang.base.TypedValue;
 public class SLine extends SFuncBase {
     public SLine(){
         super();
-        args.setKeyForIndex("startX", 0);
-        args.add(new TypedValue("Double"));
+        inputs.setKeyForIndex("startX", 0);
+        inputs.add(new TypedValue("Double"));
 
-        args.setKeyForIndex("startY", 1);
-        args.add(new TypedValue("Double"));
+        inputs.setKeyForIndex("startY", 1);
+        inputs.add(new TypedValue("Double"));
 
-        args.setKeyForIndex("endX", 2);
-        args.add(new TypedValue("Double"));
+        inputs.setKeyForIndex("endX", 2);
+        inputs.add(new TypedValue("Double"));
 
-        args.setKeyForIndex("endY", 3);
-        args.add(new TypedValue("Double"));
+        inputs.setKeyForIndex("endY", 3);
+        inputs.add(new TypedValue("Double"));
 
-        args.setKeyForIndex("stroke", 4);
-        args.add(new TypedValue("Color"));
+        inputs.setKeyForIndex("stroke", 4);
+        inputs.add(new TypedValue("Color"));
 
-        args.setKeyForIndex("strokeWeight", 5);
-        args.add(new TypedValue("Double"));
+        inputs.setKeyForIndex("strokeWeight", 5);
+        inputs.add(new TypedValue("Double"));
 
         results.add(new TypedValue(getType()));
     }
 
     @Override
     public void evaluate() {
-//        setResult(0, this);
+//        setOutput(0, this);
     }
 
     @Override

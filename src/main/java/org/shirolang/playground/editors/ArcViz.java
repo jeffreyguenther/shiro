@@ -25,10 +25,8 @@ package org.shirolang.playground.editors;
 
 import javafx.scene.shape.Arc;
 import javafx.scene.shape.ArcType;
-import javafx.scene.shape.Ellipse;
 import org.shirolang.functions.color.SColor;
 import org.shirolang.functions.geometry.SArc;
-import org.shirolang.functions.geometry.SEllipse;
 import org.shirolang.values.SDouble;
 import org.shirolang.values.SString;
 
@@ -37,25 +35,25 @@ import org.shirolang.values.SString;
  */
 public class ArcViz extends Arc {
     public ArcViz(SArc arc){
-        SDouble originX = (SDouble) arc.getArg("centerX").getResult();
+        SDouble originX = (SDouble) arc.getInput("centerX").getResult();
         setCenterX(originX.getValue());
 
-        SDouble originY = (SDouble) arc.getArg("centerY").getResult();
+        SDouble originY = (SDouble) arc.getInput("centerY").getResult();
         setCenterY(originY.getValue());
 
-        SDouble radiusX = (SDouble) arc.getArg("radiusX").getResult();
+        SDouble radiusX = (SDouble) arc.getInput("radiusX").getResult();
         setRadiusX(radiusX.getValue());
 
-        SDouble radiusY = (SDouble) arc.getArg("radiusY").getResult();
+        SDouble radiusY = (SDouble) arc.getInput("radiusY").getResult();
         setRadiusY(radiusY.getValue());
 
-        SDouble length = (SDouble) arc.getArg("length").getResult();
+        SDouble length = (SDouble) arc.getInput("length").getResult();
         setLength(length.getValue());
 
-        SDouble startAngle = (SDouble) arc.getArg("startAngle").getResult();
+        SDouble startAngle = (SDouble) arc.getInput("startAngle").getResult();
         setStartAngle(startAngle.getValue());
 
-        SString arcType = (SString) arc.getArg("arcType").getResult();
+        SString arcType = (SString) arc.getInput("arcType").getResult();
 
         switch(arcType.getValue()){
             case "open":
@@ -69,13 +67,13 @@ public class ArcViz extends Arc {
                 break;
         }
 
-        SColor file = (SColor) arc.getArg("fill").getResult();
+        SColor file = (SColor) arc.getInput("fill").getResult();
         setFill(file.getValue());
 
-        SColor stroke = (SColor) arc.getArg("stroke").getResult();
+        SColor stroke = (SColor) arc.getInput("stroke").getResult();
         setStroke(stroke.getValue());
 
-        SDouble strokeWeight = (SDouble) arc.getArg("strokeWeight").getResult();
+        SDouble strokeWeight = (SDouble) arc.getInput("strokeWeight").getResult();
         setStrokeWidth(strokeWeight.getValue());
     }
 }

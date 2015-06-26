@@ -27,8 +27,6 @@ package org.shirolang.functions.math;
 import org.shirolang.base.SFunc;
 import org.shirolang.base.SFuncBase;
 import org.shirolang.base.TypedValue;
-import org.shirolang.values.SDouble;
-import org.shirolang.values.SInteger;
 
 /**
  * Represent the common methods and fields of a binary multi-function
@@ -42,17 +40,17 @@ public abstract class SBinaryFunction extends SFuncBase{
     }
 
     protected void setBinaryArgs(SFunc a, SFunc b){
-        setArg(A, a);
-        setArg(B, b);
+        setInput(A, a);
+        setInput(B, b);
     }
 
     protected void setupBinaryLogicArgs(){
-        // setup args
-        args.setKeyForIndex(A, 0);
-        args.add(new TypedValue("Boolean"));
+        // setup inputs
+        inputs.setKeyForIndex(A, 0);
+        inputs.add(new TypedValue("Boolean"));
 
-        args.setKeyForIndex(B, 1);
-        args.add(new TypedValue("Boolean"));
+        inputs.setKeyForIndex(B, 1);
+        inputs.add(new TypedValue("Boolean"));
 
         results.add(new TypedValue("Boolean"));
     }

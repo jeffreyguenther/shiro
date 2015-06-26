@@ -36,17 +36,17 @@ public class FilterTableMFunc extends SFuncBase{
     public FilterTableMFunc(){
         super();
 
-        args.setKeyForIndex(TABLE, 0);
-        args.add(new TypedValue("Table"));
+        inputs.setKeyForIndex(TABLE, 0);
+        inputs.add(new TypedValue("Table"));
 
-        args.setKeyForIndex(COLUMN, 1);
-        args.add(new TypedValue("String"));
+        inputs.setKeyForIndex(COLUMN, 1);
+        inputs.add(new TypedValue("String"));
 
-        args.setKeyForIndex(OPERATOR, 2);
-        args.add(new TypedValue("String"));
+        inputs.setKeyForIndex(OPERATOR, 2);
+        inputs.add(new TypedValue("String"));
 
-        args.setKeyForIndex(VALUE, 3);
-        args.add(new TypedValue("Double"));
+        inputs.setKeyForIndex(VALUE, 3);
+        inputs.add(new TypedValue("Double"));
 
         results.setKeyForIndex(MATCH, 0);
         results.add(new TypedValue("Table"));
@@ -57,10 +57,10 @@ public class FilterTableMFunc extends SFuncBase{
 
     @Override
     public void evaluate() {
-        SFunc table = getArg(TABLE).getResult();
-        SFunc column = getArg(COLUMN).getResult();
-        SFunc op = getArg(OPERATOR).getResult();
-        SFunc value = getArg(VALUE).getResult();
+        SFunc table = getInput(TABLE).getResult();
+        SFunc column = getInput(COLUMN).getResult();
+        SFunc op = getInput(OPERATOR).getResult();
+        SFunc value = getInput(VALUE).getResult();
 
         Table<Integer, String, Comparable> tableValue = ((STable) table).getValue();
         String columnToFilterOn = ((SString) column).getValue();
@@ -117,11 +117,11 @@ public class FilterTableMFunc extends SFuncBase{
 
         STable matchesTable = new STable(tableMatches);
         matchesTable.evaluate();
-        setResult(MATCH, matchesTable);
+        setOutput(MATCH, matchesTable);
 
         STable notMatchesTable = new STable(tableNotMatches);
         notMatchesTable.evaluate();
-        setResult(DID_NOT_MATCH, notMatchesTable);
+        setOutput(DID_NOT_MATCH, notMatchesTable);
     }
 
     @Override

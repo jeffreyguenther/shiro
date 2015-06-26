@@ -25,12 +25,14 @@ package org.shirolang.interpreter;
 
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.misc.NotNull;
-import org.shirolang.base.*;
+import org.shirolang.base.SFunc;
+import org.shirolang.base.SGraph;
+import org.shirolang.base.SNode;
+import org.shirolang.base.SymbolType;
 import org.shirolang.exceptions.OptionNotFoundException;
 import org.shirolang.exceptions.PathNotFoundException;
 import org.shirolang.values.Path;
 import org.shirolang.values.SIdent;
-import org.shirolang.values.SPath;
 
 import java.util.List;
 
@@ -63,7 +65,7 @@ public class GraphBuilder extends ShiroExpressionListener {
         if(pass == FIRST_PASS) {
             //  get the path of LHS of production operator
             SIdent lhs = (SIdent) getExpr(ctx.path());
-            Path p = lhs.getValue();
+            Path p = lhs.getPath();
 
             // for each activation
             for (ShiroParser.ActivationContext ac : ctx.activation()) {
@@ -85,7 +87,7 @@ public class GraphBuilder extends ShiroExpressionListener {
                                 throw new RuntimeException(keys.get(i).getText() + " cannot be found in " + producedNode.getFullName());
                             }
 
-                            port.setArg(0, getExpr(values.get(i)));
+                            port.setInput(0, getExpr(values.get(i)));
                         }
                     }
 
@@ -93,7 +95,7 @@ public class GraphBuilder extends ShiroExpressionListener {
                         List<ShiroParser.ExprContext> exprs = assignment.mfparams().expr();
                         for (int i = 0; i < exprs.size(); i++) {
                             SFunc port = producedNode.getPort(i);
-                            port.setArg(0, getExpr(exprs.get(i)));
+                            port.setInput(0, getExpr(exprs.get(i)));
                         }
                     }
                 }
@@ -118,7 +120,7 @@ public class GraphBuilder extends ShiroExpressionListener {
             // look up port based on the path
             try {
                 SIdent lhs = (SIdent) getExpr(ctx.path());
-                Path path = lhs.getValue();
+                Path path = lhs.getPath();
 
                 SFunc function = scope.peek().resolvePath(path);
                 function.setSymbolType(SymbolType.PORT);

@@ -152,8 +152,8 @@ public class PowerTest {
         SInteger b = new SInteger(3);
         SPower product = new SPower(a, b);
         
-        assertTrue(product.hasArgs());
-        List<SFunc> args = product.getArgs();
+        assertTrue(product.hasInputs());
+        List<SFunc> args = product.getInputs();
         assertTrue(args.contains(a));
         assertTrue(args.contains(b));
     }

@@ -36,18 +36,18 @@ public class SNegative extends SUnaryFunction{
 
     public SNegative() {
         super();
-        args.setKeyForIndex(A, 0);
-        args.add(new TypedValue("Integer", "Double"));
+        inputs.setKeyForIndex(A, 0);
+        inputs.add(new TypedValue("Integer", "Double"));
     }
     
     public SNegative(SFunc a){
         this();
-        setArg(A, a);
+        setInput(A, a);
     }
 
     @Override
     public void evaluate() {
-        SFunc lhs = getArg(0).getResult();
+        SFunc lhs = getInput(0).getResult();
      
         if(lhs.isInteger()){
             Integer l = ((SInteger) lhs).getValue();
@@ -57,7 +57,7 @@ public class SNegative extends SUnaryFunction{
             s.evaluate();
 
             results.add(new TypedValue("Integer"));
-            setResult(0, s);
+            setOutput(0, s);
         }else if(lhs.isDouble()){
             Double d = ((SDouble) lhs).getValue();
             Double product = -1 * d;
@@ -66,7 +66,7 @@ public class SNegative extends SUnaryFunction{
             s.evaluate();
 
             results.add(new TypedValue("Double"));
-            setResult(0, s);
+            setOutput(0, s);
         }else{
             // identify which argument is not a double
             throw new RuntimeException("Only Integers and Doubles can be made negative. "

@@ -32,6 +32,7 @@ import org.shirolang.exceptions.PathNotFoundException;
 import org.shirolang.interpreter.Consoleable;
 import org.shirolang.interpreter.SFuncAction;
 import org.shirolang.values.Path;
+import org.shirolang.values.PathSegment;
 import org.shirolang.values.SIdent;
 
 import java.util.*;
@@ -68,7 +69,7 @@ public class SGraph implements Scope, Consoleable{
 
     /**
      * Adds the node to the graph.
-     * The node is stored by it's full name.
+     * The node is stored by it's name.
      * Updates the node's scope to the graph
      * @param node node to be added
      */
@@ -95,7 +96,7 @@ public class SGraph implements Scope, Consoleable{
     }
 
     public Set<SNode> getNodesWithOptions(){
-        return nodes.values().stream().filter((SNode n) -> n.hasOptions()).collect(toSet());
+        return nodes.values().stream().filter(SNode::hasOptions).collect(toSet());
     }
 
     /**
@@ -103,11 +104,6 @@ public class SGraph implements Scope, Consoleable{
      * @param port port to be added to the graph
      */
     public void addPort(SFunc port){
-//        if(!port.getSymbolType().isPort()){
-//            throw new IllegalArgumentException("Only multi-functions whose SymbolType " +
-//                    "is SymbolType.PORT can be added.");
-//        }
-
         ports.put(port.getName(), port);
     }
 
@@ -169,6 +165,12 @@ public class SGraph implements Scope, Consoleable{
         return ports.get(name);
     }
 
+    /**
+     * TODO expand this method to handle nested subjuncts specifications
+     * Evaluates a graph with the passed configuration
+     * @param subjunctTable subjunct table to determine the active options
+     * @throws OptionNotFoundException
+     */
     public void evaluate(Map<String, String> subjunctTable) throws OptionNotFoundException {
         for(String optionName: subjunctTable.keySet()){
             SNode node = nodes.get(optionName);
@@ -178,6 +180,10 @@ public class SGraph implements Scope, Consoleable{
         evaluate();
     }
 
+    /**
+     * Evaluates the graph
+     * TODO add details about which options the method will use
+     */
     public void evaluate(){
         graph.removeAllDependencies();
         for(SFunc f: getPorts()){
@@ -229,17 +235,21 @@ public class SGraph implements Scope, Consoleable{
 
         if(path.isAtEnd()){
             // check the nodes
-            funcReferenced = nodes.get(path.getCurrentPathHead());
+            funcReferenced = nodes.get(path.getSegmentAtHead());
 
             // check the ports
             if(funcReferenced == null){
-                funcReferenced = ports.get(path.getCurrentPathHead());
+                funcReferenced = ports.get(path.getSegmentAtHead());
             }
         }else{ // recursively examine the node
-            if(nodes.containsKey(path.getCurrentPathHead())){
-                SNode nodeReferenced = nodes.get(path.getCurrentPathHead());
-                path.popPathHead();
-                funcReferenced = nodeReferenced.resolvePath(path);
+            PathSegment head = path.getSegmentAtHead();
+
+            if(head.isSimple()) {
+                if (nodes.containsKey(head.getKey().get())) {
+                    SNode nodeReferenced = nodes.get(path.getSegmentAtHead().getKey().get());
+                    path.advanceHead();
+                    funcReferenced = nodeReferenced.resolvePath(path);
+                }
             }
         }
 
@@ -290,14 +300,16 @@ public class SGraph implements Scope, Consoleable{
         if (b == null) {
             GraphNode<SFunc> aNode = graph.getNodeForValue(a, graphNodeAction);
             graph.addDependency(aNode, null);
-//            System.out.println(a.toString());
         } else {
-//            System.out.println(a.toString() + "->" + b.toString());
             graph.addDependency(graph.getNodeForValue(a, graphNodeAction),
                     graph.getNodeForValue(b, graphNodeAction));
         }
     }
 
+    /**
+     * Outputs the graph in it's console from
+     * @return string containing console output for the graph
+     */
     public String toConsole(){
         StringBuilder sb = new StringBuilder();
 
@@ -311,6 +323,11 @@ public class SGraph implements Scope, Consoleable{
     }
 
 
+    /**
+     * Generates a dependency string
+     * @param node node to print
+     * @return string containing each of the node's dependencies on a new line.
+     */
     private String formatDependency(GraphNode<SFunc> node){
         StringBuilder sb = new StringBuilder();
 

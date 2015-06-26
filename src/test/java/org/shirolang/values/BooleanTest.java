@@ -59,13 +59,13 @@ public class BooleanTest {
      @Test
     public void getArgs(){
         SBoolean s = new SBoolean(true);
-        assertTrue(s.getArgs().isEmpty());
+        assertTrue(s.getInputs().isEmpty());
     }
     
     @Test
     public void hasArgs(){
         SBoolean s = new SBoolean(false);
-        assertFalse(s.hasArgs());
+        assertFalse(s.hasInputs());
     }
     
     @Test

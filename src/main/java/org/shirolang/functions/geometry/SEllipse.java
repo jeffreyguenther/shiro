@@ -23,11 +23,8 @@
 
 package org.shirolang.functions.geometry;
 
-import javafx.scene.shape.Ellipse;
 import org.shirolang.base.SFuncBase;
 import org.shirolang.base.TypedValue;
-import org.shirolang.functions.color.SColor;
-import org.shirolang.values.SDouble;
 
 /**
  * Represents an ellipse in Shiro
@@ -36,29 +33,29 @@ public class SEllipse extends SFuncBase{
     public SEllipse(){
         super();
 
-        args.setKeyForIndex("centerX", 0);
-        args.add(new TypedValue("Double"));
+        inputs.setKeyForIndex("centerX", 0);
+        inputs.add(new TypedValue("Double"));
 
-        args.setKeyForIndex("centerY", 1);
-        args.add(new TypedValue("Double"));
+        inputs.setKeyForIndex("centerY", 1);
+        inputs.add(new TypedValue("Double"));
 
-        args.setKeyForIndex("rotate", 2);
-        args.add(new TypedValue("Double"));
+        inputs.setKeyForIndex("rotate", 2);
+        inputs.add(new TypedValue("Double"));
 
-        args.setKeyForIndex("radiusX", 3);
-        args.add(new TypedValue("Double"));
+        inputs.setKeyForIndex("radiusX", 3);
+        inputs.add(new TypedValue("Double"));
 
-        args.setKeyForIndex("radiusY", 4);
-        args.add(new TypedValue("Double"));
+        inputs.setKeyForIndex("radiusY", 4);
+        inputs.add(new TypedValue("Double"));
 
-        args.setKeyForIndex("stroke", 5);
-        args.add(new TypedValue("Color"));
+        inputs.setKeyForIndex("stroke", 5);
+        inputs.add(new TypedValue("Color"));
 
-        args.setKeyForIndex("strokeWeight", 6);
-        args.add(new TypedValue("Double"));
+        inputs.setKeyForIndex("strokeWeight", 6);
+        inputs.add(new TypedValue("Double"));
 
-        args.setKeyForIndex("fill", 7);
-        args.add(new TypedValue("Color"));
+        inputs.setKeyForIndex("fill", 7);
+        inputs.add(new TypedValue("Color"));
 
         results.add(new TypedValue(getType()));
     }

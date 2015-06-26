@@ -24,13 +24,8 @@
 
 package org.shirolang.functions.math;
 
-import java.util.Objects;
 import org.shirolang.base.SFunc;
 import static org.shirolang.base.SType.NOT_EQUAL;
-import org.shirolang.values.SBoolean;
-import org.shirolang.values.SDouble;
-import org.shirolang.values.SInteger;
-import org.shirolang.values.SString;
 
 /**
  *
@@ -49,8 +44,8 @@ public class SNotEqual extends SBinaryComparisonFunction{
 
     @Override
     public void evaluate() {
-        SFunc lhs = getArg(0).getResult();
-        SFunc rhs = getArg(1).getResult();
+        SFunc lhs = getInput(0).getResult();
+        SFunc rhs = getInput(1).getResult();
 
         compute(lhs, rhs,
                 (a, b) -> !a.equals(b),

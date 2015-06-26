@@ -152,8 +152,8 @@ public class SubtractTest {
         SString s = new SString("5");
         SSubtract diff = new SSubtract(s, a);
         
-        List<SFunc> deps = diff.getArgs();
-        assertTrue(diff.hasArgs());
+        List<SFunc> deps = diff.getInputs();
+        assertTrue(diff.hasInputs());
         assertEquals(2, deps.size());
         assertTrue(deps.contains(a));
         assertTrue(deps.contains(s));

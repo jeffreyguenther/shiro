@@ -38,7 +38,7 @@ public class PathSegment {
 
     /**
      * Creates a SIMPLE path segment, like "a" in a.b.c
-     * @param key the value of the segement
+     * @param key the value of the segment
      */
     public PathSegment(String key){
         type = SegmentType.SIMPLE;

@@ -33,35 +33,35 @@ public class SArc extends SFuncBase{
     public SArc(){
         super();
 
-        args.setKeyForIndex("centerX", 0);
-        args.add(TypedValue.asDouble());
+        inputs.setKeyForIndex("centerX", 0);
+        inputs.add(TypedValue.asDouble());
 
-        args.setKeyForIndex("centerY", 1);
-        args.add(TypedValue.asDouble());
+        inputs.setKeyForIndex("centerY", 1);
+        inputs.add(TypedValue.asDouble());
 
-        args.setKeyForIndex("radiusX", 2);
-        args.add(TypedValue.asDouble());
+        inputs.setKeyForIndex("radiusX", 2);
+        inputs.add(TypedValue.asDouble());
 
-        args.setKeyForIndex("radiusY", 3);
-        args.add(TypedValue.asDouble());
+        inputs.setKeyForIndex("radiusY", 3);
+        inputs.add(TypedValue.asDouble());
 
-        args.setKeyForIndex("length", 4);
-        args.add(TypedValue.asDouble());
+        inputs.setKeyForIndex("length", 4);
+        inputs.add(TypedValue.asDouble());
 
-        args.setKeyForIndex("startAngle", 5);
-        args.add(TypedValue.asDouble());
+        inputs.setKeyForIndex("startAngle", 5);
+        inputs.add(TypedValue.asDouble());
 
-        args.setKeyForIndex("arcType", 6);
-        args.add(TypedValue.asString());
+        inputs.setKeyForIndex("arcType", 6);
+        inputs.add(TypedValue.asString());
 
-        args.setKeyForIndex("fill", 7);
-        args.add(new TypedValue("Color"));
+        inputs.setKeyForIndex("fill", 7);
+        inputs.add(new TypedValue("Color"));
 
-        args.setKeyForIndex("stroke", 8);
-        args.add(new TypedValue("Color"));
+        inputs.setKeyForIndex("stroke", 8);
+        inputs.add(new TypedValue("Color"));
 
-        args.setKeyForIndex("strokeWeight", 9);
-        args.add(new TypedValue("Double"));
+        inputs.setKeyForIndex("strokeWeight", 9);
+        inputs.add(new TypedValue("Double"));
 
         results.add(new TypedValue(getType()));
     }

@@ -32,17 +32,14 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.shirolang.base.*;
 import org.shirolang.exceptions.GraphNotFoundException;
 import org.shirolang.exceptions.NameUsedException;
-import org.shirolang.exceptions.PortNotFoundException;
 import org.shirolang.functions.color.ColorFromHSB;
 import org.shirolang.functions.color.ColorFromRGB;
 import org.shirolang.functions.color.SColor;
 import org.shirolang.functions.geometry.*;
 import org.shirolang.functions.math.*;
 import org.shirolang.values.*;
-import org.shirolang.values.Path;
 
 import java.io.IOException;
-import java.nio.file.*;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;

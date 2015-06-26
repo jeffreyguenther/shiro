@@ -52,4 +52,6 @@ public final class SType {
     public static final String POWER = "Power";
     public static final String SUBTRACT = "Subtract";
     public static final String IDENT = "Ident";
+    public static final String SELECTOR = "Selector";
+    public static final String REFERENCE = "Reference";
 }
