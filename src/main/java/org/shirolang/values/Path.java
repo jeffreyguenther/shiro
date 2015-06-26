@@ -271,7 +271,8 @@ public class Path {
      */
     @Override
     public String toString() {
-        return "(" + path.toString() + ")";
+        String ref = isReference() ? "~ " : "";
+        return "("+ ref + path.toString() + ")";
     }
 
     @Override

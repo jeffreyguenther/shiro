@@ -152,6 +152,7 @@ public class PathTest {
         Assert.assertFalse(p.isReference());
         p.makeReference();
         Assert.assertTrue(p.isReference());
+        Assert.assertEquals("(~ [])", p.toString());
     }
 
     @Test

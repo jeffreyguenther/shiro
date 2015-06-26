@@ -152,13 +152,12 @@ public class SNode extends SFuncBase implements Scope{
             // create an input with the port's name
             inputs.add(new TypedValue(port.getType(), port));
             inputs.setKeyForIndex(port.getName(), inputs.size() - 1);
-
         }
 
         if(port.getAccess().isRead()){
             // create an output with the port's name
             results.add(new TypedValue(port.getType(), port));
-            results.setKeyForIndex(port.getName(), inputs.size() - 1);
+            results.setKeyForIndex(port.getName(), results.size() - 1);
         }
 
         if(port.getAccess().isInternal()){
@@ -553,6 +552,15 @@ public class SNode extends SFuncBase implements Scope{
                 // get the input port with the index
                 portReferenced = getInput(portIndex);
             }
+
+            if (portReferenced != null) {
+                path.resetHead();
+
+                if (path.atSecondLast()) {
+                    path.setReferencesPortValue(true);
+
+                }
+            }
         }
 
         if(portReferenced == null && head.isOutput()){
@@ -562,11 +570,6 @@ public class SNode extends SFuncBase implements Scope{
                 String portName = head.getKey().get();
                 // get the input port with the name
                 portReferenced = getOutput(portName);
-
-                // check the internal ports
-                if(portReferenced == null) {
-                    portReferenced = ports.get(portName);
-                }
             }
 
             // look for the port if there is an index
@@ -574,7 +577,16 @@ public class SNode extends SFuncBase implements Scope{
                 int portIndex = head.getIndex().get();
 
                 // get the input port with the index
-                portReferenced = getInput(portIndex);
+                portReferenced = getOutput(portIndex);
+            }
+
+            if (portReferenced != null) {
+                path.resetHead();
+
+                if (path.atSecondLast()) {
+                    path.setReferencesPortValue(true);
+
+                }
             }
         }
 

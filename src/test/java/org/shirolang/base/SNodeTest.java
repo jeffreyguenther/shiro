@@ -431,6 +431,153 @@ public class SNodeTest {
     }
 
     @Test
+    public void resolveInputPath() throws PathNotFoundException {
+        SNode n = new SNode("Type", "a");
+        SDouble d = new SDouble(183.2);
+        d.setSymbolType(SymbolType.PORT);
+        d.setName("d");
+        n.addPort(d);
+
+        Path p = new Path();
+        p.addSegment(new PathSegment(SegmentType.INPUT, "d"));
+        Assert.assertEquals(0, p.getHead());
+        Assert.assertSame(d, n.resolvePath(p));
+
+        Path p2 = new Path();
+        p2.addSegment(new PathSegment(SegmentType.INPUT, 0));
+        Assert.assertEquals(0, p2.getHead());
+        Assert.assertSame(d, n.resolvePath(p2));
+    }
+
+    @Test
+    public void resolveInputPathWithPortValue() throws PathNotFoundException {
+        SNode n = new SNode("Type", "a");
+        SDouble d = new SDouble(183.2);
+        d.setSymbolType(SymbolType.PORT);
+        d.setName("d");
+        n.addPort(d);
+
+        Path p = new Path();
+        p.addSegment(new PathSegment(SegmentType.INPUT, "d"));
+        p.addSegment(new PathSegment(SegmentType.OUTPUT, 0));
+        Assert.assertSame(d, n.resolvePath(p));
+        Assert.assertEquals(0, p.getHead());
+        Assert.assertTrue("should be marked as referencing a port value", p.doesReferencePortValue());
+    }
+
+    @Test
+    public void resolveOutputPath() throws PathNotFoundException {
+        SNode n = new SNode("Type", "a");
+        SDouble d = new SDouble(183.2);
+        d.setSymbolType(SymbolType.PORT);
+        d.setName("d");
+        d.setAccess(Access.READ);
+        n.addPort(d);
+        Assert.assertTrue(d.getAccess().isRead());
+
+        Path p = new Path();
+        p.addSegment(new PathSegment(SegmentType.OUTPUT, "d"));
+
+        Assert.assertEquals("path should be reset", 0, p.getHead());
+        Assert.assertSame(d, n.resolvePath(p));
+
+        Path p2 = new Path();
+        p2.addSegment(new PathSegment(SegmentType.OUTPUT, 0));
+
+        Assert.assertEquals("path should be reset", 0, p2.getHead());
+        Assert.assertSame(d, n.resolvePath(p2));
+    }
+
+    @Test
+    public void resolveOutputPathWithPortValue() throws PathNotFoundException {
+        SNode n = new SNode("Type", "a");
+        SDouble d = new SDouble(183.2);
+        d.setSymbolType(SymbolType.PORT);
+        d.setAccess(Access.READ);
+
+        Assert.assertTrue(d.getAccess().isRead());
+        d.setName("d");
+        n.addPort(d);
+
+        Path p = new Path();
+        p.addSegment(new PathSegment(SegmentType.OUTPUT, "d"));
+        p.addSegment(new PathSegment(SegmentType.OUTPUT, 0));
+
+        Assert.assertEquals(0, p.getHead());
+        Assert.assertSame(d, n.resolvePath(p));
+        Assert.assertTrue("should be marked as referencing a port value", p.doesReferencePortValue());
+    }
+
+    @Test
+    public void resolvePathToInternal() throws PathNotFoundException {
+        SNode n = new SNode("Type", "a");
+        SDouble d = new SDouble(183.2);
+        d.setSymbolType(SymbolType.PORT);
+        d.setName("d");
+        d.setAccess(Access.INTERNAL);
+        n.addPort(d);
+        Assert.assertTrue(d.getAccess().isInternal());
+
+        Path p = new Path();
+        p.addSegment(new PathSegment(SegmentType.SIMPLE, "d"));
+
+        Assert.assertEquals("path should be reset", 0, p.getHead());
+        Assert.assertSame(d, n.resolvePath(p));
+    }
+
+    @Test
+    public void resolvePathToInternalWithPortValue() throws PathNotFoundException {
+        SNode n = new SNode("Type", "a");
+        SDouble d = new SDouble(183.2);
+        d.setSymbolType(SymbolType.PORT);
+        d.setName("d");
+        d.setAccess(Access.INTERNAL);
+        n.addPort(d);
+        Assert.assertTrue(d.getAccess().isInternal());
+
+        Path p = new Path();
+        p.addSegment(new PathSegment(SegmentType.SIMPLE, "d"));
+        p.addSegment(new PathSegment(SegmentType.INPUT, 0));
+
+        Assert.assertEquals("path should be reset", 0, p.getHead());
+        Assert.assertSame(d, n.resolvePath(p));
+        Assert.assertTrue("should be marked as referencing a port value", p.doesReferencePortValue());
+    }
+
+    @Test(expected = PathNotFoundException.class)
+    public void resolvePathToInternalFail() throws PathNotFoundException {
+        SNode n = new SNode("Type", "a");
+        SDouble d = new SDouble(183.2);
+        d.setSymbolType(SymbolType.PORT);
+        d.setName("d");
+        d.setAccess(Access.INTERNAL);
+        n.addPort(d);
+        Assert.assertTrue(d.getAccess().isInternal());
+
+        Path p = new Path();
+        p.addSegment(new PathSegment(SegmentType.OUTPUT, "d"));
+        p.addSegment(new PathSegment(SegmentType.INPUT, 0));
+
+        n.resolvePath(p);
+    }
+
+    @Test
+    public void resolvePathToPortValues() throws PathNotFoundException {
+        SNode n = new SNode("Type", "a");
+        SDouble d = new SDouble(183.2);
+        d.setSymbolType(SymbolType.PORT);
+        d.setName("d");
+        n.addPort(d);
+
+        Path p = new Path();
+        p.addSegment(new PathSegment("d"));
+        p.addSegment(new PathSegment(SegmentType.OUTPUT, 0));
+
+        Assert.assertSame(d, n.resolvePath(p));
+        Assert.assertTrue("should be marked as path to port value", p.doesReferencePortValue());
+    }
+
+    @Test
     public void isRoot(){
         SNode n = new SNode();
         Assert.assertFalse(n.isRoot());
@@ -452,41 +599,4 @@ public class SNodeTest {
 
         Assert.assertEquals(expected, n.getPorts());
     }
-
-//    @Test
-//    public void resolvePathIndices(){
-//        SNode n = new SNode();
-//        SDouble p = new SDouble("p", 100.0);
-//        SDouble r = new SDouble("r", 0.05);
-//        SDouble t = new SDouble("t", 1.0);
-//
-//        SSimpleInterest interest = new SSimpleInterest();
-//        interest.setName("eval");
-//        interest.setInput(SSimpleInterest.PRINCIPAL, p);
-//        interest.setInput(SSimpleInterest.RATE, r);
-//        interest.setInput(SSimpleInterest.DURATION, t);
-//        n.addPort(interest);
-//
-//        List<String> parts = new ArrayList<>();
-//        parts.add("eval");
-//        Path path = new Path(parts, 0);
-//        SIdent id = new SIdent(n, path);
-//
-//        List<String> parts2 = new ArrayList<>();
-//        parts2.add("eval");
-////        Path path2 = new Path(parts2, "value");
-//        SIdent id2 = new SIdent(n, path2);
-//
-//        p.evaluate();
-//        r.evaluate();
-//        t.evaluate();
-//        interest.evaluate();
-//        id.evaluate();
-//        id2.evaluate();
-//
-//        SDouble resInterest = (SDouble) id.getOutput();
-//        SDouble resValue = (SDouble) id2.getOutput();
-//        Assert.assertEquals(5.0, resInterest.getPath(), 1e-15);
-//        Assert.assertEquals(105.0, resValue.getPath(), 1e-15);
-//    }
 }
