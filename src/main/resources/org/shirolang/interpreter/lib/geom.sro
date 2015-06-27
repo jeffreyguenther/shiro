@@ -76,6 +76,7 @@ node Line begin
 end
 
 node Text begin
+    input originX Double(0.0)
     input originY Double(0.0)
     input rotate Double(0.0)
     input text String

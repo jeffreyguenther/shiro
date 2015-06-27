@@ -236,7 +236,6 @@ public class SNode extends SFuncBase implements Scope{
 
         // get the ports of the tree of nested nodes
         for(SNode nested: nestedNodes.values()){
-//            allPorts.addAll(nested.getPorts());
             all.addAll(nested.getPorts());
         }
         return all; //allPorts;

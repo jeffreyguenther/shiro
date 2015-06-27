@@ -1,6 +1,6 @@
 include "geom.sro"
 
-Geometry.Rectangle -> r
+Rectangle -> r
 r.originX(10.0)
 r.originY(100.0)
 r.width(100.0)
@@ -9,12 +9,12 @@ r.height(400.0)
 a Double(29.0)
 offset Double (20.0 + a)
 
-Geometry.Ellipse -> e(centerX: 100.0, centerY: 200.0, radiusX: 100.0, radiusY: 200.0)
+Ellipse -> e(centerX: 100.0, centerY: 200.0, radiusX: 100.0, radiusY: 200.0)
 e.strokeWeight(offset)
 
-Geometry.Text -> t
+Text -> t
 t.text("Oh happy day!")
 t.originX(250.0)
 t.originY(100.0)
 
-Geometry.Line -> l(startX: 0.0, startY: 0.0, endX: 400.0, endY: 400.0, strokeWeight: 5.0)
+Line -> l(startX: 0.0, startY: 0.0, endX: 400.0, endY: 400.0, strokeWeight: 5.0)
