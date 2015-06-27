@@ -137,7 +137,7 @@ public class InlineGraphBuilderTest extends ShiroBaseTest{
         Assert.assertEquals(1, lib.getNodeDefs().size());
 
         Assert.assertEquals(1, graph.getNodes().size());
-        Assert.assertEquals(12, graph.getPorts().size());
+        Assert.assertEquals(14, graph.getPorts().size());
     }
 
     @Test
