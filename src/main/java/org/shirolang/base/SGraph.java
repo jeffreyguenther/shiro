@@ -217,10 +217,10 @@ public class SGraph implements Scope, Consoleable{
         List<GraphNode<SFunc>> topologicalOrdering = sorter.getTopologicalOrdering();
 
 //        System.out.println("--------new list -----------");
-        for (GraphNode<SFunc> gn : topologicalOrdering) {
-            SFunc func = gn.getValue();
-//            System.out.println(func.toString());
-        }
+//        for (GraphNode<SFunc> gn : topologicalOrdering) {
+//            SFunc func = gn.getValue();
+////            System.out.println(func.toString());
+//        }
 //        System.out.println("--------end list -----------");
 
         // loop through all ports to update them.

@@ -58,7 +58,7 @@ public class SModulo extends SBinaryArithmeticFunction{
             s.evaluate();
 
             returnDouble(s);
-        }else if(lhs.isInteger() && lhs.isInteger()){
+        }else if(lhs.isInteger() && rhs.isInteger()){
             Integer l = ((SInteger) lhs).getValue();
             Integer r = ((SInteger) rhs).getValue();
             Integer result = l % r;

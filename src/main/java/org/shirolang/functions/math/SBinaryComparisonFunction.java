@@ -66,7 +66,7 @@ public abstract class SBinaryComparisonFunction extends SBinaryFunction{
             s.evaluate();
 
             setOutput(0, s);
-        }else if(lhs.isInteger() && lhs.isInteger()){
+        }else if(lhs.isInteger() && rhs.isInteger()){
             Integer l = ((SInteger) lhs).getValue();
             Integer r = ((SInteger) rhs).getValue();
             Boolean gt = ii.apply(l, r);
@@ -101,7 +101,7 @@ public abstract class SBinaryComparisonFunction extends SBinaryFunction{
             s.evaluate();
 
             setOutput(0, s);
-        }else if(lhs.isInteger() && lhs.isInteger()){
+        }else if(lhs.isInteger() && rhs.isInteger()){
             Integer l = ((SInteger) lhs).getValue();
             Integer r = ((SInteger) rhs).getValue();
             Boolean gt = ii.apply(l, r);

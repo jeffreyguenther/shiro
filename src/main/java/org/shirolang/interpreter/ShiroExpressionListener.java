@@ -113,9 +113,6 @@ public class ShiroExpressionListener extends ShiroBaseListener {
     }
     
     protected SFunc createPath(Scope currentScope, ShiroParser.PathContext ctx) {
-        // Declare a list to store the path's parts
-        List<PathSegment> segments = new ArrayList<>();
-
         Path p = new Path();
         ctx.segments.stream().map(this::createSegment).forEach(p::addSegment);
 

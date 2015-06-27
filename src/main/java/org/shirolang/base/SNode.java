@@ -92,7 +92,7 @@ public class SNode extends SFuncBase implements Scope{
      * @param name name of node ( the same as the type for prototype instances)
      * @param scope scope the node is in
      */
-    private final void initializeVars(String type, String name, Scope scope) {
+    private void initializeVars(String type, String name, Scope scope) {
         // type of node
         this.type = type;
         // add the enclosing scope
@@ -183,7 +183,7 @@ public class SNode extends SFuncBase implements Scope{
      * name is not found.
      */
     public SFunc getPort(String name){
-        SFunc port = null;
+        SFunc port;
         // look in inputs
         port = getInput(name);
 
@@ -207,7 +207,7 @@ public class SNode extends SFuncBase implements Scope{
      * @return the port for the given index
      */
     public SFunc getPort(int index){
-        SFunc port = null;
+        SFunc port;
         // look in inputs
         port = getInput(index);
 
@@ -238,7 +238,7 @@ public class SNode extends SFuncBase implements Scope{
         for(SNode nested: nestedNodes.values()){
             all.addAll(nested.getPorts());
         }
-        return all; //allPorts;
+        return all;
     }
 
     /**

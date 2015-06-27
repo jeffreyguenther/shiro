@@ -41,7 +41,7 @@ public class ShiroPlayground extends Application {
     public void start(Stage primaryStage) throws Exception {
         URL resource = getClass().getResource("fxml_viewer.fxml");
         FXMLLoader loader = new FXMLLoader(resource);
-        BorderPane root = (BorderPane) loader.load();
+        BorderPane root = loader.load();
         c = loader.getController();
 
         Scene scene = new Scene(root);

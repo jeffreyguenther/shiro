@@ -326,7 +326,7 @@ public class FXMLViewerController {
             if (fileToOpen != null) {
                 BufferedReader reader = new BufferedReader(new FileReader(fileToOpen));
                 StringBuilder sb = new StringBuilder();
-                String line = null;
+                String line;
                 String newLine = "\n";
                 while ((line = reader.readLine()) != null) {
                     sb.append(line);
