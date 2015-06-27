@@ -27,7 +27,6 @@ run in **Shiro Playground**.
 * Drawing - shows how to draw in Shiro
 	* [ ] `Costume_Selection.sro` shows how to render differty costumes for a character
 	* [x] `FlowerOfLife.sro` uses traces of the Flower of Life, a patterns of circles to create images
-	* [x] `LineExample.sro` shows a basic example of creating an alternative for the endpoint of a line
 	* [x] `shapes.sro` is collage of the shapes you can draw in Shiro
 
 * Finance - financial calculations
