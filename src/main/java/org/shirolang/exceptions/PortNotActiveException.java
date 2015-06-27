@@ -1,4 +1,4 @@
-package shiro.exceptions;
+package org.shirolang.exceptions;
 
 /**
  *
