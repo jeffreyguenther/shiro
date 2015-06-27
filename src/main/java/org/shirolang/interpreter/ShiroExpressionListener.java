@@ -380,6 +380,10 @@ public class ShiroExpressionListener extends ShiroBaseListener {
 
         SFunc arg0 = getExpr(args.get(0));
         if(args.size() == 1 && arg0.getType().equals(function.getType())){
+            arg0.setAccess(function.getAccess());
+            arg0.setName(function.getName());
+            arg0.setSymbolType(function.getSymbolType());
+
             return arg0;
         }else{
             return setArgList(function, args);
