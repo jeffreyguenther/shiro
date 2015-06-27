@@ -1,4 +1,5 @@
 *.class
+gradle.properties
 
 # Package Files #
 *.jar

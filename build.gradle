@@ -3,9 +3,15 @@
  * 
  * */
 description = "shiro - a data flow language for alternatives"
+apply plugin: 'maven'
+apply plugin: 'signing'
+
 apply plugin: 'java'
 apply plugin: 'application'
 apply from: 'gradle/javafx.plugin'
+
+version = '0.5.0-SNAPSHOT'
+group = 'org.shirolang'
 
 gradle.projectsEvaluated {
     tasks.withType(JavaCompile) {
@@ -61,11 +67,11 @@ dependencies {
     compile group: 'org.fxmisc.richtext', name: 'richtextfx', version: '0.6.3'
     compile 'com.google.guava:guava:12.0'
     compile 'net.sf.opencsv:opencsv:2.3'
-    compile 'net.sf.jung:jung-api:2.0.1'
-    compile 'net.sf.jung:jung-graph-impl:2.0.1'
-    compile 'net.sf.jung:jung-algorithms:2.0.1'
-    compile 'net.sf.jung:jung-io:2.0.1'
-    compile 'net.sf.jung:jung-visualization:2.0.1'
+//    compile 'net.sf.jung:jung-api:2.0.1'
+//    compile 'net.sf.jung:jung-graph-impl:2.0.1'
+//    compile 'net.sf.jung:jung-algorithms:2.0.1'
+//    compile 'net.sf.jung:jung-io:2.0.1'
+//    compile 'net.sf.jung:jung-visualization:2.0.1'
     
     
     testCompile group: "junit", name: "junit", version: versions.junit
@@ -111,13 +117,91 @@ clean {
     delete antlr.destinationDir
 }
 
-jar{
-    manifest {
-        attributes 'Implementation-Title': 'shiro', 
-                   'Implementation-Version': "0.1.0",
-                   'Main-Class': "org.shirolang.playground.ShiroPlayground"
+javadoc {
+    // ignore missing Javadoc comments or tags
+    options.addStringOption('Xdoclint:all,-missing', '-quiet')
+
+    // support for JavaFX properties
+    options.addBooleanOption('javafx', true);
+
+    // resolve links to Java and JavaFX Javadocs
+    options.links = [
+            'http://docs.oracle.com/javase/8/docs/api/',
+            'http://docs.oracle.com/javase/8/javafx/api/'
+    ]
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from 'build/docs/javadoc'
+}
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allSource
+    classifier = 'sources'
+}
+
+artifacts {
+    archives jar
+
+    archives javadocJar
+    archives sourcesJar
+}
+
+signing {
+    sign configurations.archives
+}
+
+signArchives.onlyIf {
+    project.hasProperty('signing.keyId') && project.hasProperty('signing.password') && project.hasProperty('signing.secretKeyRingFile')
+}
+
+def doUploadArchives = false //project.hasProperty('sonatypeUsername') && project.hasProperty('sonatypePassword')
+
+if(doUploadArchives) {
+    uploadArchives {
+        repositories.mavenDeployer {
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+                authentication(userName: sonatypeUsername, password: sonatypePassword)
+            }
+
+            snapshotRepository(url: 'https://oss.sonatype.org/content/repositories/snapshots') {
+                authentication(userName: sonatypeUsername, password: sonatypePassword)
+            }
+
+            pom.project {
+                name 'Shiro'
+                packaging 'jar'
+                description 'Experimental dataflow programming language'
+                url 'http://shirolang.org'
+
+                scm {
+                    url 'scm:git@github.com:jrguenther/shiro.git'
+                    connection 'scm:git@github.com:jrguenther/shiro.git'
+                    developerConnection 'scm:git@github.com:jrguenther/shiro.git'
+                }
+
+                licenses {
+                    license {
+                        name 'The MIT License (MIT)'
+                        url 'http://opensource.org/licenses/MIT'
+                        distribution 'repo'
+                    }
+                }
+
+                developers {
+                    developer {
+                        name 'Jeffrey Guenther'
+                    }
+                }
+            }
+        }
     }
 }
+
+uploadArchives.onlyIf { doUploadArchives }
 
 task fatJar(type: Jar, dependsOn: classes) {
     appendix = 'fat'
