@@ -6,7 +6,7 @@ graph includeTester begin
     A -> a(1)
     B -> b(2.2)
 
-    port sum Add(a.value, b.value)
+    sum Add(a.value, b.value)
 
     Text -> t
     t.originX(sum)
