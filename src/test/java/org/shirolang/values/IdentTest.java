@@ -108,7 +108,7 @@ public class IdentTest {
 
         SIdent id = new SIdent(g, "d");
         id.evaluate();
-        Assert.assertEquals("0.12", id.toConsole());
+        Assert.assertEquals("([d])", id.toConsole());
     }
 
     @Test
@@ -135,6 +135,7 @@ public class IdentTest {
         Assert.assertEquals("d", id.toConsole());
     }
 
+    private static final double DELTA = 1e-15;
     @Test
     public void getResult(){
         SGraph g = new SGraph();
@@ -162,9 +163,8 @@ public class IdentTest {
         SIdent sumResult = new SIdent(g, "sum");
         sumResult.evaluate();
 
-        Assert.assertSame(sum, sumResult.getOutput(0));
-
         SDouble s = (SDouble) sumResult.getResult();
-        System.out.println(s.getValue());
+        Assert.assertEquals(132.4, s.getValue(), DELTA);
+
     }
 }

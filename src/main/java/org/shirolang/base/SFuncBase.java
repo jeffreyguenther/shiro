@@ -158,7 +158,7 @@ public abstract class SFuncBase implements SFunc {
      */
     @Override
     public boolean hasInputs() {
-        return !inputs.values.stream().map(a -> a.getValue()).anyMatch(Objects::isNull);
+        return !inputs.isEmpty() && !inputs.values.stream().map(a -> a.getValue()).anyMatch(Objects::isNull);
     }
 
     /**

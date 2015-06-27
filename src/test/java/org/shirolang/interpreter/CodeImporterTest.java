@@ -42,6 +42,8 @@ public class CodeImporterTest extends ShiroBaseTest{
             // graph_with_includes.sro -> b_include.sro
             // graph_with_includes.sro -> geom.sro
 
+        // This test is a little deceiving as the path created when testing does not reference the normal
+        // runtime resources location.
         Library lib = new Library();
         Path path = Paths.get(getClass().getResource("graph_with_includes.sro").getPath());
         CodeImporter codeImporter = new CodeImporter(lib, path);

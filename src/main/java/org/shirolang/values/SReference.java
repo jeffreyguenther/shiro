@@ -72,4 +72,9 @@ public class SReference extends SValue<String>{
     public String toConsole(){
         return toString();
     }
+
+    @Override
+    public String getValue() {
+        return v;
+    }
 }

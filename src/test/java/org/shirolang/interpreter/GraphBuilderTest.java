@@ -68,7 +68,7 @@ public class GraphBuilderTest extends ShiroBaseTest{
 
         Assert.assertEquals(1, g.getNodes().size());
         Assert.assertNotNull(g.getNode("b"));
-        Assert.assertEquals(12, g.getPorts().size());
+        Assert.assertEquals(9, g.getPorts().size());
 
         g.evaluate();
     }

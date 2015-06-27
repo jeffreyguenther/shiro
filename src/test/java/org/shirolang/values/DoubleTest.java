@@ -101,12 +101,14 @@ public class DoubleTest {
         g.addPort(refValue);
 
         SIdent id = new SIdent(g, "a");
-        g.addPort(id);
 
         SDouble d = new SDouble();
+        d.setName("d");
         d.setSymbolType(SymbolType.PORT);
+        Assert.assertTrue(d.getSymbolType().isPort());
 
-        d.appendInput(id);
+        d.setInput(0, id);
+        Assert.assertTrue(d.hasInputs());
         g.addPort(d);
 
         g.evaluate();
@@ -131,7 +133,7 @@ public class DoubleTest {
         SDouble d = new SDouble();
         d.setSymbolType(SymbolType.PORT);
 
-        d.appendInput(id);
+        d.setInput(0, id);
         g.addPort(d);
 
         g.evaluate();
