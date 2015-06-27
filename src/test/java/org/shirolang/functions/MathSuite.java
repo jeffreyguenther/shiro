@@ -22,10 +22,11 @@
  * THE SOFTWARE.
  */
 
-package org.shirolang.functions.math;
+package org.shirolang.functions;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
+import org.shirolang.functions.math.*;
 
 /**
  * Suite of math function tests
@@ -34,20 +35,21 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
     AddTest.class,
-    SubtractTest.class,
-    MultiplyTest.class,
-    ModuloTest.class,
+    AndTest.class,
     DivideTest.class,
-    PowerTest.class,
     EqualTest.class,
-    NotEqualTest.class,
     GreaterThanOrEqualTest.class,
     GreaterThanTest.class,
     LessThanOrEqualTest.class,
     LessThanTest.class,
+    ModuloTest.class,
+    MultiplyTest.class,
+    NegativeTest.class,
+    NotEqualTest.class,
     NotTest.class,
     OrTest.class,
-    AndTest.class
+    PowerTest.class,
+    SubtractTest.class
 })
 public class MathSuite {
     

@@ -25,24 +25,22 @@ package org.shirolang.interpreter;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
-import org.shirolang.base.SGraphTest;
-import org.shirolang.base.SNodeTest;
+import org.shirolang.base.*;
 
 /**
  * Runs the test for the interpreter
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-        DefinitionCollectorTest.class,
-        GraphBuilderTest.class,
-        CodeImporterTest.class,
-        LibraryTest.class,
-        NameManagerTest.class,
-        NodeInstantiatorTest.class,
-        ShiroRuntimeTest.class,
-        SGraphTest.class,
-        SNodeTest.class,
-        StateBuilderTest.class
+    CodeImporterTest.class,
+    DefinitionCollectorTest.class,
+    GraphBuilderTest.class,
+    InlineGraphBuilderTest.class,
+    LibraryTest.class,
+    NameManagerTest.class,
+    NodeInstantiatorTest.class,
+    ShiroRuntimeTest.class,
+    StateBuilderTest.class
 })
 public class InterpreterSuite {
 }

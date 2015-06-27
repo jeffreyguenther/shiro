@@ -164,17 +164,17 @@ public class Library {
     /**
      * Create a function of the given type
      * Looks in the node definitions
-     * @param p type of the node to create
      * @param g graph where the node should be stored
+     * @param p type of the node to create
      * @param name name of the instance
      * @return an instance of the SNode of the given type
      */
-    public SFunc instantiateNode(SGraph g, Path p, String name){
+    public SFunc instantiateNode(SGraph g, String p, String name){
         // TODO handle the instantiation of nested nodes
-        ParseTree nodeDef = nodeDefs.get(p.getPath());
+        ParseTree nodeDef = nodeDefs.get(p);
 
         if(nodeDef == null){
-            throw new RuntimeException(p.getPath() + " cannot be found");
+            throw new RuntimeException(p + " cannot be found");
         }
 
         NodeInstantiator nodeProducer = new NodeInstantiator(this, g);
@@ -370,29 +370,29 @@ public class Library {
      */
     private void loadRuntimeFunctions(){
         try {
-            registerFunction(SType.BOOLEAN, () -> new SBoolean());
-            registerFunction(SType.DOUBLE, () -> new SDouble());
-            registerFunction(SType.IDENT, () -> new SIdent());
-            registerFunction(SType.INTEGER, () -> new SInteger());
-            registerFunction(SType.STRING, () -> new SString());
-            registerFunction(SType.LIST, () -> new SList());
+            registerFunction(SType.BOOLEAN, SBoolean::new);
+            registerFunction(SType.DOUBLE, SDouble::new);
+            registerFunction(SType.IDENT, SIdent::new);
+            registerFunction(SType.INTEGER, SInteger::new);
+            registerFunction(SType.STRING, SString::new);
+            registerFunction(SType.LIST, SList::new);
 
-            registerFunction(SType.ADD, () -> new SAdd());
-            registerFunction(SType.AND, () -> new SAnd());
-            registerFunction(SType.DIVIDE, () -> new SDivide());
-            registerFunction(SType.EQUAL, () -> new SEqual());
-            registerFunction(SType.GREATERTHAN, () -> new SGreaterThan());
-            registerFunction(SType.GREATERTHAN_OR_EQUAL, () -> new SGreaterThanOrEqual());
-            registerFunction(SType.LESSTHAN, () -> new SLessThan());
-            registerFunction(SType.LESSTHAN_OR_EQUAL, () -> new SLessThanOrEqual());
-            registerFunction(SType.MODULO, () -> new SModulo());
-            registerFunction(SType.MULTIPLY, () -> new SMultiply());
-            registerFunction(SType.NEGATIVE, () -> new SNegative());
-            registerFunction(SType.NOT, () -> new SNot());
-            registerFunction(SType.NOT_EQUAL, () -> new SNotEqual());
-            registerFunction(SType.OR, () -> new SOr());
-            registerFunction(SType.POWER, () -> new SPower());
-            registerFunction(SType.SUBTRACT, () -> new SSubtract());
+            registerFunction(SType.ADD, SAdd::new);
+            registerFunction(SType.AND, SAnd::new);
+            registerFunction(SType.DIVIDE, SDivide::new);
+            registerFunction(SType.EQUAL, SEqual::new);
+            registerFunction(SType.GREATERTHAN, SGreaterThan::new);
+            registerFunction(SType.GREATERTHAN_OR_EQUAL, SGreaterThanOrEqual::new);
+            registerFunction(SType.LESSTHAN, SLessThan::new);
+            registerFunction(SType.LESSTHAN_OR_EQUAL, SLessThanOrEqual::new);
+            registerFunction(SType.MODULO, SModulo::new);
+            registerFunction(SType.MULTIPLY, SMultiply::new);
+            registerFunction(SType.NEGATIVE, SNegative::new);
+            registerFunction(SType.NOT, SNot::new);
+            registerFunction(SType.NOT_EQUAL, SNotEqual::new);
+            registerFunction(SType.OR, SOr::new);
+            registerFunction(SType.POWER, SPower::new);
+            registerFunction(SType.SUBTRACT, SSubtract::new);
 
         } catch (NameUsedException e) {
             throw new RuntimeException("Something crazy happened and an internal type is already defined!");
@@ -401,17 +401,17 @@ public class Library {
 
     private void loadGraphicsFunctions(){
         try{
-            registerFunction("Color", () -> new SColor());
-            registerFunction("ColorFromRGB", () -> new ColorFromRGB());
-            registerFunction("ColorFromHSB", () -> new ColorFromHSB());
-            registerFunction("ColorToGrayscale", () -> new ColorFromHSB());
+            registerFunction("Color", SColor::new);
+            registerFunction("ColorFromRGB", ColorFromRGB::new);
+            registerFunction("ColorFromHSB", ColorFromHSB::new);
+            registerFunction("ColorToGrayscale", ColorFromHSB::new);
 
-            registerFunction("Rectangle", () -> new SRectangle());
-            registerFunction("Ellipse", () -> new SEllipse());
-            registerFunction("Arc", () -> new SArc());
-            registerFunction("Line", () -> new SLine());
-            registerFunction("Text", () -> new SText());
-            registerFunction("Group", ()-> new SGroup());
+            registerFunction("Rectangle", SRectangle::new);
+            registerFunction("Ellipse", SEllipse::new);
+            registerFunction("Arc", SArc::new);
+            registerFunction("Line", SLine::new);
+            registerFunction("Text", SText::new);
+            registerFunction("Group", SGroup::new);
         }catch (NameUsedException e) {
             throw new RuntimeException("Something crazy happened and an internal type is already defined!");
         }

@@ -26,21 +26,23 @@ package org.shirolang;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
+import org.shirolang.base.BaseSuite;
 import org.shirolang.base.SIndexedMapTest;
-import org.shirolang.base.SNodeTest;
-import org.shirolang.functions.math.MathSuite;
+import org.shirolang.functions.FinanceSuite;
+import org.shirolang.functions.MathSuite;
 import org.shirolang.interpreter.InterpreterSuite;
-import org.shirolang.interpreter.ShiroRuntimeTest;
+import org.shirolang.values.ValuesSuite;
 
 /**
  * Tests the components of the runtime.
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-    SIndexedMapTest.class,
-    MathSuite.class,
-    SymbolTypeTest.class,
-    InterpreterSuite.class
+    BaseSuite.class,
+    FinanceSuite.class,
+    InterpreterSuite.class,
+    ValuesSuite.class,
+    SymbolTypeTest.class
 })
 public class RuntimeSuite {
 }

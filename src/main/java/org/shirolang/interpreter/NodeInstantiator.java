@@ -31,6 +31,7 @@ import org.shirolang.base.SNode;
 import org.shirolang.exceptions.OptionNotFoundException;
 import org.shirolang.values.Path;
 import org.shirolang.values.SIdent;
+import org.shirolang.values.SReference;
 
 /**
  * An ANTLR listener used to realize node parse trees
@@ -101,41 +102,14 @@ public class NodeInstantiator extends ShiroExpressionListener {
     public void exitOptionalNodeProduction(ShiroParser.OptionalNodeProductionContext ctx) {
 
         //  get the path of LHS of production operator
-        SIdent lhs = (SIdent) getExpr(ctx.nodeProduction().path());
-        Path p = lhs.getPath();
+        SReference lhs = (SReference) getExpr(ctx.nodeProduction().fullyQualifiedType());
 
         SNode parentNode = (SNode) scope.peek();
         // for each activation
         for (ShiroParser.ActivationContext ac : ctx.nodeProduction().activation()) {
             String nodeName = ac.nodeName.getText();
 
-            SNode producedNode = (SNode) library.instantiateNode(graph, p, nodeName);
-
-            ShiroParser.NodeAssignmentContext assignment = ac.nodeAssignment();
-            if(assignment != null){
-                if( assignment.argMap() != null ){
-                    List<Token> keys = assignment.argMap().keys;
-                    List<ShiroParser.ExprContext> values = assignment.argMap().values;
-
-                    for(int i = 0; i < keys.size(); i++){
-                        SFunc port = producedNode.getPort(keys.get(i).getText());
-
-                        if(port == null){
-                            throw new RuntimeException(keys.get(i).getText() + " cannot be found in " + producedNode.getFullName());
-                        }
-
-                        port.setInput(0, getExpr(values.get(i)));
-                    }
-                }
-
-                if(assignment.mfparams() != null ){
-                    List<ShiroParser.ExprContext> exprs = assignment.mfparams().expr();
-                    for (int i = 0; i < exprs.size(); i++) {
-                        SFunc port = producedNode.getPort(i);
-                        port.setInput(0, getExpr(exprs.get(i)));
-                    }
-                }
-            }
+            SNode producedNode = instantiateNode(lhs.getValue(), ac.arguments(),nodeName, graph);
 
             if (ac.activeObject != null) {
                 String updatePort = ac.activeObject.getText();

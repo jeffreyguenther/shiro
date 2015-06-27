@@ -25,6 +25,7 @@ package org.shirolang.interpreter;
 
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.misc.NotNull;
+import org.antlr.v4.runtime.tree.ParseTree;
 import org.shirolang.base.SFunc;
 import org.shirolang.base.SGraph;
 import org.shirolang.base.SNode;
@@ -33,8 +34,11 @@ import org.shirolang.exceptions.OptionNotFoundException;
 import org.shirolang.exceptions.PathNotFoundException;
 import org.shirolang.values.Path;
 import org.shirolang.values.SIdent;
+import org.shirolang.values.SReference;
 
 import java.util.List;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * An ANTLR expression listener used to build Graph instances.
@@ -64,41 +68,15 @@ public class GraphBuilder extends ShiroExpressionListener {
     public void exitNodeProduction(@NotNull ShiroParser.NodeProductionContext ctx) {
         if(pass == FIRST_PASS) {
             //  get the path of LHS of production operator
-            SIdent lhs = (SIdent) getExpr(ctx.path());
-            Path p = lhs.getPath();
+            SReference lhs = (SReference) getExpr(ctx.fullyQualifiedType());
+            String fullyQualfiedType = lhs.getValue();
 
             // for each activation
             for (ShiroParser.ActivationContext ac : ctx.activation()) {
                 String nodeName = ac.nodeName.getText();
 
                 SGraph g = (SGraph) scope.peek();
-                SNode producedNode = (SNode) library.instantiateNode(g, p, nodeName);
-
-                ShiroParser.NodeAssignmentContext assignment = ac.nodeAssignment();
-                if(assignment != null){
-                    if( assignment.argMap() != null ){
-                        List<Token> keys = assignment.argMap().keys;
-                        List<ShiroParser.ExprContext> values = assignment.argMap().values;
-
-                        for(int i = 0; i < keys.size(); i++){
-                            SFunc port = producedNode.getPort(keys.get(i).getText());
-
-                            if(port == null){
-                                throw new RuntimeException(keys.get(i).getText() + " cannot be found in " + producedNode.getFullName());
-                            }
-
-                            port.setInput(0, getExpr(values.get(i)));
-                        }
-                    }
-
-                    if(assignment.mfparams() != null ){
-                        List<ShiroParser.ExprContext> exprs = assignment.mfparams().expr();
-                        for (int i = 0; i < exprs.size(); i++) {
-                            SFunc port = producedNode.getPort(i);
-                            port.setInput(0, getExpr(exprs.get(i)));
-                        }
-                    }
-                }
+                SNode producedNode = instantiateNode(fullyQualfiedType, ac.arguments(), nodeName, g);
 
                 g.addNode(producedNode);
 
@@ -114,6 +92,8 @@ public class GraphBuilder extends ShiroExpressionListener {
         }
     }
 
+
+
     @Override
     public void exitPortAssignment(@NotNull ShiroParser.PortAssignmentContext ctx) {
         if(pass == SECOND_PASS) {
@@ -124,8 +104,7 @@ public class GraphBuilder extends ShiroExpressionListener {
 
                 SFunc function = scope.peek().resolvePath(path);
                 function.setSymbolType(SymbolType.PORT);
-                List<ShiroParser.ExprContext> args = ctx.mfparams().expr();
-                setArgs(function, args);
+                setArguments(function, ctx.arguments());
 
             } catch (PathNotFoundException pnfe) {
                 System.out.println(pnfe.getMessage());

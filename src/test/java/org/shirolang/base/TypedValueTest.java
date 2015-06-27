@@ -29,7 +29,7 @@ import org.shirolang.values.SDouble;
 import org.shirolang.values.SString;
 
 /**
- *
+ * Tests a TypedValue
  */
 public class TypedValueTest {
     @Test
@@ -40,12 +40,5 @@ public class TypedValueTest {
         tv.setValue(d);
         Assert.assertTrue(tv.doesTypeMatch(d));
         Assert.assertTrue(tv.doesTypeMatch(d.getType()));
-    }
-
-    @Test(expected = RuntimeException.class)
-    public void doesTypeMatchFail(){
-        TypedValue tv = new TypedValue("Double");
-        SString s = new SString("sf");
-        tv.setValue(s);
     }
 }

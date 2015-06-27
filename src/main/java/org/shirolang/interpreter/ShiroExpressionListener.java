@@ -24,40 +24,20 @@
 
 package org.shirolang.interpreter;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Stack;
-
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
-import org.antlr.v4.runtime.tree.TerminalNode;
-import org.shirolang.base.SFunc;
-import org.shirolang.base.Scope;
-import org.shirolang.base.SymbolType;
-import org.shirolang.exceptions.GraphNotFoundException;
-import org.shirolang.functions.math.SAdd;
-import org.shirolang.functions.math.SAnd;
-import org.shirolang.functions.math.SDivide;
-import org.shirolang.functions.math.SEqual;
-import org.shirolang.functions.math.SGreaterThan;
-import org.shirolang.functions.math.SGreaterThanOrEqual;
-import org.shirolang.functions.math.SLessThan;
-import org.shirolang.functions.math.SLessThanOrEqual;
-import org.shirolang.functions.math.SModulo;
-import org.shirolang.functions.math.SMultiply;
-import org.shirolang.functions.math.SNegative;
-import org.shirolang.functions.math.SNot;
-import org.shirolang.functions.math.SNotEqual;
-import org.shirolang.functions.math.SOr;
-import org.shirolang.functions.math.SSubtract;
-import org.shirolang.values.Path;
-import org.shirolang.values.SBoolean;
-import org.shirolang.values.SDouble;
-import org.shirolang.values.SIdent;
-import org.shirolang.values.SInteger;
-import org.shirolang.values.SString;
+import org.shirolang.base.*;
+import org.shirolang.functions.math.*;
+import org.shirolang.values.*;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Stack;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * An listener to create expressions.
@@ -111,6 +91,7 @@ public class ShiroExpressionListener extends ShiroBaseListener {
             expr = new SInteger(Integer.parseInt(number));
         }
 
+        // store the value on the arg
         setExpr(ctx, expr);
     }
 
@@ -133,34 +114,10 @@ public class ShiroExpressionListener extends ShiroBaseListener {
     
     protected SFunc createPath(Scope currentScope, ShiroParser.PathContext ctx) {
         // Declare a list to store the path's parts
-        List<String> parts = new ArrayList<>();
+        List<PathSegment> segments = new ArrayList<>();
 
-        Path p;
-
-        // Convert the tree nodes into strings and add to list
-        for (Token t : ctx.parts) {
-            parts.add(t.getText());
-        }
-
-        // prepend this, when used
-        if (ctx.THIS() != null) {
-            parts.add(0, "this");
-        }
-
-        if (ctx.pathIndex() != null) {
-            ShiroParser.PathIndexContext pathIndex = ctx.pathIndex();
-
-            if (pathIndex.index.getType() == ShiroParser.NUMBER) {
-                int i = Integer.parseInt(pathIndex.NUMBER().getText());
-                p = new Path(parts, i);
-            } else {
-                String key = pathIndex.STRING_LITERAL().getText().replace("\"", "");
-                p = new Path(parts, key);
-            }
-
-        } else {
-            p = new Path(parts);
-        }
+        Path p = new Path();
+        ctx.segments.stream().map(this::createSegment).forEach(p::addSegment);
 
         if(ctx.REF() != null){
             p.makeReference();
@@ -173,9 +130,49 @@ public class ShiroExpressionListener extends ShiroBaseListener {
         return new SIdent(currentScope, p);
     }
 
+    private PathSegment createSegment(ShiroParser.PathSegmentContext ctx){
+        if(ctx.IDENT() != null){
+            return new PathSegment(ctx.IDENT().getText());
+        }
+
+        if(ctx.INPUTS() != null){
+            ShiroParser.PathIndexContext pathIndex = ctx.pathIndex();
+            if(pathIndex.index.getType() == ShiroParser.NUMBER){
+                int i = Integer.parseInt(pathIndex.NUMBER().getText());
+                return new PathSegment(SegmentType.INPUT, i);
+            }else if( pathIndex.index.getType() == ShiroParser.STRING_LITERAL){
+                String key = pathIndex.STRING_LITERAL().getText().replace("\"", "");
+                return new PathSegment(SegmentType.INPUT, key);
+            }
+        }
+
+        if(ctx.OUTPUTS() != null){
+            ShiroParser.PathIndexContext pathIndex = ctx.pathIndex();
+            if(pathIndex.index.getType() == ShiroParser.NUMBER){
+                int i = Integer.parseInt(pathIndex.NUMBER().getText());
+                return new PathSegment(SegmentType.OUTPUT, i);
+            }else if( pathIndex.index.getType() == ShiroParser.STRING_LITERAL){
+                String key = pathIndex.STRING_LITERAL().getText().replace("\"", "");
+                return new PathSegment(SegmentType.OUTPUT, key);
+            }
+        }
+
+        return null; // should never reach here.
+    }
+
     @Override
     public void enterPath(@NotNull ShiroParser.PathContext ctx) {
         setExpr(ctx, createPath(scope.peek(), ctx));
+    }
+
+    @Override
+    public void enterFullyQualifiedType(ShiroParser.FullyQualifiedTypeContext ctx) {
+        setExpr(ctx, createFullyQualifiedType(ctx));
+    }
+
+    private SFunc createFullyQualifiedType(ShiroParser.FullyQualifiedTypeContext ctx) {
+        String type = String.join(".", ctx.types.stream().map(Token::getText).collect(toList()));
+        return new SReference(type);
     }
 
     @Override
@@ -303,9 +300,8 @@ public class ShiroExpressionListener extends ShiroBaseListener {
     @Override
     public void exitPortDeclInit(@NotNull ShiroParser.PortDeclInitContext ctx) {
         String portName = ctx.portName().IDENT().getText();
-        String portType = ctx.portType().getText();
+        String portType = Objects.isNull(ctx.portType())? "" : ctx.portType().getText();
         String mfName = ctx.mfCall().mfName().getText();
-        List<ShiroParser.ExprContext> args = ctx.mfCall().mfparams().expr();
         
         // get the type name
         SFunc function = library.createFunction(mfName);
@@ -315,19 +311,26 @@ public class ShiroExpressionListener extends ShiroBaseListener {
         }
         function.setSymbolType(SymbolType.PORT);
 
-        SFunc arg0 = getExpr(args.get(0));
-        if(args.size() == 1 && arg0.getType().equals(function.getType())){
-            function = arg0;
-            function.setName(portName);
-        }else{
-            setArgs(function, args);
-            function.setName(portName);
-        }
+        ShiroParser.ArgumentsContext arguments = ctx.mfCall().arguments();
+        function = setArguments(function, arguments);
+
+        function.setAccess(determineAccess(portType));
+        function.setName(portName);
 
         setExpr(ctx, function);
     }
 
-    protected void setArgs(SFunc function, List<ShiroParser.ExprContext> args){
+    protected SFunc setArguments(SFunc function, ShiroParser.ArgumentsContext arguments) {
+        SFunc withArgs = null;
+        if(Objects.nonNull(arguments.argMap())){
+            withArgs = setArgsFromMap(function, arguments.argMap());
+        }else if(Objects.nonNull(arguments.argList())){
+            withArgs = setArgsFromList(function, arguments.argList());
+        }
+        return withArgs;
+    }
+
+    protected SFunc setArgList(SFunc function, List<ParseTree> args){
         // check to see if the right number of exprs came back
         if (args.size() < function.getMinArgs()) {
             throw new RuntimeException(function.getFullName() + ":" + function.getType() + " expected at least " + function.getMinArgs()
@@ -339,17 +342,76 @@ public class ShiroExpressionListener extends ShiroBaseListener {
                     + " arguments to be provided.");
         }
 
-        // append the args to the function
+        // append the inputs to the function
         for (int i = 0; i < args.size(); i++) {
             SFunc exp = getExpr(args.get(i));
-            function.setArg(i, exp);
+            function.setInput(i, exp);
         }
+
+        return function;
+    }
+
+
+    protected SFunc setArgsFromList(SFunc function, ShiroParser.ArgListContext ctx){
+        List<ParseTree> args = ctx.arg().stream().map(argContext -> argContext.getChild(0)).collect(toList());
+
+        SFunc arg0 = getExpr(args.get(0));
+        if(args.size() == 1 && arg0.getType().equals(function.getType())){
+            return arg0;
+        }else{
+            return setArgList(function, args);
+        }
+    }
+
+    protected SFunc setArgsFromMap(SFunc function, ShiroParser.ArgMapContext ctx){
+        List<Token> keys = ctx.keys;
+        List<ParseTree> values = ctx.values.stream().map(argContext -> argContext.getChild(0)).collect(toList());
+
+        for(int i = 0; i < keys.size(); i++){
+            function.setInput(keys.get(i).getText(), getExpr(values.get(i)));
+        }
+        return function;
+    }
+
+    protected SNode instantiateNode(String fullyQualfiedType, ShiroParser.ArgumentsContext assignment, String nodeName, SGraph g) {
+        SNode producedNode = (SNode) library.instantiateNode(g, fullyQualfiedType, nodeName);
+
+        if(assignment != null){
+            if( assignment.argMap() != null ){
+                List<Token> keys = assignment.argMap().keys;
+                List<ParseTree> values = assignment.argMap().values.stream()
+                        .map(argContext -> argContext.getChild(0))
+                        .collect(toList());
+
+                for(int i = 0; i < keys.size(); i++){
+                    SFunc port = producedNode.getPort(keys.get(i).getText());
+
+                    if(port == null){
+                        throw new RuntimeException(keys.get(i).getText() + " cannot be found in " + producedNode.getFullName());
+                    }
+
+                    port.setInput(0, getExpr(values.get(i)));
+                }
+            }
+
+            if(assignment.argList() != null ){
+                List<ParseTree> exprs = assignment.argList().arg().stream()
+                        .map(argContext -> argContext.getChild(0))
+                        .collect(toList());
+
+                for (int i = 0; i < exprs.size(); i++) {
+                    SFunc port = producedNode.getPort(i);
+                    port.setInput(0, getExpr(exprs.get(i)));
+                }
+            }
+        }
+        return producedNode;
     }
 
     @Override
     public void exitPortDecl(@NotNull ShiroParser.PortDeclContext ctx) {
         String portName = ctx.portName().IDENT().getText();
-        String portType = ctx.portType().getText();
+        String portType = Objects.isNull(ctx.portType())? "" : ctx.portType().getText();
         String mfName = ctx.MFNAME().getText();
 
         // get the type name
@@ -361,6 +423,18 @@ public class ShiroExpressionListener extends ShiroBaseListener {
 
         function.setName(portName);
         function.setSymbolType(SymbolType.PORT);
+        function.setAccess(determineAccess(portType));
         setExpr(ctx, function);
+    }
+
+    private Access determineAccess(String access){
+        switch(access){
+            case "input":
+                return Access.READWRITE;
+            case "output":
+                return Access.READ;
+            default:
+                return Access.INTERNAL;
+        }
     }
 }

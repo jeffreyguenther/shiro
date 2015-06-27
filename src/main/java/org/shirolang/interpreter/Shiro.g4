@@ -35,7 +35,7 @@ stateLine
     ;
 
 stateGraphSelection
-    :   'Graph' IDENT
+    :   GRAPH IDENT
     ;
 
 stateActivation
@@ -43,7 +43,7 @@ stateActivation
     ;
 
 graphDecl
-	:	'graph' IDENT BEGIN NEWLINE
+	:	GRAPH IDENT BEGIN NEWLINE
 		graphLine+
 		END
 	;
@@ -59,20 +59,25 @@ nodestmt
     ;
 
 nodeProduction
-	:	path (PROD_OP activation)+ NEWLINE
+	:	fullyQualifiedType (PROD_OP activation)+ NEWLINE
 	;
 
 activation
-	:	nodeName=IDENT ( LSQUARE activeObject=IDENT RSQUARE )? ('(' nodeAssignment ')')?
+	:	nodeName=IDENT ( LSQUARE activeObject=IDENT RSQUARE )? ('(' arguments ')')?
 	;
 
-nodeAssignment
-    :   argMap | mfparams
+arguments
+    :   argMap | argList
     ;
 
 argMap
-    :   (keys+=IDENT ':' values+=expr)(',' keys+=IDENT ':' values+=expr)*
+    :   (keys+=IDENT ':' values+=arg)(',' keys+=IDENT ':' values+=arg)*
     ;
+
+argList:	arg(',' arg)*
+    	;
+
+arg: (expr | fullyQualifiedType);
 
 activeSelector
 	:	IDENT
@@ -90,11 +95,11 @@ optionalNodeProduction
     ;
 
 portDecl
-	:	OPTION? portType portName MFNAME
+	:	OPTION? portType? portName MFNAME
 	;
 	
 portDeclInit
-	:	OPTION? portType portName mfCall
+	:	OPTION? portType? portName mfCall
 	;
 
 portstmt	
@@ -106,38 +111,29 @@ portName
 	;
 	
 portType
-    :       PORT
-	    |   INPUT
+    :       INPUT
 	    |   OUTPUT
         |   EVAL
 	;
 	
-mfCall	:	mfName '(' mfparams ')'
+mfCall	:	mfName '(' arguments ')'
 	;
 	
 mfName 	:	MFNAME
 	;
 
-mfparams:	expr(',' expr)* 
-	;
+fullyQualifiedType
+    :   types+=MFNAME ('.' types+=MFNAME)*
+    ;
 
-path 	:	(parts+=IDENT | parts+=MFNAME | THIS)('.' (parts+=MFNAME | parts+=IDENT))* (LSQUARE pathIndex RSQUARE)?
-        |   REF IDENT('.' IDENT)*
-        |   SELECT IDENT('.' IDENT)*
-	;
-
-newpath
-    :       (REF| SELECT)? pathSegment ('.' pathSegment accessor*)*
+path
+    :       (REF| SELECT)? segments+=pathSegment ('.' segments+=pathSegment)*
     ;
 
 pathSegment
         :       IDENT
-        |       ('inputs'|'outputs') outputAccessor=accessor
+        |       (INPUTS| OUTPUTS) LSQUARE pathIndex RSQUARE
         ;
-
-accessor
-    : LSQUARE pathIndex RSQUARE
-    ;
 
 pathIndex
 	    :	index=(NUMBER
@@ -145,7 +141,7 @@ pathIndex
 	;
 
 portAssignment
-    :	path '(' mfparams ')' NEWLINE
+    :	path '(' arguments ')' NEWLINE
     ;
 
 anonExpr
@@ -172,7 +168,6 @@ expr :  '(' expr ')'						  #parensExpr
 	 |	NUMBER 								  #numExpr
 	 |  BOOLEAN_LITERAL						  #boolExpr
 	 |  STRING_LITERAL                        #stringExpr
-	 |  MFNAME                                #mfExpr
 	 ;
 
 INCLUDE: 'include';
@@ -208,18 +203,15 @@ PROD_OP : '->';
 BEGIN: 'begin';
 END: 'end';
 NODE: 'node';
+INPUTS: 'inputs';
+OUTPUTS: 'outputs';
+GRAPH: 'graph';
 
 OPTION : 'option';
 
 BOOLEAN_LITERAL
     : 'true' | 'false'
     ;
-
-/*
-FILENAME
-      : '"' ~[\\/ ]+ '"'
-      ;
- */
 
 STRING_LITERAL : '"' (~'"'|'\\"')* '"'  ;
 

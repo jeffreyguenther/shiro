@@ -24,23 +24,52 @@
 
 package org.shirolang.values;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.shirolang.base.*;
+import org.shirolang.exceptions.PathNotFoundException;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
- * Test all Shiro constant values
- * @author jeffreyguenther
+ * Defines a literal reference
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
-    BooleanTest.class,
-    DoubleTest.class,
-    IdentTest.class,
-    IntegerTest.class,
-    PathSegmentTest.class,
-    StringTest.class,
-    PathTest.class
-})
-public class ValuesSuite {
-    
+public class SReference extends SValue<String>{
+
+    public SReference(){
+        this("");
+    }
+
+    public SReference(String type){
+        super(type);
+    }
+
+    public String getFullyqualifiedType() {
+        return getValue();
+    }
+
+    @Override
+    public String getType() {
+        return SType.REFERENCE;
+
+    }
+
+    @Override
+    public int getMaxArgs() {
+        return 0;
+    }
+
+    @Override
+    public int getMinArgs() {
+        return 0;
+    }
+
+    @Override
+    public SymbolType getSymbolType(){
+        return SymbolType.LITERAL;
+    }
+
+    @Override
+    public String toConsole(){
+        return toString();
+    }
 }
