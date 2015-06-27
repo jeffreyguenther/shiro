@@ -1,11 +1,11 @@
 node Invest begin
 	input rate Double(0.10)
-	input principle Double(5000)
+	input principle Double(5000.0)
 	input duration Double
 	eval update SimpleInterest(rate, principle, duration)
-	output interest Double (update[0])
-	output value Double (update[1])
+	output interest Double (update.outputs[0])
+	output value Double (update.outputs[1])
 end
 
 port aList Array(1, 2, 3, 4)
-port result Map(aList, ~Invest, @interest)
+port result Map(aList, Invest, @interest)

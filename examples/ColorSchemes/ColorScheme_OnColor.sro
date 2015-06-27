@@ -1,34 +1,34 @@
 include "geom"
 
 node Value1 begin
-    port r ColorFromRGB(22, 0, 0, 1.0)
+    r ColorFromRGB(22, 0, 0, 1.0)
 	option output red Color(r)
 
-	port g ColorFromRGB(0, 22, 0, 1.0)
+	g ColorFromRGB(0, 22, 0, 1.0)
 	option output green Color(g)
 end
 
 node Value2 begin
-    port r ColorFromRGB(100, 0, 0, 1.0)
+    r ColorFromRGB(100, 0, 0, 1.0)
 	option output red Color(r)
 
-	port g ColorFromRGB(0, 100, 0, 1.0)
+	g ColorFromRGB(0, 100, 0, 1.0)
 	option output green Color(g)
 end
 
 node Value3 begin
-    port r ColorFromRGB(150, 0, 0, 1.0)
+    r ColorFromRGB(150, 0, 0, 1.0)
 	option output red Color(r)
 
-	port g ColorFromRGB(0, 150, 0, 1.0)
+	g ColorFromRGB(0, 150, 0, 1.0)
 	option output green Color(g)
 end
 
 node Value4 begin
-    port r ColorFromRGB(200, 0, 0, 1.0)
+    r ColorFromRGB(200, 0, 0, 1.0)
 	option output red Color(r)
 
-	port g ColorFromRGB(0, 200, 0, 1.0)
+	g ColorFromRGB(0, 200, 0, 1.0)
 	option output green Color(g)
 end
 
@@ -39,7 +39,7 @@ node BlackAndWhite begin
 end
 
 node Palette begin
-    port stroke ColorFromRGB(0, 0, 0, 1.0)
+    stroke ColorFromRGB(0, 0, 0, 1.0)
 
 	input sideLength Double(50.0)
 	input x Double
@@ -126,7 +126,7 @@ graph colors begin
 end
 
 state redPalette begin
-	Graph colors
+	graph colors
 	value1[red]
 	value2[red]
 	value3[red]
@@ -134,7 +134,7 @@ state redPalette begin
 end
 
 state greenPalette begin
-	Graph colors
+	graph colors
 	value1[green]
 	value2[green]
 	value3[green]

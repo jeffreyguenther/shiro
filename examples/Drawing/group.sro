@@ -1,8 +1,8 @@
 include "geom"
 
-port stroke ColorFromRGB(0, 0, 0, 1.0)
-port fill ColorFromRGB(255, 255, 255, 1.0)
-port c_fill ColorFromRGB(0, 0, 125, 1.0)
+stroke ColorFromRGB(0, 0, 0, 1.0)
+fill ColorFromRGB(255, 255, 255, 1.0)
+c_fill ColorFromRGB(0, 0, 125, 1.0)
 
 Rectangle -> r
 r.originX(0.0)
@@ -14,7 +14,7 @@ r.fill(fill)
 
 
 Ellipse -> c
-c.centerX(100.0)
+c.centerX(100.0)`
 c.centerY(100.0)
 c.radiusX(50.0)
 c.radiusY(50.0)

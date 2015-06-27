@@ -1,4 +1,4 @@
-port aList Array(1, 2, 3, 4)
+aList Array(1, 2, 3, 4)
 
 node DayOfWeek begin
 	input day Integer

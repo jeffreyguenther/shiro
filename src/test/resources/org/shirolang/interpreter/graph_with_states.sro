@@ -19,11 +19,11 @@ graph money begin
 end
 
 state lowRate begin
-	Graph money
+	graph money
 	i[low]
 end
 
 state highRate begin
-	Graph money
+	graph money
 	i[high]
 end

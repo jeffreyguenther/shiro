@@ -42,5 +42,5 @@ graph poverty begin
 end
 
 state povertyAnalysis begin
-	Graph poverty
+	graph poverty
 end

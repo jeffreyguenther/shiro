@@ -56,11 +56,11 @@ graph patterns begin
     Petal5 -> petal5
     Petal6 -> petal6
 
-    port stroke ColorFromRGB(0, 0, 255, 1.0)
-    port arcStroke ColorFromRGB(0, 0, 0, 1.0)
-    port arcStrokeWeight Double(4.0)
-    port fill ColorFromRGB(0, 0, 0, 0.0)
-    port arcType String("open")
+    stroke ColorFromRGB(0, 0, 255, 1.0)
+    arcStroke ColorFromRGB(0, 0, 0, 1.0)
+    arcStrokeWeight Double(4.0)
+    fill ColorFromRGB(0, 0, 0, 0.0)
+    arcType String("open")
 
     // define center of flower
     // draw outline
@@ -194,7 +194,7 @@ graph patterns begin
 end
 
 state outlinePetal begin
-    Graph patterns
+    graph patterns
     petal1[outer]
     petal2[outer]
     petal3[outer]
@@ -204,7 +204,7 @@ state outlinePetal begin
 end
 
 state littleCenter begin
-    Graph patterns
+    graph patterns
     petal1[inner]
     petal2[inner]
     petal3[inner]
@@ -214,7 +214,7 @@ state littleCenter begin
 end
 
 state bigCenter begin
-    Graph patterns
+    graph patterns
     petal1[bigger]
     petal2[bigger]
     petal3[bigger]
@@ -225,7 +225,7 @@ end
 
 
 state bowtie begin
-    Graph patterns
+    graph patterns
     petal1[bowtie]
     petal2[bowtie]
     petal3[bowtie]

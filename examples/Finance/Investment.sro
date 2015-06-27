@@ -44,14 +44,14 @@ graph earnMoney begin
 end
 
 state productA begin
-	Graph earnMoney
+	graph earnMoney
 	retirement[simple]
 	time[threeYear]
 	rate[productA]
 end
 
 state productB begin
-	Graph earnMoney
+	graph earnMoney
 	retirement[monthly]
 	time[threeYear]
 	rate[productB]

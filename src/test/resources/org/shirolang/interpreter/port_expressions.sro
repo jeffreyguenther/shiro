@@ -1,3 +1,3 @@
-port a Number(4)
-port b Number(23)
-port result Subtract(a, b)
+a Double(4.0)
+b Double(23.0)
+result Subtract(a, b)

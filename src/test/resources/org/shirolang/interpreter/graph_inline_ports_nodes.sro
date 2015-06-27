@@ -7,7 +7,7 @@ node Box begin
      output name String("Box")
 end
 
-port length Double(100)
+length Double(100)
 
 Box -> b
 b.length(length)

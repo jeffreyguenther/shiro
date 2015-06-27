@@ -13,11 +13,11 @@ graph aSketch begin
 end
 
 state small begin
-	Graph aSketch
+	graph aSketch
 	s[small]
 end
 
 state large begin
-	Graph aSketch
+	graph aSketch
 	s[large]
 end

@@ -20,9 +20,9 @@ graph everGreenLogo begin
 	TypeColors -> typeColors
 	BackgroundColors -> bgColors
 
-	port radius Double(200.0)
-	port lineLength Double(300.0)
-	port lineColor ColorFromRGB(0, 0, 0, 1.0)
+	radius Double(200.0)
+	lineLength Double(300.0)
+	lineColor ColorFromRGB(0, 0, 0, 1.0)
 	
 	Line -> top(startX: radius - (lineLength / 2), startY: radius - 20)
 	top.stroke(lineColor)
@@ -45,7 +45,7 @@ graph everGreenLogo begin
 end
 
 state test begin
-   Graph everGreenLogo
+   graph everGreenLogo
    type[times]
    typeColors[grey]
    bgColors[green]

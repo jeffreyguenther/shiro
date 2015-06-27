@@ -8,7 +8,7 @@ node Box begin
 end
 
 graph box_calc begin
-    port length Double(100.0)
+    length Double(100.0)
 
     Box -> b
     b.length(length)

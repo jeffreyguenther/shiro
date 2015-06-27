@@ -24,11 +24,11 @@ graph costumeSelection begin
 end
 
 state Tux begin
-	Graph costumeSelection
+	graph costumeSelection
 	costumes[tux]
 end
 
 state Bball begin
-	Graph costumeSelection
+	graph costumeSelection
 	costumes[bbal]
 end

@@ -7,7 +7,6 @@ node Box begin
      output name String("Box")
 end
 
-
 graph box_calc begin
     Box -> b
     b.length(100.0)

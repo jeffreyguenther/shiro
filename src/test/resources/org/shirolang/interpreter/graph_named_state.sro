@@ -2,7 +2,7 @@ node Box begin
      input length Double
      input width Double
      input height Double
-     eval update Multiply(length, width)
+     update Multiply(length, width)
      output area Double(update)
      output name String("Box")
 end
@@ -17,5 +17,5 @@ end
 
 
 state s1 begin
-    Graph box_calc
+    graph box_calc
 end

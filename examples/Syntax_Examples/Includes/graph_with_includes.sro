@@ -6,5 +6,5 @@ graph useThose begin
 
 	B -> b(2.2)
 
-	port sum Add(a.value, b.value)
+	sum Add(a.value, b.value)
 end

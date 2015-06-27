@@ -18,8 +18,8 @@ node CompoundInterest begin
    input time Double
    input noOfCompounds Double
 
-   port compoundInterest Add(1, rate / noOfCompounds)
-   port iFactor Power(compoundInterest, time * noOfCompounds)
+   compoundInterest Add(1, rate / noOfCompounds)
+   iFactor Power(compoundInterest, time * noOfCompounds)
 
    output interest Double(principal - (principal * iFactor))
    output accrued Double(principal * iFactor)

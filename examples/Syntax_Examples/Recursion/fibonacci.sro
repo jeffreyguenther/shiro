@@ -22,8 +22,8 @@ node Fibonacci begin
 		1: value to return if true
 		2: value to return if false
 	*/
-	port zeroFilter ConditionalReturn(n == 0, 0, 0)
-	port oneFilter ConditionalReturn(n == 1, 1, 0)
+	zeroFilter ConditionalReturn(n == 0, 0, 0)
+	oneFilter ConditionalReturn(n == 1, 1, 0)
 	// pass a node reference, in this case a prototype, into the node for conditional execution
 	// n is passed as the first arg to the prototype
 	port fibFilter ConditionalReturnNode(n > 1, n, Fibonnacci, 0)
@@ -37,7 +37,7 @@ node Fibonacci begin
 		for a syntactical shorthand for specifying single values as anonymous nodes that way only one ConditionalReturn multi-function is required.
 	*/
 end
-h
+
 graph Fib5 begin
 	Fibonacci -> fib(n: 5)
 	fib.sum // outputs 12

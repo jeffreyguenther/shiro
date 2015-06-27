@@ -4,4 +4,4 @@ include "b_include.sro"
 A -> a(1.0)
 B -> b(2.2)
 
-port sum Add(a.value, b.value)
+sum Add(a.value, b.value)

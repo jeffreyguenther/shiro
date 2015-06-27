@@ -23,10 +23,10 @@ end
 
 
 state s1 begin
-    Graph box_calc
+    graph box_calc
 end
 
 state s2 begin
-    Graph box_calc
+    graph box_calc
     l[long]
 end

@@ -19,22 +19,22 @@ public class SMap extends SBinaryFunction{
     
     public SMap(SFunc list, SFunc func){
         // TODO fix me
-//        args.add(list);
-//        args.add(func);
+//        inputs.add(list);
+//        inputs.add(func);
     }
 
     @Override
     public void evaluate() {
-        SList list = (SList) getArg(0);
-        SFunc func = getArg(1);
+        SList list = (SList) getInput(0);
+        SFunc func = getInput(1);
         
         List<SFunc> rs = new ArrayList<>();
         List<SFunc> rawValues = list.getValue();
         for(SFunc v: rawValues){
-            func.setArg(1, v);
+            func.setInput(1, v);
             func.evaluate();
             
-            SFunc r = func.getArg();
+            SFunc r = func.getInput();
             rs.add(r);
         }
 

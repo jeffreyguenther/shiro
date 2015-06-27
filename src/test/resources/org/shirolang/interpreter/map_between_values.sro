@@ -1,8 +1,8 @@
-node 10x begin
+node TenX begin
 	input value Number
 	eval update Number(value * 10)
 	output newValue Number(update)
 end
 
-port aList Array(1, 2, 3, 4)
-port result Map(aList, 10x) // get reference to 10x prototype
+aList Array(1, 2, 3, 4)
+result Map(aList, TenX)
