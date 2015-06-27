@@ -140,21 +140,6 @@ public class NodeInstantiator extends ShiroExpressionListener {
             node.addOption(getExpr(ctx));
         }
     }
-    
-//    /**
-//     * Determine a port's type based on its declaration
-//     * @param type type of port
-//     * @param p port to add
-//     */
-//    private void setPortType(String type, Port p){
-//        if (type.equals("eval")) {
-//            p.setPortType(PortType.Evaluated);
-//        }else if(type.equals("input")){
-//            p.setPortType(PortType.Input);
-//        }else if (type.equals("output")){
-//            p.setPortType(PortType.Output);
-//        }
-//    }
 
     @Override
     public void exitPortDecl(ShiroParser.PortDeclContext ctx) {

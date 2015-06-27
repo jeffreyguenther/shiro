@@ -86,8 +86,6 @@ public class GraphBuilder extends ShiroExpressionListener {
         }
     }
 
-
-
     @Override
     public void exitPortAssignment(@NotNull ShiroParser.PortAssignmentContext ctx) {
         if(pass == SECOND_PASS) {
@@ -98,7 +96,11 @@ public class GraphBuilder extends ShiroExpressionListener {
 
                 SFunc function = scope.peek().resolvePath(path);
                 function.setSymbolType(SymbolType.PORT);
-                function = assignArguments(function, ctx.arguments());
+                if(function.getAccess().isReadWrite()){
+                    function = assignArguments(function, ctx.arguments());
+                }else{
+                    throw new RuntimeException(path + " is " + function.getAccess() + ". It's inputs cannot be set.");
+                }
 
             } catch (PathNotFoundException pnfe) {
                 System.out.println(pnfe.getMessage());

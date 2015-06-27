@@ -32,7 +32,6 @@ import org.shirolang.base.*;
 import org.shirolang.functions.math.*;
 import org.shirolang.values.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Stack;
@@ -306,7 +305,6 @@ public class ShiroExpressionListener extends ShiroBaseListener {
             throw new RuntimeException("A multifunction by the name " + mfName
                     + "does not exist.");
         }
-
         function.setName(portName);
         function.setSymbolType(SymbolType.PORT);
         function.setAccess(determineAccess(portType));
@@ -326,12 +324,11 @@ public class ShiroExpressionListener extends ShiroBaseListener {
             + "does not exist.");
         }
         function.setSymbolType(SymbolType.PORT);
+        function.setAccess(determineAccess(portType));
+        function.setName(portName);
 
         ShiroParser.ArgumentsContext arguments = ctx.mfCall().arguments();
         function = setArgumentsInDecl(function, arguments);
-
-        function.setAccess(determineAccess(portType));
-        function.setName(portName);
 
         setExpr(ctx, function);
     }
@@ -350,7 +347,7 @@ public class ShiroExpressionListener extends ShiroBaseListener {
         SFunc withArgs = null;
         if(Objects.nonNull(arguments.argMap())){
             withArgs = setArgsFromMap(function, arguments.argMap());
-        }else if(Objects.nonNull(arguments.argList())){
+        }else if(Objects.nonNull(arguments.argList())) {
             withArgs = assignArgsFromList(function, arguments.argList());
         }
         return withArgs;
