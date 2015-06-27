@@ -174,7 +174,7 @@ public class ShiroRuntime{
         }else if (!library.hasUserDefinedStates()){ // has a graph (includes default), but no states
             // generate the states to evaluate the graphs
             Set<SState> sStates = generateAllStates(library.getGraphs());
-            sStates.stream().forEach(s -> library.addState(s));
+            sStates.stream().forEach(library::addState);
         }
 
         for(SState state: library.getStates().values()){
@@ -217,7 +217,7 @@ public class ShiroRuntime{
 
                         // Render each of the children
                         SList args = (SList) group.getInput("children").getResult();
-                        List<SFunc> shapes = args.getValue().stream().map((id) -> id.getResult()).collect(toList());
+                        List<SFunc> shapes = args.getValue().stream().map(SFunc::getResult).collect(toList());
                         shapes.forEach((s) ->{
                             Callback<SFunc, Node> callback = visualCallBacks.get(s.getType());
                             groupViz.getChildren().add(visualized.computeIfAbsent(s, callback::call));

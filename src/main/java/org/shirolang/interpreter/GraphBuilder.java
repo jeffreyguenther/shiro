@@ -23,9 +23,7 @@
 
 package org.shirolang.interpreter;
 
-import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.misc.NotNull;
-import org.antlr.v4.runtime.tree.ParseTree;
 import org.shirolang.base.SFunc;
 import org.shirolang.base.SGraph;
 import org.shirolang.base.SNode;
@@ -35,10 +33,6 @@ import org.shirolang.exceptions.PathNotFoundException;
 import org.shirolang.values.Path;
 import org.shirolang.values.SIdent;
 import org.shirolang.values.SReference;
-
-import java.util.List;
-
-import static java.util.stream.Collectors.toList;
 
 /**
  * An ANTLR expression listener used to build Graph instances.
@@ -104,7 +98,7 @@ public class GraphBuilder extends ShiroExpressionListener {
 
                 SFunc function = scope.peek().resolvePath(path);
                 function.setSymbolType(SymbolType.PORT);
-                setArguments(function, ctx.arguments());
+                function = assignArguments(function, ctx.arguments());
 
             } catch (PathNotFoundException pnfe) {
                 System.out.println(pnfe.getMessage());

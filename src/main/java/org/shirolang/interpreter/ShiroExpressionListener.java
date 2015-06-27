@@ -298,6 +298,25 @@ public class ShiroExpressionListener extends ShiroBaseListener {
     }
 
     @Override
+    public void exitPortDecl(@NotNull ShiroParser.PortDeclContext ctx) {
+        String portName = ctx.portName().IDENT().getText();
+        String portType = Objects.isNull(ctx.portType())? "" : ctx.portType().getText();
+        String mfName = ctx.MFNAME().getText();
+
+        // get the type name
+        SFunc function = library.createFunction(mfName);
+        if(function == null){
+            throw new RuntimeException("A multifunction by the name " + mfName
+                    + "does not exist.");
+        }
+
+        function.setName(portName);
+        function.setSymbolType(SymbolType.PORT);
+        function.setAccess(determineAccess(portType));
+        setExpr(ctx, function);
+    }
+
+    @Override
     public void exitPortDeclInit(@NotNull ShiroParser.PortDeclInitContext ctx) {
         String portName = ctx.portName().IDENT().getText();
         String portType = Objects.isNull(ctx.portType())? "" : ctx.portType().getText();
@@ -312,7 +331,7 @@ public class ShiroExpressionListener extends ShiroBaseListener {
         function.setSymbolType(SymbolType.PORT);
 
         ShiroParser.ArgumentsContext arguments = ctx.mfCall().arguments();
-        function = setArguments(function, arguments);
+        function = setArgumentsInDecl(function, arguments);
 
         function.setAccess(determineAccess(portType));
         function.setName(portName);
@@ -320,12 +339,22 @@ public class ShiroExpressionListener extends ShiroBaseListener {
         setExpr(ctx, function);
     }
 
-    protected SFunc setArguments(SFunc function, ShiroParser.ArgumentsContext arguments) {
+    protected SFunc setArgumentsInDecl(SFunc function, ShiroParser.ArgumentsContext arguments) {
         SFunc withArgs = null;
         if(Objects.nonNull(arguments.argMap())){
             withArgs = setArgsFromMap(function, arguments.argMap());
         }else if(Objects.nonNull(arguments.argList())){
             withArgs = setArgsFromList(function, arguments.argList());
+        }
+        return withArgs;
+    }
+
+    protected SFunc assignArguments(SFunc function, ShiroParser.ArgumentsContext arguments) {
+        SFunc withArgs = null;
+        if(Objects.nonNull(arguments.argMap())){
+            withArgs = setArgsFromMap(function, arguments.argMap());
+        }else if(Objects.nonNull(arguments.argList())){
+            withArgs = assignArgsFromList(function, arguments.argList());
         }
         return withArgs;
     }
@@ -361,6 +390,11 @@ public class ShiroExpressionListener extends ShiroBaseListener {
         }else{
             return setArgList(function, args);
         }
+    }
+
+    protected SFunc assignArgsFromList(SFunc function, ShiroParser.ArgListContext ctx){
+        List<ParseTree> args = ctx.arg().stream().map(argContext -> argContext.getChild(0)).collect(toList());
+        return setArgList(function, args);
     }
 
     protected SFunc setArgsFromMap(SFunc function, ShiroParser.ArgMapContext ctx){
@@ -406,25 +440,6 @@ public class ShiroExpressionListener extends ShiroBaseListener {
             }
         }
         return producedNode;
-    }
-
-    @Override
-    public void exitPortDecl(@NotNull ShiroParser.PortDeclContext ctx) {
-        String portName = ctx.portName().IDENT().getText();
-        String portType = Objects.isNull(ctx.portType())? "" : ctx.portType().getText();
-        String mfName = ctx.MFNAME().getText();
-
-        // get the type name
-        SFunc function = library.createFunction(mfName);
-        if(function == null){
-            throw new RuntimeException("A multifunction by the name " + mfName
-                    + "does not exist.");
-        }
-
-        function.setName(portName);
-        function.setSymbolType(SymbolType.PORT);
-        function.setAccess(determineAccess(portType));
-        setExpr(ctx, function);
     }
 
     private Access determineAccess(String access){
