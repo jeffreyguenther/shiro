@@ -267,7 +267,7 @@ public class Path {
 
     /**
      * Gets a string representation of the path
-     * @return (<list of path strings>)
+     * @return (list of path strings)
      */
     @Override
     public String toString() {

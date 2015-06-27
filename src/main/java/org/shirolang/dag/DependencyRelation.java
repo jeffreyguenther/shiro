@@ -2,7 +2,7 @@ package org.shirolang.dag;
 
 /**
  * A basic pair describing a dependency relation. Follows the basic pattern of
- * A -> B, or A depends on B
+ * <code>A -&gt; B, or A depends on B</code>
  * @param <T> type of object used in the dependency relation
  * @author jeffreyguenther
  */
