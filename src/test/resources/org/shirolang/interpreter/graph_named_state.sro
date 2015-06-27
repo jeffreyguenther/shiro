@@ -2,7 +2,7 @@ node Box begin
      input length Double
      input width Double
      input height Double
-     update Multiply(length, width)
+     eval update Multiply(length, width)
      output area Double(update)
      output name String("Box")
 end

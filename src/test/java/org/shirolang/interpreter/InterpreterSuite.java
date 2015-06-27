@@ -39,7 +39,6 @@ import org.shirolang.base.*;
     LibraryTest.class,
     NameManagerTest.class,
     NodeInstantiatorTest.class,
-    ShiroRuntimeTest.class,
     StateBuilderTest.class
 })
 public class InterpreterSuite {

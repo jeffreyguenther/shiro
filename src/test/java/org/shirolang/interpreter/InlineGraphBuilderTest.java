@@ -68,7 +68,7 @@ public class InlineGraphBuilderTest extends ShiroBaseTest{
                 "     output name String(\"Box\")\n" +
                 "end\n" +
                 "\n" +
-                "port length Double(100)\n" +
+                "length Double(100)\n" +
                 "\n" +
                 "Box -> b\n" +
                 "b.length(length)\n" +
@@ -107,7 +107,7 @@ public class InlineGraphBuilderTest extends ShiroBaseTest{
                 "     output name String(\"Box\")\n" +
                 "end\n" +
                 "\n" +
-                "port length Double(100)\n" +
+                "length Double(100)\n" +
                 "\n" +
                 "Box -> b\n" +
                 "b.length(length)\n" +
@@ -173,6 +173,5 @@ public class InlineGraphBuilderTest extends ShiroBaseTest{
         Assert.assertNotNull(c);
 
         g.evaluate();
-        System.out.println(g.toConsole());
     }
 }
