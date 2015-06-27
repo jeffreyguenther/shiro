@@ -67,7 +67,7 @@ public class LibraryTest{
     @Test
     public void registerMFuncByName() throws NameUsedException {
         String name = "myfunction";
-        l.registerFunction(name, () -> new SAdd());
+        l.registerFunction(name, SAdd::new);
         SFunc function = l.createFunction(name);
         assertEquals("Add", function.getType());
     }
@@ -76,35 +76,6 @@ public class LibraryTest{
     public void isNameUsed(){
         Assert.assertTrue(l.isTypeNameUsed("Add"));
         Assert.assertFalse(l.isTypeNameUsed("Adder"));
-    }
-
-    @Test
-    public void getTypeNames(){
-        Set<String> types = new HashSet<>();
-        types.add(SType.ADD);
-        types.add(SType.BOOLEAN);
-        types.add(SType.DOUBLE);
-        types.add(SType.IDENT);
-        types.add(SType.INTEGER);
-        types.add(SType.STRING);
-        types.add(SType.ADD);
-        types.add(SType.AND);
-        types.add(SType.DIVIDE);
-        types.add(SType.EQUAL);
-        types.add(SType.GREATERTHAN);
-        types.add(SType.GREATERTHAN_OR_EQUAL);
-        types.add(SType.LESSTHAN);
-        types.add(SType.LESSTHAN_OR_EQUAL);
-        types.add(SType.MODULO);
-        types.add(SType.MULTIPLY);
-        types.add(SType.NEGATIVE);
-        types.add(SType.NOT);
-        types.add(SType.NOT_EQUAL);
-        types.add(SType.OR);
-        types.add(SType.POWER);
-        types.add(SType.SUBTRACT);
-
-        Assert.assertEquals(types, l.getTypeNames());
     }
 
     @Test

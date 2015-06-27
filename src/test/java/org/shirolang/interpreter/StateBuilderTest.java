@@ -56,16 +56,4 @@ public class StateBuilderTest extends ShiroBaseTest{
         Assert.assertEquals("box_calc", state.getGraph());
         Assert.assertTrue(state.getSubjunctTable().isEmpty());
     }
-
-    @Test
-    public void instantiateAlternativeWithSubjuncts() throws IOException {
-        ShiroParser parser = parse("graph_named_state.sro");
-        ParseTree tree = parser.shiro();
-
-        ParseTreeWalker walker = new ParseTreeWalker();
-        DefinitionCollector dc = new DefinitionCollector();
-        walker.walk(dc, tree);
-
-        Assert.fail();
-    }
 }

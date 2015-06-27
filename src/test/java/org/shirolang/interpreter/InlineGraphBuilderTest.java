@@ -91,7 +91,7 @@ public class InlineGraphBuilderTest extends ShiroBaseTest{
         SGraph graph = lib.getDefaultGraph();
         SNode node = graph.getNode("b");
         Assert.assertNotNull(node);
-        Assert.assertEquals(9, node.getPorts().size());
+        Assert.assertEquals(6, node.getPorts().size());
         Assert.assertNotNull(lib.getNodeDefs().get("Box"));
         Assert.assertEquals(1, lib.getNodeDefs().size());
     }
@@ -137,7 +137,7 @@ public class InlineGraphBuilderTest extends ShiroBaseTest{
         Assert.assertEquals(1, lib.getNodeDefs().size());
 
         Assert.assertEquals(1, graph.getNodes().size());
-        Assert.assertEquals(13, graph.getPorts().size());
+        Assert.assertEquals(12, graph.getPorts().size());
     }
 
     @Test
