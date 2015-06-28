@@ -1,4 +1,3 @@
-*.class
 gradle.properties
 
 # Package Files #
@@ -12,8 +11,6 @@ shiro/nbactions*
 nbactions.xml
 nb-configuration.xml
 .gradle/*
-build/*
-
 .nb-gradle*
 scenicView.properties
 /build
