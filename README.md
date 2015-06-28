@@ -43,6 +43,8 @@ run in **Shiro Playground**.
 	* [x] Options - desmonstrates the use of `option`
 	* [ ] Recursion - demonstrates how to do recursion
 	* [x] `arthimetic.sro` demonstrates basic arithmetic
+	* [x] `list.sro` syntax for a literal list
+	* [x] `map.sro` demonstrates how to use the map function to iterate over a list.
 
 
 Development
