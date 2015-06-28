@@ -59,12 +59,6 @@ public class InlineGraphBuilder extends GraphBuilder {
     protected void setExpr(ParseTree node, SFunc expr) {
         super.setExpr(node, expr);
 
-//        if(expr.getName().isEmpty()){
-//            defaultGraph.addAnonymousPort(expr);
-//        }else{
-//            defaultGraph.addPort(expr);
-//        }
-
         lastFuncProcessed = expr;
     }
 

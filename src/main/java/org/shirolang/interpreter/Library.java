@@ -36,6 +36,7 @@ import org.shirolang.functions.color.ColorFromHSB;
 import org.shirolang.functions.color.ColorFromRGB;
 import org.shirolang.functions.color.SColor;
 import org.shirolang.functions.geometry.*;
+import org.shirolang.functions.lists.SMap;
 import org.shirolang.functions.math.*;
 import org.shirolang.values.*;
 
@@ -394,6 +395,7 @@ public class Library {
             registerFunction(SType.POWER, SPower::new);
             registerFunction(SType.SUBTRACT, SSubtract::new);
 
+            registerFunction(SType.MAP, SMap::new);
         } catch (NameUsedException e) {
             throw new RuntimeException("Something crazy happened and an internal type is already defined!");
         }

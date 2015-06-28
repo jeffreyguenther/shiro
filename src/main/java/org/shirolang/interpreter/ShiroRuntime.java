@@ -81,6 +81,10 @@ public class ShiroRuntime{
         nodes = FXCollections.observableHashMap();
     }
 
+    public Library getLibrary() {
+        return library;
+    }
+
     public void mapCallBack(String type, Callback<SFunc, Node> cb ){
         visualCallBacks.put(type, cb);
     }

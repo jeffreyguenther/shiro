@@ -1,0 +1,10 @@
+node DoubleIt begin
+    input v Double
+    output newValue Double (v * 2)
+end
+
+l List(1.0, 2.0, 3.0)
+doubled Map(l, DoubleIt, @v, @newValue)
+
+// DoubleIt -> di
+// doubled Map(l, ~di, @v, @newValue)

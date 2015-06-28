@@ -29,6 +29,7 @@ import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
 import org.shirolang.base.*;
+import org.shirolang.functions.lists.SMap;
 import org.shirolang.functions.math.*;
 import org.shirolang.values.*;
 
@@ -319,9 +320,14 @@ public class ShiroExpressionListener extends ShiroBaseListener {
         
         // get the type name
         SFunc function = library.createFunction(mfName);
+
         if(function == null){
             throw new RuntimeException("A multifunction by the name " + mfName
             + "does not exist.");
+        }
+
+        if(function.getType().equals(SType.MAP)){
+            ((SMap) function).setLibrary(library);
         }
         function.setSymbolType(SymbolType.PORT);
         function.setAccess(determineAccess(portType));

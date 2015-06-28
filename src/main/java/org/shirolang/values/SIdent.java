@@ -90,58 +90,63 @@ public class SIdent extends SFuncBase{
 
     @Override
     public void evaluate() {
-        try {
-            SFunc func = scope.resolvePath(path);
+        SFunc val;
 
-            // return result 0 by default
-            SFunc val = func.getResult();
+        // selector
+        if(path.isSelector()){
+            val = this;
+        }else {
+            try {
+                SFunc func = scope.resolvePath(path);
 
-            // port value
-            if(path.doesReferencePortValue()) {
-                val = func.get(path.getLast());
-                if (val == null) {
-                    throw new RuntimeException("The path tried to access a port value and failed. " + path + " can't be resolved.");
+                // return result 0 by default
+                val = func.getResult();
+
+                // port value
+                if (path.doesReferencePortValue()) {
+                    val = func.get(path.getLast());
+                    if (val == null) {
+                        throw new RuntimeException("The path tried to access a port value and failed. " + path + " can't be resolved.");
+                    }
                 }
+
+                // reference value
+                if (path.isReference()) {
+                    val = func;
+                }
+            } catch (PathNotFoundException e) {
+                throw new RuntimeException(e.getMessage());
             }
+        }
 
-            // selector
-            if(path.isSelector()){
-                val = this;
-            }
+        /**
+         * Because an identifier simply resolves a path to
+         * a particular port, the type of it's return
+         * should be set to the type of the node it finds.
+         */
+        if (!results.isEmpty()) {
+            TypedValue v = results.get(0);
+            v.setAcceptedTypes(val.getType());
+            v.setValue(val);
 
-            // reference value
-            if(path.isReference()){
-                val = func;
-            }
+            results.set(v, 0);
+        } else {
+            TypedValue v = new TypedValue(val.getType(), val);
 
-            /**
-             * Because an identifier simply resolves a path to
-             * a particular port, the type of it's return
-             * should be set to the type of the node it finds.
-             */
-            if(!results.isEmpty()){
-                TypedValue v = results.get(0);
-                v.setAcceptedTypes(val.getType());
-                v.setValue(val);
-
-                results.set(v, 0);
-            }else {
-                TypedValue v = new TypedValue(val.getType(), val);
-
-                results.add(v);
-            }
-
-        } catch (PathNotFoundException e) {
-            throw new RuntimeException(e.getMessage());
+            results.add(v);
         }
     }
 
     @Override
     public List<SFunc> getDependencies() {
-        try {
-            return Collections.singletonList(scope.resolvePath(path));
-        } catch (PathNotFoundException e) {
-            throw new RuntimeException(e.getMessage());
+        if(isSelector()){
+         return Collections.emptyList();
+        }else {
+            try {
+                return Collections.singletonList(scope.resolvePath(path));
+            } catch (PathNotFoundException e) {
+                throw new RuntimeException(e.getMessage());
+            }
         }
     }
 
