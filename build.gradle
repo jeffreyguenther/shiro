@@ -117,6 +117,7 @@ clean {
     delete antlr.destinationDir
 }
 
+// maven deployment code based on https://github.com/TomasMikula/RichTextFX
 javadoc {
     // ignore missing Javadoc comments or tags
     options.addStringOption('Xdoclint:all,-missing', '-quiet')
@@ -209,6 +210,7 @@ task fatJar(type: Jar, dependsOn: classes) {
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
 }
 assemble.dependsOn fatJar
+// end deployment code
 
 mainClassName = 'org.shirolang.playground.ShiroPlayground'
 
