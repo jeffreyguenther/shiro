@@ -47,6 +47,25 @@ run in **Shiro Playground**.
 	* [x] `map.sro` demonstrates how to use the map function to iterate over a list.
 
 
+Integrating Shiro
+=================
+
+Shiro is designed to be integrated into applications as a scripting language. See the [Playground](https://github.com/jrguenther/shiro/tree/master/src/main/java/org/shirolang/playground)
+for an example of what it takes.
+
+The latest version of Shiro is 0.5.0
+
+### Add via maven
+
+|Group ID | Artifact ID | Version |
+|---------|-------------|---------|
+|org.shirolang|shiro    |0.5.0    |
+
+### Add manually
+
+To add Shiro to your project manually, add the [fat jar](https://github.com/jrguenther/shiro/releases/download/v0.5.0/shiro-fat-0.5.0.jar)
+to the classpath of your application.
+
 Development
 ===========
 
