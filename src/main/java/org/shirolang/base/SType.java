@@ -55,4 +55,7 @@ public final class SType {
     public static final String SELECTOR = "Selector";
     public static final String REFERENCE = "Reference";
     public static final String MAP = "Map";
+    public static final String CONDITIONAL_RETURN = "ConditionalReturn";
+    public static final String CONDITIONAL_RETURN_NODE = "ConditionalReturnNode";
+    public static final String SUM = "Sum";
 }

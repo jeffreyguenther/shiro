@@ -29,6 +29,7 @@ import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
 import org.shirolang.base.*;
+import org.shirolang.functions.Instantiator;
 import org.shirolang.functions.lists.SMap;
 import org.shirolang.functions.math.*;
 import org.shirolang.values.*;
@@ -326,8 +327,8 @@ public class ShiroExpressionListener extends ShiroBaseListener {
             + "does not exist.");
         }
 
-        if(function.getType().equals(SType.MAP)){
-            ((SMap) function).setLibrary(library);
+        if(library.getTypesRequiringLibrary().contains(function.getType())){
+            ((Instantiator) function).setLibrary(library);
         }
         function.setSymbolType(SymbolType.PORT);
         function.setAccess(determineAccess(portType));

@@ -25,6 +25,7 @@
 package org.shirolang.functions.lists;
 
 import org.shirolang.base.*;
+import org.shirolang.functions.Instantiator;
 import org.shirolang.interpreter.Library;
 import org.shirolang.values.SIdent;
 import org.shirolang.values.SList;
@@ -33,7 +34,7 @@ import org.shirolang.values.SReference;
 /**
  * Represents a multi-function to map a list of values
  */
-public class SMap extends SFuncBase{
+public class SMap extends SFuncBase implements Instantiator{
     private Library library;
 
     public SMap(){

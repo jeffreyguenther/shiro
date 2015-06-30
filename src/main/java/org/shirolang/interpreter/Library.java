@@ -35,6 +35,8 @@ import org.shirolang.exceptions.NameUsedException;
 import org.shirolang.functions.color.ColorFromHSB;
 import org.shirolang.functions.color.ColorFromRGB;
 import org.shirolang.functions.color.SColor;
+import org.shirolang.functions.conditionals.SConditionalReturn;
+import org.shirolang.functions.conditionals.SConditionalReturnNode;
 import org.shirolang.functions.geometry.*;
 import org.shirolang.functions.lists.SMap;
 import org.shirolang.functions.math.*;
@@ -394,8 +396,11 @@ public class Library {
             registerFunction(SType.OR, SOr::new);
             registerFunction(SType.POWER, SPower::new);
             registerFunction(SType.SUBTRACT, SSubtract::new);
+            registerFunction(SType.SUM, SSum::new);
 
             registerFunction(SType.MAP, SMap::new);
+            registerFunction(SType.CONDITIONAL_RETURN, SConditionalReturn::new);
+            registerFunction(SType.CONDITIONAL_RETURN_NODE, SConditionalReturnNode::new);
         } catch (NameUsedException e) {
             throw new RuntimeException("Something crazy happened and an internal type is already defined!");
         }
@@ -417,6 +422,13 @@ public class Library {
         }catch (NameUsedException e) {
             throw new RuntimeException("Something crazy happened and an internal type is already defined!");
         }
+    }
+
+    public Set<String> getTypesRequiringLibrary(){
+        HashSet<String> sets = new HashSet<>();
+        sets.add(SType.MAP);
+        sets.add(SType.CONDITIONAL_RETURN_NODE);
+        return sets;
     }
 
     /**

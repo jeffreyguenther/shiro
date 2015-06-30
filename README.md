@@ -41,7 +41,7 @@ run in **Shiro Playground**.
 * Syntax_Examples - short snippets demonstrating bits of the syntax
 	* [x] Includes - demonstrates the use of `include`
 	* [x] Options - desmonstrates the use of `option`
-	* [ ] Recursion - demonstrates how to do recursion
+	* [x] Recursion - demonstrates how to do recursion
 	* [x] `arthimetic.sro` demonstrates basic arithmetic
 	* [x] `list.sro` syntax for a literal list
 	* [x] `map.sro` demonstrates how to use the map function to iterate over a list.

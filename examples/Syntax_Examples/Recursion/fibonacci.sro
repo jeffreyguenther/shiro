@@ -1,8 +1,8 @@
 /*
 Demonstrates a recursion in Shiro using a classic example - the sum of the nth fibonacci numbers
 
-An imperative approach:
-	fib(n){
+An imperative approach, in say javascript:
+	function fib(n){
 		if n  == 0{
 			return 0
 		}else if n == 1{
@@ -26,19 +26,12 @@ node Fibonacci begin
 	oneFilter ConditionalReturn(n == 1, 1, 0)
 	// pass a node reference, in this case a prototype, into the node for conditional execution
 	// n is passed as the first arg to the prototype
-	port fibFilter ConditionalReturnNode(n > 1, n, Fibonnacci, 0)
+	nMinus1 ConditionalReturnNode(n > 1, n - 1, Fibonnacci, 0)
+	nMinus2 ConditionalReturnNode(n > 1, n - 2, Fibonnacci, 0)
 
 	// Sums the arguments passed
-	output sum AddN(zeroFilter, oneFilter, fibFilter)
-
-	/*
-		It should be possible to generalize the ConditionalReturn multi-function
-		to handle node references for both cases. There might also be need
-		for a syntactical shorthand for specifying single values as anonymous nodes that way only one ConditionalReturn multi-function is required.
-	*/
+	values List(zeroFilter, oneFilter, nMinus1, nMinus2)
+    output sum Sum(values)
 end
 
-graph Fib5 begin
-	Fibonacci -> fib(n: 5)
-	fib.sum // outputs 12
-end
+Fibonacci -> fib(n: 5)
