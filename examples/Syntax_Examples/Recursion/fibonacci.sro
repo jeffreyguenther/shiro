@@ -26,8 +26,8 @@ node Fibonacci begin
 	oneFilter ConditionalReturn(n == 1, 1, 0)
 	// pass a node reference, in this case a prototype, into the node for conditional execution
 	// n is passed as the first arg to the prototype
-	nMinus1 ConditionalReturnNode(n > 1, n - 1, Fibonnacci, 0)
-	nMinus2 ConditionalReturnNode(n > 1, n - 2, Fibonnacci, 0)
+	nMinus1 ConditionalReturnNode(n > 1, n - 1, Fibonacci, 0)
+	nMinus2 ConditionalReturnNode(n > 1, n - 2, Fibonacci, 0)
 
 	// Sums the arguments passed
 	values List(zeroFilter, oneFilter, nMinus1, nMinus2)

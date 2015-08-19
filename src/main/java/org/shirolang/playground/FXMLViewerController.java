@@ -332,7 +332,7 @@ public class FXMLViewerController {
                     sb.append(line);
                     sb.append(newLine);
                 }
-                codeArea.replaceText(sb.toString().trim());
+                codeArea.replaceText(sb.toString());
                 currentFile = fileToOpen;
 
             }
