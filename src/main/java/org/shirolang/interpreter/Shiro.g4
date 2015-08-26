@@ -56,7 +56,7 @@ graphDecl
 	;
 
 graphStmt
-	:	funcDeclInit | funcDecl | NEWLINE
+	:	portAssignment | funcDeclInit | funcDecl | NEWLINE
 	;
 
 nodeDecl
