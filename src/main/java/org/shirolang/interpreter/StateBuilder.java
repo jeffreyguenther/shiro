@@ -55,7 +55,12 @@ public class StateBuilder extends ShiroExpressionListener{
 
     @Override
     public void enterStateGraphSelection(@NotNull ShiroParser.StateGraphSelectionContext ctx) {
-        state.setGraph(ctx.IDENT().getText());
+        String graphName = "";
+        if (ctx.IDENT() != null){
+            graphName = ctx.IDENT().getText();
+        }
+
+        state.setGraph(graphName);
     }
 
     @Override
