@@ -1,0 +1,47 @@
+node Volume begin
+    node Box begin
+        input length Double
+        input width Double
+        input height Double
+        output volume Double( length * width * height )
+    end
+end
+
+node Layout begin
+    input x Double
+    input y Double
+end
+
+node Depths begin
+    option output diving Double(10.0)
+    option output shallow Double(3.0)
+end
+
+node Pool begin
+    option square Layout(20.0, 20.0)
+    option narrow Layout(y: 20.0, x: 10.0)
+
+    output depths Depths
+end
+
+p Pool
+a Volume.Box(p.active.x, p.active.y, p.depths.active)
+
+state divingSquare begin
+    graph ^
+    p[square] begin
+        d[diving]
+    end
+end
+
+graph test begin
+    p Pool
+    a Volume.Box(p.active.x, p.active.y, p.depths.active)
+end
+
+state narrowShallow begin
+    graph test
+    p[narrow] begin
+        d[shallow]
+    end
+end
