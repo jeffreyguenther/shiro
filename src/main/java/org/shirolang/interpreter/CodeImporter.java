@@ -67,7 +67,7 @@ public class CodeImporter extends ShiroBaseListener{
     }
 
     @Override
-    public void enterUseStatement(@NotNull ShiroParser.UseStatementContext ctx) {
+    public void enterIncludeStmt(ShiroParser.IncludeStmtContext ctx) {
         String importedFile = ctx.STRING_LITERAL().getText().replaceAll("\"", "");
         // look in standard lib folders first (org.shirolang.interpreter.lib)
 
