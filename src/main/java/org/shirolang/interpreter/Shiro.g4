@@ -1,41 +1,48 @@
 grammar Shiro;
 
-//@lexer::members{
-//public static final int WHITESPACE = 1;
-//public static final int COMMENTS = 2;
-//}
-
-shiro : useStatement* statement* EOF
+shiro : includeStmt*
+        shiroStmt*
+        EOF
 	  ;
 
-useStatement: INCLUDE STRING_LITERAL NEWLINE;
+includeStmt: INCLUDE STRING_LITERAL NEWLINE;
 
-statement
+shiroStmt
     :
-          nodestmt
+        anonymousGraphStmt
+        | nodeDecl
         | graphDecl
-        | inLineExpr
-        | stateStmt
+        | stateDecl
         | NEWLINE
 	;
 
-stateStmt
+stateDecl
     :   STATE stateName BEGIN NEWLINE
-        stateLine*
+        stateStmt*
         END
     ;
+
 stateName
     :   IDENT
     ;
 
-stateLine
+stateStmt
     :   stateGraphSelection
     |   stateActivation
+    |   nestedStateActivation
     |   NEWLINE
     ;
 
 stateGraphSelection
-    :   GRAPH IDENT
+    :   GRAPH (IDENT | DEFAULT)
+    ;
+
+nestedStateActivation
+    :   stateActivation BEGIN NEWLINE
+        (stateActivation
+        | nestedStateActivation
+        | NEWLINE)*
+        END
     ;
 
 stateActivation
@@ -44,27 +51,29 @@ stateActivation
 
 graphDecl
 	:	GRAPH IDENT BEGIN NEWLINE
-		graphLine+
+		graphStmt+
 		END
 	;
 
-graphLine
-	:	portDeclInit | nodeProduction | portAssignment | NEWLINE
+graphStmt
+	:	funcDeclInit | funcDecl | NEWLINE
 	;
 
-nodestmt
-    :   NODE MFNAME ('[' activeSelector ']')? BEGIN NEWLINE
-        nodeInternal
+nodeDecl
+    :   NODE MFNAME ('[' optionSelector ']')? BEGIN NEWLINE
+        nodeStmt
         END
     ;
 
-nodeProduction
-	:	fullyQualifiedType (PROD_OP activation)+ NEWLINE
-	;
+funcDeclInit
+    :   nodeName=IDENT fullyQualifiedType ( LSQUARE activeObject=IDENT RSQUARE )? ('(' arguments ')')?
+    ;
 
-activation
-	:	nodeName=IDENT ( LSQUARE activeObject=IDENT RSQUARE )? ('(' arguments ')')?
-	;
+funcCall : fullyQualifiedType ( LSQUARE activeObject=IDENT RSQUARE )? ('(' arguments ')')?;
+
+funcDecl
+    :   nodeName=IDENT fullyQualifiedType
+    ;
 
 arguments
     :   argMap | argList
@@ -74,33 +83,29 @@ argMap
     :   (keys+=IDENT ':' values+=arg)(',' keys+=IDENT ':' values+=arg)*
     ;
 
-argList:	arg(',' arg)*
-    	;
+argList
+    :	arg(',' arg)*
+    ;
 
-arg: (expr | fullyQualifiedType);
+arg: expr;
 
-activeSelector
+optionSelector
 	:	IDENT
 	;
 
-nodeInternal
+nodeStmt
     :   (portstmt
         | portAssignment
-        | OPTION? nodestmt
-        | optionalNodeProduction
+        | nodeDecl
         | NEWLINE)*
     ;
 
-optionalNodeProduction
-    :   OPTION? nodeProduction
-    ;
-
 portDecl
-	:	OPTION? portType? portName MFNAME
+	:	OPTION? accessModifier? funcDecl
 	;
 	
 portDeclInit
-	:	OPTION? portType? portName mfCall
+	:	OPTION? accessModifier? funcDeclInit
 	;
 
 portstmt	
@@ -111,16 +116,8 @@ portName
 	:	IDENT
 	;
 	
-portType
-    :       INPUT
-	    |   OUTPUT
-        |   EVAL
-	;
-	
-mfCall	:	mfName '(' arguments ')'
-	;
-	
-mfName 	:	MFNAME
+accessModifier
+    :   INPUT | OUTPUT
 	;
 
 fullyQualifiedType
@@ -128,17 +125,16 @@ fullyQualifiedType
     ;
 
 path
-    :       (REF| SELECT)? segments+=pathSegment ('.' segments+=pathSegment)*
+    :   (REF| SELECT)? segments+=pathSegment ('.' segments+=pathSegment)*
     ;
 
 pathSegment
-        :       IDENT
-        |       (INPUTS| OUTPUTS) LSQUARE pathIndex RSQUARE
-        ;
+    :    IDENT
+    |    (INPUTS| OUTPUTS) LSQUARE pathIndex RSQUARE
+    ;
 
 pathIndex
-	    :	index=(NUMBER
-        |   STRING_LITERAL)
+	:	index=(NUMBER | IDENT)
 	;
 
 portAssignment
@@ -149,14 +145,14 @@ anonExpr
     : expr NEWLINE
     ;
 
-inLineExpr
-    : anonExpr
-    | nodeProduction
-    | portDeclInit NEWLINE
-    | portAssignment
+anonymousGraphStmt
+    :   portAssignment
+    |   funcDeclInit NEWLINE
+    |   funcDecl NEWLINE
+    |   anonExpr
     ;
 
-expr :  '(' expr ')'						  #parensExpr
+expr : '(' expr ')'						      #parensExpr
 	 |	NOT_OP expr 				          #notExpr
 	 |  MINUS_OP expr      					  #negExpr
 	 |  expr AND_OP expr  		  			  #andExpr
@@ -165,23 +161,22 @@ expr :  '(' expr ')'						  #parensExpr
 	 |  expr (PLUS_OP | MINUS_OP ) expr       #addExpr
 	 |  expr (GT | GTE | LT | LTE) expr       #comparisonExpr
 	 |  expr ( EQ | NEQ ) expr                #equalityExpr
+	 |  funcCall                              #inlineFuncCall
+	 |  fullyQualifiedType                    #typeExpr
 	 |  path                                  #pathExpr
 	 |	NUMBER 								  #numExpr
 	 |  BOOLEAN_LITERAL						  #boolExpr
 	 |  STRING_LITERAL                        #stringExpr
 	 ;
 
-INCLUDE: 'include';
-
-STATE: 'state';
-
-SELECT: '@';
-REF : '~';
-PORT: 'port';
-INPUT: 'input';
-OUTPUT: 'output';
-EVAL: 'eval';
-THIS : 'this';
+SELECT   : '@';
+REF      : '~';
+DEFAULT  : '^';
+PORT     : 'port';
+INPUT    : 'input';
+OUTPUT   : 'output';
+EVAL     : 'eval';
+THIS     : 'this';
 NOT_OP   : '!';
 AND_OP	 : '&&';
 OR_OP    : '||';
@@ -199,15 +194,14 @@ LTE      : '<=';
 EQ		 : '==';
 NEQ      : '!=';
 
-PROD_OP : '->';
-
+INCLUDE: 'include';
+STATE: 'state';
+NODE: 'node';
+GRAPH: 'graph';
 BEGIN: 'begin';
 END: 'end';
-NODE: 'node';
 INPUTS: 'inputs';
 OUTPUTS: 'outputs';
-GRAPH: 'graph';
-
 OPTION : 'option';
 
 BOOLEAN_LITERAL
@@ -215,7 +209,6 @@ BOOLEAN_LITERAL
     ;
 
 STRING_LITERAL : '"' (~'"'|'\\"')* '"'  ;
-
 
 NUMBER 	
     :	DIGIT+ ('.'DIGIT+)?
@@ -225,7 +218,8 @@ IDENT
     : LCLETTER (LCLETTER | UCLETTER | DIGIT|'_')*
     ;
 
-MFNAME: UCLETTER (LCLETTER | UCLETTER | DIGIT|'_')*
+MFNAME
+    : UCLETTER (LCLETTER | UCLETTER | DIGIT|'_')*
     ;
 
 WS :  (' '|'\t'|'\f')+ -> channel(HIDDEN)
