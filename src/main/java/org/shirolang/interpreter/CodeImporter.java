@@ -93,10 +93,8 @@ public class CodeImporter extends ShiroBaseListener{
                 sourceFiles.add(new DependencyRelation<>(sourceFile, sourceInLib));
                 sourceFiles.addAll(getSourceDependencies(sourceInLib));
             }
-        } catch (IOException ex) {
+        } catch (IOException | URISyntaxException ex) {
             Logger.getLogger(CodeImporter.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (URISyntaxException e) {
-            Logger.getLogger(CodeImporter.class.getName()).log(Level.SEVERE, null, e);
         }
     }
 

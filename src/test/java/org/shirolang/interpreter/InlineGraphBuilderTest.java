@@ -63,14 +63,14 @@ public class InlineGraphBuilderTest extends ShiroBaseTest{
                 "     input length Double\n" +
                 "     input width Double\n" +
                 "     input height Double\n" +
-                "     eval update Multiply(length, width)\n" +
+                "      update Multiply(length, width)\n" +
                 "     output area Double(update)\n" +
                 "     output name String(\"Box\")\n" +
                 "end\n" +
                 "\n" +
                 "length Double(100)\n" +
                 "\n" +
-                "Box -> b\n" +
+                "b Box\n" +
                 "b.length(length)\n" +
                 "b.width(20.0)\n" +
                 "b.height(7.0)\n";
@@ -102,14 +102,14 @@ public class InlineGraphBuilderTest extends ShiroBaseTest{
                 "     input length Double\n" +
                 "     input width Double\n" +
                 "     input height Double\n" +
-                "     eval update Multiply(length, width)\n" +
+                "     update Multiply(length, width)\n" +
                 "     output area Double(update)\n" +
                 "     output name String(\"Box\")\n" +
                 "end\n" +
                 "\n" +
                 "length Double(100)\n" +
                 "\n" +
-                "Box -> b\n" +
+                "b Box\n" +
                 "b.length(length)\n" +
                 "b.width(20.0)\n" +
                 "b.height(7.0)\n";

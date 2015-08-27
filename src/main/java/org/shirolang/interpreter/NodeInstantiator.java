@@ -23,15 +23,13 @@
 
 package org.shirolang.interpreter;
 
-import java.util.List;
-import org.antlr.v4.runtime.Token;
 import org.shirolang.base.SFunc;
 import org.shirolang.base.SGraph;
 import org.shirolang.base.SNode;
 import org.shirolang.exceptions.OptionNotFoundException;
 import org.shirolang.values.Path;
-import org.shirolang.values.SIdent;
-import org.shirolang.values.SReference;
+
+import java.util.Objects;
 
 /**
  * An ANTLR listener used to realize node parse trees
@@ -40,11 +38,9 @@ import org.shirolang.values.SReference;
  */
 public class NodeInstantiator extends ShiroExpressionListener {
     private SNode createdNode;
-    private SGraph graph;
 
     public NodeInstantiator(Library lib, SGraph graph) {
         super(lib);
-        this.graph = graph;
         scope.push(graph);
         createdNode = null;
     }
@@ -54,16 +50,16 @@ public class NodeInstantiator extends ShiroExpressionListener {
     }
 
     @Override
-    public void enterNodestmt(ShiroParser.NodestmtContext ctx) {
+    public void enterNodeDecl(ShiroParser.NodeDeclContext ctx) {
         // if there is at least one node on the scope stack
         // stack will always be size 1 because of the parametric system
         if (scope.size() > 1) {
             SNode parentNode = (SNode) scope.peek();
-            
+
             // create a new node
             String type = Path.createFullName(parentNode.getFullName(), ctx.MFNAME().getText());
             createdNode = new SNode(type, ctx.MFNAME().getText(), parentNode);
-            
+
             // add the node as a nested node
             parentNode.addNestedNode(createdNode);
             scope.push(createdNode);
@@ -76,80 +72,70 @@ public class NodeInstantiator extends ShiroExpressionListener {
     }
 
     @Override
-    public void exitNodestmt(ShiroParser.NodestmtContext ctx) {
+    public void exitNodeDecl(ShiroParser.NodeDeclContext ctx) {
         // Set the default options
         // This depends on nodeInternal adding ports and nodes before hand.
-        if(ctx.activeSelector() != null){
+        if(ctx.optionSelector() != null){
             // Get a reference to the current node
             SNode node = (SNode) scope.peek();
-            
+
             // add the node's active option
             try {
-                node.setDefaultOption(ctx.activeSelector().IDENT().getText());
-                node.setActiveOption(ctx.activeSelector().IDENT().getText());
+                node.setDefaultOption(ctx.optionSelector().IDENT().getText());
+                node.setActiveOption(ctx.optionSelector().IDENT().getText());
             } catch (OptionNotFoundException e) {
                 //output error message to error listener
             }
         }
-        
+
         // if the stack is not empty, pop
         if(scope.size() > 1){
             createdNode = (SNode) scope.pop();
-        }
-    }
-
-    @Override
-    public void exitOptionalNodeProduction(ShiroParser.OptionalNodeProductionContext ctx) {
-
-        //  get the path of LHS of production operator
-        SReference lhs = (SReference) getExpr(ctx.nodeProduction().fullyQualifiedType());
-
-        SNode parentNode = (SNode) scope.peek();
-        // for each activation
-        for (ShiroParser.ActivationContext ac : ctx.nodeProduction().activation()) {
-            String nodeName = ac.nodeName.getText();
-
-            SNode producedNode = instantiateNode(lhs.getValue(), ac.arguments(),nodeName, graph);
-
-            if (ac.activeObject != null) {
-                String updatePort = ac.activeObject.getText();
-                try {
-                    producedNode.setActiveOption(updatePort);
-                } catch (OptionNotFoundException e) {
-                    System.out.println(e.getMessage());
-                }
-            }
-
-            if(ctx.OPTION() == null){
-                parentNode.addNestedNode(producedNode);
-            }else{
-                parentNode.addOption(producedNode);
-            }
         }
     }
     
     @Override
     public void exitPortDeclInit(ShiroParser.PortDeclInitContext ctx) {
         super.exitPortDeclInit(ctx);
+        SFunc function = getExpr(ctx.funcDeclInit());
 
         // Add the port to it's encapsulating node
         SNode node = (SNode) scope.peek();
-        if(ctx.OPTION() == null){
-            node.addPort(getExpr(ctx));
-        }else{
-            node.addOption(getExpr(ctx));
+        boolean isOption = Objects.nonNull(ctx.OPTION());
+        if(function.getSymbolType().isNode()){
+            if(isOption){
+                node.addOption(function);
+            }else{
+                node.addNestedNode((SNode) function);
+            }
+        }else {
+            if (isOption) {
+                node.addOption(getExpr(ctx));
+            } else {
+                node.addPort(getExpr(ctx));
+            }
         }
     }
 
     @Override
     public void exitPortDecl(ShiroParser.PortDeclContext ctx) {
         super.exitPortDecl(ctx);
+        SFunc function = getExpr(ctx.funcDecl());
 
         SNode node = (SNode) scope.peek();
-        if(ctx.OPTION() == null){
-            node.addPort(getExpr(ctx));
-        }else{
-            node.addOption(getExpr(ctx));
+        boolean isOption = Objects.nonNull(ctx.OPTION());
+        if(function.getSymbolType().isNode()){
+            if(isOption){
+                node.addOption(function);
+            }else{
+                node.addNestedNode((SNode) function);
+            }
+        }else {
+            if (isOption) {
+                node.addOption(getExpr(ctx));
+            } else {
+                node.addPort(getExpr(ctx));
+            }
         }
     }
 }

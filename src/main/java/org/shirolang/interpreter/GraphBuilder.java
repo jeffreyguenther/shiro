@@ -27,12 +27,9 @@ import org.antlr.v4.runtime.misc.NotNull;
 import org.shirolang.base.SFunc;
 import org.shirolang.base.SGraph;
 import org.shirolang.base.SNode;
-import org.shirolang.base.SymbolType;
-import org.shirolang.exceptions.OptionNotFoundException;
 import org.shirolang.exceptions.PathNotFoundException;
 import org.shirolang.values.Path;
 import org.shirolang.values.SIdent;
-import org.shirolang.values.SReference;
 
 /**
  * An ANTLR expression listener used to build Graph instances.
@@ -58,31 +55,30 @@ public class GraphBuilder extends ShiroExpressionListener {
         this.pass = pass;
     }
 
+
     @Override
-    public void exitNodeProduction(@NotNull ShiroParser.NodeProductionContext ctx) {
+    public void exitFuncDecl(ShiroParser.FuncDeclContext ctx) {
         if(pass == FIRST_PASS) {
-            //  get the path of LHS of production operator
-            SReference lhs = (SReference) getExpr(ctx.fullyQualifiedType());
-            String fullyQualfiedType = lhs.getValue();
+            super.exitFuncDecl(ctx);
+            SFunc function = getExpr(ctx);
 
-            // for each activation
-            for (ShiroParser.ActivationContext ac : ctx.activation()) {
-                String nodeName = ac.nodeName.getText();
-
-                SGraph g = (SGraph) scope.peek();
-                SNode producedNode = instantiateNode(fullyQualfiedType, ac.arguments(), nodeName, g);
-
-                g.addNode(producedNode);
-
-                if (ac.activeObject != null) {
-                    String updatePort = ac.activeObject.getText();
-                    try {
-                        producedNode.setActiveOption(updatePort);
-                    } catch (OptionNotFoundException e) {
-                        System.out.println(e.getMessage());
-                    }
-                }
+            SGraph g = (SGraph) scope.peek();
+            if(function.getSymbolType().isNode()) {
+                g.addNode((SNode) function);
+            }else{
+                g.addPort(function);
             }
+        }
+    }
+
+    @Override
+    public void exitFuncDeclInit(ShiroParser.FuncDeclInitContext ctx) {
+        if(pass == FIRST_PASS) {
+            super.exitFuncDeclInit(ctx);
+            SFunc function = getExpr(ctx);
+
+            SGraph g = (SGraph) scope.peek();
+            g.addPort(function);
         }
     }
 
@@ -95,26 +91,20 @@ public class GraphBuilder extends ShiroExpressionListener {
                 Path path = lhs.getPath();
 
                 SFunc function = scope.peek().resolvePath(path);
-                function.setSymbolType(SymbolType.PORT);
-                if(function.getAccess().isReadWrite()){
-                    function = assignArguments(function, ctx.arguments());
-                }else{
-                    throw new RuntimeException(path + " is " + function.getAccess() + ". It's inputs cannot be set.");
+
+                if(function.getSymbolType().isPort()){
+                    if(function.getAccess().isReadWrite()){
+                        assignArguments(function, ctx.arguments());
+                    }else{
+                        throw new RuntimeException(path + " is " + function.getAccess() + ". It's inputs cannot be set.");
+                    }
+                }else if(function.getSymbolType().isNode()){
+                    throw new RuntimeException(path + " is a node. It cannot assigned.");
                 }
 
             } catch (PathNotFoundException pnfe) {
                 System.out.println(pnfe.getMessage());
             }
-        }
-    }
-
-    @Override
-    public void exitPortDeclInit(@NotNull ShiroParser.PortDeclInitContext ctx) {
-        if(pass == SECOND_PASS) {
-            super.exitPortDeclInit(ctx);
-            SFunc port = getExpr(ctx);
-            SGraph g = (SGraph) scope.peek();
-            g.addPort(port);
         }
     }
 }

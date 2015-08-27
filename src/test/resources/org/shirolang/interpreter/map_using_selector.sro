@@ -2,7 +2,7 @@ aList Array(1, 2, 3, 4)
 
 node DayOfWeek begin
 	input day Integer
-	eval update NumToDay(day)
+	update NumToDay(day)
 	output english String(update[0])
 	output german String(update[1])
 end

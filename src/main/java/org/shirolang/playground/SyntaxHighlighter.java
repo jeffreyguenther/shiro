@@ -33,6 +33,7 @@ import org.shirolang.interpreter.ShiroParser;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * Computes the the style class and segment for Shiro code.
@@ -52,30 +53,23 @@ public class SyntaxHighlighter extends ShiroBaseListener{
     }
 
     @Override
-    public void exitPortDecl(@NotNull ShiroParser.PortDeclContext ctx) {
-        add(ctx.MFNAME(), "mf");
-    }
-
-    @Override
     public void enterPortName(@NotNull ShiroParser.PortNameContext ctx) {
         add(ctx.IDENT(), "ident");
     }
 
     @Override
-    public void enterMfName(@NotNull ShiroParser.MfNameContext ctx) {
+    public void enterFullyQualifiedType(ShiroParser.FullyQualifiedTypeContext ctx) {
         add(ctx.MFNAME(), "mf");
     }
 
     @Override
-    public void enterNodestmt(@NotNull ShiroParser.NodestmtContext ctx) {
+    public void enterNodeDecl(ShiroParser.NodeDeclContext ctx) {
         add(ctx.MFNAME(), "node-type");
         add(ctx.BEGIN(), "begin-end");
-
-
     }
 
     @Override
-    public void exitNodestmt(@NotNull ShiroParser.NodestmtContext ctx) {
+    public void exitNodeDecl(ShiroParser.NodeDeclContext ctx) {
         add(ctx.END(), "begin-end");
     }
 
@@ -83,9 +77,13 @@ public class SyntaxHighlighter extends ShiroBaseListener{
 	 * @return the styles
 	 */
 	public StyleSpans<Collection<String>> getStyles() {
-        spansBuilder.add(Collections.emptyList(), textlength - lastEnd );
+        spansBuilder.add(Collections.emptyList(), textlength - lastEnd);
 		return spansBuilder.create();
 	}
+
+    private void add(List<TerminalNode> symbols, String style){
+        symbols.stream().forEach(terminalNode -> add(terminalNode, style));
+    }
 
 	private void add(TerminalNode ident, String style) {
         if(ident != null) {

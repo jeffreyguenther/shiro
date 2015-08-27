@@ -72,7 +72,7 @@ funcDeclInit
 funcCall : fullyQualifiedType ( LSQUARE activeObject=IDENT RSQUARE )? ('(' arguments ')')?;
 
 funcDecl
-    :   nodeName=IDENT fullyQualifiedType
+    :   nodeName=IDENT fullyQualifiedType ( LSQUARE activeObject=IDENT RSQUARE )?
     ;
 
 arguments

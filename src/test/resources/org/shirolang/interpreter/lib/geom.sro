@@ -36,7 +36,7 @@ node Rectangle begin
     input fill Color
     input arcHeight Double(0.0)
     input arcWidth Double(0.0)
-    eval rect Rectangle(originX, originY, rotate, width, height, stroke, strokeWeight, fill, arcHeight, arcWidth)
+    rect Rectangle(originX, originY, rotate, width, height, stroke, strokeWeight, fill, arcHeight, arcWidth)
 end
 
 node Arc begin
@@ -50,7 +50,7 @@ node Arc begin
     input fill Color
     input stroke Color
     input strokeWeight Double(1.0)
-    eval update Arc(centerX, centerY, radiusX, radiusY, length, startAngle, arcType, fill, stroke, strokeWeight)
+     update Arc(centerX, centerY, radiusX, radiusY, length, startAngle, arcType, fill, stroke, strokeWeight)
 end
 
 node Ellipse begin
@@ -62,7 +62,7 @@ node Ellipse begin
     input stroke Color
     input strokeWeight Double(1.0)
     input fill Color
-    eval update Ellipse(centerX, centerY, rotate, radiusX, radiusY, stroke, strokeWeight, fill)
+    update Ellipse(centerX, centerY, rotate, radiusX, radiusY, stroke, strokeWeight, fill)
 end
 
 node Line begin
@@ -72,7 +72,7 @@ node Line begin
     input endY Double
     input stroke Color
     input strokeWeight Double(1.0)
-    eval update Line(startX, startY, endX, endY, stroke, strokeWeight)
+    update Line(startX, startY, endX, endY, stroke, strokeWeight)
 end
 
 node Text begin
@@ -82,7 +82,7 @@ node Text begin
     input font String
     input size Double(12.0)
     input weight String("normal")
-    eval update Text(originX, originY, rotate, text, font, size, weight)
+    update Text(originX, originY, rotate, text, font, size, weight)
 end
 
 node Group begin
@@ -90,7 +90,7 @@ node Group begin
     input originY Double
     input rotate Double(0.0)
     input children List
-    eval update Group(originX, originY, rotate, children)
+    update Group(originX, originY, rotate, children)
 end
 
 /**

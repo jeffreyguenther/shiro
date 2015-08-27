@@ -1,6 +1,6 @@
 node TenX begin
 	input value Number
-	eval update Number(value * 10)
+	update Number(value * 10)
 	output newValue Number(update)
 end
 

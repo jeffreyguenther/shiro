@@ -86,19 +86,26 @@ public class InlineGraphBuilder extends GraphBuilder {
     }
 
     @Override
-    public void enterInLineExpr(@NotNull ShiroParser.InLineExprContext ctx) {
+    public void enterAnonymousGraphStmt(ShiroParser.AnonymousGraphStmtContext ctx) {
         isInLine = true;
     }
 
     @Override
-    public void exitInLineExpr(@NotNull ShiroParser.InLineExprContext ctx) {
+    public void exitAnonymousGraphStmt(ShiroParser.AnonymousGraphStmtContext ctx) {
         isInLine = false;
     }
 
     @Override
-    public void exitNodeProduction(@NotNull ShiroParser.NodeProductionContext ctx) {
+    public void exitFuncDecl(ShiroParser.FuncDeclContext ctx) {
         if(isInLine && pass == FIRST_PASS) {
-            super.exitNodeProduction(ctx);
+            super.exitFuncDecl(ctx);
+        }
+    }
+
+    @Override
+    public void exitFuncDeclInit(ShiroParser.FuncDeclInitContext ctx) {
+        if(isInLine && pass == FIRST_PASS) {
+            super.exitFuncDeclInit(ctx);
         }
     }
 
@@ -106,13 +113,6 @@ public class InlineGraphBuilder extends GraphBuilder {
     public void enterPath(@NotNull ShiroParser.PathContext ctx) {
         if(isInLine && pass == FIRST_PASS) {
             super.enterPath(ctx);
-        }
-    }
-
-    @Override
-    public void exitPortDeclInit(@NotNull ShiroParser.PortDeclInitContext ctx) {
-        if(isInLine && pass == SECOND_PASS) {
-            super.exitPortDeclInit(ctx);
         }
     }
 

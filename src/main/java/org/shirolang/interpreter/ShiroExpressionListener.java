@@ -29,14 +29,15 @@ import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
 import org.shirolang.base.*;
+import org.shirolang.exceptions.OptionNotFoundException;
 import org.shirolang.functions.Instantiator;
-import org.shirolang.functions.lists.SMap;
 import org.shirolang.functions.math.*;
 import org.shirolang.values.*;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Stack;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -139,7 +140,7 @@ public class ShiroExpressionListener extends ShiroBaseListener {
                 int i = Integer.parseInt(pathIndex.NUMBER().getText());
                 return new PathSegment(SegmentType.INPUT, i);
             }else if( pathIndex.index.getType() == ShiroParser.STRING_LITERAL){
-                String key = pathIndex.STRING_LITERAL().getText().replace("\"", "");
+                String key = pathIndex.IDENT().getText();
                 return new PathSegment(SegmentType.INPUT, key);
             }
         }
@@ -150,7 +151,7 @@ public class ShiroExpressionListener extends ShiroBaseListener {
                 int i = Integer.parseInt(pathIndex.NUMBER().getText());
                 return new PathSegment(SegmentType.OUTPUT, i);
             }else if( pathIndex.index.getType() == ShiroParser.STRING_LITERAL){
-                String key = pathIndex.STRING_LITERAL().getText().replace("\"", "");
+                String key = pathIndex.IDENT().getText();
                 return new PathSegment(SegmentType.OUTPUT, key);
             }
         }
@@ -168,8 +169,12 @@ public class ShiroExpressionListener extends ShiroBaseListener {
         setExpr(ctx, createFullyQualifiedType(ctx));
     }
 
+    private String convertFullyQualifiedTypeToString(ShiroParser.FullyQualifiedTypeContext ctx){
+        return ctx.types.stream().map(Token::getText).collect(Collectors.joining("."));
+    }
+
     private SFunc createFullyQualifiedType(ShiroParser.FullyQualifiedTypeContext ctx) {
-        String type = String.join(".", ctx.types.stream().map(Token::getText).collect(toList()));
+        String type = convertFullyQualifiedTypeToString(ctx);
         return new SReference(type);
     }
 
@@ -296,48 +301,84 @@ public class ShiroExpressionListener extends ShiroBaseListener {
     }
 
     @Override
-    public void exitPortDecl(@NotNull ShiroParser.PortDeclContext ctx) {
-        String portName = ctx.portName().IDENT().getText();
-        String portType = Objects.isNull(ctx.portType())? "" : ctx.portType().getText();
-        String mfName = ctx.MFNAME().getText();
+    public void exitFuncDecl(ShiroParser.FuncDeclContext ctx) {
+        String type = convertFullyQualifiedTypeToString(ctx.fullyQualifiedType());
 
         // get the type name
-        SFunc function = library.createFunction(mfName);
+        SFunc function = library.createFunction(type);
         if(function == null){
-            throw new RuntimeException("A multifunction by the name " + mfName
+            throw new RuntimeException("A function by the name " + type
                     + "does not exist.");
         }
-        function.setName(portName);
-        function.setSymbolType(SymbolType.PORT);
-        function.setAccess(determineAccess(portType));
+
+        if (ctx.activeObject != null) {
+            // TODO provide Shiro error if function is not a node
+            String updatePort = ctx.activeObject.getText();
+            try {
+                ((SNode) function).setActiveOption(updatePort);
+            } catch (OptionNotFoundException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+
         setExpr(ctx, function);
     }
 
     @Override
-    public void exitPortDeclInit(@NotNull ShiroParser.PortDeclInitContext ctx) {
-        String portName = ctx.portName().IDENT().getText();
-        String portType = Objects.isNull(ctx.portType())? "" : ctx.portType().getText();
-        String mfName = ctx.mfCall().mfName().getText();
-        
+    public void exitPortDecl(@NotNull ShiroParser.PortDeclContext ctx) {
+        SFunc function = getExpr(ctx.funcDecl());
+
+        String portName = ctx.funcDecl().nodeName.getText();
+        String portType = Objects.isNull(ctx.accessModifier())? "" : ctx.accessModifier().getText();
+
+        function.setName(portName);
+        function.setSymbolType(SymbolType.PORT);
+        function.setAccess(determineAccess(portType));
+    }
+
+
+    @Override
+    public void exitFuncDeclInit(ShiroParser.FuncDeclInitContext ctx) {
+        String type = convertFullyQualifiedTypeToString(ctx.fullyQualifiedType());
+
         // get the type name
-        SFunc function = library.createFunction(mfName);
+        SFunc function = library.createFunction(type);
 
         if(function == null){
-            throw new RuntimeException("A multifunction by the name " + mfName
-            + "does not exist.");
+            throw new RuntimeException("A function by the name " + type
+                    + "does not exist.");
         }
 
         if(library.getTypesRequiringLibrary().contains(function.getType())){
             ((Instantiator) function).setLibrary(library);
         }
-        function.setSymbolType(SymbolType.PORT);
-        function.setAccess(determineAccess(portType));
-        function.setName(portName);
 
-        ShiroParser.ArgumentsContext arguments = ctx.mfCall().arguments();
+        if (ctx.activeObject != null) {
+            // TODO provide Shiro error if function is not a node
+            String updatePort = ctx.activeObject.getText();
+            try {
+                ((SNode) function).setActiveOption(updatePort);
+            } catch (OptionNotFoundException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+
+        ShiroParser.ArgumentsContext arguments = ctx.arguments();
         function = setArgumentsInDecl(function, arguments);
 
         setExpr(ctx, function);
+    }
+
+    @Override
+    public void exitPortDeclInit(@NotNull ShiroParser.PortDeclInitContext ctx) {
+        SFunc function = getExpr(ctx.funcDeclInit());
+
+        String portName = ctx.funcDeclInit().nodeName.getText();
+        String portType = Objects.isNull(ctx.accessModifier())? "" : ctx.accessModifier().getText();
+
+        function.setSymbolType(SymbolType.PORT);
+        function.setAccess(determineAccess(portType));
+        function.setName(portName);
     }
 
     protected SFunc setArgumentsInDecl(SFunc function, ShiroParser.ArgumentsContext arguments) {

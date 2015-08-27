@@ -4,7 +4,7 @@ node Invest begin
 	input rate Double(0.10)
 	input principal Double(5000)
 	input duration Double(1)
-	eval update SimpleInterest(rate, principal, duration)
+	update SimpleInterest(rate, principal, duration)
 	output interest(update[0])
 	output value(update[1])
 end

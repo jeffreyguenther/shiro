@@ -2,9 +2,9 @@ node Box begin
      input length Double
      input width Double
      input height Double
-     eval update Multiply(length, width)
+     update Multiply(length, width)
      output volume Double(update)
      output name String("Box")
 end
 
-Box -> b(100, 20, 7)
+b Box(100, 20, 7)

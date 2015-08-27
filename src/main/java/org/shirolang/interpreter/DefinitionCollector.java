@@ -40,7 +40,6 @@ public class DefinitionCollector extends ShiroBaseListener {
     private Map<String, ParseTree> alternativeDefs;
     private Map<String, ParseTree> graphs;
     private List<ParseTree> inLineStatements;
-    private boolean locked;
     private String path;
 
     public DefinitionCollector() {
@@ -49,7 +48,6 @@ public class DefinitionCollector extends ShiroBaseListener {
         alternativeDefs = new HashMap<>();
         graphs = new HashMap<>();
         inLineStatements = new ArrayList<>();
-        locked = false;
         path = "";
     }
 
@@ -87,7 +85,7 @@ public class DefinitionCollector extends ShiroBaseListener {
     }
 
     @Override
-    public void enterNodestmt(@NotNull ShiroParser.NodestmtContext ctx) {
+    public void enterNodeDecl(ShiroParser.NodeDeclContext ctx) {
         String name = ctx.MFNAME().getText();
 
         if(path.isEmpty()){
@@ -97,11 +95,10 @@ public class DefinitionCollector extends ShiroBaseListener {
         }
 
         defs.put(path, ctx);
-
     }
 
     @Override
-    public void exitNodestmt(@NotNull ShiroParser.NodestmtContext ctx) {
+    public void exitNodeDecl(ShiroParser.NodeDeclContext ctx) {
         // remove current name from string
         int lastDot = path.lastIndexOf(".");
         if(lastDot > 0) {
@@ -111,14 +108,13 @@ public class DefinitionCollector extends ShiroBaseListener {
         }
     }
 
-
     @Override
     public void enterGraphDecl(@NotNull ShiroParser.GraphDeclContext ctx) {
         graphs.put(ctx.IDENT().getText(), ctx);
     }
 
     @Override
-    public void enterStateStmt(@NotNull ShiroParser.StateStmtContext ctx) {
+    public void enterStateDecl(ShiroParser.StateDeclContext ctx) {
         alternativeDefs.put(ctx.stateName().getText(), ctx);
     }
 }

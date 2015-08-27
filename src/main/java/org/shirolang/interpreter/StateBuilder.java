@@ -46,8 +46,9 @@ public class StateBuilder extends ShiroExpressionListener{
         return state;
     }
 
+
     @Override
-    public void enterStateStmt(@NotNull ShiroParser.StateStmtContext ctx) {
+    public void enterStateDecl(ShiroParser.StateDeclContext ctx) {
         String stateName = ctx.stateName().getText();
         state = new SState(stateName);
         state.setSubjunctTable(subjunctTable);
