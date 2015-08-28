@@ -328,13 +328,18 @@ public class SNode extends SFuncBase implements Scope{
 
     /**
      * Gets the node name to option name pairs used
-     * @return a add containing pairs of (nodename, optionName) for each
-     * option in the node
+     * @return a set containing pairs of (nodename, optionName) for each
+     * option in the node and all nested nodes
      */
     public Set<Pair<String, String>> getOptionPairs(){
         Set<Pair<String, String>> pairs = new HashSet<>();
+
         for(SFunc s: getOptions().values()){
             pairs.add(new Pair<>(name.get(), s.getName()));
+        }
+
+        for(SNode nested: nestedNodes.values()){
+            pairs.addAll(nested.getOptionPairs());
         }
         return pairs;
     }
@@ -381,10 +386,25 @@ public class SNode extends SFuncBase implements Scope{
         if(activeItem == null){
             throw new OptionNotFoundException(this.getFullName() + " does not have an option " + name);
         }
-
         activateOption(activeItem);
 
         return activeOption;
+    }
+
+    /**
+     * Activates the options for this node and all the nested nodes
+     * @param activation activation to apply to the node
+     * @throws OptionNotFoundException
+     */
+    public void activateOptions(StateActivation activation) throws OptionNotFoundException{
+        setActiveOption(activation.getOption());
+
+        if(activation.hasNestedActivations()){
+            for(StateActivation a: activation.getNestedActivations()) {
+                SNode n = getNestedNode(a.getName());
+                n.activateOptions(a);
+            }
+        }
     }
 
     /**

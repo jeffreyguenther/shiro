@@ -48,12 +48,12 @@ public class StateBuilderTest extends ShiroBaseTest{
         Assert.assertNotNull(s1);
 
         Library l = new Library();
-        StateBuilder sb = new StateBuilder(l);
+        StateBuilder sb = new StateBuilder();
         walker.walk(sb, s1);
 
         SState state = sb.getState();
         Assert.assertEquals("s1", state.getName());
         Assert.assertEquals("box_calc", state.getGraph());
-        Assert.assertTrue(state.getSubjunctTable().isEmpty());
+        Assert.assertTrue(state.getActivations().isEmpty());
     }
 }

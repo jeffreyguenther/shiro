@@ -37,10 +37,7 @@ import javafx.util.Pair;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
-import org.shirolang.base.SFunc;
-import org.shirolang.base.SGraph;
-import org.shirolang.base.SNode;
-import org.shirolang.base.SState;
+import org.shirolang.base.*;
 import org.shirolang.dag.DAGraph;
 import org.shirolang.dag.DependencyRelation;
 import org.shirolang.dag.GraphNode;
@@ -159,14 +156,8 @@ public class ShiroRuntime{
             library.addGraph(g);
         }
 
-        // generate the graphs
-        for(Map.Entry<String, ParseTree> altDef: library.getAlternativeDefs().entrySet()){
-            String altName = altDef.getKey();
-            ParseTree def = altDef.getValue();
-        }
-
         for(ParseTree def: library.getAlternativeDefs().values()){
-            StateBuilder stateBuilder = new StateBuilder(library);
+            StateBuilder stateBuilder = new StateBuilder();
             walker.walk(stateBuilder, def);
             library.addState(stateBuilder.getState());
         }
@@ -185,10 +176,9 @@ public class ShiroRuntime{
             String graphName = state.getGraph();
             SGraph graph = library.getGraph(graphName);
 
-            // only evaluate states that have a graph defined
-            if (!state.getSubjunctTable().isEmpty()) {
+            if (state.hasOptionActivations()) {
                 try {
-                    graph.evaluate(state.getSubjunctTable());
+                    graph.evaluate(state.getActivations());
                     sendToOutput(graph.toConsole());
                 } catch (OptionNotFoundException e) {
                     throw new RuntimeException("Error during evaluation: " + e.getMessage());
@@ -276,18 +266,6 @@ public class ShiroRuntime{
         }
     }
 
-    public void evaluate(){
-        //clear the existing library
-        // lex
-        // parse
-        // defs
-        // realize states
-            // realize graphs
-                // realize nodes
-        // build dependency graph
-        // evaluate
-    }
-
     /**
      * Gets all of the states known by the runtime
      * Delegates the to Library.getStates()
@@ -322,7 +300,7 @@ public class ShiroRuntime{
                     // create a state
                     SState state = new SState(library.getNameManager().generateName("state"), g.getName());
                     for (Pair<String, String> entry : table) {
-                        state.addActiveNode(entry.getKey(), entry.getValue());
+                        state.addActivation(new StateActivation(entry.getKey(), entry.getValue()));
                     }
                     states.add(state);
                 }

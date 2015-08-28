@@ -25,19 +25,19 @@ package org.shirolang.interpreter;
 
 import org.antlr.v4.runtime.misc.NotNull;
 import org.shirolang.base.SState;
+import org.shirolang.base.StateActivation;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Stack;
 
 /**
  *
  */
 public class StateBuilder extends ShiroBaseListener{
-    private Map<String, String> subjunctTable;
     private SState state;
+    private Stack<StateActivation> activationStack;
 
-    public StateBuilder(Library lib) {
-        subjunctTable = new HashMap<>();
+    public StateBuilder() {
+        activationStack = new Stack<>();
     }
 
     public SState getState(){
@@ -48,7 +48,6 @@ public class StateBuilder extends ShiroBaseListener{
     public void enterStateDecl(ShiroParser.StateDeclContext ctx) {
         String stateName = ctx.stateName().getText();
         state = new SState(stateName);
-        state.setSubjunctTable(subjunctTable);
     }
 
     @Override
@@ -62,9 +61,32 @@ public class StateBuilder extends ShiroBaseListener{
     }
 
     @Override
-    public void enterStateActivation(@NotNull ShiroParser.StateActivationContext ctx) {
-        String nodeName = ctx.nodeName.getText();
-        String activeOption = ctx.activeObject.getText();
-        subjunctTable.put(nodeName, activeOption);
+    public void exitOptionSelection(ShiroParser.OptionSelectionContext ctx) {
+        StateActivation activation = new StateActivation(ctx.nodeName.getText(), ctx.activeObject.getText());
+
+        if(activationStack.empty()){
+            state.addActivation(activation);
+        }else{
+            StateActivation parent = activationStack.peek();
+            parent.addNestedActivation(activation);
+        }
+    }
+
+    @Override
+    public void enterNestedOptionSelection(ShiroParser.NestedOptionSelectionContext ctx) {
+        StateActivation activation = new StateActivation(ctx.nodeName.getText(), ctx.activeObject.getText());
+        activationStack.push(activation);
+
+        if(activationStack.empty()){
+            state.addActivation(activation);
+        }else{
+            StateActivation parent = activationStack.peek();
+            parent.addNestedActivation(activation);
+        }
+    }
+
+    @Override
+    public void exitNestedOptionSelection(ShiroParser.NestedOptionSelectionContext ctx) {
+        activationStack.pop();
     }
 }

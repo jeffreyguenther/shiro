@@ -178,17 +178,21 @@ public class SGraph implements Scope, Consoleable{
     }
 
     /**
-     * TODO expand this method to handle nested subjuncts specifications
      * Evaluates a graph with the passed configuration
-     * @param subjunctTable subjunct table to determine the active options
+     * @param activations subjunct table to determine the active options
      * @throws OptionNotFoundException
      */
-    public void evaluate(Map<String, String> subjunctTable) throws OptionNotFoundException {
-        for(String optionName: subjunctTable.keySet()){
-            SNode node = nodes.get(optionName);
-            node.setActiveOption(subjunctTable.get(optionName));
-        }
+    public void evaluate(Set<StateActivation> activations) throws OptionNotFoundException {
 
+        for(StateActivation activation: activations) {
+            SNode node = nodes.get(activation.getName());
+
+            if(node != null) {
+                node.activateOptions(activation);
+            }else{
+                throw new OptionNotFoundException("No node named: " + activation.getName() + " cannot be found.");
+            }
+        }
         evaluate();
     }
 

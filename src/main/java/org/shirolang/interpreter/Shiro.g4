@@ -18,6 +18,7 @@ shiroStmt
 
 stateDecl
     :   STATE stateName BEGIN NEWLINE
+        stateGraphSelection NEWLINE
         stateStmt*
         END
     ;
@@ -27,9 +28,7 @@ stateName
     ;
 
 stateStmt
-    :   stateGraphSelection
-    |   stateActivation
-    |   nestedStateActivation
+    :   stateActivation NEWLINE
     |   NEWLINE
     ;
 
@@ -37,16 +36,19 @@ stateGraphSelection
     :   GRAPH (IDENT | DEFAULT)
     ;
 
-nestedStateActivation
-    :   stateActivation BEGIN NEWLINE
-        (stateActivation
-        | nestedStateActivation
-        | NEWLINE)*
+stateActivation
+    :   optionSelection
+    |   nestedOptionSelection
+    ;
+
+nestedOptionSelection
+    :   nodeName=IDENT LSQUARE activeObject=IDENT RSQUARE BEGIN NEWLINE
+        (stateActivation NEWLINE | NEWLINE)*
         END
     ;
 
-stateActivation
-    :   nodeName=IDENT ( LSQUARE activeObject=IDENT RSQUARE )?
+optionSelection
+    :   nodeName=IDENT LSQUARE activeObject=IDENT RSQUARE
     ;
 
 graphDecl

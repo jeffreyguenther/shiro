@@ -23,8 +23,8 @@
 
 package org.shirolang.base;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Represents a state
@@ -32,12 +32,12 @@ import java.util.Map;
 public class SState {
     private String name;
     private String graph;
-    private Map<String, String> subjunctTable;
+    private Set<StateActivation> optionActivations;
 
     public SState(String name, String graph){
         this.name = name;
         this.graph = graph;
-        this.subjunctTable = new HashMap<>();
+        this.optionActivations = new HashSet<>();
     }
 
     public SState(String name){
@@ -52,14 +52,6 @@ public class SState {
         this.name = name;
     }
 
-    public void setSubjunctTable(Map<String, String> subjunctTable) {
-        this.subjunctTable = subjunctTable;
-    }
-
-    public Map<String, String> getSubjunctTable() {
-        return subjunctTable;
-    }
-
     public String getGraph() {
         return graph;
     }
@@ -68,7 +60,15 @@ public class SState {
         this.graph = graph;
     }
 
-    public void addActiveNode(String key, String value) {
-        subjunctTable.put(key, value);
+    public Set<StateActivation> getActivations() {
+        return optionActivations;
+    }
+
+    public void addActivation(StateActivation activation) {
+        optionActivations.add(activation);
+    }
+
+    public boolean hasOptionActivations(){
+        return !optionActivations.isEmpty();
     }
 }
