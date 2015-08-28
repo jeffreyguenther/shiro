@@ -102,18 +102,10 @@ public class NodeInstantiator extends ShiroExpressionListener {
         // Add the port to it's encapsulating node
         SNode node = (SNode) scope.peek();
         boolean isOption = Objects.nonNull(ctx.OPTION());
-        if(function.getSymbolType().isNode()){
-            if(isOption){
-                node.addOption(function);
-            }else{
-                node.addNestedNode((SNode) function);
-            }
-        }else {
-            if (isOption) {
-                node.addOption(getExpr(ctx.funcDeclInit()));
-            } else {
-                node.addPort(getExpr(ctx.funcDeclInit()));
-            }
+        if(isOption){
+            node.addOption(function);
+        }else{
+            node.addFunction(function);
         }
     }
 
@@ -124,18 +116,12 @@ public class NodeInstantiator extends ShiroExpressionListener {
 
         SNode node = (SNode) scope.peek();
         boolean isOption = Objects.nonNull(ctx.OPTION());
-        if(function.getSymbolType().isNode()){
-            if(isOption){
-                node.addOption(function);
-            }else{
-                node.addNestedNode((SNode) function);
-            }
-        }else {
-            if (isOption) {
-                node.addOption(getExpr(ctx.funcDecl()));
-            } else {
-                node.addPort(getExpr(ctx.funcDecl()));
-            }
+
+        if(isOption){
+            node.addOption(function);
+        }else{
+            node.addFunction(function);
         }
+
     }
 }

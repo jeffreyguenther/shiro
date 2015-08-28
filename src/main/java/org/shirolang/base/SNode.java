@@ -169,6 +169,18 @@ public class SNode extends SFuncBase implements Scope{
     }
 
     /**
+     * Add a function to a node
+     * @param func the function to add
+     */
+    public void addFunction(SFunc func){
+        if(func.getSymbolType().isNode()){
+            addNestedNode((SNode) func);
+        }else{
+            addPort(func);
+        }
+    }
+
+    /**
      * Gets whether the node has ports
      * @return true if the node has ports, otherwise false
      */

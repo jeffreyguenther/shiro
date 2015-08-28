@@ -27,11 +27,8 @@ package org.shirolang.base;
 import org.junit.Assert;
 import org.junit.Test;
 import org.shirolang.exceptions.PathNotFoundException;
-import org.shirolang.functions.math.SAdd;
-import org.shirolang.values.Path;
 import org.shirolang.values.SDouble;
 import org.shirolang.values.SIdent;
-import org.shirolang.values.SInteger;
 
 /**
  *
@@ -45,6 +42,21 @@ public class SGraphTest {
         Assert.assertEquals("should have name", expected, g.getName());
         Assert.assertEquals("should have full name", expected, g.getFullName());
         Assert.assertEquals("full and short names should be the same", g.getFullName(), g.getName());
+    }
+
+    @Test
+    public void addFunction(){
+        SGraph g = new SGraph();
+        SNode n = new SNode();
+
+        g.addFunction(n);
+        Assert.assertTrue(g.getNodes().contains(n));
+        Assert.assertSame(g, n.getScope());
+
+        SDouble d = new SDouble();
+        d.setSymbolType(SymbolType.PORT);
+        g.addFunction(d);
+        Assert.assertTrue(g.getPorts().contains(d));
     }
 
     @Test

@@ -68,6 +68,18 @@ public class SGraph implements Scope, Consoleable{
     }
 
     /**
+     * Add the function
+     * @param func function to add the graph
+     */
+    public void addFunction(SFunc func){
+        if(func.getSymbolType().isNode()){
+            addNode((SNode) func);
+        }else{
+            addPort(func);
+        }
+    }
+
+    /**
      * Adds the node to the graph.
      * The node is stored by it's name.
      * Updates the node's scope to the graph

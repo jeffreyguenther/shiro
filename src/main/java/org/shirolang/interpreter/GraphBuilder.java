@@ -26,7 +26,6 @@ package org.shirolang.interpreter;
 import org.antlr.v4.runtime.misc.NotNull;
 import org.shirolang.base.SFunc;
 import org.shirolang.base.SGraph;
-import org.shirolang.base.SNode;
 import org.shirolang.exceptions.PathNotFoundException;
 import org.shirolang.values.Path;
 import org.shirolang.values.SIdent;
@@ -62,11 +61,7 @@ public class GraphBuilder extends ShiroExpressionListener {
             SFunc function = getExpr(ctx);
 
             SGraph g = (SGraph) scope.peek();
-            if(function.getSymbolType().isNode()) {
-                g.addNode((SNode) function);
-            }else{
-                g.addPort(function);
-            }
+            g.addFunction(function);
         }
     }
 
@@ -77,7 +72,7 @@ public class GraphBuilder extends ShiroExpressionListener {
             SFunc function = getExpr(ctx);
 
             SGraph g = (SGraph) scope.peek();
-            g.addPort(function);
+            g.addFunction(function);
         }
     }
 

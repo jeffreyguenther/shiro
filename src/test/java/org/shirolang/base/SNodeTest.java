@@ -142,6 +142,24 @@ public class SNodeTest {
     }
 
     @Test
+    public void addFunction(){
+        String type = "EndPoints";
+        String name = "endPoints";
+        SNode n = new SNode(type, name, getScope());
+
+        String childNodeType = "Point";
+        String childNodeName = "P1";
+        String expectedFullName = "endPoints.P1";
+        SNode childNode = new SNode(childNodeType, childNodeName, n);
+
+        n.addFunction(childNode);
+        Assert.assertEquals("should have full name", expectedFullName, childNode.getFullName());
+        Assert.assertEquals("should have name", childNodeName, childNode.getName());
+        Assert.assertEquals("should have new scope", n, childNode.getScope());
+        Assert.assertTrue("should have nested nodes", n.hasNestedNodes());
+    }
+
+    @Test
     public void addNestedNode(){
         String type = "EndPoints";
         String name = "endPoints";
@@ -157,6 +175,15 @@ public class SNodeTest {
         Assert.assertEquals("should have name", childNodeName, childNode.getName());
         Assert.assertEquals("should have new scope", n, childNode.getScope());
         Assert.assertTrue("should have nested nodes", n.hasNestedNodes());
+
+        SNode n2 =  new SNode();
+        SDouble sDouble = new SDouble(23.4);
+        sDouble.setSymbolType(SymbolType.PORT);
+        sDouble.setName("a");
+        n2.addFunction(sDouble);
+
+        Assert.assertSame(sDouble, n2.getInput("a"));
+        Assert.assertSame(sDouble, n2.getPort("a"));
     }
 
     @Test
