@@ -30,7 +30,6 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.shirolang.base.*;
-import org.shirolang.exceptions.GraphNotFoundException;
 import org.shirolang.exceptions.NameUsedException;
 import org.shirolang.functions.color.ColorFromHSB;
 import org.shirolang.functions.color.ColorFromRGB;
@@ -131,61 +130,29 @@ public class Library {
     }
 
     /**
-     * Adds a symbol to the given graph
-     * @param graphName name of the graph to add the symbol to
-     * @param symbol symbol to add to the graph
-     */
-    public void addSymbolToGraph(String graphName, SFunc symbol) throws GraphNotFoundException {
-        SGraph graph = graphs.get(graphName);
-
-        if(graph == null){
-            throw new GraphNotFoundException("A graph named \"" + graphName + "\" cannot be found.");
-        }
-
-        if(symbol.getSymbolType().isNode()){
-            graph.addNode((SNode) symbol);
-        }else if(symbol.getSymbolType().isPort()){
-            graph.addPort(symbol);
-        }
-    }
-
-    /**
      * Creates a function with of the given type
-     * @param type type of the multi-function
-     * @return the multi-function corresponding to the type
+     * @param type type of the function
+     * @return the function corresponding to the type. The function might be a node or a port
      */
-    public SFunc createFunction(String type){
+    public SFunc createFunction(SGraph g, String type){
         FunctionFactory factory = mfuncs.get(type);
         if(factory != null){
-            return factory.create();
-        }else{
-            throw new RuntimeException(type + " cannot be found.");
+            SFunc port = factory.create();
+            port.setSymbolType(SymbolType.PORT);
+            return port;
         }
 
-    }
-
-    /**
-     * Create a function of the given type
-     * Looks in the node definitions
-     * @param g graph where the node should be stored
-     * @param p type of the node to create
-     * @param name name of the instance
-     * @return an instance of the SNode of the given type
-     */
-    public SFunc instantiateNode(SGraph g, String p, String name){
-        // TODO handle the instantiation of nested nodes
-        ParseTree nodeDef = nodeDefs.get(p);
-
-        if(nodeDef == null){
-            throw new RuntimeException(p + " cannot be found");
+        ParseTree nodeDef = nodeDefs.get(type);
+        if(nodeDef != null){
+            NodeInstantiator nodeProducer = new NodeInstantiator(this, g);
+            ParseTreeWalker walker = new ParseTreeWalker();
+            walker.walk(nodeProducer, nodeDef);
+            SNode node = nodeProducer.getCreatedNode();
+            return node;
         }
 
-        NodeInstantiator nodeProducer = new NodeInstantiator(this, g);
-        ParseTreeWalker walker = new ParseTreeWalker();
-        walker.walk(nodeProducer, nodeDef);
-        SNode node = nodeProducer.getCreatedNode();
-        node.setName(name);
-        return node;
+        throw new RuntimeException(type + " cannot be found.");
+
     }
 
     /**

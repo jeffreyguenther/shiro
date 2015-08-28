@@ -13,9 +13,9 @@ node InterestRates[low] begin
 end
 
 graph money begin
-	InterestRates -> i
+	i InterestRates
 
-	Invest -> investment(rate: i.active)
+	investment Invest(rate: i.active)
 end
 
 state lowRate begin

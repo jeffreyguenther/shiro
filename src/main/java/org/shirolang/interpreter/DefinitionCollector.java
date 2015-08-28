@@ -25,7 +25,6 @@ package org.shirolang.interpreter;
 
 import org.antlr.v4.runtime.misc.NotNull;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.shirolang.interpreter.ShiroBaseListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;

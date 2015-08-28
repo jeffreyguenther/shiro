@@ -70,7 +70,8 @@ public class SMap extends SFuncBase implements Instantiator{
             SReference ref = (SReference) tempRef;
             String type = ref.getValue();
 
-            SFunc node = library.instantiateNode(g, type, "internal");
+            SFunc node = library.createFunction(g, type);
+            node.setName("internal");
             g.addNode((SNode) node);
 
             // for each function in the list

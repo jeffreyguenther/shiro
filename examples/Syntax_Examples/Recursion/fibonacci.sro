@@ -30,7 +30,7 @@ node Fibonacci begin
 	nMinus2 ConditionalReturnNode(n > 1, n - 2, Fibonacci, 0)
 
 	// Sums the arguments passed
-	values List(zeroFilter, oneFilter, nMinus1, nMinus2)
+	values List.Ldf.Fun(zeroFilter, oneFilter, nMinus1, nMinus2)
     output sum Sum(values)
 end
 

@@ -33,10 +33,8 @@ import org.junit.Test;
 import org.shirolang.base.SFunc;
 import org.shirolang.base.SGraph;
 import org.shirolang.base.SNode;
-import org.shirolang.base.SType;
 
 import java.io.IOException;
-import java.util.List;
 
 /**
  * Tests parse tree listener to instantiate inline graphs
@@ -63,17 +61,18 @@ public class InlineGraphBuilderTest extends ShiroBaseTest{
                 "     input length Double\n" +
                 "     input width Double\n" +
                 "     input height Double\n" +
-                "      update Multiply(length, width)\n" +
+                "     update Multiply(length, width)\n" +
                 "     output area Double(update)\n" +
                 "     output name String(\"Box\")\n" +
                 "end\n" +
                 "\n" +
-                "length Double(100)\n" +
+                "length Double(100.0)\n" +
                 "\n" +
                 "b Box\n" +
                 "b.length(length)\n" +
                 "b.width(20.0)\n" +
-                "b.height(7.0)\n";
+                "b.height(7.0)\n" +
+                "\n";
 
         ParseTree tree = buildParseTree(code);
         ParseTreeWalker walker = new ParseTreeWalker();
@@ -107,12 +106,13 @@ public class InlineGraphBuilderTest extends ShiroBaseTest{
                 "     output name String(\"Box\")\n" +
                 "end\n" +
                 "\n" +
-                "length Double(100)\n" +
+                "length Double(100.0)\n" +
                 "\n" +
                 "b Box\n" +
                 "b.length(length)\n" +
                 "b.width(20.0)\n" +
-                "b.height(7.0)\n";
+                "b.height(7.0)\n" +
+                "\n";
 
         ParseTree tree = buildParseTree(code);
         ParseTreeWalker walker = new ParseTreeWalker();
@@ -137,7 +137,7 @@ public class InlineGraphBuilderTest extends ShiroBaseTest{
         Assert.assertEquals(1, lib.getNodeDefs().size());
 
         Assert.assertEquals(1, graph.getNodes().size());
-        Assert.assertEquals(14, graph.getPorts().size());
+        Assert.assertEquals(13, graph.getPorts().size());
     }
 
     @Test

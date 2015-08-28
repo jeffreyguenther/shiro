@@ -32,14 +32,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.shirolang.base.SFunc;
 import org.shirolang.base.SGraph;
-import org.shirolang.base.SType;
 import org.shirolang.exceptions.NameUsedException;
 import org.shirolang.functions.math.SAdd;
 
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 
@@ -60,7 +57,7 @@ public class LibraryTest{
 
     @Test
     public void createFunction(){
-        SFunc add = l.createFunction("Add");
+        SFunc add = l.createFunction(null, "Add");
         Assert.assertEquals("Add", add.getType());
     }
 
@@ -68,7 +65,7 @@ public class LibraryTest{
     public void registerMFuncByName() throws NameUsedException {
         String name = "myfunction";
         l.registerFunction(name, SAdd::new);
-        SFunc function = l.createFunction(name);
+        SFunc function = l.createFunction(null, name);
         assertEquals("Add", function.getType());
     }
 

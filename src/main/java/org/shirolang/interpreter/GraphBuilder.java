@@ -55,7 +55,6 @@ public class GraphBuilder extends ShiroExpressionListener {
         this.pass = pass;
     }
 
-
     @Override
     public void exitFuncDecl(ShiroParser.FuncDeclContext ctx) {
         if(pass == FIRST_PASS) {

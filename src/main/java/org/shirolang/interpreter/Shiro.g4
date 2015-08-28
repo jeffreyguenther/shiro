@@ -66,13 +66,13 @@ nodeDecl
     ;
 
 funcDeclInit
-    :   nodeName=IDENT fullyQualifiedType ( LSQUARE activeObject=IDENT RSQUARE )? ('(' arguments ')')?
+    :   name=IDENT fullyQualifiedType ( LSQUARE activeObject=IDENT RSQUARE )? ('(' arguments ')')
     ;
 
 funcCall : fullyQualifiedType ( LSQUARE activeObject=IDENT RSQUARE )? ('(' arguments ')')?;
 
 funcDecl
-    :   nodeName=IDENT fullyQualifiedType ( LSQUARE activeObject=IDENT RSQUARE )?
+    :   name=IDENT fullyQualifiedType ( LSQUARE activeObject=IDENT RSQUARE )?
     ;
 
 arguments

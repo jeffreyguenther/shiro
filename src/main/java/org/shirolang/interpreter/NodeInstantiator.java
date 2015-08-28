@@ -52,7 +52,7 @@ public class NodeInstantiator extends ShiroExpressionListener {
     @Override
     public void enterNodeDecl(ShiroParser.NodeDeclContext ctx) {
         // if there is at least one node on the scope stack
-        // stack will always be size 1 because of the parametric system
+        // stack will always have at least 1 element because of the graph
         if (scope.size() > 1) {
             SNode parentNode = (SNode) scope.peek();
 
@@ -110,9 +110,9 @@ public class NodeInstantiator extends ShiroExpressionListener {
             }
         }else {
             if (isOption) {
-                node.addOption(getExpr(ctx));
+                node.addOption(getExpr(ctx.funcDeclInit()));
             } else {
-                node.addPort(getExpr(ctx));
+                node.addPort(getExpr(ctx.funcDeclInit()));
             }
         }
     }
@@ -132,9 +132,9 @@ public class NodeInstantiator extends ShiroExpressionListener {
             }
         }else {
             if (isOption) {
-                node.addOption(getExpr(ctx));
+                node.addOption(getExpr(ctx.funcDecl()));
             } else {
-                node.addPort(getExpr(ctx));
+                node.addPort(getExpr(ctx.funcDecl()));
             }
         }
     }

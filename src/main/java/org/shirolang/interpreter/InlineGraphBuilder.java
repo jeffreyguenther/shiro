@@ -67,7 +67,7 @@ public class InlineGraphBuilder extends GraphBuilder {
     }
 
     @Override
-    public void enterAndExpr(@NotNull ShiroParser.AndExprContext ctx) {
+    public void enterAnonExpr(ShiroParser.AnonExprContext ctx) {
         isAnonExpr = true;
     }
 
@@ -78,11 +78,6 @@ public class InlineGraphBuilder extends GraphBuilder {
         if(pass == SECOND_PASS){
             defaultGraph.addAnonymousPort(getExpr(ctx.expr()));
         }
-    }
-
-    @Override
-    public void exitAddExpr(ShiroParser.AddExprContext ctx) {
-        super.exitAddExpr(ctx);
     }
 
     @Override
@@ -121,5 +116,15 @@ public class InlineGraphBuilder extends GraphBuilder {
         if(isInLine && pass == SECOND_PASS) {
             super.exitPortAssignment(ctx);
         }
+    }
+
+    @Override
+    public void exitPortDecl(@NotNull ShiroParser.PortDeclContext ctx) {
+
+    }
+
+    @Override
+    public void exitPortDeclInit(@NotNull ShiroParser.PortDeclInitContext ctx) {
+
     }
 }

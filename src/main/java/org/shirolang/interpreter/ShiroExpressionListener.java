@@ -58,6 +58,10 @@ public class ShiroExpressionListener extends ShiroBaseListener {
         this.library = lib;
     }
 
+    protected SGraph getGraph() {
+        return (SGraph) scope.get(0);
+    }
+
     /**
      * Get an expression for a parse tree node
      *
@@ -305,7 +309,7 @@ public class ShiroExpressionListener extends ShiroBaseListener {
         String type = convertFullyQualifiedTypeToString(ctx.fullyQualifiedType());
 
         // get the type name
-        SFunc function = library.createFunction(type);
+        SFunc function = library.createFunction(getGraph(), type);
         if(function == null){
             throw new RuntimeException("A function by the name " + type
                     + "does not exist.");
@@ -320,6 +324,8 @@ public class ShiroExpressionListener extends ShiroBaseListener {
                 System.out.println(e.getMessage());
             }
         }
+        String portName = ctx.name.getText();
+        function.setName(portName);
 
         setExpr(ctx, function);
     }
@@ -328,10 +334,8 @@ public class ShiroExpressionListener extends ShiroBaseListener {
     public void exitPortDecl(@NotNull ShiroParser.PortDeclContext ctx) {
         SFunc function = getExpr(ctx.funcDecl());
 
-        String portName = ctx.funcDecl().nodeName.getText();
         String portType = Objects.isNull(ctx.accessModifier())? "" : ctx.accessModifier().getText();
 
-        function.setName(portName);
         function.setSymbolType(SymbolType.PORT);
         function.setAccess(determineAccess(portType));
     }
@@ -342,7 +346,7 @@ public class ShiroExpressionListener extends ShiroBaseListener {
         String type = convertFullyQualifiedTypeToString(ctx.fullyQualifiedType());
 
         // get the type name
-        SFunc function = library.createFunction(type);
+        SFunc function = library.createFunction(getGraph(), type);
 
         if(function == null){
             throw new RuntimeException("A function by the name " + type
@@ -366,6 +370,9 @@ public class ShiroExpressionListener extends ShiroBaseListener {
         ShiroParser.ArgumentsContext arguments = ctx.arguments();
         function = setArgumentsInDecl(function, arguments);
 
+        String portName = ctx.name.getText();
+        function.setName(portName);
+
         setExpr(ctx, function);
     }
 
@@ -373,12 +380,11 @@ public class ShiroExpressionListener extends ShiroBaseListener {
     public void exitPortDeclInit(@NotNull ShiroParser.PortDeclInitContext ctx) {
         SFunc function = getExpr(ctx.funcDeclInit());
 
-        String portName = ctx.funcDeclInit().nodeName.getText();
         String portType = Objects.isNull(ctx.accessModifier())? "" : ctx.accessModifier().getText();
 
         function.setSymbolType(SymbolType.PORT);
         function.setAccess(determineAccess(portType));
-        function.setName(portName);
+
     }
 
     protected SFunc setArgumentsInDecl(SFunc function, ShiroParser.ArgumentsContext arguments) {
@@ -451,41 +457,6 @@ public class ShiroExpressionListener extends ShiroBaseListener {
             function.setInput(keys.get(i).getText(), getExpr(values.get(i)));
         }
         return function;
-    }
-
-    protected SNode instantiateNode(String fullyQualfiedType, ShiroParser.ArgumentsContext assignment, String nodeName, SGraph g) {
-        SNode producedNode = (SNode) library.instantiateNode(g, fullyQualfiedType, nodeName);
-
-        if(assignment != null){
-            if( assignment.argMap() != null ){
-                List<Token> keys = assignment.argMap().keys;
-                List<ParseTree> values = assignment.argMap().values.stream()
-                        .map(argContext -> argContext.getChild(0))
-                        .collect(toList());
-
-                for(int i = 0; i < keys.size(); i++){
-                    SFunc port = producedNode.getPort(keys.get(i).getText());
-
-                    if(port == null){
-                        throw new RuntimeException(keys.get(i).getText() + " cannot be found in " + producedNode.getFullName());
-                    }
-
-                    port.setInput(0, getExpr(values.get(i)));
-                }
-            }
-
-            if(assignment.argList() != null ){
-                List<ParseTree> exprs = assignment.argList().arg().stream()
-                        .map(argContext -> argContext.getChild(0))
-                        .collect(toList());
-
-                for (int i = 0; i < exprs.size(); i++) {
-                    SFunc port = producedNode.getPort(i);
-                    port.setInput(0, getExpr(exprs.get(i)));
-                }
-            }
-        }
-        return producedNode;
     }
 
     private Access determineAccess(String access){

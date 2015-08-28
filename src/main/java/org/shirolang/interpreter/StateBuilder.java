@@ -32,20 +32,17 @@ import java.util.Map;
 /**
  *
  */
-public class StateBuilder extends ShiroExpressionListener{
+public class StateBuilder extends ShiroBaseListener{
     private Map<String, String> subjunctTable;
     private SState state;
-    private String graphName;
 
     public StateBuilder(Library lib) {
-        super(lib);
         subjunctTable = new HashMap<>();
     }
 
     public SState getState(){
         return state;
     }
-
 
     @Override
     public void enterStateDecl(ShiroParser.StateDeclContext ctx) {

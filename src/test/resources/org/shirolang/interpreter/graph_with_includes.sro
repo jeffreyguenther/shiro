@@ -3,12 +3,12 @@ include "a_include.sro"
 include "b_include.sro"
 
 graph includeTester begin
-    A -> a(1)
-    B -> b(2.2)
+    a A(1)
+    b B(2.2)
 
     sum Add(a.value, b.value)
 
-    Text -> t
+    t Text
     t.originX(sum)
     t.text("Look ma, I ran")
 end

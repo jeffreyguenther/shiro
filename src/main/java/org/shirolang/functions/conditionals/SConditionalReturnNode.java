@@ -40,7 +40,8 @@ public class SConditionalReturnNode extends SFuncBase implements Instantiator{
         if(condition.getValue()){
             SGraph g = new SGraph();
             String type = trueRef.getValue();
-            SFunc node = library.instantiateNode(g, type, "internal");
+            SFunc node = library.createFunction(g, type);
+            node.setName("internal");
             g.addNode((SNode) node);
 
             SFunc input = node.getInput(0);
