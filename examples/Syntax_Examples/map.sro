@@ -6,5 +6,5 @@ end
 l List(1.0, 2.0, 3.0)
 doubled Map(l, DoubleIt, @v, @newValue)
 
-// DoubleIt -> di
+// di DoubleIt
 // doubled Map(l, ~di, @v, @newValue)

@@ -4,7 +4,7 @@ stroke ColorFromRGB(0, 0, 0, 1.0)
 fill ColorFromRGB(255, 255, 255, 1.0)
 c_fill ColorFromRGB(0, 0, 125, 1.0)
 
-Rectangle -> r
+r Rectangle
 r.originX(0.0)
 r.originY(0.0)
 r.width(100.0)
@@ -13,7 +13,7 @@ r.stroke(stroke)
 r.fill(fill)
 
 
-Ellipse -> c
+c Ellipse
 c.centerX(100.0)`
 c.centerY(100.0)
 c.radiusX(50.0)
@@ -21,7 +21,7 @@ c.radiusY(50.0)
 c.stroke(stroke)
 c.fill(c_fill)
 
-Group -> g
+g Group
 g.originX(100.0)
 g.originY(150.0)
 g.children(~r, ~c)

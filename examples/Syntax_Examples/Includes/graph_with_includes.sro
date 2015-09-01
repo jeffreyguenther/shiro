@@ -2,9 +2,9 @@ include "a_include.sro"
 include "b_include.sro"
 
 graph useThose begin
-	A -> a(1.0)
+	a A(1.0)
 
-	B -> b(2.2)
+	b B(2.2)
 
 	sum Add(a.value, b.value)
 end

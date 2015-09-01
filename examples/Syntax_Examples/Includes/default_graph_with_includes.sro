@@ -1,7 +1,7 @@
 include "a_include.sro"
 include "b_include.sro"
 
-A -> a(1.0)
-B -> b(2.2)
+a A(1.0)
+b B(2.2)
 
 sum Add(a.value, b.value)

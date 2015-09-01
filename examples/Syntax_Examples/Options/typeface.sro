@@ -6,8 +6,8 @@ node Faces begin
 end
 
 graph typefaces begin
-    Faces -> f
-    Geometry.Text -> t
+    f Faces
+    Geometry.t Text
     t.originX(100.00)
     t.originY(75.0)
     t.text("Hello world!")

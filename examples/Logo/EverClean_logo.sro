@@ -16,30 +16,30 @@ node BackgroundColors begin
 end
 
 graph everGreenLogo begin
-	Typefaces -> type
-	TypeColors -> typeColors
-	BackgroundColors -> bgColors
+	type Typefaces
+	typeColors TypeColors
+	bgColors BackgroundColors
 
 	radius Double(200.0)
 	lineLength Double(300.0)
 	lineColor ColorFromRGB(0, 0, 0, 1.0)
 	
-	Line -> top(startX: radius - (lineLength / 2), startY: radius - 20)
+	top Line(startX: radius - (lineLength / 2), startY: radius - 20)
 	top.stroke(lineColor)
 	top.endX(radius - (lineLength / 2) + lineLength)
 	top.endY(radius - 20)
 
-	Line -> bottom(startX: radius - (lineLength / 2), startY: radius + 20)
+	bottom Line(startX: radius - (lineLength / 2), startY: radius + 20)
 	bottom.stroke(lineColor)
 	bottom.endX(radius - (lineLength / 2) + lineLength)
 	bottom.endY(radius + 20)
 
-	Ellipse -> bg(centerX: radius, centerY: radius, fill: bgColors.active)
+	bg Ellipse(centerX: radius, centerY: radius, fill: bgColors.active)
 	bg.stroke(bgColors.active)
 	bg.radiusX(radius)
 	bg.radiusY(radius)
 
-	Text -> logotype(text: "EverClean", font: type.active)
+	logotype Text(text: "EverClean", font: type.active)
 	logotype.originX(radius - 100)
 	logotype.originY(radius)
 end

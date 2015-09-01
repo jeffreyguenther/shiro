@@ -6,55 +6,55 @@ node Point begin
 end
 
 node Petal1[outer] begin
-    option Point -> outer(x: 0.0, y: 135.0)
-    option Point -> inner(x: 180.0, y: 45.0)
-    option Point -> bigger(x: 135.0, y: 180.0)
-    option Point -> bowtie(x: 315.0, y: 45.0)
+    option outer Point(x: 0.0, y: 135.0)
+    option inner Point(x: 180.0, y: 45.0)
+    option bigger Point(x: 135.0, y: 180.0)
+    option bowtie Point(x: 315.0, y: 45.0)
 end
 
 node Petal2[outer] begin
-    option Point -> outer(x: 315.0, y: 90.0)
-    option Point -> inner(x: 135.0, y: 90.0)
-    option Point -> bigger(x: 45.0, y: 0.0)
-    option Point -> bowtie(x: 45.0, y: 270.0)
+    option outer Point(x: 315.0, y: 90.0)
+    option inner Point(x: 135.0, y: 90.0)
+    option bigger Point(x: 45.0, y: 0.0)
+    option bowtie Point(x: 45.0, y: 270.0)
 end
 
 node Petal3[outer] begin
-    option Point -> outer(x: 225.0, y: 135.0)
-    option Point -> inner(x: 135.0, y: 45.0)
-    option Point -> bigger(x: 45.0, y: 180.0)
-    option Point -> bowtie(x: 0.0, y: 45.0)
+    option outer Point(x: 225.0, y: 135.0)
+    option inner Point(x: 135.0, y: 45.0)
+    option bigger Point(x: 45.0, y: 180.0)
+    option bowtie Point(x: 0.0, y: 45.0)
 end
 
 node Petal4[outer] begin
-    option Point -> outer(x: 180.0, y: 135.0)
-    option Point -> inner(x: 0.0, y: 45.0)
-    option Point -> bigger(x: 315.0, y: 180.0)
-    option Point -> bowtie(x: 135.0, y: 45.0)
+    option outer Point(x: 180.0, y: 135.0)
+    option inner Point(x: 0.0, y: 45.0)
+    option bigger Point(x: 315.0, y: 180.0)
+    option bowtie Point(x: 135.0, y: 45.0)
 end
 
 node Petal5[outer] begin
-   option Point -> outer(x: 135.0, y: 90.0)
-   option Point -> inner(x: 315.0, y: 90.0)
-   option Point -> bigger(x: 315.0, y: 0.0)
-   option Point -> bowtie(x: 225.0, y: 270.0)
+   option outer Point(x: 135.0, y: 90.0)
+   option inner Point(x: 315.0, y: 90.0)
+   option bigger Point(x: 315.0, y: 0.0)
+   option bowtie Point(x: 225.0, y: 270.0)
 end
 
 node Petal6[outer] begin
-    option Point -> outer(x: 45.0, y: 135.0)
-    option Point -> inner(x: 315.0, y: 45.0)
-    option Point -> bigger(x: 225.0, y: 180.0)
-    option Point -> bowtie(x: 180.0, y:45.0)
+    option outer Point(x: 45.0, y: 135.0)
+    option inner Point(x: 315.0, y: 45.0)
+    option bigger Point(x: 225.0, y: 180.0)
+    option bowtie Point(x: 180.0, y:45.0)
 end
 
 graph patterns begin
-    // Define petal subjuntive nodes
-    Petal1 -> petal1
-    Petal2 -> petal2
-    Petal3 -> petal3
-    Petal4 -> petal4
-    Petal5 -> petal5
-    Petal6 -> petal6
+    // Define petal subjunctive nodes
+    petal1 Petal1
+    petal2 Petal2
+    petal3 Petal3
+    petal4 Petal4
+    petal5 Petal5
+    petal6 Petal6
 
     stroke ColorFromRGB(0, 0, 255, 1.0)
     arcStroke ColorFromRGB(0, 0, 0, 1.0)
@@ -64,7 +64,7 @@ graph patterns begin
 
     // define center of flower
     // draw outline
-    Ellipse -> outline
+    outline Ellips
     outline.centerX(200.0)
     outline.centerY(200.0)
     outline.radiusX(200.0)
@@ -72,7 +72,7 @@ graph patterns begin
     outline.stroke(stroke)
     outline.fill(fill)
 
-    Ellipse -> c1
+    c1 Ellips
     c1.centerX(270.7)
     c1.centerY(129.3)
     c1.radiusX(100.0)
@@ -80,7 +80,7 @@ graph patterns begin
     c1.stroke(stroke)
     c1.fill(fill)
 
-    Arc -> a1
+    a1 Ar
     a1.startAngle(petal1.active.x)
     a1.length(petal1.active.y)
     a1.radiusX(100.0)
@@ -92,7 +92,7 @@ graph patterns begin
     a1.fill(fill)
     a1.strokeWeight(arcStrokeWeight)
 
-    Ellipse -> c2
+    c2 Ellips
     c2.centerX(300.0)
     c2.centerY(200.0)
     c2.radiusX(100.0)
@@ -100,7 +100,7 @@ graph patterns begin
     c2.stroke(stroke)
     c2.fill(fill)
 
-    Arc -> a2
+    a2 Ar
     a2.startAngle(petal2.active.x)
     a2.length(petal2.active.y)
     a2.radiusX(100.0)
@@ -112,7 +112,7 @@ graph patterns begin
     a2.fill(fill)
     a2.strokeWeight(arcStrokeWeight)
 
-    Ellipse -> c3
+    c3 Ellips
     c3.centerX(270.7)
     c3.centerY(270.7)
     c3.radiusX(100.0)
@@ -120,7 +120,7 @@ graph patterns begin
     c3.stroke(stroke)
     c3.fill(fill)
 
-    Arc -> a3
+    a3 Ar
     a3.startAngle(petal3.active.x)
     a3.length(petal3.active.y)
     a3.radiusX(100.0)
@@ -132,7 +132,7 @@ graph patterns begin
     a3.fill(fill)
     a3.strokeWeight(arcStrokeWeight)
 
-    Ellipse -> c4
+    c4 Ellips
     c4.centerX(129.3)
     c4.centerY(270.7)
     c4.radiusX(100.0)
@@ -140,7 +140,7 @@ graph patterns begin
     c4.stroke(stroke)
     c4.fill(fill)
 
-    Arc -> a4
+    a4 Ar
     a4.startAngle(petal4.active.x)
     a4.length(petal4.active.y)
     a4.radiusX(100.0)
@@ -152,7 +152,7 @@ graph patterns begin
     a4.fill(fill)
     a4.strokeWeight(arcStrokeWeight)
 
-    Ellipse -> c5
+    c5 Ellips
     c5.centerX(100.0)
     c5.centerY(200.0)
     c5.radiusX(100.0)
@@ -160,7 +160,7 @@ graph patterns begin
     c5.stroke(stroke)
     c5.fill(fill)
 
-    Arc -> a5
+    a5 Ar
     a5.startAngle(petal5.active.x)
     a5.length(petal5.active.y)
     a5.radiusX(100.0)
@@ -172,7 +172,7 @@ graph patterns begin
     a5.fill(fill)
     a5.strokeWeight(arcStrokeWeight)
 
-    Ellipse -> c6
+    c6 Ellips
     c6.centerX(129.3)
     c6.centerY(129.3)
     c6.radiusX(100.0)
@@ -180,7 +180,7 @@ graph patterns begin
     c6.stroke(stroke)
     c6.fill(fill)
 
-    Arc -> a6
+    a6 Ar
     a6.startAngle(petal6.active.x)
     a6.length(petal6.active.y)
     a6.radiusX(100.0)
@@ -222,7 +222,6 @@ state bigCenter begin
     petal5[bigger]
     petal6[bigger]
 end
-
 
 state bowtie begin
     graph patterns

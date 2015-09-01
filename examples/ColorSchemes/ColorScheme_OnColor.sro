@@ -51,7 +51,7 @@ node Palette begin
 	input color4 Color
 
 	// create the swatches
-	Rectangle -> r1
+	r1 Rectangle
 	r1.originX(0.0)
 	r1.originY(0.0)
 	r1.width(sideLength)
@@ -59,7 +59,7 @@ node Palette begin
 	r1.stroke(stroke)
 	r1.fill(color1)
 
-	Rectangle -> r2
+	r2 Rectangle
 	r2.originX(50.0)
 	r2.originY(0.0)
 	r2.width(sideLength)
@@ -67,7 +67,7 @@ node Palette begin
 	r2.stroke(stroke)
 	r2.fill(color2)
 
-	Rectangle -> r3
+	r3 Rectangle
 	r3.originX(100.0)
 	r3.originY(0.0)
 	r3.width(sideLength)
@@ -75,7 +75,7 @@ node Palette begin
 	r3.stroke(stroke)
 	r3.fill(color3)
 
-	Rectangle -> r4
+	r4 Rectangle
 	r4.originX(150.0)
 	r4.originY(0.0)
 	r4.width(sideLength)
@@ -84,7 +84,7 @@ node Palette begin
 	r4.fill(color4)
 
 	// put all the rectangles in a group so they can moved as a unit
-	Group -> g
+	g Group
 	g.originX(x)
 	g.originY(y)
 	g.children(~r1, ~r2, ~r3, ~r4)
@@ -92,16 +92,16 @@ end
 
 // Compute the colors
 graph colors begin
-	BlackAndWhite -> bw1
-	BlackAndWhite -> bw2
-	BlackAndWhite -> bw3
-	BlackAndWhite -> bw4
-	Palette -> colorPalette
-	Palette -> bwPalette
-	Value1 -> value1
-	Value2 -> value2
-	Value3 -> value3
-	Value4 -> value4
+	bw1 BlackAndWhite
+	bw2 BlackAndWhite
+	bw3 BlackAndWhite
+	bw4 BlackAndWhite
+	colorPalette Palette
+	bwPalette Palette
+	value1 Value1
+	Value2 value2
+	value3 Value3
+	value4 Value4
 
 	colorPalette.x(0)
     colorPalette.y(0)

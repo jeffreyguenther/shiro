@@ -13,7 +13,7 @@ node ColorSchemes begin
     r3 ColorFromRGB(150, 0, 0)
     r4 ColorFromRGB(200, 0, 0)
 
-	option Colors -> red
+	option red Colors
 	red.value1(r1)
 	red.value2(r2)
 	red.value3(r3)
@@ -24,7 +24,7 @@ node ColorSchemes begin
 	g3 ColorFromRGB(0, 150, 0)
 	g4 ColorFromRGB(0, 200, 0)
 
-	option Colors -> green
+	option green Colors
 	green.value1(g1)
 	green.value2(g2)
 	green.value3(g3)
@@ -41,35 +41,35 @@ node Palette begin
 	input color3 Color
 	input color4 Color
 
-	Rectangle -> r1
+	r1 Rectangle
 	r1.originX(0.0)
 	r1.originY(0.0)
 	r1.width(sideLength)
 	r1.height(sideLength)
 	r1.fill(color1)
 
-	Rectangle -> r2
+	r2 Rectangle
 	r2.originX(50.0)
 	r2.originY(0.0)
 	r2.width(sideLength)
 	r2.height(sideLength)
 	r2.color(color2)
 
-	Rectangle -> r3
+	r3 Rectangle
 	r3.originX(100.0)
 	r3.originY(0.0)
 	r3.width(sideLength)
 	r3.height(sideLength)
 	r3.color(color3)
 
-	Rectangle -> r4
+	r4 Rectangle
 	r4.originX(150)
 	r4.originY(0)
 	r4.width(sideLength)
 	r4.height(sideLength)
 	r4.color(color4)
 
-	Group -> g
+	g Group
 	g.originX(x)
 	g.originY(y)
 	g.children(r1.rect, r2.rect, r3.rect, r4.rect)
@@ -77,18 +77,18 @@ end
 
 node BlackAndWhite begin
 	input color Color
-	eval corrector Grayscale(color)
+	corrector Grayscale(color)
 	output bw Color(corrector)
 end
 
 graph colors begin
-	BlackAndWhite -> bw1
-	BlackAndWhite -> bw2
-	BlackAndWhite -> bw3
-	BlackAndWhite -> bw4
-	Palette -> colorPalette
-	Palette -> bwPalette
-	ColorSchemes -> colors
+	bw1 BlackAndWhite
+	bw2 BlackAndWhite
+	bw3 BlackAndWhite
+	bw4 BlackAndWhite
+	colorPalette Palette
+	bwPalette Palette
+	colors ColorSchemes
 
 	colorPalette.x(0)
 	colorPalette.y(0)

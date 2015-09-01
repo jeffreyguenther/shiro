@@ -10,16 +10,16 @@ node Layer begin
 end
 
 node Costumes begin
-	option Image -> bball( path: "Costume_Selection/basketball.png")
-	option Image -> tux( path: "Costume_Selection/tux.png")
+	option bball Image( path: "Costume_Selection/basketball.png")
+	option tux Image( path: "Costume_Selection/tux.png")
 	end
 end
 
 graph costumeSelection begin
-	Image -> character(path: "Costume_Selection/character.png")
+	character Image(path: "Costume_Selection/character.png")
 
-	Costumes -> costumes
-	Layer -> l
+	costumes Costumes
+	l Layer
 	l.layers(character.img, costumes.active.img)
 end
 

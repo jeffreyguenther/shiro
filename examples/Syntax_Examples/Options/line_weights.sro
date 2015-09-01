@@ -7,8 +7,8 @@ end
 
 
 graph aSketch begin
-	StrokeWidths -> s  
-	Geometry.Rectangle -> r(originX: 40.0, originY: 100.0, width: 100.0, height: 400.0)
+	s StrokeWidths  
+	Geometry.r Rectangle(originX: 40.0, originY: 100.0, width: 100.0, height: 400.0)
 	r.strokeWeight(s.active)
 end
 
