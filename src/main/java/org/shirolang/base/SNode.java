@@ -334,11 +334,15 @@ public class SNode extends SFuncBase implements Scope{
     public Set<Pair<String, String>> getOptionPairs(){
         Set<Pair<String, String>> pairs = new HashSet<>();
 
-        for(SFunc s: getOptions().values()){
-            pairs.add(new Pair<>(name.get(), s.getName()));
+        if(hasDefaultOption()) {
+            pairs.add(new Pair<>(name.get(), getDefaultOption().getName()));
+        }else {
+            for (SFunc s : getOptions().values()) {
+                pairs.add(new Pair<>(name.get(), s.getName()));
+            }
         }
 
-        for(SNode nested: nestedNodes.values()){
+        for (SNode nested : nestedNodes.values()) {
             pairs.addAll(nested.getOptionPairs());
         }
         return pairs;
@@ -405,6 +409,10 @@ public class SNode extends SFuncBase implements Scope{
                 n.activateOptions(a);
             }
         }
+    }
+
+    public boolean hasDefaultOption(){
+        return Objects.nonNull(getDefaultOption());
     }
 
     /**
