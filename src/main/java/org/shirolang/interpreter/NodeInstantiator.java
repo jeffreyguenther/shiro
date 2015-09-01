@@ -99,7 +99,6 @@ public class NodeInstantiator extends ShiroExpressionListener {
         super.exitPortDeclInit(ctx);
         SFunc function = getExpr(ctx.funcDeclInit());
 
-        // Add the port to it's encapsulating node
         SNode node = (SNode) scope.peek();
         boolean isOption = Objects.nonNull(ctx.OPTION());
         if(isOption){

@@ -24,11 +24,11 @@
 
 package org.shirolang.values;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.shirolang.base.*;
 import org.shirolang.exceptions.PathNotFoundException;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Defines an identifier points to. This

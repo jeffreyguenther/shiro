@@ -26,6 +26,7 @@ package org.shirolang.base;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.shirolang.exceptions.OptionNotFoundException;
 import org.shirolang.exceptions.PathNotFoundException;
 import org.shirolang.values.SDouble;
 import org.shirolang.values.SIdent;
@@ -165,6 +166,27 @@ public class SGraphTest {
 
         SFunc path = g.resolvePath("nums");
         Assert.assertSame(d, path);
+    }
+    @Test
+    public void resolvePathToActiveNodePort() throws PathNotFoundException, OptionNotFoundException {
+        SGraph g = new SGraph();
+        SNode n = new SNode("Type", "n");
+        g.addNode(n);
+
+        SNode p = new SNode("Type", "p");
+        n.addOption(p);
+        n.setActiveOption("p");
+
+        SNode q = new SNode("Type", "a");
+        n.addFunction(q);
+
+        SDouble d = new SDouble(12.2);
+        d.setSymbolType(SymbolType.PORT);
+        d.setName("d");
+
+        p.addFunction(d);
+
+        Assert.assertSame(d, g.resolvePath("n.active.d"));
     }
 
     @Test

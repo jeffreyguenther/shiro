@@ -336,7 +336,9 @@ public class ShiroExpressionListener extends ShiroBaseListener {
 
         String portType = Objects.isNull(ctx.accessModifier())? "" : ctx.accessModifier().getText();
 
-        function.setSymbolType(SymbolType.PORT);
+        if(!function.getSymbolType().isNode()) {
+            function.setSymbolType(SymbolType.PORT);
+        }
         function.setAccess(determineAccess(portType));
     }
 
@@ -382,7 +384,9 @@ public class ShiroExpressionListener extends ShiroBaseListener {
 
         String portType = Objects.isNull(ctx.accessModifier())? "" : ctx.accessModifier().getText();
 
-        function.setSymbolType(SymbolType.PORT);
+        if(!function.getSymbolType().isNode()) {
+            function.setSymbolType(SymbolType.PORT);
+        }
         function.setAccess(determineAccess(portType));
 
     }

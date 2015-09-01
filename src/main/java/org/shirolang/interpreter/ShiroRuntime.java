@@ -189,7 +189,6 @@ public class ShiroRuntime{
             }
 
             // render the current state using the callbacks
-//            Set<Node> visualized = new HashSet<>();
             Map<SFunc, Node> visualized = new HashMap<>();
             for(String type: library.getTypeNames()){
                 List<SFunc> collect = graph.getPorts().stream().filter(p -> p.getType().equals(type)).collect(toList());
@@ -198,7 +197,6 @@ public class ShiroRuntime{
                     if (!type.equals("Group")) {
                         Callback<SFunc, Node> callback = visualCallBacks.get(type);
                         if (callback != null) {
-//                        visualized.add(callback.call(sFunc));
                             visualized.computeIfAbsent(sFunc, callback::call);
                             System.out.println("rendering " + type);
                         }
