@@ -163,8 +163,8 @@ expr : '(' expr ')'						      #parensExpr
 	 |  expr (PLUS_OP | MINUS_OP ) expr       #addExpr
 	 |  expr (GT | GTE | LT | LTE) expr       #comparisonExpr
 	 |  expr ( EQ | NEQ ) expr                #equalityExpr
-	 |  funcCall                              #inlineFuncCall
 	 |  fullyQualifiedType                    #typeExpr
+	 |  funcCall                              #inlineFuncCall
 	 |  path                                  #pathExpr
 	 |	NUMBER 								  #numExpr
 	 |  BOOLEAN_LITERAL						  #boolExpr

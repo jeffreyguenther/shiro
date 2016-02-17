@@ -169,8 +169,8 @@ public class ShiroExpressionListener extends ShiroBaseListener {
     }
 
     @Override
-    public void enterFullyQualifiedType(ShiroParser.FullyQualifiedTypeContext ctx) {
-        setExpr(ctx, createFullyQualifiedType(ctx));
+    public void exitTypeExpr(ShiroParser.TypeExprContext ctx) {
+        setExpr(ctx, createFullyQualifiedType(ctx.fullyQualifiedType()));
     }
 
     private String convertFullyQualifiedTypeToString(ShiroParser.FullyQualifiedTypeContext ctx){
