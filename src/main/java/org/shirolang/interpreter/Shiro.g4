@@ -58,7 +58,7 @@ graphDecl
 	;
 
 graphStmt
-	:	portAssignment | funcDeclInit | funcDecl | NEWLINE
+	:	portAssignment | funcDeclInit | funcDecl | namedRef |NEWLINE
 	;
 
 nodeDecl
@@ -67,11 +67,27 @@ nodeDecl
         END
     ;
 
-funcDeclInit
-    :   name=IDENT fullyQualifiedType ( LSQUARE activeObject=IDENT RSQUARE )? ('(' arguments ')')
+namedRef
+    :   name=IDENT reference
     ;
 
-funcCall : fullyQualifiedType ( LSQUARE activeObject=IDENT RSQUARE )? ('(' arguments ')')?;
+anonymousRef
+    :   reference
+    ;
+
+reference
+    :   REF funcCall outputSelector
+    ;
+
+outputSelector
+    :   (LSQUARE selectedOutput=IDENT RSQUARE)?
+    ;
+
+funcDeclInit
+    :   name=IDENT fullyQualifiedType ( LSQUARE activeObject=IDENT RSQUARE )? ('(' arguments? ')')
+    ;
+
+funcCall : fullyQualifiedType ( LSQUARE activeObject=IDENT RSQUARE )? ('(' arguments? ')')?;
 
 funcDecl
     :   name=IDENT fullyQualifiedType ( LSQUARE activeObject=IDENT RSQUARE )?
@@ -111,7 +127,7 @@ portDeclInit
 	;
 
 portstmt	
-	:	( portDeclInit | portDecl ) NEWLINE
+	:	( portDeclInit | portDecl | namedRef ) NEWLINE
 	;	
 	
 portName 
@@ -152,6 +168,11 @@ anonymousGraphStmt
     |   funcDeclInit NEWLINE
     |   funcDecl NEWLINE
     |   anonExpr
+    |   namedRef NEWLINE
+    ;
+
+listLiteral
+    :   LSQUARE argList? RSQUARE
     ;
 
 expr : '(' expr ')'						      #parensExpr
@@ -164,8 +185,10 @@ expr : '(' expr ')'						      #parensExpr
 	 |  expr (GT | GTE | LT | LTE) expr       #comparisonExpr
 	 |  expr ( EQ | NEQ ) expr                #equalityExpr
 	 |  fullyQualifiedType                    #typeExpr
+	 |  anonymousRef                          #anonRefExpr
 	 |  funcCall                              #inlineFuncCall
 	 |  path                                  #pathExpr
+	 |  listLiteral                           #listExpr
 	 |	NUMBER 								  #numExpr
 	 |  BOOLEAN_LITERAL						  #boolExpr
 	 |  STRING_LITERAL                        #stringExpr
