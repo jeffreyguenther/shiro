@@ -25,10 +25,15 @@
 package org.shirolang.base;
 
 import javafx.util.Pair;
+import org.shirolang.dag.DAGraph;
+import org.shirolang.dag.GraphNode;
+import org.shirolang.dag.TopologicalSort;
 import org.shirolang.exceptions.OptionNotFoundException;
 import org.shirolang.exceptions.PathNotFoundException;
+import org.shirolang.interpreter.SFuncAction;
 import org.shirolang.values.Path;
 import org.shirolang.values.PathSegment;
+import org.shirolang.values.SIdent;
 
 import java.util.*;
 
@@ -40,6 +45,8 @@ import static java.util.stream.Collectors.toSet;
  *
  */
 public class SNode extends SFuncBase implements Scope{
+    private SEvaluator evaluator; //object with methods to evaluate graphs
+
     // the node's parent scope; The value maybe another node or the global parametric system.
     private Scope parentScope;
     // type string for the node
@@ -93,6 +100,8 @@ public class SNode extends SFuncBase implements Scope{
      * @param scope scope the node is in
      */
     private void initializeVars(String type, String name, Scope scope) {
+        evaluator = new SEvaluator();
+
         // type of node
         this.type = type;
         // add the enclosing scope
@@ -505,10 +514,11 @@ public class SNode extends SFuncBase implements Scope{
 
     @Override
     public void evaluate() {
-        // todo handle node evaluation.
-        // This is where we will deal with the mechanics of having a
-        // node evaluate itself when it's not attached to a graph.
-        // this will happen when a node is passed as a lambda
+
+    }
+
+    public void evaluateSubgraph(){
+        evaluator.evaluateGraph(getPorts());
     }
 
     @Override

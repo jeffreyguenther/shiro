@@ -34,7 +34,7 @@ end
 
 node BlackAndWhite begin
 	input color Color
-	eval corrector ColorToGrayscale(color)
+	corrector ColorToGrayscale(color)
 	output bw Color(corrector)
 end
 
@@ -99,7 +99,7 @@ graph colors begin
 	colorPalette Palette
 	bwPalette Palette
 	value1 Value1
-	Value2 value2
+	value2 Value2
 	value3 Value3
 	value4 Value4
 

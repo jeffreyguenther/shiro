@@ -1,0 +1,27 @@
+node Fibonacci begin
+  input n Integer
+  input a Integer
+  input b Integer
+
+  zeroFilter ConditionalReturn(n == 0, a, 0)
+  oneFilter ConditionalReturn(n == 1, b, 0)
+
+  // this version doesn't work so well. It makes it ambiguous the function is to be used as a lambda or if it's an
+  // instance in the graph
+  f Fibonacci( n - 1, b, a + b)
+  aboveFilter ConditionalReturn(n > 1, ~f, 0)
+
+  // OR
+  // aboveFilter ConditionalReturnNode(n > 1, ~Fibonacci( n - 1, b, a + b), 0)
+  // aboveFilter ConditionalReturnNode(n > 1, ~Fibonacci( n - 1, b, a + b)[sum], 0)
+
+  // Sums the arguments passed
+  values List(zeroFilter, oneFilter, aboveFilter)
+  output sum Sum(values)
+end
+
+graph fib5 begin
+  fib Fibonacci(5, 0, 1)
+  result Integer(fib.sum) // outputs 12
+end
+

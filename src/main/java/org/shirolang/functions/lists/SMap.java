@@ -89,15 +89,22 @@ public class SMap extends SFuncBase implements Instantiator{
             }
         }
 
-        if (tempRef.getSymbolType().isIdent()){
-            SFunc localfunction = tempRef.getResult();
+        if (tempRef.getSymbolType().isNode()){
+            SNode localfunction = (SNode) tempRef;
+
             // for each function in the list
             for(SFunc elem: list.getValue()){
                 // set the input specified by the input selector
+                SFunc input = localfunction.getInput(inputName);
+                input.setInput(0, elem);
 
-                localfunction.evaluate();
+                System.out.println(input.getResult());
+
+                localfunction.evaluateSubgraph();
+
                 // get the output specified by the output selector
-
+                SFunc outputValue = localfunction.getOutput(outputName);
+                output.appendInput((outputValue.getResult()));
             }
 
         }
