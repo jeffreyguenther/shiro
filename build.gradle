@@ -44,6 +44,10 @@ project.run.classpath += sourceSets.generated.output
 
 repositories {
     mavenCentral()
+
+    maven {
+        url 'https://oss.sonatype.org/content/repositories/snapshots/'
+    }
 }
 
 configurations {
@@ -64,21 +68,15 @@ dependencies {
     compile 'org.antlr:ST4:4.0.8'
     compile group: "org.antlr", name: "antlr4", version: "4.5"
 
-    compile group: 'org.fxmisc.richtext', name: 'richtextfx', version: '0.6.10'
+    compile group: 'org.fxmisc.richtext', name: 'richtextfx', version: '1.0.0-SNAPSHOT'
     compile 'com.google.guava:guava:18.0'
     compile 'net.sf.opencsv:opencsv:2.3'
-//    compile 'net.sf.jung:jung-api:2.0.1'
-//    compile 'net.sf.jung:jung-graph-impl:2.0.1'
-//    compile 'net.sf.jung:jung-algorithms:2.0.1'
-//    compile 'net.sf.jung:jung-io:2.0.1'
-//    compile 'net.sf.jung:jung-visualization:2.0.1'
-    
-    
+
     testCompile group: "junit", name: "junit", version: versions.junit
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.4'
+    gradleVersion = '2.13'
 }
 
 tasks.withType(JavaCompile) {
