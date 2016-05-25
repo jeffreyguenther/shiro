@@ -1,0 +1,42 @@
+program(p) ::=<<
+<p.nodeDefs:nodeDef(); separator="\n\n"><\\>
+<if(p.nodeDefs && (p.graphDefs || p.stateDefs))><\n><\n><endif><\\>
+<p.graphDefs:graphDef(); separator="\n\n"><\\>
+<if(p.graphDefs && p.stateDefs)><\n><\n><endif><\\>
+<p.stateDefs:stateDef(); separator="\n\n">
+>>
+
+nodeDef(n) ::= <<
+node <n.name> begin
+end
+>>
+
+graphDef(g) ::= <<
+graph <g.name> begin
+    <g.functions:funcDef(); separator="\n">
+end
+>>
+
+stateDef(s) ::= <<
+state <s.name> begin
+    graph <s.graph>
+    <s.options:optionDef(); separator="\n">
+end
+>>
+
+optionDef(o) ::= <<
+<if(o.optionSelections)><\\>
+<o.function>[<o.option>] begin
+    <o.selections:optionDef(); separator = "\n">
+end<\\>
+<else><\\>
+<o.function>[<o.option>]<\\>
+<endif>
+>>
+
+funcDef(f) ::= "<f.name> <f.type><if(f.activeOption)>[<f.option>]<endif><if(f.argsDefined)>(<args(f)>)<endif>"
+
+args(f) ::= <<
+<if(f.keywordArgs)><f.argMap.keys:{k| <k>: <f.argMap.(k)>}; separator=", "><endif><\\>
+<if(f.listArgs)><f.argList:{a| <a>}; separator=", "><endif>
+>>

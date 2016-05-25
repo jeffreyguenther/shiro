@@ -27,10 +27,9 @@ package org.shirolang;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.shirolang.base.BaseSuite;
-import org.shirolang.base.SIndexedMapTest;
 import org.shirolang.functions.FinanceSuite;
-import org.shirolang.functions.MathSuite;
 import org.shirolang.interpreter.InterpreterSuite;
+import org.shirolang.interpreter.ast.DefinitionSuite;
 import org.shirolang.values.ValuesSuite;
 
 /**
@@ -42,7 +41,8 @@ import org.shirolang.values.ValuesSuite;
     FinanceSuite.class,
     InterpreterSuite.class,
     ValuesSuite.class,
-    SymbolTypeTest.class
+    SymbolTypeTest.class,
+    DefinitionSuite.class
 })
 public class RuntimeSuite {
 }
