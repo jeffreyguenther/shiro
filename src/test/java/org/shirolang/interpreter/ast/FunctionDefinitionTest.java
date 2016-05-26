@@ -2,11 +2,9 @@ package org.shirolang.interpreter.ast;
 
 import org.junit.Test;
 import org.shirolang.fixtures.FunctionDefinitionFixture;
-import org.shirolang.interpreter.ast.FunctionDefinition.ArgumentsType;
+import org.shirolang.interpreter.ast.Function.ArgumentsType;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class FunctionDefinitionTest {
     @Test

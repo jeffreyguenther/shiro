@@ -31,6 +31,10 @@ public class GraphDefinition implements Codeable{
         return functions;
     }
 
+    public void addDefinition(FunctionDefinition def) {
+        functions.add(def);
+    }
+
     @Override
     public String toCode() {
         String path = GraphDefinition.class.getResource("shiro.stg").getPath();
@@ -39,9 +43,5 @@ public class GraphDefinition implements Codeable{
         ST code = templates.getInstanceOf("graphDef");
         code.add("g", this);
         return code.render();
-    }
-
-    public void addDefinition(FunctionDefinition def) {
-        functions.add(def);
     }
 }

@@ -36,7 +36,10 @@ end<\\>
 
 funcDef(f) ::= "<f.name> <f.type><if(f.activeOption)>[<f.option>]<endif><if(f.argsDefined)>(<args(f)>)<endif>"
 
+funcCall(f) ::= "<f.path><if(f.activeOption)>[<f.option>]<endif>(<args(f)>)"
+
 args(f) ::= <<
 <if(f.keywordArgs)><f.argMap.keys:{k| <k>: <f.argMap.(k)>}; separator=", "><endif><\\>
 <if(f.listArgs)><f.argList:{a| <a>}; separator=", "><endif>
 >>
+

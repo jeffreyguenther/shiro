@@ -10,7 +10,12 @@ import org.junit.runners.Suite;
         OptionSelectionTest.class,
         GraphDefinitionTest.class,
         NodeDefinitionTest.class,
-        FunctionDefinitionTest.class
+        FunctionDefinitionTest.class,
+        FunctionCallTest.class,
+        LiteralTest.class,
+        BinaryOperationTest.class,
+        UnaryOperationTest.class,
+        ExpressionTest.class
 })
 public class DefinitionSuite {
 }

@@ -1,6 +1,8 @@
 package org.shirolang.fixtures;
 
+import org.shirolang.interpreter.ast.Expression;
 import org.shirolang.interpreter.ast.FunctionDefinition;
+import org.shirolang.interpreter.ast.Literal;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -35,7 +37,8 @@ public class FunctionDefinitionFixture {
      * @return FunctionDefinition
      */
     public static FunctionDefinition withNameTypeAndListOfArgs(){
-        return new FunctionDefinition("Box", "b", Arrays.asList("1", "2", "3"));
+        return new FunctionDefinition("Box", "b",
+                Arrays.asList(new Literal<Integer>(1), new Literal<Integer>(2), new Literal<Integer>(3)));
     }
 
     /**
@@ -44,9 +47,9 @@ public class FunctionDefinitionFixture {
      * @return FunctionDefinition
      */
     public static FunctionDefinition withNameTypeAndKeywordArgs(){
-        Map<String, String> args = new HashMap<>();
-        args.put("a", "1");
-        args.put("b", "10");
+        Map<String, Expression> args = new HashMap<>();
+        args.put("a", new Literal<Integer>(1));
+        args.put("b", new Literal<Integer>(10));
 
         return new FunctionDefinition("Box", "b", args);
     }
@@ -58,7 +61,8 @@ public class FunctionDefinitionFixture {
      * @return FunctionDefinition
      */
     public static FunctionDefinition withNameTypeOptionAndListOfArgs(){
-        return new FunctionDefinition("Box", "b", "a", Arrays.asList("1", "2", "3"));
+        return new FunctionDefinition("Box", "b", "a",
+                Arrays.asList(new Literal<Integer>(1), new Literal<Integer>(2), new Literal<Integer>(3)));
     }
 
     /**
@@ -67,9 +71,9 @@ public class FunctionDefinitionFixture {
      * @return FunctionDefinition
      */
     public static FunctionDefinition withNameTypeOptionAndKeywordArgs(){
-        Map<String, String> args = new HashMap<>();
-        args.put("a", "1");
-        args.put("b", "10");
+        Map<String, Expression> args = new HashMap<>();
+        args.put("a", new Literal<Integer>(1));
+        args.put("b", new Literal<Integer>(10));
 
         return new FunctionDefinition("Box", "b", "a", args);
     }
