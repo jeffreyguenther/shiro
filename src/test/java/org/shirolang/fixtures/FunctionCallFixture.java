@@ -14,7 +14,6 @@ import java.util.Map;
 public class FunctionCallFixture {
     /**
      * a.y[b](1, 2, 3)
-     * @return
      */
     public static FunctionCall withPathOptionAndListOfArgs(){
         return new FunctionCall("a.y", "b",
@@ -23,7 +22,6 @@ public class FunctionCallFixture {
 
     /**
      * x.y[b](a: 1, b: 10)
-     * @return
      */
     public static FunctionCall withPathOptionAndKeywordargs(){
         Map<String, Expression> args = new HashMap<>();
@@ -35,7 +33,6 @@ public class FunctionCallFixture {
 
     /**
      * a.y(1, 2, 3)
-     * @return
      */
     public static FunctionCall withPathAndListOfArgs(){
         return new FunctionCall("a.y",
@@ -44,7 +41,6 @@ public class FunctionCallFixture {
 
     /**
      * x.y(a: 1, b: 10)
-     * @return
      */
     public static FunctionCall withPathAndKeywordargs(){
         Map<String, Expression> args = new HashMap<>();
@@ -56,7 +52,6 @@ public class FunctionCallFixture {
 
     /**
      * a.x(a.b(10) / 0.1, 10)
-     * @return
      */
     public static FunctionCall withFunctionCallArgs(){
         return new FunctionCall("a.x", Arrays.asList(ExpressionDefinitionFixture.withFunctionCall(), Literal.asInteger(10)));

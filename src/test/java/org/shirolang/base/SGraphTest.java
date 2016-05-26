@@ -31,9 +31,6 @@ import org.shirolang.exceptions.PathNotFoundException;
 import org.shirolang.values.SDouble;
 import org.shirolang.values.SIdent;
 
-/**
- *
- */
 public class SGraphTest {
 
     @Test

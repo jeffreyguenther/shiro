@@ -3,13 +3,8 @@ node Box begin
     input width Double
     input height Double
     update Multiply(length, width)
-    output area Double(update)
+    output volume Double(update)
     output name String("Box")
 end
 
-graph box_calc begin
-    b Box
-    b.length(100.0)
-    b.width(20.0)
-    b.height(7.0)
-end
+b Box(length: 100.0, width: 20.0, height: 7.0)

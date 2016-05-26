@@ -25,7 +25,7 @@ package org.shirolang.interpreter;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
-import org.shirolang.base.*;
+import org.shirolang.interpreter.ast.ASTSuite;
 
 /**
  * Runs the test for the interpreter
@@ -39,7 +39,8 @@ import org.shirolang.base.*;
     LibraryTest.class,
     NameManagerTest.class,
     NodeInstantiatorTest.class,
-    StateBuilderTest.class
+    StateBuilderTest.class,
+    ASTSuite.class
 })
 public class InterpreterSuite {
 }

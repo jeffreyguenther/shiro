@@ -111,7 +111,7 @@ public class LibraryTest{
     public void instantiateNamedGraphWithLoosePort() throws IOException {
         ParseTreeWalker walker = new ParseTreeWalker();
         ShiroLexer lex = new ShiroLexer(new ANTLRInputStream(this.getClass()
-                .getResourceAsStream("graph_named_with_loose_ports.sro")));
+                .getResourceAsStream("graph_named_with_internal_ports.sro")));
         CommonTokenStream tokens = new CommonTokenStream(lex);
         ShiroParser parser = new ShiroParser(tokens);
         parser.setBuildParseTree(true);

@@ -8,9 +8,6 @@ import org.shirolang.values.SInteger;
 
 import static org.junit.Assert.*;
 
-/**
- * Tests a conditional return
- */
 public class SConditionalReturnTest {
 
     @Test
@@ -31,8 +28,6 @@ public class SConditionalReturnTest {
 
         SInteger result = (SInteger) ret.getResult();
         Assert.assertEquals(100, result.getValue().intValue());
-
-
     }
 
     @Test

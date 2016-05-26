@@ -1,10 +1,10 @@
 aList Array(1, 2, 3, 4)
 
 node DayOfWeek begin
-	input day Integer
-	update NumToDay(day)
-	output english String(update[0])
-	output german String(update[1])
+    input day Integer
+    update NumToDay(day)
+    output english String(update[0])
+    output german String(update[1])
 end
 
 port result Map(aList DayOfWeek, @german)

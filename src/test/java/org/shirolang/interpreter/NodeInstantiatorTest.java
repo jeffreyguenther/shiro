@@ -40,7 +40,7 @@ public class NodeInstantiatorTest extends ShiroBaseTest {
     public void produceNode() throws IOException {
         Library l = new Library();
 
-        ShiroParser parse = parse("node_with_eval.sro");
+        ShiroParser parse = parse("node.sro");
         ParseTree shiro = parse.shiro();
         ParseTreeWalker walker = new ParseTreeWalker();
         NodeInstantiator produceNode = new NodeInstantiator(l, l.getDefaultGraph());
@@ -61,7 +61,7 @@ public class NodeInstantiatorTest extends ShiroBaseTest {
     public void produceNestedNode() throws IOException {
         Library l = new Library();
 
-        ShiroParser parse = parse("nodes_nested.sro");
+        ShiroParser parse = parse("node_nested_definition.sro");
         ParseTree shiro = parse.shiro();
 
         DefinitionCollector c = new DefinitionCollector();

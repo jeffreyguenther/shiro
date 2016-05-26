@@ -1,10 +1,10 @@
 node Box begin
-     input length Double
-     input width Double
-     input height Double
-     update Multiply(length, width)
-     output area Double(update)
-     output name String("Box")
+    input length Double
+    input width Double
+    input height Double
+    update Multiply(length, width)
+    output area Double(update)
+    output name String("Box")
 end
 
 length Double(100)

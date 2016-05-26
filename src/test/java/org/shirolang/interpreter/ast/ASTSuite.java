@@ -17,5 +17,5 @@ import org.junit.runners.Suite;
         UnaryOperationTest.class,
         ExpressionTest.class
 })
-public class DefinitionSuite {
+public class ASTSuite {
 }

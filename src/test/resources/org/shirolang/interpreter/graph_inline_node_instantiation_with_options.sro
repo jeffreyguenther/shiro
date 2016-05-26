@@ -8,3 +8,5 @@ node Box[vol] begin
     output area Double(base)
     output name String("Box")
 end
+
+b Box[base](length: 100, width: 20, height: 7)

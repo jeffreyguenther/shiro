@@ -37,7 +37,7 @@ public class DefinitionCollectorTest extends ShiroBaseTest{
 
     @Test
     public void handlesNonNestedNodes() throws IOException {
-        ShiroParser parser = parse("node_with_eval.sro");
+        ShiroParser parser = parse("node.sro");
         ParseTree tree = parser.shiro();
 
         ParseTreeWalker walker = new ParseTreeWalker();
@@ -50,7 +50,7 @@ public class DefinitionCollectorTest extends ShiroBaseTest{
 
     @Test
     public void handlesNoAlts() throws IOException {
-        ShiroParser parser = parse("node_with_eval.sro");
+        ShiroParser parser = parse("node.sro");
         ParseTree tree = parser.shiro();
 
         ParseTreeWalker walker = new ParseTreeWalker();
@@ -63,7 +63,7 @@ public class DefinitionCollectorTest extends ShiroBaseTest{
 
     @Test
     public void handlesNoGraphs() throws IOException {
-        ShiroParser parser = parse("node_with_eval.sro");
+        ShiroParser parser = parse("node.sro");
         ParseTree tree = parser.shiro();
 
         ParseTreeWalker walker = new ParseTreeWalker();
@@ -92,7 +92,7 @@ public class DefinitionCollectorTest extends ShiroBaseTest{
 
     @Test
     public void collectedNestedNodes() throws IOException {
-        ShiroParser parser = parse("nodes_nested.sro");
+        ShiroParser parser = parse("node_nested_definition.sro");
         ParseTree tree = parser.shiro();
 
         ParseTreeWalker walker = new ParseTreeWalker();

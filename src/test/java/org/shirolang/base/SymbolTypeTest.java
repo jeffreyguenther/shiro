@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package org.shirolang;
+package org.shirolang.base;
 
 import org.junit.Assert;
 import org.junit.Test;

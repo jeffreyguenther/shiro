@@ -12,6 +12,7 @@ import org.junit.runners.Suite;
     SIndexedMapTest.class,
     SNodeTest.class,
     SStateTest.class,
+    SymbolTypeTest.class,
     TypedValueTest.class
 })
 public class BaseSuite {
