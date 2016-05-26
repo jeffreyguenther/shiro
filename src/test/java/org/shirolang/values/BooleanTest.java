@@ -13,10 +13,6 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Assert;
 import org.junit.Test;
 
-/**
- *
- * @author jeffreyguenther
- */
 public class BooleanTest {
     @Test
     public void constructors(){
