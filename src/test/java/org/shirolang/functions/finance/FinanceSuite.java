@@ -1,4 +1,4 @@
-package org.shirolang.functions;
+package org.shirolang.functions.finance;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

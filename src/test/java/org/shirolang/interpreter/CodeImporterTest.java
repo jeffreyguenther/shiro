@@ -31,9 +31,6 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-/**
- * Tests the code importer
- */
 public class CodeImporterTest extends ShiroBaseTest{
     @Test
     public void includeCode() throws IOException {

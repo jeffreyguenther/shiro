@@ -28,7 +28,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.shirolang.base.BaseSuite;
 import org.shirolang.base.SymbolTypeTest;
-import org.shirolang.functions.FinanceSuite;
+import org.shirolang.functions.finance.FinanceSuite;
 import org.shirolang.interpreter.InterpreterSuite;
 import org.shirolang.values.ValuesSuite;
 

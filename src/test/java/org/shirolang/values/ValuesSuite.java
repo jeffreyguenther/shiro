@@ -38,8 +38,8 @@ import org.junit.runners.Suite;
     IdentTest.class,
     IntegerTest.class,
     PathSegmentTest.class,
-    StringTest.class,
-    PathTest.class
+    PathTest.class,
+    StringTest.class
 })
 public class ValuesSuite {
     
