@@ -1,6 +1,5 @@
 package org.shirolang.fixtures;
 
-import org.shirolang.interpreter.ast.FunctionDefinition;
 import org.shirolang.interpreter.ast.GraphDefinition;
 
 /**
@@ -22,7 +21,21 @@ public class GraphDefinitionFixture {
      */
     public static GraphDefinition withFunctionDeclarations(){
         GraphDefinition graph = emptyGraph();
-        graph.addDefinition(FunctionDefinitionFixture.withNameTypeOptionAndListOfArgs());
+        graph.add(FunctionDefinitionFixture.withNameTypeOptionAndListOfArgs());
+
+        return graph;
+    }
+
+    /**
+     *  graph g begin
+     *      b Box[a](1, 2, 3)
+     *      a.y(1, 2, 3)
+     *  end
+     */
+    public static GraphDefinition withFunctionDeclarationsAndPortAssignments(){
+        GraphDefinition graph = emptyGraph();
+        graph.add(FunctionDefinitionFixture.withNameTypeOptionAndListOfArgs());
+        graph.add(PortAssignmentFixture.create(FunctionCallFixture.withPathAndListOfArgs()));
 
         return graph;
     }
@@ -32,7 +45,7 @@ public class GraphDefinitionFixture {
      */
     public static GraphDefinition defaultGraphWithFunctionDeclarations(){
         GraphDefinition g = new GraphDefinition();
-        g.addDefinition(FunctionDefinitionFixture.withNameTypeOptionAndListOfArgs());
+        g.add(FunctionDefinitionFixture.withNameTypeOptionAndListOfArgs());
         return g;
     }
 }

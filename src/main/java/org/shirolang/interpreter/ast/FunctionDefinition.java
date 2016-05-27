@@ -9,8 +9,7 @@ import java.util.*;
 /**
  * Defines a function definition in the Shiro
  */
-public class FunctionDefinition extends Function{
-    private String type;
+public class FunctionDefinition extends TypedFunction {
     private String name;
 
     public FunctionDefinition(String type, String name) {
@@ -29,8 +28,7 @@ public class FunctionDefinition extends Function{
     }
 
     public FunctionDefinition(String type, String name, String option) {
-        super(option);
-        this.type = type;
+        super(option, type);
         this.name = name;
     }
 
@@ -43,10 +41,6 @@ public class FunctionDefinition extends Function{
         this(type, name, option);
         this.argMap = argMap;
         argsType = ArgumentsType.KEYWORDS;
-    }
-
-    public String getType() {
-        return type;
     }
 
     public String getName() {

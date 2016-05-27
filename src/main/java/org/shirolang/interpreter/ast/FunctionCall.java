@@ -10,7 +10,7 @@ import java.util.Map;
 /**
  * Defines a function call
  */
-public class FunctionCall extends Function{
+public class FunctionCall extends FunctionBase {
     private String path;
 
     public FunctionCall(String path, Map<String, Expression> argMap) {

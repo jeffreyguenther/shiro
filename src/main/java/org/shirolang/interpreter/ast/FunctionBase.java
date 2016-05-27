@@ -9,26 +9,26 @@ import java.util.TreeMap;
  * Abstract class contain shared code between function definitions
  * and function calls
  */
-public abstract class Function implements Expression {
+public abstract class FunctionBase implements Expression {
     protected String option;
     protected ArgumentsType argsType;
     protected Map<String, Expression> argMap;
     protected List<Expression> argList;
 
-    public Function(String option) {
+    public FunctionBase(String option) {
         this.option = option;
         this.argsType = ArgumentsType.LIST;
         this.argMap = new TreeMap<>();
         this.argList = new ArrayList<>();
     }
 
-    public Function(String option, Map<String, Expression> argMap) {
+    public FunctionBase(String option, Map<String, Expression> argMap) {
         this(option);
         argsType = ArgumentsType.KEYWORDS;
         this.argMap.putAll(argMap);
     }
 
-    public Function(String option, List<Expression> argList) {
+    public FunctionBase(String option, List<Expression> argList) {
         this(option);
         this.argList.addAll(argList);
     }

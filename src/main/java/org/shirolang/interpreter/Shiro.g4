@@ -72,18 +72,18 @@ anonymousRef
     ;
 
 reference
-    :   REF funcCall outputSelector
+    :   REF fullyQualifiedType ( LSQUARE activeObject=IDENT RSQUARE )? ('(' arguments? ')') outputSelector?
     ;
 
 outputSelector
-    :   (LSQUARE selectedOutput=IDENT RSQUARE)?
+    :   (LSQUARE selectedOutput=(IDENT| NUMBER) RSQUARE)
     ;
 
 funcDeclInit
-    :   name=IDENT fullyQualifiedType ( LSQUARE activeObject=IDENT RSQUARE )? ('(' arguments? ')')
+    :   name=IDENT fullyQualifiedType ( LSQUARE activeObject=IDENT RSQUARE )? ('(' arguments ')')
     ;
 
-funcCall : fullyQualifiedType ( LSQUARE activeObject=IDENT RSQUARE )? ('(' arguments? ')')?;
+funcCall : fullyQualifiedType ( LSQUARE activeObject=IDENT RSQUARE )? ('(' arguments ')')?;
 
 funcDecl
     :   name=IDENT fullyQualifiedType ( LSQUARE activeObject=IDENT RSQUARE )?
@@ -192,7 +192,6 @@ expr : '(' expr ')'						      #parensExpr
 SELECT   : '@';
 REF      : '~';
 DEFAULT  : '^';
-PORT     : 'port';
 INPUT    : 'input';
 OUTPUT   : 'output';
 EVAL     : 'eval';

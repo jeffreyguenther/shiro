@@ -14,10 +14,12 @@ import java.util.List;
 public class GraphDefinition implements Codeable{
     private String name;
     private List<FunctionDefinition> functions;
+    private List<PortAssignment> assignments;
 
     public GraphDefinition(String name) {
         this.name = name;
         functions = new ArrayList<>();
+        assignments = new ArrayList<>();
     }
 
     public GraphDefinition() {
@@ -40,8 +42,16 @@ public class GraphDefinition implements Codeable{
         return functions;
     }
 
-    public void addDefinition(FunctionDefinition def) {
+    public List<PortAssignment> getAssignments() {
+        return assignments;
+    }
+
+    public void add(FunctionDefinition def) {
         functions.add(def);
+    }
+
+    public void add(PortAssignment portAssignment) {
+        assignments.add(portAssignment);
     }
 
     @Override

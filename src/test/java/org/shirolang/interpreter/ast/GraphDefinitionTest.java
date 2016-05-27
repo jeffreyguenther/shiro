@@ -28,11 +28,22 @@ public class GraphDefinitionTest {
     }
 
     @Test
-    public void canOutputGraph(){
+    public void withFunctionDefinition(){
         GraphDefinition graph = GraphDefinitionFixture.withFunctionDeclarations();
         assertEquals(
             "graph g begin\n" +
             "    b Box[a](1, 2, 3)\n" +
+            "end", graph.toCode()
+        );
+    }
+
+    @Test
+    public void withPortAssignmentandFunctionDefinition(){
+        GraphDefinition graph = GraphDefinitionFixture.withFunctionDeclarationsAndPortAssignments();
+        assertEquals(
+            "graph g begin\n" +
+            "    b Box[a](1, 2, 3)\n" +
+            "    a.y(1, 2, 3)\n" +
             "end", graph.toCode()
         );
     }
