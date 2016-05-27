@@ -3,6 +3,7 @@ package org.shirolang.interpreter.ast;
 import org.junit.Before;
 import org.junit.Test;
 import org.shirolang.fixtures.GraphDefinitionFixture;
+import org.shirolang.fixtures.NodeDefinitionFixture;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -54,12 +55,19 @@ public class ProgramTest {
 
     @Test
     public void includesNodeAndGraph(){
-        p.add(new NodeDefinition("A"));
+        p.add(NodeDefinitionFixture.withInputsOutputsAndInternals());
         p.add(new GraphDefinition("g"));
         p.add(new IncludeStatement("geom"));
         assertEquals(
             "include \"geom\"\n\n" +
-            "node A begin\nend\n\n" +
+            "node A begin\n" +
+            "    input b Box\n" +
+            "    option input b Box\n" +
+            "    b Box\n" +
+            "    option b Box\n" +
+            "    output b Box\n" +
+            "    option output b Box\n" +
+            "end\n\n" +
             "graph g begin\nend",
             p.toCode()
         );

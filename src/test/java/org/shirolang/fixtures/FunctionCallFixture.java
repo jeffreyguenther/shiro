@@ -53,7 +53,7 @@ public class FunctionCallFixture {
     /**
      * a.x(a.b(10) / 0.1, 10)
      */
-    public static FunctionCall withFunctionCallArgs(){
+    public static FunctionCall withComplexArgs(){
         return new FunctionCall("a.x", Arrays.asList(ExpressionDefinitionFixture.withFunctionCall(), Literal.asInteger(10)));
     }
 }

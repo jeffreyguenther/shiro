@@ -8,12 +8,18 @@ import org.shirolang.interpreter.ast.GraphDefinition;
  */
 public class GraphDefinitionFixture {
     /**
-     * Creates an empty graph named g
+     * graph g begin
+     * end
      */
     public static GraphDefinition emptyGraph(){
         return new GraphDefinition("g");
     }
 
+    /**
+     *  graph g begin
+     *      b Box[a](1, 2, 3)
+     *  end
+     */
     public static GraphDefinition withFunctionDeclarations(){
         GraphDefinition graph = emptyGraph();
         graph.addDefinition(FunctionDefinitionFixture.withNameTypeOptionAndListOfArgs());
@@ -22,7 +28,6 @@ public class GraphDefinitionFixture {
     }
 
     /**
-     *
      * b Box[a](1, 2, 3)
      */
     public static GraphDefinition defaultGraphWithFunctionDeclarations(){

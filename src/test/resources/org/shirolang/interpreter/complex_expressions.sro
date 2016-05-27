@@ -1,0 +1,3 @@
+Power(2, Power( Add(2, 2), 5))
+
+Map(~F(a)[a], @select)

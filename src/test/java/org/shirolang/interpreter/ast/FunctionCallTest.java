@@ -27,7 +27,7 @@ public class FunctionCallTest {
         FunctionCall call4 = FunctionCallFixture.withPathOptionAndListOfArgs();
         assertEquals("a.y[b](1, 2, 3)", call4.toCode());
 
-        FunctionCall call5 = FunctionCallFixture.withFunctionCallArgs();
+        FunctionCall call5 = FunctionCallFixture.withComplexArgs();
         assertEquals("a.x(a.b(10) / 0.1, 10)", call5.toCode());
     }
 }

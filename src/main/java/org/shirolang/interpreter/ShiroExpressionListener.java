@@ -32,6 +32,7 @@ import org.shirolang.base.*;
 import org.shirolang.exceptions.OptionNotFoundException;
 import org.shirolang.functions.Instantiator;
 import org.shirolang.functions.math.*;
+import org.shirolang.interpreter.ast.Access;
 import org.shirolang.values.*;
 
 import java.util.List;

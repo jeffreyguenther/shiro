@@ -13,9 +13,18 @@ program(p) ::=<<
 includeStmt(i) ::= "include \"<i.file>\""
 
 nodeDef(n) ::= <<
-node <n.name> begin
+node <n.name><if(n.defaultOption)> [<n.defaultOption>]<endif> begin
+    <n.inputs:portDef(); separator="\n">
+    <n.internal:portDef(); separator="\n">
+    <n.assignments:portAssignment(); separator="\n">
+    <n.outputs:portDef(); separator="\n"><if(n.nodes)><\n><endif>
+    <n.nodes:nodeDef(); separator="\n\n">
 end
 >>
+
+portDef(p) ::= "<if(p.option)>option <endif><if(!p.internal)><p.access> <endif><p.function:funcDef()>"
+
+portAssignment(p) ::= "<p.assignment:funcCall()>"
 
 graphDef(g) ::= <<
 graph <g.name> begin
@@ -52,4 +61,3 @@ args(f) ::= <<
 <if(f.keywordArgs)><f.argMap.keys:{k| <k>: <f.argMap.(k)>}; separator=", "><endif><\\>
 <if(f.listArgs)><f.argList:{a| <a>}; separator=", "><endif>
 >>
-

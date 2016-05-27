@@ -11,6 +11,8 @@ import org.junit.runners.Suite;
         OptionSelectionTest.class,
         GraphDefinitionTest.class,
         NodeDefinitionTest.class,
+        PortDefinitionTest.class,
+        PortAssignmentTest.class,
         FunctionDefinitionTest.class,
         FunctionCallTest.class,
         LiteralTest.class,

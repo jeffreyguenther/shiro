@@ -28,6 +28,7 @@ import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import org.shirolang.interpreter.ast.Access;
 import org.shirolang.values.Path;
 import org.shirolang.values.PathSegment;
 import org.shirolang.values.SIdent;
