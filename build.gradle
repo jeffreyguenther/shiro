@@ -204,6 +204,7 @@ uploadArchives.onlyIf { doUploadArchives }
 
 task fatJar(type: Jar, dependsOn: classes) {
     appendix = 'fat'
+    baseName = "shiro"
     from sourceSets.main.output
     from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
 }
