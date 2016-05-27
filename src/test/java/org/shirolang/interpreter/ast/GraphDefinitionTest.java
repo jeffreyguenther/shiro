@@ -2,14 +2,23 @@ package org.shirolang.interpreter.ast;
 
 import org.junit.Test;
 import org.shirolang.fixtures.GraphDefinitionFixture;
+import org.shirolang.interpreter.Defaults;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class GraphDefinitionTest {
     @Test
     public void getName(){
         GraphDefinition graph = GraphDefinitionFixture.emptyGraph();
         assertEquals("g", graph.getName());
+    }
+
+    @Test
+    public void defaultGraph(){
+        GraphDefinition graph = new GraphDefinition();
+        assertEquals(Defaults.GRAPH_NAME, graph.getName());
+        assertTrue(graph.isDefault());
     }
 
     @Test

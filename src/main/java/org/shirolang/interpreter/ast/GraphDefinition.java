@@ -1,5 +1,6 @@
 package org.shirolang.interpreter.ast;
 
+import org.shirolang.interpreter.Defaults;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
@@ -17,6 +18,14 @@ public class GraphDefinition implements Codeable{
     public GraphDefinition(String name) {
         this.name = name;
         functions = new ArrayList<>();
+    }
+
+    public GraphDefinition() {
+        this(Defaults.GRAPH_NAME);
+    }
+
+    public boolean isDefault(){
+        return this.name.equals(Defaults.GRAPH_NAME);
     }
 
     public String getName() {

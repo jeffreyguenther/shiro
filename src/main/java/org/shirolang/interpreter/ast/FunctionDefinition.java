@@ -10,7 +10,6 @@ import java.util.*;
  * Defines a function definition in the Shiro
  */
 public class FunctionDefinition extends Function{
-
     private String type;
     private String name;
 

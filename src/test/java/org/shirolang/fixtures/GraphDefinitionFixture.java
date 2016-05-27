@@ -20,4 +20,14 @@ public class GraphDefinitionFixture {
 
         return graph;
     }
+
+    /**
+     *
+     * b Box[a](1, 2, 3)
+     */
+    public static GraphDefinition defaultGraphWithFunctionDeclarations(){
+        GraphDefinition g = new GraphDefinition();
+        g.addDefinition(FunctionDefinitionFixture.withNameTypeOptionAndListOfArgs());
+        return g;
+    }
 }

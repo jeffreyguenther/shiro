@@ -57,6 +57,7 @@ public class FunctionDefinitionFixture {
     /**
      * Creates a function definition of type Box named b
      * with an active option named a with the args [1, 2, 3]
+     *
      * b Box[a](1, 2, 3)
      * @return FunctionDefinition
      */

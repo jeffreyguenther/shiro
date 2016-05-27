@@ -11,23 +11,40 @@ import java.util.List;
  * Describes an abstract representation of Shiro program
  */
 public class Program implements Codeable{
+    private List<IncludeStatement> includes;
     private List<GraphDefinition> graphDefs;
+    private GraphDefinition defaultGraph;
     private List<NodeDefinition> nodeDefs;
     private List<StateDefinition> stateDefs;
 
 
     public Program() {
+        includes = new ArrayList<>();
         graphDefs = new ArrayList<>();
+        defaultGraph = null;
         nodeDefs = new ArrayList<>();
         stateDefs = new ArrayList<>();
     }
 
     public boolean add(GraphDefinition g) {
-        return graphDefs.add(g);
+        if(g.isDefault()){
+            defaultGraph = g;
+            return true;
+        }else{
+            return graphDefs.add(g);
+        }
     }
 
     public List<GraphDefinition> getGraphDefs(){
         return graphDefs;
+    }
+
+    public boolean hasDefaultGraph(){
+        return defaultGraph != null;
+    }
+
+    public GraphDefinition getDefaultGraph() {
+        return defaultGraph;
     }
 
     public boolean add(NodeDefinition n) {
@@ -38,12 +55,20 @@ public class Program implements Codeable{
         return nodeDefs;
     }
 
+    public boolean add(StateDefinition stateDefinition) {
+        return stateDefs.add(stateDefinition);
+    }
+
     public List<StateDefinition> getStateDefs() {
         return stateDefs;
     }
 
-    public boolean add(StateDefinition stateDefinition) {
-        return stateDefs.add(stateDefinition);
+    public boolean add(IncludeStatement include) {
+        return includes.add(include);
+    }
+
+    public List<IncludeStatement> getIncludes() {
+        return includes;
     }
 
     @Override

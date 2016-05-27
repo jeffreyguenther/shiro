@@ -2,8 +2,10 @@ package org.shirolang.interpreter.ast;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.shirolang.fixtures.GraphDefinitionFixture;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class ProgramTest {
     private Program p;
@@ -34,11 +36,132 @@ public class ProgramTest {
         assertEquals(2, p.getStateDefs().size());
     }
 
+    @Test
+    public void includes(){
+        p.add(new IncludeStatement("geom"));
+        assertEquals("include \"geom\"", p.toCode());
+    }
+
+    @Test
+    public void includesAndNode(){
+        p.add(new NodeDefinition("A"));
+        p.add(new IncludeStatement("geom"));
+        assertEquals(
+            "include \"geom\"\n\n" +
+            "node A begin\nend", p.toCode()
+        );
+    }
+
+    @Test
+    public void includesNodeAndGraph(){
+        p.add(new NodeDefinition("A"));
+        p.add(new GraphDefinition("g"));
+        p.add(new IncludeStatement("geom"));
+        assertEquals(
+            "include \"geom\"\n\n" +
+            "node A begin\nend\n\n" +
+            "graph g begin\nend",
+            p.toCode()
+        );
+    }
+
+    @Test
+    public void includesNodeGraphAndState(){
+        p.add(new NodeDefinition("A"));
+        p.add(new GraphDefinition("g"));
+        p.add(new IncludeStatement("geom"));
+        p.add(new StateDefinition("s1"));
+        assertEquals(
+            "include \"geom\"\n\n" +
+            "node A begin\nend\n\n" +
+            "graph g begin\nend\n\n" +
+            "state s1 begin\n" +
+            "    graph ^\n" +
+            "end",
+            p.toCode()
+        );
+    }
+
+    @Test
+    public void includeNodeGraphDefaultGraphAndState(){
+        p.add(new NodeDefinition("A"));
+        p.add(new GraphDefinition("g"));
+        p.add(new IncludeStatement("geom"));
+        p.add(new StateDefinition("s1"));
+        p.add(GraphDefinitionFixture.defaultGraphWithFunctionDeclarations());
+        assertEquals(
+            "include \"geom\"\n\n" +
+            "node A begin\nend\n\n" +
+            "b Box[a](1, 2, 3)\n\n" +
+            "graph g begin\nend\n\n" +
+            "state s1 begin\n" +
+            "    graph ^\n" +
+            "end",
+                p.toCode()
+        );
+    }
 
     @Test
     public void singleGraph(){
         p.add(new GraphDefinition("g"));
         assertEquals("graph g begin\nend", p.toCode());
+    }
+
+    @Test
+    public void emptyDefaultGraph(){
+        p.add(new GraphDefinition());
+        assertTrue(p.hasDefaultGraph());
+        assertEquals(
+            "", p.toCode()
+        );
+    }
+
+    @Test
+    public void defaultGraph(){
+        p.add(GraphDefinitionFixture.defaultGraphWithFunctionDeclarations());
+        assertEquals(
+            "b Box[a](1, 2, 3)", p.toCode()
+        );
+    }
+
+    @Test
+    public void defaultGraphWithNode(){
+        p.add(new NodeDefinition("A"));
+        p.add(GraphDefinitionFixture.defaultGraphWithFunctionDeclarations());
+        assertEquals(
+          "node A begin\nend\n\n" +
+          "b Box[a](1, 2, 3)", p.toCode()
+        );
+    }
+
+    @Test
+    public void defaultGraphWithNodeAndNamedGraph(){
+        p.add(new NodeDefinition("A"));
+        p.add(GraphDefinitionFixture.defaultGraphWithFunctionDeclarations());
+        p.add(new GraphDefinition("g"));
+        assertEquals(
+            "node A begin\nend\n\n" +
+            "b Box[a](1, 2, 3)\n\n" +
+            "graph g begin\nend",
+            p.toCode()
+        );
+    }
+
+    @Test
+    public void defaultGraphWithNodeNamedGraphAndState(){
+        p.add(new NodeDefinition("A"));
+        p.add(GraphDefinitionFixture.defaultGraphWithFunctionDeclarations());
+        p.add(new GraphDefinition("g"));
+        p.add(new StateDefinition("s1"));
+        assertEquals(
+            "node A begin\nend\n\n" +
+            "b Box[a](1, 2, 3)\n\n" +
+            "graph g begin\nend\n\n" +
+            "state s1 begin\n" +
+            "    graph ^\n" +
+            "end",
+            p.toCode()
+        );
     }
 
     @Test

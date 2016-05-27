@@ -1,10 +1,16 @@
 program(p) ::=<<
+<p.includes:includeStmt(); separator="\n"><\\>
+<if(p.includes && (p.nodeDefs || p.graphDefs || p.stateDefs))><\n><\n><endif><\\>
 <p.nodeDefs:nodeDef(); separator="\n\n"><\\>
-<if(p.nodeDefs && (p.graphDefs || p.stateDefs))><\n><\n><endif><\\>
+<if(p.nodeDefs && (p.defaultGraph || p.graphDefs || p.stateDefs))><\n><\n><endif><\\>
+<p.defaultGraph:defaultGraph()><\\>
+<if(p.defaultGraph && (p.graphDefs || p.stateDefs))><\n><\n><endif><\\>
 <p.graphDefs:graphDef(); separator="\n\n"><\\>
 <if(p.graphDefs && p.stateDefs)><\n><\n><endif><\\>
 <p.stateDefs:stateDef(); separator="\n\n">
 >>
+
+includeStmt(i) ::= "include \"<i.file>\""
 
 nodeDef(n) ::= <<
 node <n.name> begin
@@ -15,6 +21,10 @@ graphDef(g) ::= <<
 graph <g.name> begin
     <g.functions:funcDef(); separator="\n">
 end
+>>
+
+defaultGraph(g) ::= <<
+<g.functions:funcDef(); separator="\n">
 >>
 
 stateDef(s) ::= <<
