@@ -58,17 +58,13 @@ graphDecl
 	;
 
 graphStmt
-	:	portAssignment | funcDeclInit | funcDecl | namedRef |NEWLINE
+	:	portAssignment | funcDeclInit | funcDecl |NEWLINE
 	;
 
 nodeDecl
     :   NODE MFNAME ('[' optionSelector ']')? BEGIN NEWLINE
         nodeStmt
         END
-    ;
-
-namedRef
-    :   name=IDENT reference
     ;
 
 anonymousRef
@@ -127,7 +123,7 @@ portDeclInit
 	;
 
 portstmt	
-	:	( portDeclInit | portDecl | namedRef ) NEWLINE
+	:	( portDeclInit | portDecl ) NEWLINE
 	;	
 	
 portName 
@@ -168,7 +164,6 @@ anonymousGraphStmt
     |   funcDeclInit NEWLINE
     |   funcDecl NEWLINE
     |   anonExpr
-    |   namedRef NEWLINE
     ;
 
 listLiteral
