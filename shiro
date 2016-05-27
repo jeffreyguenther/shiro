@@ -1,3 +1,3 @@
 #!/bin/bash
 
-java -cp ##PREFIX##/shiro-named_lambda-fat-0.5.1-SNAPSHOT.jar org.shirolang.Shiro $@
+java -cp ##PREFIX##/libs org.shirolang.Shiro $@
