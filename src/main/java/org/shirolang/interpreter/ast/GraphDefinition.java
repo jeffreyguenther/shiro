@@ -15,11 +15,13 @@ public class GraphDefinition implements Codeable{
     private String name;
     private List<FunctionDefinition> functions;
     private List<PortAssignment> assignments;
+    private List<Expression> anonExpressions;
 
     public GraphDefinition(String name) {
         this.name = name;
         functions = new ArrayList<>();
         assignments = new ArrayList<>();
+        anonExpressions = new ArrayList<>();
     }
 
     public GraphDefinition() {
@@ -46,6 +48,10 @@ public class GraphDefinition implements Codeable{
         return assignments;
     }
 
+    public List<Expression> getAnonymousExpressions() {
+        return anonExpressions;
+    }
+
     public void add(FunctionDefinition def) {
         functions.add(def);
     }
@@ -54,13 +60,24 @@ public class GraphDefinition implements Codeable{
         assignments.add(portAssignment);
     }
 
+    public void add(Expression expression) {
+        anonExpressions.add(expression);
+    }
+
     @Override
     public String toCode() {
         String path = GraphDefinition.class.getResource("shiro.stg").getPath();
 
         STGroup templates = new STGroupFile(path);
         templates.registerModelAdaptor(Codeable.class, new CodeableAdaptor());
-        ST code = templates.getInstanceOf("graphDef");
+
+        ST code;
+        if(isDefault()) {
+            code = templates.getInstanceOf("defaultGraph");
+        }else{
+            code = templates.getInstanceOf("graphDef");
+        }
+
         code.add("g", this);
         return code.render();
     }

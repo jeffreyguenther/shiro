@@ -32,11 +32,14 @@ graphDef(g) ::= <<
 graph <g.name> begin
     <g.functions:funcDef(); separator="\n">
     <g.assignments:portAssignment(); separator="\n">
+    <g.anonymousExpressions:{e| <e.code>}; separator="\n">
 end
 >>
 
 defaultGraph(g) ::= <<
-<g.functions:funcDef(); separator="\n">
+<g.functions:funcDef(); separator="\n"><if(g.functions && (g.assignments || g.anonymousExpressions))><\n><endif><\\>
+<g.assignments:portAssignment(); separator="\n"><if(g.assignments && g.anonymousExpressions)><\n><endif><\\>
+<g.anonymousExpressions:{e| <e.code>}; separator="\n">
 >>
 
 stateDef(s) ::= <<

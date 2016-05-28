@@ -38,7 +38,27 @@ public class GraphDefinitionTest {
     }
 
     @Test
-    public void withPortAssignmentandFunctionDefinition(){
+    public void withAnonymousExpressions(){
+        GraphDefinition graph = GraphDefinitionFixture.withAnonymousExpressions();
+        assertEquals(
+            "graph g begin\n" +
+            "    1.0 == (3 + 2)\n" +
+            "end", graph.toCode()
+        );
+    }
+
+    @Test
+    public void withPortAssignments(){
+        GraphDefinition graph = GraphDefinitionFixture.withPortAssignments();
+        assertEquals(
+            "graph g begin\n" +
+            "    a.y(1, 2, 3)\n" +
+            "end", graph.toCode()
+        );
+    }
+
+    @Test
+    public void withFunctionDefinitionAndPortAssignment(){
         GraphDefinition graph = GraphDefinitionFixture.withFunctionDeclarationsAndPortAssignments();
         assertEquals(
             "graph g begin\n" +
@@ -46,5 +66,88 @@ public class GraphDefinitionTest {
             "    a.y(1, 2, 3)\n" +
             "end", graph.toCode()
         );
+    }
+
+    @Test
+    public void withFunctionDeclarationsAndAnonExpressions(){
+        GraphDefinition graph = GraphDefinitionFixture.withFunctionDeclarationsAndAnonExpressions();
+        assertEquals(
+            "graph g begin\n" +
+            "    b Box[a](1, 2, 3)\n" +
+            "    1.0 == (3 + 2)\n" +
+            "end", graph.toCode()
+        );
+    }
+
+    @Test
+    public void withPortAssignmentsAndAnonExpressions(){
+        GraphDefinition graph = GraphDefinitionFixture.withPortAssignmentsAndAnonExpressions();
+        assertEquals(
+            "graph g begin\n" +
+            "    a.y(1, 2, 3)\n" +
+            "    1.0 == (3 + 2)\n" +
+            "end", graph.toCode()
+        );
+    }
+
+    @Test
+    public void withFunctionDeclarationsPortAssignmentsAndAnonExpressions(){
+        GraphDefinition graph = GraphDefinitionFixture.withFunctionDeclarationsPortAssignmentsAndAnonExpressions();
+        assertEquals(
+            "graph g begin\n" +
+            "    b Box[a](1, 2, 3)\n" +
+            "    a.y(1, 2, 3)\n" +
+            "    1.0 == (3 + 2)\n" +
+            "end", graph.toCode()
+        );
+    }
+
+    @Test
+    public void defaultGraphWithPortAssignment(){
+        GraphDefinition graph = GraphDefinitionFixture.defaultGraphWithPortAssignment();
+        assertEquals("a.y(1, 2, 3)", graph.toCode());
+    }
+
+    @Test
+    public void defaultGraphWithFunctionDeclarationsAndPortAssignments(){
+        GraphDefinition graph = GraphDefinitionFixture.defaultGraphWithFunctionDeclarationsAndPortAssignments();
+        assertEquals(
+            "b Box[a](1, 2, 3)\n" +
+            "a.y(1, 2, 3)", graph.toCode()
+        );
+    }
+
+    @Test
+    public void defaultGraphWithFunctionDeclarationsAndAnonExpressions(){
+        GraphDefinition graph = GraphDefinitionFixture.defaultGraphWithFunctionDeclarationsAndAnonExpressions();
+        assertEquals(
+            "b Box[a](1, 2, 3)\n" +
+            "1.0 == (3 + 2)", graph.toCode()
+        );
+    }
+
+    @Test
+    public void defaultGraphWithPortAssignmentsAndAnonExpressions(){
+        GraphDefinition graph = GraphDefinitionFixture.defaultGraphWithPortAssignmentsAndAnonExpressions();
+        assertEquals(
+            "a.y(1, 2, 3)\n" +
+            "1.0 == (3 + 2)", graph.toCode()
+        );
+    }
+
+    @Test
+    public void defaultGraphWithFunctionDeclarationsPortAssignmentsAnonExpressions(){
+        GraphDefinition graph = GraphDefinitionFixture.defaultGraphWithFunctionDeclarationsPortAssignmentsAnonExpressions();
+        assertEquals(
+            "b Box[a](1, 2, 3)\n" +
+            "a.y(1, 2, 3)\n" +
+            "1.0 == (3 + 2)", graph.toCode()
+        );
+    }
+
+    @Test
+    public void defaultGraphWithAnonymousExpressions(){
+        GraphDefinition graph = GraphDefinitionFixture.defaultGraphWithAnonExpressions();
+        assertEquals("1.0 == (3 + 2)", graph.toCode());
     }
 }
