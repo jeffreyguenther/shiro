@@ -2,7 +2,7 @@ package org.shirolang.interpreter.ast;
 
 
 import org.junit.Test;
-import org.shirolang.fixtures.FunctionCallFixture;
+import org.shirolang.fixtures.PortAssignmentFixture;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -10,13 +10,13 @@ import static org.junit.Assert.assertNotNull;
 public class PortAssignmentTest {
     @Test
     public void create(){
-        PortAssignment assign = new PortAssignment(FunctionCallFixture.withPathAndListOfArgs());
+        PortAssignment assign = PortAssignmentFixture.withPathAndListOfArgs();
         assertNotNull(assign);
     }
 
     @Test
     public void toCode(){
-        PortAssignment assign = new PortAssignment(FunctionCallFixture.withPathAndListOfArgs());
+        PortAssignment assign = PortAssignmentFixture.withPathAndListOfArgs();
         assertEquals(
             "a.y(1, 2, 3)", assign.toCode()
         );

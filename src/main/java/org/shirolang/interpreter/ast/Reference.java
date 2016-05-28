@@ -10,7 +10,7 @@ import java.util.Map;
 /**
  * Describes a Reference AST node
  */
-public class Reference extends TypedFunction{
+public class Reference extends TypedFunction implements Expression{
     private String outputSelector;
 
     public Reference(String type, String option, String outputSelector) {
@@ -73,6 +73,7 @@ public class Reference extends TypedFunction{
         String path = GraphDefinition.class.getResource("shiro.stg").getPath();
 
         STGroup templates = new STGroupFile(path);
+        templates.registerModelAdaptor(Codeable.class, new CodeableAdaptor());
         ST code = templates.getInstanceOf("anonReference");
         code.add("r", this);
         return code.render();

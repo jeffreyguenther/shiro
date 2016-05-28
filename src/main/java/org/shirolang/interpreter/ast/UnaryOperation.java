@@ -23,15 +23,10 @@ public class UnaryOperation implements Expression {
     @Override
     public String toCode() {
         if(getOperator().equals(UnaryOperator.PARENS)){
-            return "(" + getOperand() +")";
+            return "(" + getOperand().toCode() +")";
         }else{
             return getOperator() + getOperand().toCode();
         }
 
-    }
-
-    @Override
-    public String toString() {
-        return toCode();
     }
 }

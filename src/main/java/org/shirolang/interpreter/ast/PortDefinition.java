@@ -51,6 +51,7 @@ public class PortDefinition implements Codeable{
         String path = GraphDefinition.class.getResource("shiro.stg").getPath();
 
         STGroup templates = new STGroupFile(path);
+        templates.registerModelAdaptor(Codeable.class, new CodeableAdaptor());
         ST code = templates.getInstanceOf("portDef");
         code.add("p", this);
         return code.render();

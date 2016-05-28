@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.shirolang.fixtures.ExpressionDefinitionFixture;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class ExpressionTest {
     @Test
@@ -13,8 +14,11 @@ public class ExpressionTest {
 
         Expression expr2 = ExpressionDefinitionFixture.addLiterals();
         assertEquals("3.5 + 6", expr2.toCode());
+    }
 
-        Expression expr3 = ExpressionDefinitionFixture.withFunctionCall();
-        assertEquals("a.b(10) / 0.1", expr3.toCode());
+    @Test
+    public void nestedFunctionCalls(){
+        Expression expr = ExpressionDefinitionFixture.nestedFunctionCall();
+        assertEquals("F(G(H(1)))", expr.toCode());
     }
 }

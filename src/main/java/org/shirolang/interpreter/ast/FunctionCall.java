@@ -10,31 +10,30 @@ import java.util.Map;
 /**
  * Defines a function call
  */
-public class FunctionCall extends FunctionBase {
-    private String path;
+public class FunctionCall extends TypedFunction implements Expression{
 
-    public FunctionCall(String path, Map<String, Expression> argMap) {
-        super("", argMap);
-        this.path = path;
+    public FunctionCall(String type, String option) {
+        super(option, type);
     }
 
-    public FunctionCall(String path, List<Expression> argList) {
-        super("", argList);
-        this.path = path;
+    public FunctionCall(String type, String option, Map<String, Expression> argMap) {
+        super(option, argMap, type);
     }
 
-    public FunctionCall(String path, String option, List<Expression> argList) {
-        super(option, argList);
-        this.path = path;
+    public FunctionCall(String type, String option, List<Expression> argList) {
+        super(option, argList, type);
     }
 
-    public FunctionCall(String path, String option, Map<String, Expression> argMap) {
-        super(option, argMap);
-        this.path = path;
+    public FunctionCall(String type) {
+        this(type, "");
     }
 
-    public String getPath() {
-        return path;
+    public FunctionCall(String type, Map<String, Expression> argMap) {
+        this(type, "", argMap);
+    }
+
+    public FunctionCall(String type, List<Expression> argList) {
+        this(type, "", argList);
     }
 
     @Override
@@ -42,6 +41,7 @@ public class FunctionCall extends FunctionBase {
         String path = GraphDefinition.class.getResource("shiro.stg").getPath();
 
         STGroup templates = new STGroupFile(path);
+        templates.registerModelAdaptor(Codeable.class, new CodeableAdaptor());
         ST code = templates.getInstanceOf("funcCall");
         code.add("f", this);
         return code.render();

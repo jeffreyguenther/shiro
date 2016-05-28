@@ -87,6 +87,7 @@ public class NodeDefinition implements Codeable{
         String path = GraphDefinition.class.getResource("shiro.stg").getPath();
 
         STGroup templates = new STGroupFile(path);
+        templates.registerModelAdaptor(Codeable.class, new CodeableAdaptor());
         ST code = templates.getInstanceOf("nodeDef");
         code.add("n", this);
         return code.render();

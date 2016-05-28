@@ -26,10 +26,9 @@ public class ExpressionDefinitionFixture {
     }
 
     /**
-     * a.b(10) / 0.1
+     * F(G(H(1)))
      */
-    public static Expression withFunctionCall(){
-        FunctionCall call = new FunctionCall("a.b", Arrays.asList(Literal.asInteger(10)));
-        return new BinaryOperation(call, BinaryOperator.DIVIDE, Literal.asDouble(0.1));
+    public static Expression nestedFunctionCall(){
+        return new FunctionCall("F", Arrays.asList(new FunctionCall("G", Arrays.asList(new FunctionCall("H", Arrays.asList(Literal.asInteger(1)))))));
     }
 }

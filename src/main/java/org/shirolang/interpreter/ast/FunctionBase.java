@@ -9,7 +9,7 @@ import java.util.TreeMap;
  * Abstract class contain shared code between function definitions
  * and function calls
  */
-public abstract class FunctionBase implements Expression {
+public abstract class FunctionBase {
     protected String option;
     protected ArgumentsType argsType;
     protected Map<String, Expression> argMap;

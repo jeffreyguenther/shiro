@@ -35,7 +35,7 @@ public class GraphDefinitionFixture {
     public static GraphDefinition withFunctionDeclarationsAndPortAssignments(){
         GraphDefinition graph = emptyGraph();
         graph.add(FunctionDefinitionFixture.withNameTypeOptionAndListOfArgs());
-        graph.add(PortAssignmentFixture.create(FunctionCallFixture.withPathAndListOfArgs()));
+        graph.add(PortAssignmentFixture.withPathAndListOfArgs());
 
         return graph;
     }

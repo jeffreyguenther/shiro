@@ -30,9 +30,4 @@ public class BinaryOperation implements Expression {
     public String toCode() {
         return left.toCode() + " " + operator +  " " + right.toCode();
     }
-
-    @Override
-    public String toString() {
-        return toCode();
-    }
 }

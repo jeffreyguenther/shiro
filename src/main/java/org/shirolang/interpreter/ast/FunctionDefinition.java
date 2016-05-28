@@ -9,7 +9,7 @@ import java.util.*;
 /**
  * Defines a function definition in the Shiro
  */
-public class FunctionDefinition extends TypedFunction {
+public class FunctionDefinition extends TypedFunction implements Codeable {
     private String name;
 
     public FunctionDefinition(String type, String name) {
@@ -52,6 +52,7 @@ public class FunctionDefinition extends TypedFunction {
         String path = GraphDefinition.class.getResource("shiro.stg").getPath();
 
         STGroup templates = new STGroupFile(path);
+        templates.registerModelAdaptor(Codeable.class, new CodeableAdaptor());
         ST code = templates.getInstanceOf("funcDef");
         code.add("f", this);
         return code.render();

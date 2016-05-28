@@ -2,14 +2,11 @@ package org.shirolang.interpreter.ast;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.shirolang.fixtures.FunctionCallFixture;
 import org.shirolang.fixtures.NodeDefinitionFixture;
 import org.shirolang.fixtures.PortAssignmentFixture;
 import org.shirolang.fixtures.PortStatementFixture;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class NodeDefinitionTest {
     private NodeDefinition nodeDef;
@@ -129,7 +126,7 @@ public class NodeDefinitionTest {
 
     @Test
     public void withInputsInternalsOutputsAndAssignments(){
-        nodeDef.add(PortAssignmentFixture.create(FunctionCallFixture.withPathAndListOfArgs()));
+        nodeDef.add(PortAssignmentFixture.withPathAndListOfArgs());
         nodeDef.add(PortStatementFixture.output());
         nodeDef.add(PortStatementFixture.input());
         nodeDef.add(PortStatementFixture.internal());
@@ -147,7 +144,7 @@ public class NodeDefinitionTest {
     @Test
     public void withInputsInternalsOutputsAssignmentsAndNestedNode(){
         nodeDef.add(NodeDefinitionFixture.withInputs());
-        nodeDef.add(PortAssignmentFixture.create(FunctionCallFixture.withPathAndListOfArgs()));
+        nodeDef.add(PortAssignmentFixture.withPathAndListOfArgs());
         nodeDef.add(PortStatementFixture.output());
         nodeDef.add(PortStatementFixture.input());
         nodeDef.add(PortStatementFixture.internal());
@@ -170,7 +167,7 @@ public class NodeDefinitionTest {
     public void withInputsInternalsOutputsAssignmentsAndNestedNodes(){
         nodeDef.add(NodeDefinitionFixture.withInputs());
         nodeDef.add(NodeDefinitionFixture.withInputs());
-        nodeDef.add(PortAssignmentFixture.create(FunctionCallFixture.withPathAndListOfArgs()));
+        nodeDef.add(PortAssignmentFixture.withPathAndListOfArgs());
         nodeDef.add(PortStatementFixture.output());
         nodeDef.add(PortStatementFixture.input());
         nodeDef.add(PortStatementFixture.internal());
