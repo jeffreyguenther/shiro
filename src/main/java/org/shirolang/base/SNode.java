@@ -25,15 +25,10 @@
 package org.shirolang.base;
 
 import javafx.util.Pair;
-import org.shirolang.dag.DAGraph;
-import org.shirolang.dag.GraphNode;
-import org.shirolang.dag.TopologicalSort;
 import org.shirolang.exceptions.OptionNotFoundException;
 import org.shirolang.exceptions.PathNotFoundException;
-import org.shirolang.interpreter.SFuncAction;
-import org.shirolang.values.Path;
-import org.shirolang.values.PathSegment;
-import org.shirolang.values.SIdent;
+import org.shirolang.interpreter.ast.Path;
+import org.shirolang.interpreter.ast.PathSegment;
 
 import java.util.*;
 

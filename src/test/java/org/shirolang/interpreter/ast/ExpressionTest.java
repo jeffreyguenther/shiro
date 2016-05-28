@@ -21,4 +21,22 @@ public class ExpressionTest {
         Expression expr = ExpressionDefinitionFixture.nestedFunctionCall();
         assertEquals("F(G(H(1)))", expr.toCode());
     }
+
+    @Test
+    public void withReference(){
+        Expression expr = ExpressionDefinitionFixture.referenceAsArg();
+        assertEquals("Map(~DoubleIt())", expr.toCode());
+    }
+
+    @Test
+    public void functionWithPath(){
+        Expression expr = ExpressionDefinitionFixture.functionCallWithPath();
+        assertEquals("A(a.b.c)", expr.toCode());
+    }
+
+    @Test
+    public void functionWithFQTArg(){
+        Expression expr = ExpressionDefinitionFixture.functionWithFQTArg();
+        assertEquals("A(X.Y)", expr.toCode());
+    }
 }

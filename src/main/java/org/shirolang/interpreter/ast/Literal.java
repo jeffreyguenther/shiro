@@ -19,29 +19,34 @@ public class Literal<T> implements Expression {
     public String toCode() {
         if(value instanceof String){
             return "\"" + value.toString() +"\"";
+        }else if(value instanceof Codeable){
+            return ((Codeable) value).toCode();
         }else{
             return value.toString();
         }
     }
 
-    @Override
-    public String toString() {
-        return toCode();
+    public static Expression asBoolean(Boolean b){
+        return new Literal<>(b);
     }
 
-    public static Literal<Boolean> asBoolean(Boolean b){
-        return new Literal<Boolean>(b);
+    public static Expression asInteger(Integer i){
+        return new Literal<>(i);
     }
 
-    public static Literal<Integer> asInteger(Integer i){
-        return new Literal<Integer>(i);
+    public static Expression asDouble(Double d){
+        return new Literal<>(d);
     }
 
-    public static Literal<Double> asDouble(Double d){
-        return new Literal<Double>(d);
+    public static Expression asString(String s){
+        return new Literal<>(s);
     }
 
-    public static Literal<String> asString(String s){
-        return new Literal<String>(s);
+    public static Expression asPath(Path p){
+        return new Literal<>(p);
+    }
+
+    public static Expression asFullyQualifiedType(String type){
+        return new FullyQualifiedType(type);
     }
 }

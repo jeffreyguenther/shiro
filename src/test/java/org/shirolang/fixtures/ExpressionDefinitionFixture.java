@@ -31,4 +31,25 @@ public class ExpressionDefinitionFixture {
     public static Expression nestedFunctionCall(){
         return new FunctionCall("F", Arrays.asList(new FunctionCall("G", Arrays.asList(new FunctionCall("H", Arrays.asList(Literal.asInteger(1)))))));
     }
+
+    /**
+     * Map(~DoubleIt())
+     */
+    public static Expression referenceAsArg(){
+        return new FunctionCall("Map", Arrays.asList(ReferenceFixture.doubleIt()));
+    }
+
+    /**
+     * @return A(a.b.c)
+     */
+    public static Expression functionCallWithPath() {
+        return new FunctionCall("A", Arrays.asList(Literal.asPath(Path.create("a.b.c"))));
+    }
+
+    /**
+     * @return A(X.Y)
+     */
+    public static Expression functionWithFQTArg() {
+        return new FunctionCall("A", Arrays.asList(Literal.asFullyQualifiedType("X.Y")));
+    }
 }

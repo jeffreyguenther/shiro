@@ -27,7 +27,7 @@ import org.shirolang.base.SFunc;
 import org.shirolang.base.SGraph;
 import org.shirolang.base.SNode;
 import org.shirolang.exceptions.OptionNotFoundException;
-import org.shirolang.values.Path;
+import org.shirolang.interpreter.ast.Path;
 
 import java.util.Objects;
 

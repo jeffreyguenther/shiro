@@ -26,6 +26,8 @@ package org.shirolang.values;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.shirolang.interpreter.ast.Path;
+import org.shirolang.interpreter.ast.PathSegment;
 
 import java.util.ArrayList;
 import java.util.List;

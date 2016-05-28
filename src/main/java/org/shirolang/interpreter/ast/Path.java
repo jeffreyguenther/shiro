@@ -22,11 +22,12 @@
  * THE SOFTWARE.
  */
 
-package org.shirolang.values;
+package org.shirolang.interpreter.ast;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -50,7 +51,7 @@ import static java.util.stream.Collectors.toList;
  * System.out.println(p.getSegmentAtHead()); // "length"
  * </code>
  */
-public class Path {
+public class Path implements Codeable{
     private List<PathSegment> path;         // Strings that make up the path
     private int head;                       // index of the path head
     private boolean isReference = false;    // indicates whether the path should be treated as a reference(pointer)
@@ -273,6 +274,22 @@ public class Path {
     public String toString() {
         String ref = isReference() ? "~ " : "";
         return "("+ ref + path.toString() + ")";
+    }
+
+    @Override
+    public String toCode() {
+        String prefix = prefix();
+        return prefix + path.stream().map(PathSegment::toString).collect(Collectors.joining("."));
+    }
+
+    private String prefix(){
+        if(isReference()){
+            return "~";
+        }else if(isSelector) {
+            return "@";
+        }else{
+            return "";
+        }
     }
 
     @Override

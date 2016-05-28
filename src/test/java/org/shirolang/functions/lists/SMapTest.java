@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.shirolang.base.SFunc;
 import org.shirolang.base.SGraph;
 import org.shirolang.interpreter.ShiroRuntime;
+import org.shirolang.interpreter.ast.Path;
 import org.shirolang.values.*;
 
 import java.util.List;

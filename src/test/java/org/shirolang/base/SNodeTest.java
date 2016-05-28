@@ -29,6 +29,8 @@ import org.junit.Test;
 import org.shirolang.exceptions.OptionNotFoundException;
 import org.shirolang.exceptions.PathNotFoundException;
 import org.shirolang.interpreter.ast.Access;
+import org.shirolang.interpreter.ast.Path;
+import org.shirolang.interpreter.ast.PathSegment;
 import org.shirolang.values.*;
 
 import java.util.HashSet;

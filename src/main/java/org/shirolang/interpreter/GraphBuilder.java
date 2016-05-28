@@ -27,7 +27,7 @@ import org.antlr.v4.runtime.misc.NotNull;
 import org.shirolang.base.SFunc;
 import org.shirolang.base.SGraph;
 import org.shirolang.exceptions.PathNotFoundException;
-import org.shirolang.values.Path;
+import org.shirolang.interpreter.ast.Path;
 import org.shirolang.values.SIdent;
 
 /**

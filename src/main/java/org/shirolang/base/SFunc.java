@@ -27,7 +27,7 @@ package org.shirolang.base;
 import javafx.beans.property.BooleanProperty;
 import org.shirolang.interpreter.Consoleable;
 import org.shirolang.interpreter.ast.Access;
-import org.shirolang.values.PathSegment;
+import org.shirolang.interpreter.ast.PathSegment;
 
 import java.util.List;
 import java.util.Set;

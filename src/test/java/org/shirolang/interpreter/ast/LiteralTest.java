@@ -32,4 +32,31 @@ public class LiteralTest {
         assertFalse(b.getValue());
         assertEquals("false", b.toCode());
     }
+
+    @Test
+    public void fullyQualifiedType(){
+        Expression t = Literal.asFullyQualifiedType("A.B.C");
+        assertEquals("A.B.C", t.toCode());
+    }
+
+    @Test
+    public void path(){
+        Path p = Path.create("a.b.c");
+        Expression t = Literal.asPath(p);
+        assertEquals("a.b.c", t.toCode());
+    }
+
+    @Test
+    public void referencePath(){
+        Path p = Path.createReference("a.b.c");
+        Expression t = Literal.asPath(p);
+        assertEquals("~a.b.c", t.toCode());
+    }
+
+    @Test
+    public void selectorPath(){
+        Path p = Path.createSelector("a.b.c");
+        Expression t = Literal.asPath(p);
+        assertEquals("@a.b.c", t.toCode());
+    }
 }

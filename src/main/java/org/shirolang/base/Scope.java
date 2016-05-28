@@ -25,7 +25,7 @@
 package org.shirolang.base;
 
 import org.shirolang.exceptions.PathNotFoundException;
-import org.shirolang.values.Path;
+import org.shirolang.interpreter.ast.Path;
 
 /**
  *

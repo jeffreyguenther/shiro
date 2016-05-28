@@ -28,6 +28,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.shirolang.base.SGraph;
 import org.shirolang.functions.math.SAdd;
+import org.shirolang.interpreter.ast.Path;
 
 import static org.junit.Assert.*;
 

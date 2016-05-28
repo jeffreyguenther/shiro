@@ -2,6 +2,7 @@ package org.shirolang.values;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.shirolang.interpreter.ast.PathSegment;
 
 /**
  * Tests a path segment

@@ -16,6 +16,7 @@ import org.junit.runners.Suite;
         FunctionDefinitionTest.class,
         FunctionCallTest.class,
         LiteralTest.class,
+        FullyQualifiedTypeTest.class,
         ReferenceTest.class,
         BinaryOperationTest.class,
         UnaryOperationTest.class,

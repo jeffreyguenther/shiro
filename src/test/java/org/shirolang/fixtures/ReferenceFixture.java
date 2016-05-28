@@ -94,4 +94,8 @@ public class ReferenceFixture {
 
         return new Reference("Box", "a", args, "b");
     }
+
+    public static Reference doubleIt(){
+        return new Reference("DoubleIt");
+    }
 }

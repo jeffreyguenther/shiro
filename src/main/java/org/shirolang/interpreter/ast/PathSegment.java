@@ -1,4 +1,6 @@
-package org.shirolang.values;
+package org.shirolang.interpreter.ast;
+
+import org.shirolang.values.SegmentType;
 
 import java.util.Optional;
 
