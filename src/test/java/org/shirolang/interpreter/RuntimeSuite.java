@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  */
 
-package org.shirolang;
+package org.shirolang.interpreter;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;

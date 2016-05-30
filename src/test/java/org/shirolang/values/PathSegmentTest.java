@@ -4,9 +4,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.shirolang.interpreter.ast.PathSegment;
 
-/**
- * Tests a path segment
- */
 public class PathSegmentTest {
     @Test
     public void constructors(){

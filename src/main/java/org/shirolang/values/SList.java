@@ -32,7 +32,6 @@ import org.shirolang.base.TypedValue;
 
 /**
  * Defines a list
- * @author jeffreyguenther
  */
 public class SList extends SValue<List<SFunc>>{
     

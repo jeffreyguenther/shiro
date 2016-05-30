@@ -28,14 +28,13 @@ import org.shirolang.base.SType;
 import org.shirolang.base.SymbolType;
 
 /**
- *
  * Defines a double in Shiro
  */
 public class SDouble extends SValue<Double>{
 
     /**
      * Creates a Shiro double with the value NAN.
-     * The symboltype is also intialized to LITERAL
+     * The symboltype is also initialized to LITERAL
      */
     public SDouble(){
         this(Double.NaN);

@@ -31,5 +31,5 @@ import org.shirolang.base.SFunc;
  * @author jeffreyguenther
  */
 public interface FunctionFactory {
-    public SFunc create();
+    SFunc create();
 }

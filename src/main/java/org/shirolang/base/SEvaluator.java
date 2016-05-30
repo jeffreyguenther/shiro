@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * Created by jeffreyguenther on 2016-02-17.
+ * Walks a DAG and evaluates each node in topological order
  */
 public class SEvaluator {
     private DAGraph<SFunc> graph;
@@ -53,12 +53,9 @@ public class SEvaluator {
         TopologicalSort<SFunc> sorter = new TopologicalSort<>(graph);
         List<GraphNode<SFunc>> topologicalOrdering = sorter.getTopologicalOrdering();
 
-        System.out.println("--------new list -----------");
         for (GraphNode<SFunc> gn : topologicalOrdering) {
             SFunc func = gn.getValue();
-            System.out.println(func.toString());
         }
-        System.out.println("--------end list -----------");
 
         // loop through all ports to update them.
         for (GraphNode<SFunc> gn : topologicalOrdering) {
