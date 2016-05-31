@@ -36,10 +36,10 @@ node Rectangle begin
     input fill Color
     input arcHeight Double(0.0)
     input arcWidth Double(0.0)
-    rect Rectangle(originX, originY, rotate, width, height, stroke, strokeWeight, fill, arcHeight, arcWidth)
+    rect SRectangle(originX, originY, rotate, width, height, stroke, strokeWeight, fill, arcHeight, arcWidth)
 end
 
-node Ar begin
+node SArc begin
     input centerX Double
     input centerY Double
     input radiusX Double
@@ -50,19 +50,19 @@ node Ar begin
     input fill Color
     input stroke Color
     input strokeWeight Double(1.0)
-    update Arc(centerX, centerY, radiusX, radiusY, length, startAngle, arcType, fill, stroke, strokeWeight)
+    update SArc(centerX, centerY, radiusX, radiusY, length, startAngle, arcType, fill, stroke, strokeWeight)
 end
 
-node Ellips begin
+node Ellipse begin
     input centerX Double
     input centerY Double
     input rotate Double(0.0)
     input radiusX Double
     input radiusY Double
-    input stroke Color
+    input stroke Color(ColorFromRGB(0, 0, 0, 1.0))
     input strokeWeight Double(1.0)
-    input fill Color
-    update Ellipse(centerX, centerY, rotate, radiusX, radiusY, stroke, strokeWeight, fill)
+    input fill Color(ColorFromRGB(255, 255, 255, 1.0))
+    update SEllipse(centerX, centerY, rotate, radiusX, radiusY, stroke, strokeWeight, fill)
 end
 
 node Line begin
@@ -72,7 +72,7 @@ node Line begin
     input endY Double
     input stroke Color
     input strokeWeight Double(1.0)
-    update Line(startX, startY, endX, endY, stroke, strokeWeight)
+    update SLine(startX, startY, endX, endY, stroke, strokeWeight)
 end
 
 node Text begin
@@ -83,7 +83,7 @@ node Text begin
     input font String
     input size Double(12.0)
     input weight String("normal")
-    update Text(originX, originY, rotate, text, font, size, weight)
+    update SText(originX, originY, rotate, text, font, size, weight)
 end
 
 node Group begin
@@ -91,7 +91,7 @@ node Group begin
     input originY Double
     input rotate Double(0.0)
     input children List
-    update Group(originX, originY, rotate, children)
+    update SGroup(originX, originY, rotate, children)
 end
 
 /**

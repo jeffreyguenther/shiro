@@ -81,6 +81,6 @@ public class SRectangle extends SFuncBase{
 
     @Override
     public String getType() {
-        return "Rectangle";
+        return "SRectangle";
     }
 }

@@ -82,6 +82,6 @@ public class SArc extends SFuncBase{
 
     @Override
     public String getType() {
-        return "Arc";
+        return "SArc";
     }
 }

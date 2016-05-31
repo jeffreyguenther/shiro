@@ -62,6 +62,6 @@ public class SGroup extends SFuncBase{
 
     @Override
     public String getType() {
-        return "Group";
+        return "SGroup";
     }
 }

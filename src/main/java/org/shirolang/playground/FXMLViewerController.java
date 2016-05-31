@@ -141,12 +141,12 @@ public class FXMLViewerController {
 
         errorLabel.visibleProperty().bind(model.hasErrorProperty());
 
-        model.mapCallBack("Rectangle", r -> new RectangleViz((SRectangle) r));
-        model.mapCallBack("Ellipse", e -> new EllipseViz((SEllipse) e));
-        model.mapCallBack("Arc", a -> new ArcViz((SArc) a));
-        model.mapCallBack("Text", t -> new TextViz((SText) t));
-        model.mapCallBack("Line", l -> new LineViz((SLine) l));
-        model.mapCallBack("Group", g -> new GroupViz((SGroup) g));
+        model.mapCallBack("SRectangle", r -> new RectangleViz((SRectangle) r));
+        model.mapCallBack("SEllipse", e -> new EllipseViz((SEllipse) e));
+        model.mapCallBack("SArc", a -> new ArcViz((SArc) a));
+        model.mapCallBack("SText", t -> new TextViz((SText) t));
+        model.mapCallBack("SLine", l -> new LineViz((SLine) l));
+        model.mapCallBack("SGroup", g -> new GroupViz((SGroup) g));
 
         errorLabel.visibleProperty().bind(model.hasErrorProperty());
         model.hasErrorProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {

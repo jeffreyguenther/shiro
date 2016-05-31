@@ -1,27 +1,3 @@
-/*
- * The MIT License
- *
- * Copyright (c) 2012 - 2014 Jeffrey Guenther.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-
 package org.shirolang.interpreter;
 
 import org.antlr.v4.runtime.Token;
@@ -305,6 +281,37 @@ public class ShiroExpressionListener extends ShiroBaseListener {
         SFunc op1 = getExpr(ctx.expr());
         SNegative negate = new SNegative(op1);
         setExpr(ctx, negate);
+    }
+
+    @Override
+    public void exitFuncCall(ShiroParser.FuncCallContext ctx) {
+        String type = convertFullyQualifiedTypeToString(ctx.fullyQualifiedType());
+
+        // get the type name
+        SFunc function = library.createFunction(getGraph(), type);
+
+        if(function == null){
+            throw new RuntimeException("A function by the name " + type
+                    + "does not exist.");
+        }
+
+        if(library.getTypesRequiringLibrary().contains(function.getType())){
+            ((Instantiator) function).setLibrary(library);
+        }
+
+        if (ctx.activeObject != null) {
+            // TODO provide Shiro error if function is not a node
+            String updatePort = ctx.activeObject.getText();
+            try {
+                ((SNode) function).setActiveOption(updatePort);
+            } catch (OptionNotFoundException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+
+        ShiroParser.ArgumentsContext arguments = ctx.arguments();
+        function = setArgumentsInDecl(function, arguments);
+        setExpr(ctx, function);
     }
 
     @Override

@@ -70,6 +70,6 @@ public class SLine extends SFuncBase {
 
     @Override
     public String getType() {
-        return "Line";
+        return "SLine";
     }
 }

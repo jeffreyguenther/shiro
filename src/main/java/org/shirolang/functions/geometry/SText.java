@@ -73,6 +73,6 @@ public class SText extends SFuncBase {
 
     @Override
     public String getType() {
-        return "Text";
+        return "SText";
     }
 }

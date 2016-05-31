@@ -380,12 +380,12 @@ public class Library {
             registerFunction("ColorFromHSB", ColorFromHSB::new);
             registerFunction("ColorToGrayscale", ColorFromHSB::new);
 
-            registerFunction("Rectangle", SRectangle::new);
-            registerFunction("Ellipse", SEllipse::new);
-            registerFunction("Arc", SArc::new);
-            registerFunction("Line", SLine::new);
-            registerFunction("Text", SText::new);
-            registerFunction("Group", SGroup::new);
+            registerFunction("SRectangle", SRectangle::new);
+            registerFunction("SEllipse", SEllipse::new);
+            registerFunction("SArc", SArc::new);
+            registerFunction("SLine", SLine::new);
+            registerFunction("SText", SText::new);
+            registerFunction("SGroup", SGroup::new);
         }catch (NameUsedException e) {
             throw new RuntimeException("Something crazy happened and an internal type is already defined!");
         }
