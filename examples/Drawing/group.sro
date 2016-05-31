@@ -12,9 +12,8 @@ r.height(100.0)
 r.stroke(stroke)
 r.fill(fill)
 
-
 c Ellipse
-c.centerX(100.0)`
+c.centerX(100.0)
 c.centerY(100.0)
 c.radiusX(50.0)
 c.radiusY(50.0)
