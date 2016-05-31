@@ -47,6 +47,7 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.Token;
 import org.fxmisc.richtext.*;
@@ -334,6 +335,8 @@ public class FXMLViewerController {
                 }
                 codeArea.replaceText(sb.toString());
                 currentFile = fileToOpen;
+                Stage stage = (Stage) root.getScene().getWindow();
+                stage.setTitle(stage.getTitle() + " | " +fileToOpen.getName());
 
             }
         } catch (IOException ex) {
