@@ -7,8 +7,7 @@ import java.util.*;
  * sense that the vertices, or nodes in the graph are defined when the graph is
  * declared.
  *
- * @param <T> 
- * @author jeffreyguenther
+ * @param <T>
  */
 public class DAGraph<T> {
 

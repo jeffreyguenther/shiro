@@ -6,7 +6,6 @@ import java.util.Set;
 /**
  * Defines a graph node used in the generic directed acyclic graph
  * @param <T> the type of the graph node
- * @author jeffreyguenther
  */
 public class GraphNode<T> {
     private T value;            // object stored in the graph nodes

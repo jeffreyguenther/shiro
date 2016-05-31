@@ -1,8 +1,7 @@
 package org.shirolang.dag;
 
 /**
- *
- * @author jeffreyguenther
+ * Evaluate the directed acyclic graph
  */
 public interface DAGEvaluator {
 

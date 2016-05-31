@@ -8,7 +8,6 @@ import java.util.Set;
  * The action is parameterized to allow graph nodes to be used without
  * casting.
  * @param <T> Type of the action
- * @author jeffreyguenther
  */
 public interface NodeAction<T> {
     /**
