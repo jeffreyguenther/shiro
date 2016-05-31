@@ -39,7 +39,7 @@ node Rectangle begin
     rect SRectangle(originX, originY, rotate, width, height, stroke, strokeWeight, fill, arcHeight, arcWidth)
 end
 
-node SArc begin
+node Arc begin
     input centerX Double
     input centerY Double
     input radiusX Double
