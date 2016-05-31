@@ -32,9 +32,9 @@ import org.shirolang.interpreter.ast.Path;
  * Defines a scope in Shiro
  */
 public interface Scope {
-    public SFunc resolvePath(Path path) throws PathNotFoundException;
-    public SFunc resolvePath(String path) throws PathNotFoundException;
-    public String getName();
-    public String getFullName();
-    public boolean isRoot();
+    SFunc resolvePath(Path path) throws PathNotFoundException;
+    SFunc resolvePath(String path) throws PathNotFoundException;
+    String getName();
+    String getFullName();
+    boolean isRoot();
 }
