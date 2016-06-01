@@ -1,7 +1,7 @@
 Shiro
 =====
 
-Shiro is a data flow programming language designed to be embedded into
+Shiro is a dataflow programming language designed to be embedded into
 applications to help to support reuse and the exploration of alternatives. The
 language is part of Jeff's PhD thesis. This is research code. Use with a sense
 of humour and lots of patience.
@@ -11,7 +11,7 @@ Usage
 
 The Shiro runtime is designed to be used as the computational engine for
 applications like parametric CAD tools, vector editors, and spreadsheets. The
-runtime provides an API for manipulating the runtime.
+runtime provides an API to modify a program.
 
 #### Examples
 In `examples`, you'll find folders with example Shiro programs. Checked examples

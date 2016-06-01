@@ -1,4 +1,4 @@
-package org.shirolang.fixtures;
+package org.shirolang.fixtures.ast;
 
 import org.shirolang.interpreter.ast.Expression;
 import org.shirolang.interpreter.ast.Literal;

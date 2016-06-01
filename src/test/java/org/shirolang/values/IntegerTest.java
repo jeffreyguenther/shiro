@@ -14,7 +14,6 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- *
  * Tests a Shiro integer
  */
 public class IntegerTest {

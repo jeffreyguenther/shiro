@@ -34,7 +34,6 @@ import java.util.List;
 
 /**
  * Test a path expression object
- * @author jeffreyguenther
  */
 public class PathTest {
     @Test

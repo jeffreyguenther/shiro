@@ -1,7 +1,7 @@
 package org.shirolang.interpreter.ast;
 
 /**
- *
+ * Defines the access privilege for functions
  */
 public enum Access {
     READWRITE, READ, INTERNAL;

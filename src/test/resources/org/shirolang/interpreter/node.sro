@@ -1,6 +1,6 @@
 node Box begin
-	input length Double
-	input width Double
-	input height Double
-	update Multiply(length, width)
+    input length Double
+    input width Double
+    input height Double
+    update Multiply(length, width)
 end

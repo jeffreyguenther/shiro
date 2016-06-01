@@ -29,13 +29,11 @@
 
 package org.shirolang.interpreter;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
-import org.shirolang.interpreter.ShiroLexer;
-import org.shirolang.interpreter.ShiroParser;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * Code shared by tests

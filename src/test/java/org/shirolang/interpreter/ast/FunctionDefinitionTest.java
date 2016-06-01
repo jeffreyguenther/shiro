@@ -1,7 +1,7 @@
 package org.shirolang.interpreter.ast;
 
 import org.junit.Test;
-import org.shirolang.fixtures.FunctionDefinitionFixture;
+import org.shirolang.fixtures.ast.FunctionDefinitionFixture;
 import org.shirolang.interpreter.ast.FunctionBase.ArgumentsType;
 
 import static org.junit.Assert.*;

@@ -29,7 +29,6 @@ import org.junit.runners.Suite;
 
 /**
  * Test all Shiro constant values
- * @author jeffreyguenther
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({

@@ -1,7 +1,7 @@
 package org.shirolang.interpreter.ast;
 
 import org.junit.Test;
-import org.shirolang.fixtures.GraphDefinitionFixture;
+import org.shirolang.fixtures.ast.GraphDefinitionFixture;
 import org.shirolang.interpreter.Defaults;
 
 import static org.junit.Assert.assertEquals;

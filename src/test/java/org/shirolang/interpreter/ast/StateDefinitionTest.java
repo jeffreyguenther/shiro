@@ -1,7 +1,7 @@
 package org.shirolang.interpreter.ast;
 
 import org.junit.Test;
-import org.shirolang.fixtures.StateDefinitionFixture;
+import org.shirolang.fixtures.ast.StateDefinitionFixture;
 import org.shirolang.interpreter.Defaults;
 
 import static org.junit.Assert.assertEquals;

@@ -7,7 +7,7 @@ import static org.junit.Assert.assertEquals;
 public class IncludeStatementTest {
     @Test
     public void toCode(){
-        IncludeStatement include = new IncludeStatement("code.sro");
-        assertEquals("include \"code.sro\"", include.toCode());
+        IncludeStatement include = new IncludeStatement("badCode.sro");
+        assertEquals("include \"badCode.sro\"", include.toCode());
     }
 }

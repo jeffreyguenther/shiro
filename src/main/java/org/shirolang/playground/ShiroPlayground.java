@@ -15,7 +15,7 @@ public class ShiroPlayground extends Application {
     private FXMLViewerController c;
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage stage) throws Exception {
         URL resource = getClass().getResource("fxml_viewer.fxml");
         FXMLLoader loader = new FXMLLoader(resource);
         BorderPane root = loader.load();
@@ -23,9 +23,9 @@ public class ShiroPlayground extends Application {
 
         Scene scene = new Scene(root);
         scene.getStylesheets().add(getClass().getResource("syntax.css").toExternalForm());
-        primaryStage.setTitle("Shiro Playground");
-        primaryStage.setScene(scene);
-        primaryStage.show();
+        stage.setTitle("Shiro Playground");
+        stage.setScene(scene);
+        stage.show();
     }
 
     @Override

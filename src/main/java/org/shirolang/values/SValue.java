@@ -32,7 +32,7 @@ import org.shirolang.base.*;
  * When acting as a constant such as literal string "hello" or a double 14.322,
  * these functions simply pass through the value. To add support for 
  * additional types to Shiro, extend this class and register it as a type with
- * runtime.
+ * the runtime.
  * @param <T>
  */
 public abstract class SValue<T> extends SFuncBase{

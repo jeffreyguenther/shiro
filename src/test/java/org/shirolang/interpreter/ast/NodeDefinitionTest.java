@@ -2,9 +2,9 @@ package org.shirolang.interpreter.ast;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.shirolang.fixtures.NodeDefinitionFixture;
-import org.shirolang.fixtures.PortAssignmentFixture;
-import org.shirolang.fixtures.PortStatementFixture;
+import org.shirolang.fixtures.ast.NodeDefinitionFixture;
+import org.shirolang.fixtures.ast.PortAssignmentFixture;
+import org.shirolang.fixtures.ast.PortStatementFixture;
 
 import static org.junit.Assert.*;
 

@@ -39,8 +39,7 @@ import org.shirolang.interpreter.ast.ASTSuite;
     LibraryTest.class,
     NameManagerTest.class,
     NodeInstantiatorTest.class,
-    StateBuilderTest.class,
-    ASTSuite.class
+    StateBuilderTest.class
 })
 public class InterpreterSuite {
 }

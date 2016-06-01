@@ -1,7 +1,7 @@
 package org.shirolang.interpreter.ast;
 
 import org.junit.Test;
-import org.shirolang.fixtures.ReferenceFixture;
+import org.shirolang.fixtures.ast.ReferenceFixture;
 
 import static org.junit.Assert.assertEquals;
 

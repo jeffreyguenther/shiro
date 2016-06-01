@@ -30,6 +30,7 @@ import org.shirolang.base.BaseSuite;
 import org.shirolang.base.SymbolTypeTest;
 import org.shirolang.functions.finance.FinanceSuite;
 import org.shirolang.interpreter.InterpreterSuite;
+import org.shirolang.interpreter.v2.InterpreterV2Suite;
 import org.shirolang.values.ValuesSuite;
 
 /**
@@ -40,6 +41,7 @@ import org.shirolang.values.ValuesSuite;
     BaseSuite.class,
     FinanceSuite.class,
     InterpreterSuite.class,
+    InterpreterV2Suite.class,
     ValuesSuite.class,
     SymbolTypeTest.class
 })
