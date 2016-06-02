@@ -1,6 +1,12 @@
 package org.shirolang.fixtures.ast;
 
+import org.antlr.v4.misc.Graph;
+import org.shirolang.interpreter.ast.FunctionDefinition;
 import org.shirolang.interpreter.ast.GraphDefinition;
+import org.shirolang.interpreter.ast.Literal;
+import org.shirolang.interpreter.ast.Path;
+
+import java.util.Arrays;
 
 /**
  * Creates Graph definitions for testing.
@@ -170,6 +176,17 @@ public class GraphDefinitionFixture {
         g.add(FunctionDefinitionFixture.withNameTypeOptionAndListOfArgs());
         g.add(PortAssignmentFixture.withPathAndListOfArgs());
         g.add(ExpressionDefinitionFixture.complexComparison());
+        return g;
+    }
+
+    /**
+     * result Add(1.0, 1)
+     * m Multiply(result, 2)
+     */
+    public static GraphDefinition inlineGraphMath(){
+        GraphDefinition g = new GraphDefinition();
+        g.add(new FunctionDefinition("Add", "result", Arrays.asList(Literal.asDouble(1.0), Literal.asInteger(1))));
+        g.add(new FunctionDefinition("Multiply", "m", Arrays.asList(Literal.asPath(Path.create("result")), Literal.asInteger(2))));
         return g;
     }
 }

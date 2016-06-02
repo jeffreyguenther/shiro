@@ -5,6 +5,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.junit.Test;
+import org.shirolang.fixtures.ast.GraphDefinitionFixture;
 import org.shirolang.fixtures.interpreter.InterpreterFixture;
 import org.shirolang.interpreter.ShiroLexer;
 import org.shirolang.interpreter.ShiroParser;
@@ -13,6 +14,7 @@ import org.shirolang.interpreter.ast.Program;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class ASTBuilderTest {
     @Test
@@ -24,9 +26,8 @@ public class ASTBuilderTest {
         Program program = builder.getProgram();
         GraphDefinition defaultGraph = program.getDefaultGraph();
 
-        assertEquals(1, defaultGraph.getFunctions().size());
-        assertNotNull(defaultGraph);
-
+        GraphDefinition expected = GraphDefinitionFixture.inlineGraphMath();
+        assertTrue(expected.equals(defaultGraph));
     }
 
     private ParseTree parse(String code){
