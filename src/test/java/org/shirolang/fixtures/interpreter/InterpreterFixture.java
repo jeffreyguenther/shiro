@@ -28,6 +28,125 @@ public class InterpreterFixture {
     }
 
     /**
+     * 1 + 1
+     */
+    public static String add(){
+        return "1 + 1";
+    }
+
+    /**
+     * 1 + 1.0
+     */
+    public static String addIntegerAndFloat(){
+        return "1 + 1.0";
+    }
+
+    /**
+     * 4 - 1.0
+     */
+    public static String subtractIntegerAndFloat(){
+        return "4 - 1.0";
+    }
+
+    /**
+     * 4 * 1.0
+     */
+    public static String multiplyIntegerAndFloat(){
+        return "4 * 1.0";
+    }
+
+    /**
+     * 4 / 1.0
+     */
+    public static String divideIntegerAndFloat(){
+        return "4 / 1.0";
+    }
+
+    /**
+     * 4 % 1.0
+     */
+    public static String moduloIntegerAndFloat(){
+        return "4 % 1.0";
+    }
+
+    /**
+     * -1.0
+     */
+    public static String negateFloat(){
+        return "-1.0";
+    }
+
+    /**
+     * !true
+     */
+    public static String negateBoolean(){
+        return "!true";
+    }
+
+    /**
+     * (1 + 1) * 3
+     */
+    public static String parens(){
+        return "(1 + 1) * 3";
+    }
+
+    /**
+     * true || false
+     */
+    public static String or(){
+        return "true || false";
+    }
+
+    /**
+     * true && true
+     */
+    public static String and(){
+        return "true && true";
+    }
+
+    /**
+     * 2 > 1
+     */
+    public static String greaterThan(){
+        return "2 > 1";
+    }
+
+    /**
+     * 2 >= 1
+     */
+    public static String greaterThanEqual(){
+        return "2 >= 1";
+    }
+
+    /**
+     * 2 <= 1
+     */
+    public static String lessThanEqual(){
+        return "2 <= 1";
+    }
+
+    /**
+     * 2 < 1
+     */
+    public static String lessThan(){
+        return "2 < 1";
+    }
+
+    /**
+     * 2 == 1
+     */
+    public static String equal(){
+        return "2 == 1";
+    }
+
+    /**
+     * 2 != 1
+     */
+    public static String notEqual(){
+        return "2 != 1";
+    }
+
+    /**
      * result Add(1.0, 1)
      * m Multiply(result, 2)
      */
