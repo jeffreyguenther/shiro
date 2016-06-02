@@ -8,6 +8,7 @@ import org.shirolang.interpreter.ast.ASTSuite;
 @Suite.SuiteClasses({
     InterpreterFixtureTest.class,
     LexParseTest.class,
+    ASTBuilderTest.class,
     ASTSuite.class
 })
 public class InterpreterV2Suite {
