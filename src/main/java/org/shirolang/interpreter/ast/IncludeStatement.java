@@ -27,4 +27,20 @@ public class IncludeStatement implements Codeable{
         code.add("i", this);
         return code.render();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        IncludeStatement that = (IncludeStatement) o;
+
+        return file.equals(that.file);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return file.hashCode();
+    }
 }

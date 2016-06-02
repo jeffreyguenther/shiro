@@ -29,4 +29,23 @@ public class UnaryOperation implements Expression {
         }
 
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        UnaryOperation that = (UnaryOperation) o;
+
+        if (!operand.equals(that.operand)) return false;
+        return operator == that.operator;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = operand.hashCode();
+        result = 31 * result + operator.hashCode();
+        return result;
+    }
 }

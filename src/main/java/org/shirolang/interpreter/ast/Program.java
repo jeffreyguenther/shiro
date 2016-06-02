@@ -81,4 +81,30 @@ public class Program implements Codeable{
         code.add("p", this);
         return code.render();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Program program = (Program) o;
+
+        if (!includes.equals(program.includes)) return false;
+        if (!graphDefs.equals(program.graphDefs)) return false;
+        if (defaultGraph != null ? !defaultGraph.equals(program.defaultGraph) : program.defaultGraph != null)
+            return false;
+        if (!nodeDefs.equals(program.nodeDefs)) return false;
+        return stateDefs.equals(program.stateDefs);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = includes.hashCode();
+        result = 31 * result + graphDefs.hashCode();
+        result = 31 * result + (defaultGraph != null ? defaultGraph.hashCode() : 0);
+        result = 31 * result + nodeDefs.hashCode();
+        result = 31 * result + stateDefs.hashCode();
+        return result;
+    }
 }

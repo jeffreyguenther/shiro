@@ -30,4 +30,20 @@ public class FullyQualifiedType implements Expression{
     public String toCode() {
         return types.stream().collect(Collectors.joining("."));
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        FullyQualifiedType that = (FullyQualifiedType) o;
+
+        return types.equals(that.types);
+
+    }
+
+    @Override
+    public int hashCode() {
+        return types.hashCode();
+    }
 }

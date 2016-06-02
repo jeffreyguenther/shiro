@@ -30,4 +30,25 @@ public class BinaryOperation implements Expression {
     public String toCode() {
         return left.toCode() + " " + operator +  " " + right.toCode();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        BinaryOperation that = (BinaryOperation) o;
+
+        if (!left.equals(that.left)) return false;
+        if (!right.equals(that.right)) return false;
+        return operator == that.operator;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = left.hashCode();
+        result = 31 * result + right.hashCode();
+        result = 31 * result + operator.hashCode();
+        return result;
+    }
 }

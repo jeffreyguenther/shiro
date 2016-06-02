@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.shirolang.fixtures.ast.ReferenceFixture;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class ReferenceTest {
     @Test
@@ -64,5 +65,20 @@ public class ReferenceTest {
     public void withTypeOptionKeywordArgsAndOutputSelector(){
         Reference ref = ReferenceFixture.withTypeOptionKeywordArgsAndOutputSelector();
         assertEquals("~Box[a](a: 1, b: 10)[b]", ref.toCode());
+    }
+
+    @Test
+    public void equals(){
+        Reference r1 = new Reference("A", "a", "x");
+        Reference r2 = new Reference("A", "a", "x");
+        assertTrue(r2.equals(r1));
+
+        Reference r3 = new Reference("A", "a");
+        Reference r4 = new Reference("A", "a");
+        assertTrue(r3.equals(r4));
+
+        Reference r5 = new Reference("A");
+        Reference r6 = new Reference("A");
+        assertTrue(r5.equals(r6));
     }
 }

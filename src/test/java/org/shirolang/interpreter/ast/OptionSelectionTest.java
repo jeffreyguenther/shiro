@@ -39,4 +39,11 @@ public class OptionSelectionTest {
         OptionSelection selection = createOptionSelection();
         assertFalse(selection.hasOptionSelections());
     }
+
+    @Test
+    public void equals(){
+        OptionSelection s1 = createOptionSelection();
+        OptionSelection s2 = createOptionSelection();
+        assertTrue(s1.equals(s2));
+    }
 }

@@ -55,4 +55,23 @@ public class PortAssignment extends FunctionBase implements Codeable{
         code.add("p", this);
         return code.render();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        PortAssignment that = (PortAssignment) o;
+
+        return path.equals(that.path);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + path.hashCode();
+        return result;
+    }
 }

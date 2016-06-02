@@ -95,4 +95,11 @@ public class StateDefinitionTest {
             "end", stateDef.toCode()
         );
     }
+
+    @Test
+    public void equals(){
+        StateDefinition d1 = StateDefinitionFixture.nested();
+        StateDefinition d2 = StateDefinitionFixture.nested();
+        assertTrue(d1.equals(d2));
+    }
 }

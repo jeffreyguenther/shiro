@@ -68,4 +68,31 @@ public class FunctionDefinitionTest {
         FunctionDefinition defWithTypeOptionAndKeywordArgs = FunctionDefinitionFixture.withNameTypeOptionAndKeywordArgs();
         assertEquals("b Box[a](a: 1, b: 10)", defWithTypeOptionAndKeywordArgs.toCode());
     }
+
+    @Test
+    public void equals(){
+        FunctionDefinition def = FunctionDefinitionFixture.withNameAndType();
+        FunctionDefinition def1 = FunctionDefinitionFixture.withNameAndType();
+        assertTrue(def.equals(def1));
+
+        FunctionDefinition defWithTypeAndKeyword = FunctionDefinitionFixture.withNameTypeAndKeywordArgs();
+        FunctionDefinition defWithTypeAndKeyword1 = FunctionDefinitionFixture.withNameTypeAndKeywordArgs();
+        assertTrue(defWithTypeAndKeyword.equals(defWithTypeAndKeyword1));
+
+        FunctionDefinition defWithTypeAndListArgs = FunctionDefinitionFixture.withNameTypeAndListOfArgs();
+        FunctionDefinition defWithTypeAndListArgs1 = FunctionDefinitionFixture.withNameTypeAndListOfArgs();
+        assertTrue(defWithTypeAndListArgs.equals(defWithTypeAndListArgs1));
+
+        FunctionDefinition defWithOption = FunctionDefinitionFixture.withNameTypeAndOption();
+        FunctionDefinition defWithOption1 = FunctionDefinitionFixture.withNameTypeAndOption();
+        assertTrue(defWithOption.equals(defWithOption1));
+
+        FunctionDefinition defWithTypeOptionAndListArgs = FunctionDefinitionFixture.withNameTypeOptionAndListOfArgs();
+        FunctionDefinition defWithTypeOptionAndListArgs1 = FunctionDefinitionFixture.withNameTypeOptionAndListOfArgs();
+        assertTrue(defWithTypeOptionAndListArgs.equals(defWithTypeOptionAndListArgs1));
+
+        FunctionDefinition defWithTypeOptionAndKeywordArgs = FunctionDefinitionFixture.withNameTypeOptionAndKeywordArgs();
+        FunctionDefinition defWithTypeOptionAndKeywordArgs1 = FunctionDefinitionFixture.withNameTypeOptionAndKeywordArgs();
+        assertTrue(defWithTypeOptionAndKeywordArgs.equals(defWithTypeOptionAndKeywordArgs1));
+    }
 }

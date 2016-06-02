@@ -46,4 +46,25 @@ public class OptionSelection {
     public boolean hasOptionSelections() {
         return !selections.isEmpty();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        OptionSelection that = (OptionSelection) o;
+
+        if (!function.equals(that.function)) return false;
+        if (!option.equals(that.option)) return false;
+        return selections.equals(that.selections);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = function.hashCode();
+        result = 31 * result + option.hashCode();
+        result = 31 * result + selections.hashCode();
+        return result;
+    }
 }

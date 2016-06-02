@@ -265,4 +265,19 @@ public class ProgramTest {
             "end", p.toCode()
         );
     }
+
+    @Test
+    public void equals(){
+        p.add(new GraphDefinition("g"));
+        p.add(new NodeDefinition("A"));
+        p.add(new NodeDefinition("B"));
+        p.add(new StateDefinition("s1"));
+
+        Program p1 = new Program();
+        p1.add(new GraphDefinition("g"));
+        p1.add(new NodeDefinition("A"));
+        p1.add(new NodeDefinition("B"));
+        p1.add(new StateDefinition("s1"));
+        assertTrue(p1.equals(p));
+    }
 }

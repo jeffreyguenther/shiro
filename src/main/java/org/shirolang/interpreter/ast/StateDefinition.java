@@ -68,4 +68,25 @@ public class StateDefinition implements Codeable{
         code.add("s", this);
         return code.render();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        StateDefinition that = (StateDefinition) o;
+
+        if (!name.equals(that.name)) return false;
+        if (!graph.equals(that.graph)) return false;
+        return options.equals(that.options);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name.hashCode();
+        result = 31 * result + graph.hashCode();
+        result = 31 * result + options.hashCode();
+        return result;
+    }
 }

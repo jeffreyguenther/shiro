@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.shirolang.fixtures.ast.FunctionDefinitionFixture;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class PortDefinitionTest {
     @Test
@@ -52,5 +53,16 @@ public class PortDefinitionTest {
         assertEquals(
                 "output b Box[a](1, 2, 3)", def.toCode()
         );
+    }
+
+    @Test
+    public void equals(){
+        PortDefinition d1 = new PortDefinition(Access.READ, FunctionDefinitionFixture.withNameTypeOptionAndListOfArgs());
+        PortDefinition d2 = new PortDefinition(Access.READ, FunctionDefinitionFixture.withNameTypeOptionAndListOfArgs());
+        assertTrue(d1.equals(d2));
+
+        PortDefinition d3 = new PortDefinition(Access.READWRITE, FunctionDefinitionFixture.withNameTypeOptionAndListOfArgs());
+        PortDefinition d4 = new PortDefinition(Access.READWRITE, FunctionDefinitionFixture.withNameTypeOptionAndListOfArgs());
+        assertTrue(d3.equals(d4));
     }
 }

@@ -92,4 +92,34 @@ public class NodeDefinition implements Codeable{
         code.add("n", this);
         return code.render();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        NodeDefinition that = (NodeDefinition) o;
+
+        if (!name.equals(that.name)) return false;
+        if (defaultOption != null ? !defaultOption.equals(that.defaultOption) : that.defaultOption != null)
+            return false;
+        if (!inputs.equals(that.inputs)) return false;
+        if (!outputs.equals(that.outputs)) return false;
+        if (!internal.equals(that.internal)) return false;
+        if (!assignments.equals(that.assignments)) return false;
+        return nodes.equals(that.nodes);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name.hashCode();
+        result = 31 * result + (defaultOption != null ? defaultOption.hashCode() : 0);
+        result = 31 * result + inputs.hashCode();
+        result = 31 * result + outputs.hashCode();
+        result = 31 * result + internal.hashCode();
+        result = 31 * result + assignments.hashCode();
+        result = 31 * result + nodes.hashCode();
+        return result;
+    }
 }

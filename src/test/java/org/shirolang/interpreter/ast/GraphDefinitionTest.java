@@ -150,4 +150,15 @@ public class GraphDefinitionTest {
         GraphDefinition graph = GraphDefinitionFixture.defaultGraphWithAnonExpressions();
         assertEquals("1.0 == (3 + 2)", graph.toCode());
     }
+
+    @Test
+    public void equals(){
+        GraphDefinition g1 = GraphDefinitionFixture.defaultGraphWithFunctionDeclarationsPortAssignmentsAnonExpressions();
+        GraphDefinition g2 = GraphDefinitionFixture.defaultGraphWithFunctionDeclarationsPortAssignmentsAnonExpressions();
+        assertTrue(g1.equals(g2));
+
+        GraphDefinition g3 = GraphDefinitionFixture.withFunctionDeclarationsPortAssignmentsAndAnonExpressions();
+        GraphDefinition g4 = GraphDefinitionFixture.withFunctionDeclarationsPortAssignmentsAndAnonExpressions();
+        assertTrue(g3.equals(g4));
+    }
 }

@@ -68,4 +68,27 @@ public abstract class FunctionBase {
     public enum ArgumentsType{
         LIST, KEYWORDS
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        FunctionBase that = (FunctionBase) o;
+
+        if (!option.equals(that.option)) return false;
+        if (argsType != that.argsType) return false;
+        if (!argMap.equals(that.argMap)) return false;
+        return argList.equals(that.argList);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = option.hashCode();
+        result = 31 * result + argsType.hashCode();
+        result = 31 * result + argMap.hashCode();
+        result = 31 * result + argList.hashCode();
+        return result;
+    }
 }

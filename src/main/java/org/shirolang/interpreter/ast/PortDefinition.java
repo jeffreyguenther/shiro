@@ -56,4 +56,25 @@ public class PortDefinition implements Codeable{
         code.add("p", this);
         return code.render();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        PortDefinition that = (PortDefinition) o;
+
+        if (isOption != that.isOption) return false;
+        if (access != that.access) return false;
+        return function.equals(that.function);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (isOption ? 1 : 0);
+        result = 31 * result + access.hashCode();
+        result = 31 * result + function.hashCode();
+        return result;
+    }
 }

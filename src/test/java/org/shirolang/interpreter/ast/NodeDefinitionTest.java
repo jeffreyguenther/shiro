@@ -189,4 +189,23 @@ public class NodeDefinitionTest {
             nodeDef.toCode()
         );
     }
+
+    @Test
+    public void equals(){
+        nodeDef.add(NodeDefinitionFixture.withInputs());
+        nodeDef.add(NodeDefinitionFixture.withInputs());
+        nodeDef.add(PortAssignmentFixture.withPathAndListOfArgs());
+        nodeDef.add(PortStatementFixture.output());
+        nodeDef.add(PortStatementFixture.input());
+        nodeDef.add(PortStatementFixture.internal());
+
+        NodeDefinition def = new NodeDefinition("A");
+        def.add(NodeDefinitionFixture.withInputs());
+        def.add(NodeDefinitionFixture.withInputs());
+        def.add(PortAssignmentFixture.withPathAndListOfArgs());
+        def.add(PortStatementFixture.output());
+        def.add(PortStatementFixture.input());
+        def.add(PortStatementFixture.internal());
+        assertTrue(nodeDef.equals(def));
+    }
 }

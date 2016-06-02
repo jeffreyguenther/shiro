@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class LiteralTest {
     @Test
@@ -58,5 +59,16 @@ public class LiteralTest {
         Path p = Path.createSelector("a.b.c");
         Expression t = Literal.asPath(p);
         assertEquals("@a.b.c", t.toCode());
+    }
+
+    @Test
+    public void equals(){
+        Path p = Path.createReference("a.b.c");
+        Expression t = Literal.asPath(p);
+
+        Path p1 = Path.createReference("a.b.c");
+        Expression t1 = Literal.asPath(p1);
+
+        assertTrue(t.equals(t1));
     }
 }

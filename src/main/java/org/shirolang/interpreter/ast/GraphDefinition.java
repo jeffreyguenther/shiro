@@ -81,4 +81,27 @@ public class GraphDefinition implements Codeable{
         code.add("g", this);
         return code.render();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        GraphDefinition that = (GraphDefinition) o;
+
+        if (!name.equals(that.name)) return false;
+        if (!functions.equals(that.functions)) return false;
+        if (!assignments.equals(that.assignments)) return false;
+        return anonExpressions.equals(that.anonExpressions);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name.hashCode();
+        result = 31 * result + functions.hashCode();
+        result = 31 * result + assignments.hashCode();
+        result = 31 * result + anonExpressions.hashCode();
+        return result;
+    }
 }

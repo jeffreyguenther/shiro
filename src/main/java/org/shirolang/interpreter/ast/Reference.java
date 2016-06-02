@@ -6,6 +6,7 @@ import org.stringtemplate.v4.STGroupFile;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Describes a Reference AST node
@@ -77,5 +78,24 @@ public class Reference extends TypedFunction implements Expression{
         ST code = templates.getInstanceOf("anonReference");
         code.add("r", this);
         return code.render();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+
+        Reference reference = (Reference) o;
+
+        return outputSelector.equals(reference.outputSelector);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + outputSelector.hashCode();
+        return result;
     }
 }
