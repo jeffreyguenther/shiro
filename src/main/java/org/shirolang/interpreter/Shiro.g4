@@ -2,9 +2,10 @@ grammar Shiro;
 
 shiro : includeStmt*
         shiroStmt*
+        EOF
 	  ;
 
-includeStmt: INCLUDE STRING_LITERAL; //NEWLINE;
+includeStmt: INCLUDE STRING_LITERAL NEWLINE;
 
 shiroStmt
     :
@@ -12,12 +13,12 @@ shiroStmt
         | nodeDecl
         | graphDecl
         | stateDecl
-        //| NEWLINE
+        | NEWLINE
 	;
 
 stateDecl
-    :   STATE stateName BEGIN //NEWLINE
-        stateGraphSelection //NEWLINE
+    :   STATE stateName BEGIN NEWLINE
+        stateGraphSelection NEWLINE
         stateStmt*
         END
     ;
@@ -27,8 +28,8 @@ stateName
     ;
 
 stateStmt
-    :   stateActivation //NEWLINE
-//    |   NEWLINE
+    :   stateActivation NEWLINE
+    |   NEWLINE
     ;
 
 stateGraphSelection
@@ -41,8 +42,8 @@ stateActivation
     ;
 
 nestedOptionSelection
-    :   nodeName=IDENT LSQUARE activeObject=IDENT RSQUARE BEGIN //NEWLINE
-        (stateActivation /*NEWLINE | NEWLINE */)*
+    :   nodeName=IDENT LSQUARE activeObject=IDENT RSQUARE BEGIN NEWLINE
+        (stateActivation NEWLINE | NEWLINE )*
         END
     ;
 
@@ -51,17 +52,17 @@ optionSelection
     ;
 
 graphDecl
-	:	GRAPH IDENT BEGIN //NEWLINE
+	:	GRAPH IDENT BEGIN NEWLINE
 		graphStmt+
 		END
 	;
 
 graphStmt
-	:	portAssignment | funcDeclInit | funcDecl //| NEWLINE
+	:	portAssignment | funcDeclInit | funcDecl | NEWLINE
 	;
 
 nodeDecl
-    :   NODE MFNAME ('[' optionSelector ']')? BEGIN //NEWLINE
+    :   NODE MFNAME ('[' optionSelector ']')? BEGIN NEWLINE
         nodeStmt
         END
     ;
@@ -110,25 +111,25 @@ nodeStmt
     :   (portstmt
         | portAssignment
         | nodeDecl
-        /*| NEWLINE*/)*
+        | NEWLINE)*
     ;
 
 portDecl
 	:	OPTION? accessModifier? funcDecl
 	;
-	
+
 portDeclInit
 	:	OPTION? accessModifier? funcDeclInit
 	;
 
-portstmt	
-	:	( portDeclInit | portDecl ) //NEWLINE
-	;	
-	
-portName 
+portstmt
+	:	( portDeclInit | portDecl ) NEWLINE
+	;
+
+portName
 	:	IDENT
 	;
-	
+
 accessModifier
     :   INPUT | OUTPUT
 	;
@@ -151,17 +152,17 @@ pathIndex
 	;
 
 portAssignment
-    :	path '(' arguments ')' //NEWLINE
+    :	path '(' arguments ')' NEWLINE?
     ;
 
 anonExpr
-    : expr //NEWLINE
+    : expr NEWLINE?
     ;
 
 anonymousGraphStmt
     :   portAssignment
-    |   funcDeclInit //NEWLINE
-    |   funcDecl //NEWLINE
+    |   funcDeclInit NEWLINE
+    |   funcDecl NEWLINE
     |   anonExpr
     ;
 
@@ -182,7 +183,6 @@ expr : '(' expr ')'						      #parensExpr
 	 |  anonymousRef                          #anonRefExpr
 	 |  funcCall                              #inlineFuncCall
 	 |  path                                  #pathExpr
-	 |  listLiteral                           #listExpr
 	 |	NUMBER 								  #numExpr
 	 |  BOOLEAN_LITERAL						  #boolExpr
 	 |  STRING_LITERAL                        #stringExpr
@@ -228,7 +228,7 @@ BOOLEAN_LITERAL
 
 STRING_LITERAL : '"' (~'"'|'\\"')* '"'  ;
 
-NUMBER 	
+NUMBER
     :	DIGIT+ ('.'DIGIT+)?
     ;
 
@@ -240,7 +240,7 @@ MFNAME
     : UCLETTER (LCLETTER | UCLETTER | DIGIT|'_')*
     ;
 
-WS :  (' '|'\t'|'\f'| NEWLINE)+ -> channel(HIDDEN)
+WS :  (' '|'\t'|'\f')+ -> channel(HIDDEN)
    ;
 
 COMMENT 

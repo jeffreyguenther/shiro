@@ -38,6 +38,18 @@ public class InterpreterFixture {
     }
 
     /**
+     * A mess
+     */
+    public static String expressions(){
+        return
+            " -a + @b * 1 % 10 - 2 > F(~a) && 2.3 || \"Apples\" != G.H.I.P";
+    }
+
+    public static String path(){
+        return "a.inputs[a].outputs[b].b.c.d";
+    }
+
+    /**
      * node F begin
      *     output factor Double(2.0)
      * end
@@ -102,7 +114,7 @@ public class InterpreterFixture {
             "     output factor Double(2.0)\n" +
             " end\n" +
             "\n" +
-            "graph g begin" +
+            "graph g begin\n" +
             "    f F\n" +
             "    result Add(1.0, 1)\n" +
             "    m Multiply(result, f.factor)\n" +
@@ -123,7 +135,45 @@ public class InterpreterFixture {
         return
             "node A[a] begin\n" +
             "    option input a Double\n" +
-                "option input b Double\n" +
+            "    option input b Double\n" +
+            "end";
+    }
+
+    /**
+     * node A[a] begin
+     *     option input a Double
+     *     r Double(a)
+     *     option input b Double(r)
+     * end
+     */
+    public static String inputOutputInternalPortsInNode(){
+        return
+            "node A[a] begin\n" +
+            "    option input a Double\n" +
+            "    r Double(a)\n" +
+            "    option input b Double\n" +
+            "end";
+    }
+
+    /**
+     * node A[a] begin
+     *     option input a Double
+     *     r Double(a)
+     *     option input b Double(r)
+     *     node B begin
+     *          input in Double(100.0)
+     *     end
+     * end
+     */
+    public static String nestedNode(){
+        return
+            "node A[a] begin\n" +
+            "    option input a Double\n" +
+            "    r Double(a)\n" +
+            "    option input b Double\n" +
+            "    node B begin\n" +
+            "        input in Double(100.0)\n" +
+            "    end\n" +
             "end";
     }
 }

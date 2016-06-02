@@ -42,6 +42,26 @@ public class LexParseTest {
         assertTrue(parse(InterpreterFixture.nodeWithOptions()));
     }
 
+    @Test
+    public void parseInputOuputInternalPortsInNode(){
+        assertTrue(parse(InterpreterFixture.inputOutputInternalPortsInNode()));
+    }
+
+    @Test
+    public void parseNestedNode(){
+        assertTrue(parse(InterpreterFixture.nestedNode()));
+    }
+
+    @Test
+    public void parseExpression(){
+        assertTrue(parse(InterpreterFixture.expressions()));
+    }
+
+    @Test
+    public void parsePath(){
+        assertTrue(parse(InterpreterFixture.path()));
+    }
+
     private boolean parse(String code){
         return parse(code, true);
     }
