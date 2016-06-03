@@ -6,7 +6,6 @@ import org.stringtemplate.v4.STGroupFile;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Describes a Reference AST node

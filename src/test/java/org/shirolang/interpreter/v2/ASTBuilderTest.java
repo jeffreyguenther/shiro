@@ -202,6 +202,166 @@ public class ASTBuilderTest {
         assertTrue(expected.equals(defaultGraph));
     }
 
+    @Test
+    public void simplePath(){
+        walker.walk(builder, parse(InterpreterFixture.simplePath()));
+
+        Program program = builder.getProgram();
+        GraphDefinition defaultGraph = program.getDefaultGraph();
+        GraphDefinition expected = GraphDefinitionFixture.simplePath();
+        assertTrue(expected.equals(defaultGraph));
+    }
+
+    @Test
+    public void inputsWithNumberedIndexInPath(){
+        walker.walk(builder, parse(InterpreterFixture.inputsWithNumberedIndexInPath()));
+
+        Program program = builder.getProgram();
+        GraphDefinition defaultGraph = program.getDefaultGraph();
+        GraphDefinition expected = GraphDefinitionFixture.inputsWithNumberedIndexInPath();
+        assertTrue(expected.equals(defaultGraph));
+    }
+
+    @Test
+    public void inputsWithNamedIndexInPath(){
+        walker.walk(builder, parse(InterpreterFixture.inputsWithNamedIndexInPath()));
+
+        Program program = builder.getProgram();
+        GraphDefinition defaultGraph = program.getDefaultGraph();
+        GraphDefinition expected = GraphDefinitionFixture.inputsWithNamedIndexInPath();
+        assertTrue(expected.equals(defaultGraph));
+    }
+
+    @Test
+    public void outputsWithNumberedIndexInPath(){
+        walker.walk(builder, parse(InterpreterFixture.outputsWithNumberedIndexInPath()));
+
+        Program program = builder.getProgram();
+        GraphDefinition defaultGraph = program.getDefaultGraph();
+        GraphDefinition expected = GraphDefinitionFixture.outputsWithNumberedIndexInPath();
+        assertTrue(expected.equals(defaultGraph));
+    }
+
+    @Test
+    public void outputsWithNamedIndexInPath(){
+        walker.walk(builder, parse(InterpreterFixture.outputsWithNamedIndexInPath()));
+
+        Program program = builder.getProgram();
+        GraphDefinition defaultGraph = program.getDefaultGraph();
+        GraphDefinition expected = GraphDefinitionFixture.outputsWithNamedIndexInPath();
+        assertTrue(expected.equals(defaultGraph));
+    }
+
+    @Test
+    public void fullyQualifiedType(){
+        walker.walk(builder, parse(InterpreterFixture.fullyQualifiedType()));
+
+        Program program = builder.getProgram();
+        GraphDefinition defaultGraph = program.getDefaultGraph();
+        GraphDefinition expected = GraphDefinitionFixture.fullyQualifiedType();
+        assertTrue(expected.equals(defaultGraph));
+    }
+
+    @Test
+    public void reference(){
+        walker.walk(builder, parse(InterpreterFixture.reference()));
+
+        Program program = builder.getProgram();
+        GraphDefinition defaultGraph = program.getDefaultGraph();
+        GraphDefinition expected = GraphDefinitionFixture.reference();
+        assertTrue(expected.equals(defaultGraph));
+    }
+
+    @Test
+    public void referenceWithOptionSelection(){
+        walker.walk(builder, parse(InterpreterFixture.referenceWithOptionSelection()));
+
+        Program program = builder.getProgram();
+        GraphDefinition defaultGraph = program.getDefaultGraph();
+        GraphDefinition expected = GraphDefinitionFixture.referenceWithOptionSelection();
+        assertTrue(expected.equals(defaultGraph));
+    }
+
+    @Test
+    public void referenceWithKeywordArguments(){
+        walker.walk(builder, parse(InterpreterFixture.referenceWithKeywordArguments()));
+
+        Program program = builder.getProgram();
+        GraphDefinition defaultGraph = program.getDefaultGraph();
+        GraphDefinition expected = GraphDefinitionFixture.referenceWithKeywordArguments();
+        assertTrue(expected.equals(defaultGraph));
+    }
+
+    @Test
+    public void referenceWithOptionSelectionAndKeywordArguments(){
+        walker.walk(builder, parse(InterpreterFixture.referenceWithOptionSelectionAndKeywordArguments()));
+
+        Program program = builder.getProgram();
+        GraphDefinition defaultGraph = program.getDefaultGraph();
+        GraphDefinition expected = GraphDefinitionFixture.referenceWithOptionSelectionAndKeywordArguments();
+        assertTrue(expected.equals(defaultGraph));
+    }
+
+    @Test
+    public void referenceWithOptionSelectionKeywordArgumentsAndIndexOutputSelector(){
+        walker.walk(builder, parse(InterpreterFixture.referenceWithOptionSelectionKeywordArgumentsAndIndexOutputSelector()));
+
+        Program program = builder.getProgram();
+        GraphDefinition defaultGraph = program.getDefaultGraph();
+        GraphDefinition expected = GraphDefinitionFixture.referenceWithOptionSelectionKeywordArgumentsAndIndexOutputSelector();
+        assertTrue(expected.equals(defaultGraph));
+    }
+
+    @Test
+    public void referenceWithOptionSelectionKeywordArgumentsAndKeywordOutputSelector(){
+        walker.walk(builder, parse(InterpreterFixture.referenceWithOptionSelectionKeywordArgumentsAndKeywordOutputSelector()));
+
+        Program program = builder.getProgram();
+        GraphDefinition defaultGraph = program.getDefaultGraph();
+        GraphDefinition expected = GraphDefinitionFixture.referenceWithOptionSelectionKeywordArgumentsAndKeywordOutputSelector();
+        assertTrue(expected.equals(defaultGraph));
+    }
+
+    @Test
+    public void referenceWithArguments(){
+        walker.walk(builder, parse(InterpreterFixture.referenceWithArguments()));
+
+        Program program = builder.getProgram();
+        GraphDefinition defaultGraph = program.getDefaultGraph();
+        GraphDefinition expected = GraphDefinitionFixture.referenceWithArguments();
+        assertTrue(expected.equals(defaultGraph));
+    }
+
+    @Test
+    public void referenceWithOptionSelectionAndArguments(){
+        walker.walk(builder, parse(InterpreterFixture.referenceWithOptionSelectionAndArguments()));
+
+        Program program = builder.getProgram();
+        GraphDefinition defaultGraph = program.getDefaultGraph();
+        GraphDefinition expected = GraphDefinitionFixture.referenceWithOptionSelectionAndArguments();
+        assertTrue(expected.equals(defaultGraph));
+    }
+
+    @Test
+    public void referenceWithOptionSelectionAndArgumentsAndIndexOutputSelector(){
+        walker.walk(builder, parse(InterpreterFixture.referenceWithOptionSelectionAndArgumentsAndIndexOutputSelector()));
+
+        Program program = builder.getProgram();
+        GraphDefinition defaultGraph = program.getDefaultGraph();
+        GraphDefinition expected = GraphDefinitionFixture.referenceWithOptionSelectionAndArgumentsAndIndexOutputSelector();
+        assertTrue(expected.equals(defaultGraph));
+    }
+
+    @Test
+    public void referenceWithOptionSelectionAndArgumentsAndKeywordOutputSelector(){
+        walker.walk(builder, parse(InterpreterFixture.referenceWithOptionSelectionAndArgumentsAndKeywordOutputSelector()));
+
+        Program program = builder.getProgram();
+        GraphDefinition defaultGraph = program.getDefaultGraph();
+        GraphDefinition expected = GraphDefinitionFixture.referenceWithOptionSelectionAndArgumentsAndKeywordOutputSelector();
+        assertTrue(expected.equals(defaultGraph));
+    }
+
     private ParseTree parse(String code){
         ShiroLexer lexer = new ShiroLexer(new ANTLRInputStream(code));
 

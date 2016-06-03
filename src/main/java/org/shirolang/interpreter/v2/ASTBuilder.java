@@ -8,6 +8,10 @@ import org.shirolang.interpreter.ShiroParser;
 import org.shirolang.interpreter.ast.*;
 import org.shirolang.values.SegmentType;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.shirolang.interpreter.ast.BinaryOperator.*;
@@ -32,17 +36,15 @@ public class ASTBuilder extends ShiroBaseListener{
 
     @Override
     public void exitFuncDeclInit(ShiroParser.FuncDeclInitContext ctx) {
-        String type = convertFullyQualifiedTypeToString(ctx.fullyQualifiedType());
-
     }
 
     @Override
     public void exitAnonExpr(ShiroParser.AnonExprContext ctx) {
-        p.getDefaultGraph().add(expressions.get(ctx.expr()));
+        p.getDefaultGraph().add(get(ctx.expr()));
     }
 
     @Override
-    public void enterPath(ShiroParser.PathContext ctx) {
+    public void exitPath(ShiroParser.PathContext ctx) {
         expressions.put(ctx, createPath(ctx));
     }
 
@@ -132,6 +134,16 @@ public class ASTBuilder extends ShiroBaseListener{
     }
 
     @Override
+    public void exitTypeExpr(ShiroParser.TypeExprContext ctx) {
+        expressions.put(ctx, createFullyQualifiedType(ctx.fullyQualifiedType()));
+    }
+
+    @Override
+    public void exitAnonRefExpr(ShiroParser.AnonRefExprContext ctx) {
+        expressions.put(ctx, create(ctx.anonymousRef().reference()));
+    }
+
+    @Override
     public void exitStringExpr(ShiroParser.StringExprContext ctx) {
         String literalString = ctx.STRING_LITERAL().getText();
 
@@ -161,7 +173,7 @@ public class ASTBuilder extends ShiroBaseListener{
         expressions.put(ctx, Literal.asBoolean(Boolean.parseBoolean(value)));
     }
 
-    protected Expression createPath(ShiroParser.PathContext ctx) {
+    private Expression createPath(ShiroParser.PathContext ctx) {
         Path p = new Path();
         ctx.segments.stream().map(this::createSegment).forEach(p::addSegment);
 
@@ -186,7 +198,7 @@ public class ASTBuilder extends ShiroBaseListener{
             if(pathIndex.index.getType() == ShiroParser.NUMBER){
                 int i = Integer.parseInt(pathIndex.NUMBER().getText());
                 return new PathSegment(SegmentType.INPUT, i);
-            }else if( pathIndex.index.getType() == ShiroParser.STRING_LITERAL){
+            }else if( pathIndex.index.getType() == ShiroParser.IDENT){
                 String key = pathIndex.IDENT().getText();
                 return new PathSegment(SegmentType.INPUT, key);
             }
@@ -197,7 +209,7 @@ public class ASTBuilder extends ShiroBaseListener{
             if(pathIndex.index.getType() == ShiroParser.NUMBER){
                 int i = Integer.parseInt(pathIndex.NUMBER().getText());
                 return new PathSegment(SegmentType.OUTPUT, i);
-            }else if( pathIndex.index.getType() == ShiroParser.STRING_LITERAL){
+            }else if( pathIndex.index.getType() == ShiroParser.IDENT){
                 String key = pathIndex.IDENT().getText();
                 return new PathSegment(SegmentType.OUTPUT, key);
             }
@@ -206,8 +218,95 @@ public class ASTBuilder extends ShiroBaseListener{
         return null; // should never reach here.
     }
 
+    private Reference create(ShiroParser.ReferenceContext ctx){
+        Reference r;
+
+        String type = convertFullyQualifiedTypeToString(ctx.fullyQualifiedType());
+        String activeOption = "";
+        String outputSelector = "";
+
+        List<Expression> arglist = new ArrayList<>();
+        Map<String, Expression> argMap = new HashMap<>();
+
+        if(ctx.activeObject != null){
+            activeOption = ctx.activeObject.getText();
+        }
+
+        if(ctx.outputSelector() != null){
+            if(ctx.outputSelector().IDENT() != null){
+                outputSelector = ctx.outputSelector().IDENT().getText();
+            }else if(ctx.outputSelector().NUMBER() != null){
+                outputSelector = ctx.outputSelector().NUMBER().getText();
+            }
+        }
+
+        if(ctx.arguments() != null){
+            if(ctx.arguments().argList() != null){
+                arglist.addAll(ctx.arguments().argList().arg().stream()
+                        .map(ShiroParser.ArgContext::expr)
+                        .map(e -> expressions.get(e))
+                        .collect(Collectors.toList()));
+            }else if(ctx.arguments().argMap() != null){
+                argMap.putAll(create(ctx.arguments().argMap()));
+            }
+        }
+
+        if (!arglist.isEmpty()){
+            if(!activeOption.isEmpty() && !outputSelector.isEmpty()){
+                r = new Reference(type, activeOption, arglist, outputSelector);
+            }else if(!activeOption.isEmpty()){
+                r = new Reference(type, activeOption, arglist);
+            }else if(!outputSelector.isEmpty()) {
+                r = new Reference(type, arglist, outputSelector);
+            }else {
+                r = new Reference(type, arglist);
+            }
+        }else if (!argMap.isEmpty()){
+            if(!activeOption.isEmpty() && !outputSelector.isEmpty()){
+                r = new Reference(type, activeOption, argMap, outputSelector);
+            }else if(!activeOption.isEmpty()){
+                r = new Reference(type, activeOption, argMap);
+            }else if(!outputSelector.isEmpty()) {
+                r = new Reference(type, argMap, outputSelector);
+            }else {
+                r = new Reference(type, argMap);
+            }
+        }else{
+            if(!activeOption.isEmpty() && !outputSelector.isEmpty()){
+                r = new Reference(type, activeOption, outputSelector);
+            }else if(!activeOption.isEmpty()){
+                r = new Reference(type, activeOption);
+            }else if(!outputSelector.isEmpty()) {
+                r = new Reference(type, outputSelector);
+            }else {
+                r = new Reference(type);
+            }
+        }
+
+        return r;
+    }
+
+    private Map<String, Expression> create(ShiroParser.ArgMapContext ctx){
+        Map<String, Expression> argMap = new HashMap<>();
+        List<String> keys = ctx.keys.stream().map(Token::getText).collect(Collectors.toList());
+        List<Expression> values = ctx.values.stream()
+                .map(ShiroParser.ArgContext::expr)
+                .map(e -> expressions.get(e))
+                .collect(Collectors.toList());
+
+        for(int i = 0; i < keys.size(); i++){
+            argMap.put(keys.get(i), values.get(i));
+        }
+        return argMap;
+    }
+
     private String convertFullyQualifiedTypeToString(ShiroParser.FullyQualifiedTypeContext ctx){
         return ctx.types.stream().map(Token::getText).collect(Collectors.joining("."));
+    }
+
+    private Expression createFullyQualifiedType(ShiroParser.FullyQualifiedTypeContext ctx) {
+        String type = convertFullyQualifiedTypeToString(ctx);
+        return new FullyQualifiedType(type);
     }
 
     private Access determineAccess(String access){
@@ -222,6 +321,9 @@ public class ASTBuilder extends ShiroBaseListener{
     }
 
     public Expression get(ParseTree t){
+        if (expressions.get(t) == null) {
+            return expressions.get(t.getChild(0));
+        }
         return expressions.get(t);
     }
 

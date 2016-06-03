@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 import static java.util.stream.Collectors.toList;
 
 /**
- * An listener to create expressions.
+ * A listener to create expressions.
  *
  * @author jeffreyguenther
  */

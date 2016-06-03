@@ -147,6 +147,118 @@ public class InterpreterFixture {
     }
 
     /**
+     * a.b.c
+     */
+    public static String simplePath(){
+        return "a.b.c";
+    }
+
+    /**
+     * a.inputs[0]
+     */
+    public static String inputsWithNumberedIndexInPath(){
+        return "a.inputs[0]";
+    }
+
+    /**
+     * a.inputs[b]
+     */
+    public static String inputsWithNamedIndexInPath(){
+        return "a.inputs[b]";
+    }
+
+    /**
+     * a.outputs[b]
+     */
+    public static String outputsWithNamedIndexInPath(){
+        return "a.outputs[b]";
+    }
+
+    /**
+     * a.outputs[0]
+     */
+    public static String outputsWithNumberedIndexInPath(){
+        return "a.outputs[0]";
+    }
+
+    /**
+     * A.B.C
+     */
+    public static String fullyQualifiedType(){
+        return "A.B.C";
+    }
+
+    /**
+     * ~F()
+     */
+    public static String reference(){
+        return "~F()";
+    }
+
+    /**
+     * ~F[a]()
+     */
+    public static String referenceWithOptionSelection(){
+        return "~F[a]()";
+    }
+
+    /**
+     * ~F(1, 2)
+     */
+    public static String referenceWithArguments(){
+        return "~F(1, 2)";
+    }
+
+    /**
+     * ~F[a](1, 2)
+     */
+    public static String referenceWithOptionSelectionAndArguments(){
+        return "~F[a](1, 2)";
+    }
+
+    /**
+     * ~F[a](1, 2)[1]
+     */
+    public static String referenceWithOptionSelectionAndArgumentsAndIndexOutputSelector(){
+        return "~F[a](1, 2)[1]";
+    }
+
+    /**
+     * ~F[a](1, 2)[x]
+     */
+    public static String referenceWithOptionSelectionAndArgumentsAndKeywordOutputSelector(){
+        return "~F[a](1, 2)[x]";
+    }
+
+    /**
+     * ~F(a: 1, b: 2)
+     */
+    public static String referenceWithKeywordArguments(){
+        return "~F(a: 1, b: 2)";
+    }
+
+    /**
+     * ~F[a](a: 1, b: 2)
+     */
+    public static String referenceWithOptionSelectionAndKeywordArguments(){
+        return "~F[a](a: 1, b: 2)";
+    }
+
+    /**
+     * ~F[a](a: 1, b: 2)[1]
+     */
+    public static String referenceWithOptionSelectionKeywordArgumentsAndIndexOutputSelector(){
+        return "~F[a](a: 1, b: 2)[1]";
+    }
+
+    /**
+     * ~F[a](a: 1, b: 2)[x]
+     */
+    public static String referenceWithOptionSelectionKeywordArgumentsAndKeywordOutputSelector(){
+        return "~F[a](a: 1, b: 2)[x]";
+    }
+
+    /**
      * result Add(1.0, 1)
      * m Multiply(result, 2)
      */

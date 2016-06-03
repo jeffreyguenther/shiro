@@ -2,8 +2,11 @@ package org.shirolang.fixtures.ast;
 
 import org.antlr.v4.misc.Graph;
 import org.shirolang.interpreter.ast.*;
+import org.shirolang.values.SegmentType;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Creates Graph definitions for testing.
@@ -337,6 +340,192 @@ public class GraphDefinitionFixture {
     public static GraphDefinition notEqual(){
         GraphDefinition g = new GraphDefinition();
         g.add(new BinaryOperation(Literal.asInteger(2), BinaryOperator.NOT_EQUAL, Literal.asInteger(1)));
+        return g;
+    }
+
+    /**
+     * a.b.c
+     */
+    public static GraphDefinition simplePath(){
+        GraphDefinition g = new GraphDefinition();
+        Path p = new Path("a", "b", "c");
+        g.add(Literal.asPath(p));
+
+        return g;
+    }
+
+    /**
+     * a.inputs[0]
+     */
+    public static GraphDefinition inputsWithNumberedIndexInPath(){
+        GraphDefinition g = new GraphDefinition();
+        Path p = new Path();
+        p.addSegment(new PathSegment("a"));
+        p.addSegment(new PathSegment(SegmentType.INPUT, 0));
+        g.add(Literal.asPath(p));
+
+        return g;
+    }
+
+    /**
+     * a.inputs[b]
+     */
+    public static GraphDefinition inputsWithNamedIndexInPath(){
+        GraphDefinition g = new GraphDefinition();
+        Path p = new Path();
+        p.addSegment(new PathSegment("a"));
+        p.addSegment(new PathSegment(SegmentType.INPUT, "b"));
+        g.add(Literal.asPath(p));
+
+        return g;
+    }
+
+    /**
+     * a.outputs[0]
+     */
+    public static GraphDefinition outputsWithNumberedIndexInPath(){
+        GraphDefinition g = new GraphDefinition();
+        Path p = new Path();
+        p.addSegment(new PathSegment("a"));
+        p.addSegment(new PathSegment(SegmentType.OUTPUT, 0));
+        g.add(Literal.asPath(p));
+
+        return g;
+    }
+
+    /**
+     * a.outputs[b]
+     */
+    public static GraphDefinition outputsWithNamedIndexInPath(){
+        GraphDefinition g = new GraphDefinition();
+        Path p = new Path();
+        p.addSegment(new PathSegment("a"));
+        p.addSegment(new PathSegment(SegmentType.OUTPUT, "b"));
+        g.add(Literal.asPath(p));
+
+        return g;
+    }
+
+    /**
+     * A.B.C
+     */
+    public static GraphDefinition fullyQualifiedType(){
+        GraphDefinition g = new GraphDefinition();
+        g.add(new FullyQualifiedType("A.B.C"));
+
+        return g;
+    }
+
+    /**
+     * ~F()
+     */
+    public static GraphDefinition reference(){
+        GraphDefinition g = new GraphDefinition();
+        g.add(new Reference("F"));
+
+        return g;
+    }
+
+    /**
+     * ~F[a]()
+     */
+    public static GraphDefinition referenceWithOptionSelection(){
+        GraphDefinition g = new GraphDefinition();
+        g.add(new Reference("F", "a"));
+
+        return g;
+    }
+
+    /**
+     * ~F(a: 1, b: 2)
+     */
+    public static GraphDefinition referenceWithKeywordArguments(){
+        GraphDefinition g = new GraphDefinition();
+
+        Map<String, Expression> argMap = new HashMap<>();
+        argMap.put("a", Literal.asInteger(1));
+        argMap.put("b", Literal.asInteger(2));
+        g.add(new Reference("F", argMap));
+
+        return g;
+    }
+
+    /**
+     * ~F[a](a: 1, b: 2)
+     */
+    public static GraphDefinition referenceWithOptionSelectionAndKeywordArguments(){
+        GraphDefinition g = new GraphDefinition();
+        Map<String, Expression> argMap = new HashMap<>();
+        argMap.put("a", Literal.asInteger(1));
+        argMap.put("b", Literal.asInteger(2));
+        g.add(new Reference("F", "a", argMap));
+
+        return g;
+    }
+
+    /**
+     * ~F[a](a: 1, b: 2)[1]
+     */
+    public static GraphDefinition referenceWithOptionSelectionKeywordArgumentsAndIndexOutputSelector(){
+        GraphDefinition g = new GraphDefinition();
+        Map<String, Expression> argMap = new HashMap<>();
+        argMap.put("a", Literal.asInteger(1));
+        argMap.put("b", Literal.asInteger(2));
+        g.add(new Reference("F", "a", argMap, "1"));
+
+        return g;
+    }
+
+    /**
+     * ~F[a](a: 1, b: 2)[x]
+     */
+    public static GraphDefinition referenceWithOptionSelectionKeywordArgumentsAndKeywordOutputSelector(){
+        GraphDefinition g = new GraphDefinition();
+        Map<String, Expression> argMap = new HashMap<>();
+        argMap.put("a", Literal.asInteger(1));
+        argMap.put("b", Literal.asInteger(2));
+        g.add(new Reference("F", "a", argMap, "x"));
+
+        return g;
+    }
+
+    /**
+     * ~F(1, 2)
+     */
+    public static GraphDefinition referenceWithArguments(){
+        GraphDefinition g = new GraphDefinition();
+        g.add(new Reference("F", Arrays.asList(Literal.asInteger(1), Literal.asInteger(2))));
+
+        return g;
+    }
+
+    /**
+     * ~F[a](1, 2)
+     */
+    public static GraphDefinition referenceWithOptionSelectionAndArguments(){
+        GraphDefinition g = new GraphDefinition();
+        g.add(new Reference("F", "a", Arrays.asList(Literal.asInteger(1), Literal.asInteger(2))));
+
+        return g;
+    }
+
+    /**
+     * ~F[a](1, 2)[1]
+     */
+    public static GraphDefinition referenceWithOptionSelectionAndArgumentsAndIndexOutputSelector(){
+        GraphDefinition g = new GraphDefinition();
+        g.add(new Reference("F", "a", Arrays.asList(Literal.asInteger(1), Literal.asInteger(2)),"1"));
+
+        return g;
+    }
+
+    /**
+     * ~F[a](1, 2)[x]
+     */
+    public static GraphDefinition referenceWithOptionSelectionAndArgumentsAndKeywordOutputSelector(){
+        GraphDefinition g = new GraphDefinition();
+        g.add(new Reference("F", "a", Arrays.asList(Literal.asInteger(1), Literal.asInteger(2)),"x"));
+
         return g;
     }
 }
