@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.shirolang.fixtures.ast.GraphDefinitionFixture;
+import org.shirolang.fixtures.ast.StateDefinitionFixture;
 import org.shirolang.fixtures.interpreter.InterpreterFixture;
 import org.shirolang.interpreter.ShiroLexer;
 import org.shirolang.interpreter.ShiroParser;
@@ -389,7 +390,37 @@ public class ASTBuilderTest {
         Program program = builder.getProgram();
         GraphDefinition defaultGraph = program.getDefaultGraph();
         GraphDefinition expected = GraphDefinitionFixture.referenceWithOptionSelectionAndArgumentsAndKeywordOutputSelector();
-        assertTrue(expected.equals(defaultGraph));
+        assertEquals(expected, defaultGraph);
+    }
+
+    @Test
+    public void state(){
+        walker.walk(builder, parse(InterpreterFixture.simpleState()));
+        Program result = builder.getProgram();
+
+        Program expected = new Program();
+        expected.add(StateDefinitionFixture.graphOnly());
+        assertEquals(expected, result);
+    }
+
+    @Test
+    public void stateWithSingleOption(){
+        walker.walk(builder, parse(InterpreterFixture.stateWithSingleOption()));
+        Program result = builder.getProgram();
+
+        Program expected = new Program();
+        expected.add(StateDefinitionFixture.withSingleOption());
+        assertEquals(expected, result);
+    }
+
+    @Test
+    public void nestedStates(){
+        walker.walk(builder, parse(InterpreterFixture.nestedStates()));
+        Program result = builder.getProgram();
+
+        Program expected = new Program();
+        expected.add(StateDefinitionFixture.nested());
+        assertEquals(expected, result);
     }
 
     private ParseTree parse(String code){

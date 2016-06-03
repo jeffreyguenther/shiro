@@ -290,7 +290,7 @@ public class InterpreterFixture {
     }
 
     /**
-     * A mess of expression
+     * A mess of expressions
      */
     public static String expressions(){
         return
@@ -426,6 +426,56 @@ public class InterpreterFixture {
             "    node B begin\n" +
             "        input in Double(100.0)\n" +
             "    end\n" +
+            "end";
+    }
+
+    /**
+     * state s1 begin
+     *     graph g1
+     * end
+     */
+    public static String simpleState(){
+        return "state s1 begin\n" +
+                "    graph g1\n" +
+                "end";
+    }
+
+    /**
+     * state s1 begin
+     *     graph g1
+     *     a[b]
+     * end
+     */
+    public static String stateWithSingleOption(){
+        return "state s1 begin\n" +
+                "    graph g1\n" +
+                "    a[b]\n" +
+                "end";
+    }
+
+    /**
+     * state s1 begin
+     *     graph g1
+     *     a[b]
+     *         b[c]
+     *             d[e]
+     *         end
+     *         h[i]
+     *     end
+     *     f[g]
+     * end
+     */
+    public static String nestedStates(){
+        return
+            "state s1 begin\n" +
+            "    graph g1\n" +
+            "    a[b] begin\n" +
+            "        b[c] begin\n" +
+            "            d[e]\n" +
+            "        end\n" +
+            "        h[i]\n" +
+            "    end\n" +
+            "    f[g]\n" +
             "end";
     }
 }

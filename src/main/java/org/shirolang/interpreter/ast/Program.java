@@ -107,4 +107,9 @@ public class Program implements Codeable{
         result = 31 * result + stateDefs.hashCode();
         return result;
     }
+
+    @Override
+    public String toString() {
+        return toCode();
+    }
 }

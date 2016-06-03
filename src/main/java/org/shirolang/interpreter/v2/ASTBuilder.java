@@ -3,15 +3,13 @@ package org.shirolang.interpreter.v2;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
+import org.shirolang.base.StateActivation;
 import org.shirolang.interpreter.ShiroBaseListener;
 import org.shirolang.interpreter.ShiroParser;
 import org.shirolang.interpreter.ast.*;
 import org.shirolang.values.SegmentType;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.shirolang.interpreter.ast.BinaryOperator.*;
@@ -23,10 +21,55 @@ import static org.shirolang.interpreter.ast.UnaryOperator.*;
 public class ASTBuilder extends ShiroBaseListener{
     private Program p;
     private ParseTreeProperty<Expression> expressions;
+    private Stack<OptionSelection> activations;
+    private StateDefinition stateDef;
 
     public ASTBuilder() {
         p = new Program();
         expressions = new ParseTreeProperty<>();
+        activations = new Stack<>();
+    }
+
+    @Override
+    public void enterStateDecl(ShiroParser.StateDeclContext ctx) {
+        String name = ctx.stateName().getText();
+        String graph = "";
+        if (ctx.stateGraphSelection().IDENT() != null){
+            graph = ctx.stateGraphSelection().IDENT().getText();
+        }
+
+        stateDef = new StateDefinition(name, graph);
+        p.add(stateDef);
+    }
+
+    @Override
+    public void exitOptionSelection(ShiroParser.OptionSelectionContext ctx) {
+        OptionSelection activation = new OptionSelection(ctx.nodeName.getText(), ctx.activeObject.getText());
+
+        if(activations.empty()){
+            stateDef.getOptions().add(activation);
+        }else{
+            OptionSelection parent = activations.peek();
+            parent.getSelections().add(activation);
+        }
+    }
+
+    @Override
+    public void enterNestedOptionSelection(ShiroParser.NestedOptionSelectionContext ctx) {
+        OptionSelection activation = new OptionSelection(ctx.nodeName.getText(), ctx.activeObject.getText());
+
+        if(activations.empty()){
+            stateDef.getOptions().add(activation);
+        }else{
+            OptionSelection parent = activations.peek();
+            parent.getSelections().add(activation);
+        }
+        activations.push(activation);
+    }
+
+    @Override
+    public void exitNestedOptionSelection(ShiroParser.NestedOptionSelectionContext ctx) {
+        activations.pop();
     }
 
     @Override

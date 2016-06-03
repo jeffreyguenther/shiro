@@ -2,6 +2,7 @@ package org.shirolang.interpreter.ast;
 
 import org.junit.Test;
 import org.shirolang.fixtures.ast.StateDefinitionFixture;
+import org.shirolang.fixtures.interpreter.InterpreterFixture;
 import org.shirolang.interpreter.Defaults;
 
 import static org.junit.Assert.assertEquals;
@@ -45,22 +46,22 @@ public class StateDefinitionTest {
 
     @Test
     public void canAddOptions(){
-        StateDefinition stateDef = StateDefinitionFixture.singleOption();
+        StateDefinition stateDef = StateDefinitionFixture.withSingleOption();
 
         assertTrue(stateDef.hasOptions());
         assertEquals(
             "state s1 begin\n" +
             "    graph g1\n" +
-            "    A[b]\n" +
+            "    a[b]\n" +
             "end", stateDef.toCode()
         );
     }
 
     @Test
     public void canAddNestedOptions(){
-        OptionSelection inner2 = new OptionSelection("D", "e");
-        OptionSelection inner = new OptionSelection("B", "c", inner2);
-        OptionSelection selection = new OptionSelection("A", "b", inner);
+        OptionSelection inner2 = new OptionSelection("d", "e");
+        OptionSelection inner = new OptionSelection("b", "c", inner2);
+        OptionSelection selection = new OptionSelection("a", "b", inner);
 
         StateDefinition stateDef = new StateDefinition("s1", "g1", selection);
 
@@ -68,9 +69,9 @@ public class StateDefinitionTest {
         assertEquals(
             "state s1 begin\n" +
             "    graph g1\n" +
-            "    A[b] begin\n" +
-            "        B[c] begin\n" +
-            "            D[e]\n" +
+            "    a[b] begin\n" +
+            "        b[c] begin\n" +
+            "            d[e]\n" +
             "        end\n" +
             "    end\n" +
             "end", stateDef.toCode()
@@ -82,18 +83,7 @@ public class StateDefinitionTest {
         StateDefinition stateDef = StateDefinitionFixture.nested();
 
         assertTrue(stateDef.hasOptions());
-        assertEquals(
-            "state s1 begin\n" +
-            "    graph g1\n" +
-            "    A[b] begin\n" +
-            "        B[c] begin\n" +
-            "            D[e]\n" +
-            "        end\n" +
-            "        H[i]\n" +
-            "    end\n" +
-            "    F[g]\n" +
-            "end", stateDef.toCode()
-        );
+        assertEquals(InterpreterFixture.nestedStates(), stateDef.toCode());
     }
 
     @Test
