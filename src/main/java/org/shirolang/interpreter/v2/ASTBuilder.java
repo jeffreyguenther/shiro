@@ -139,6 +139,48 @@ public class ASTBuilder extends ShiroBaseListener{
     }
 
     @Override
+    public void exitInlineFuncCall(ShiroParser.InlineFuncCallContext ctx) {
+        String type = convertFullyQualifiedTypeToString(ctx.funcCall().fullyQualifiedType());
+
+        String activeOption = "";
+
+        if(ctx.funcCall().activeObject != null){
+            activeOption =  ctx.funcCall().activeObject.getText();
+        }
+
+        List<Expression> arglist = new ArrayList<>();
+        Map<String, Expression> argMap = new HashMap<>();
+
+        if(ctx.funcCall().arguments() != null){
+            if(ctx.funcCall().arguments().argList() != null){
+                arglist.addAll(create(ctx.funcCall().arguments().argList()));
+            }else if(ctx.funcCall().arguments().argMap() != null){
+                argMap.putAll(create(ctx.funcCall().arguments().argMap()));
+            }
+        }
+
+        if(!arglist.isEmpty()){
+            if(!activeOption.isEmpty()){
+                expressions.put(ctx, new FunctionCall(type, activeOption, arglist));
+            }else{
+                expressions.put(ctx, new FunctionCall(type, arglist));
+            }
+        }else if(!argMap.isEmpty()){
+            if(!activeOption.isEmpty()){
+                expressions.put(ctx, new FunctionCall(type, activeOption, argMap));
+            }else{
+                expressions.put(ctx, new FunctionCall(type, argMap));
+            }
+        }else{
+            if(!activeOption.isEmpty()){
+                expressions.put(ctx, new FunctionCall(type, activeOption));
+            }else{
+                expressions.put(ctx, new FunctionCall(type));
+            }
+        }
+    }
+
+    @Override
     public void exitAnonRefExpr(ShiroParser.AnonRefExprContext ctx) {
         expressions.put(ctx, create(ctx.anonymousRef().reference()));
     }
@@ -242,10 +284,7 @@ public class ASTBuilder extends ShiroBaseListener{
 
         if(ctx.arguments() != null){
             if(ctx.arguments().argList() != null){
-                arglist.addAll(ctx.arguments().argList().arg().stream()
-                        .map(ShiroParser.ArgContext::expr)
-                        .map(e -> expressions.get(e))
-                        .collect(Collectors.toList()));
+                arglist.addAll(create(ctx.arguments().argList()));
             }else if(ctx.arguments().argMap() != null){
                 argMap.putAll(create(ctx.arguments().argMap()));
             }
@@ -286,13 +325,20 @@ public class ASTBuilder extends ShiroBaseListener{
         return r;
     }
 
+    private List<Expression> create(ShiroParser.ArgListContext ctx){
+        return ctx.arg().stream()
+            .map(ShiroParser.ArgContext::expr)
+            .map(e -> expressions.get(e))
+            .collect(Collectors.toList());
+    }
+
     private Map<String, Expression> create(ShiroParser.ArgMapContext ctx){
         Map<String, Expression> argMap = new HashMap<>();
         List<String> keys = ctx.keys.stream().map(Token::getText).collect(Collectors.toList());
         List<Expression> values = ctx.values.stream()
-                .map(ShiroParser.ArgContext::expr)
-                .map(e -> expressions.get(e))
-                .collect(Collectors.toList());
+            .map(ShiroParser.ArgContext::expr)
+            .map(e -> expressions.get(e))
+            .collect(Collectors.toList());
 
         for(int i = 0; i < keys.size(); i++){
             argMap.put(keys.get(i), values.get(i));

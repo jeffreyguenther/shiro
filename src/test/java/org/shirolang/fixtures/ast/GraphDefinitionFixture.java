@@ -1,6 +1,5 @@
 package org.shirolang.fixtures.ast;
 
-import org.antlr.v4.misc.Graph;
 import org.shirolang.interpreter.ast.*;
 import org.shirolang.values.SegmentType;
 
@@ -525,6 +524,36 @@ public class GraphDefinitionFixture {
     public static GraphDefinition referenceWithOptionSelectionAndArgumentsAndKeywordOutputSelector(){
         GraphDefinition g = new GraphDefinition();
         g.add(new Reference("F", "a", Arrays.asList(Literal.asInteger(1), Literal.asInteger(2)),"x"));
+
+        return g;
+    }
+
+    /**
+     * Add(1, 2)
+     */
+    public static GraphDefinition functionWithArgs(){
+        GraphDefinition g = new GraphDefinition();
+        g.add(new FunctionCall("Add", Arrays.asList(Literal.asInteger(1), Literal.asInteger(2))));
+
+        return g;
+    }
+
+    /**
+     * Add[a](1, 2)
+     */
+    public static GraphDefinition functionWithOptionAndArgs(){
+        GraphDefinition g = new GraphDefinition();
+        g.add(new FunctionCall("Add", "a", Arrays.asList(Literal.asInteger(1), Literal.asInteger(2))));
+
+        return g;
+    }
+
+    /**
+     * Add(1, Subtract(2, 1))
+     */
+    public static GraphDefinition nestedFunctionCalls(){
+        GraphDefinition g = new GraphDefinition();
+        g.add(new FunctionCall("Add", Arrays.asList(Literal.asInteger(1), new FunctionCall("Subtract", Arrays.asList(Literal.asInteger(2), Literal.asInteger(1))))));
 
         return g;
     }

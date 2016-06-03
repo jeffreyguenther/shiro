@@ -259,6 +259,27 @@ public class InterpreterFixture {
     }
 
     /**
+     * Add(1, 2)
+     */
+    public static String functionWithArgs(){
+        return "Add(1, 2)";
+    }
+
+    /**
+     * Add[a](1, 2)
+     */
+    public static String functionWithOptionAndArgs(){
+        return "Add[a](1, 2)";
+    }
+
+    /**
+     * Add(1, Subtract(2, 1))
+     */
+    public static String nestedFunctionCalls(){
+        return "Add(1, Subtract(2, 1))";
+    }
+
+    /**
      * result Add(1.0, 1)
      * m Multiply(result, 2)
      */

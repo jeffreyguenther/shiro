@@ -353,6 +353,36 @@ public class ASTBuilderTest {
     }
 
     @Test
+    public void functionWithArgs(){
+        walker.walk(builder, parse(InterpreterFixture.functionWithArgs()));
+
+        Program program = builder.getProgram();
+        GraphDefinition defaultGraph = program.getDefaultGraph();
+        GraphDefinition expected = GraphDefinitionFixture.functionWithArgs();
+        assertTrue(expected.equals(defaultGraph));
+    }
+
+    @Test
+    public void functionWithOptionAndArgs(){
+        walker.walk(builder, parse(InterpreterFixture.functionWithOptionAndArgs()));
+
+        Program program = builder.getProgram();
+        GraphDefinition defaultGraph = program.getDefaultGraph();
+        GraphDefinition expected = GraphDefinitionFixture.functionWithOptionAndArgs();
+        assertTrue(expected.equals(defaultGraph));
+    }
+
+    @Test
+    public void nestedFunctionCalls(){
+        walker.walk(builder, parse(InterpreterFixture.nestedFunctionCalls()));
+
+        Program program = builder.getProgram();
+        GraphDefinition defaultGraph = program.getDefaultGraph();
+        GraphDefinition expected = GraphDefinitionFixture.nestedFunctionCalls();
+        assertTrue(expected.equals(defaultGraph));
+    }
+
+    @Test
     public void referenceWithOptionSelectionAndArgumentsAndKeywordOutputSelector(){
         walker.walk(builder, parse(InterpreterFixture.referenceWithOptionSelectionAndArgumentsAndKeywordOutputSelector()));
 
