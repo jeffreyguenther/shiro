@@ -1,6 +1,5 @@
 package org.shirolang.fixtures.interpreter;
 
-import org.shirolang.fixtures.ast.PortAssignmentFixture;
 import org.shirolang.interpreter.InterpreterSuite;
 
 import java.io.IOException;
@@ -517,5 +516,67 @@ public class InterpreterFixture {
                 "    b Box[a](1, 2, 3)\n" +
                 "    a.y(1, 2, 3)\n" +
                 "end";
+    }
+
+    /**
+     * node A begin
+     *     a.y(1, 2, 3)
+     * end
+     */
+    public static String nodeWithPortAssignment(){
+        return
+            "node A begin\n" +
+            "    a.y(1, 2, 3)\n" +
+            "end";
+    }
+
+    /**
+     * node A begin
+     *     a.y(1, 2, 3)
+     *     node B begin
+     *     end
+     * end
+     */
+    public static String nodeWithNestedNode(){
+        return
+            "node A begin\n" +
+            "    a.y(1, 2, 3)\n" +
+            "    node B begin\n" +
+            "    end\n" +
+            "end";
+    }
+
+    /**
+     * node Box begin
+     *     input length Double
+     *     input width Double
+     *     length(1.0)
+     *     area Multiply(length, width)
+     *     output result Double(area)
+     * end
+     */
+    public static String boxNode(){
+        return
+            "node Box begin\n" +
+            "    input length Double\n" +
+            "    input width Double\n" +
+            "    length(1.0)\n" +
+            "    area Multiply(length, width)\n" +
+            "    output result Double(area)\n" +
+            "end";
+    }
+
+    /**
+     * node Box begin
+     *     input length Double
+     *     input width Double
+     * end
+     */
+    public static String boxNodeWithDefs(){
+        return
+            "node Box begin\n" +
+            "    input length Double\n" +
+            "    input width Double\n" +
+            "end";
     }
 }

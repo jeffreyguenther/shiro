@@ -4,17 +4,20 @@ import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.shirolang.fixtures.ast.GraphDefinitionFixture;
+import org.shirolang.fixtures.ast.NodeDefinitionFixture;
+import org.shirolang.fixtures.ast.PortAssignmentFixture;
 import org.shirolang.fixtures.ast.StateDefinitionFixture;
 import org.shirolang.fixtures.interpreter.InterpreterFixture;
 import org.shirolang.interpreter.ShiroLexer;
 import org.shirolang.interpreter.ShiroParser;
-import org.shirolang.interpreter.ast.GraphDefinition;
-import org.shirolang.interpreter.ast.IncludeStatement;
-import org.shirolang.interpreter.ast.Program;
+import org.shirolang.interpreter.ast.*;
+
+import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -75,6 +78,65 @@ public class ASTBuilderTest {
 
         assertEquals(expected, actual);
     }
+
+    @Test
+    public void nodeWithPortAssignment(){
+        walker.walk(builder, parse(InterpreterFixture.nodeWithPortAssignment()));
+        Program actual = builder.getProgram();
+
+        Program expected = new Program();
+        NodeDefinition nodeDef = new NodeDefinition("A");
+        nodeDef.add(PortAssignmentFixture.withPathAndListOfArgs());
+        expected.add(nodeDef);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void nodeWithFunctionDefinition(){
+        walker.walk(builder, parse(InterpreterFixture.boxNodeWithDefs()));
+        Program actual = builder.getProgram();
+
+        Program expected = new Program();
+        NodeDefinition nodeDef = new NodeDefinition("Box");
+        nodeDef.add(new PortDefinition(Access.READWRITE, new FunctionDefinition("Double", "length")));
+        nodeDef.add(new PortDefinition(Access.READWRITE, new FunctionDefinition("Double", "width")));
+        expected.add(nodeDef);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void nodeWithFunctionDefinitionsPortAssignment(){
+        walker.walk(builder, parse(InterpreterFixture.boxNode()));
+        Program actual = builder.getProgram();
+
+        Program expected = new Program();
+        NodeDefinition nodeDef = new NodeDefinition("Box");
+        nodeDef.add(new PortDefinition(Access.READWRITE, new FunctionDefinition("Double", "length")));
+        nodeDef.add(new PortDefinition(Access.READWRITE, new FunctionDefinition("Double", "width")));
+        nodeDef.add(new PortAssignment(Path.create("length"), Arrays.asList(Literal.asDouble(1.0))));
+        nodeDef.add(new PortDefinition(Access.INTERNAL, new FunctionDefinition("Multiply", "area", Arrays.asList(Literal.asPath(Path.create("length")), Literal.asPath(Path.create("width"))))));
+        nodeDef.add(new PortDefinition(Access.READ, new FunctionDefinition("Double", "result", Arrays.asList(Literal.asPath(Path.create("area"))))));
+        expected.add(nodeDef);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void nodeWithNestedNode(){
+        walker.walk(builder, parse(InterpreterFixture.nodeWithNestedNode()));
+        Program actual = builder.getProgram();
+
+        Program expected = new Program();
+        NodeDefinition nodeDef = new NodeDefinition("A");
+        nodeDef.add(PortAssignmentFixture.withPathAndListOfArgs());
+        nodeDef.add(new NodeDefinition("B"));
+        expected.add(nodeDef);
+
+        assertEquals(expected, actual);
+    }
+
 
     @Test
     public void add(){
