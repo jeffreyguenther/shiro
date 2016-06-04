@@ -3,7 +3,6 @@ package org.shirolang.interpreter.v2;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeProperty;
-import org.shirolang.base.StateActivation;
 import org.shirolang.interpreter.ShiroBaseListener;
 import org.shirolang.interpreter.ShiroParser;
 import org.shirolang.interpreter.ast.*;
@@ -28,6 +27,12 @@ public class ASTBuilder extends ShiroBaseListener{
         p = new Program();
         expressions = new ParseTreeProperty<>();
         activations = new Stack<>();
+    }
+
+    @Override
+    public void exitIncludeStmt(ShiroParser.IncludeStmtContext ctx) {
+        String importedFile = ctx.STRING_LITERAL().getText().replaceAll("\"", "");
+        p.add(new IncludeStatement(importedFile));
     }
 
     @Override

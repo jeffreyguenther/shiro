@@ -13,6 +13,7 @@ import org.shirolang.fixtures.interpreter.InterpreterFixture;
 import org.shirolang.interpreter.ShiroLexer;
 import org.shirolang.interpreter.ShiroParser;
 import org.shirolang.interpreter.ast.GraphDefinition;
+import org.shirolang.interpreter.ast.IncludeStatement;
 import org.shirolang.interpreter.ast.Program;
 
 import static org.junit.Assert.assertEquals;
@@ -31,6 +32,16 @@ public class ASTBuilderTest {
     @Before
     public void beforeTest(){
         builder= new ASTBuilder();
+    }
+
+    @Test
+    public void include(){
+        walker.walk(builder, parse(InterpreterFixture.include()));
+
+        Program actual = builder.getProgram();
+        Program expected = new Program();
+        expected.add(new IncludeStatement("code.sro"));
+        assertEquals(expected, actual);
     }
 
     @Test

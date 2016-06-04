@@ -478,4 +478,8 @@ public class InterpreterFixture {
             "    f[g]\n" +
             "end";
     }
+
+    public static String include() {
+        return "include \"code.sro\"";
+    }
 }
