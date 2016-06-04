@@ -131,9 +131,9 @@ public class PathSegment {
      * Gets the accessor value
      * @return the accessor value as a string
      */
-    private String accessorValue(){
+    public String accessorValue(){
         if(getKey().isPresent()){
-          return "\"" + getKey().get() + "\"";
+          return "" + getKey().get();
         }else if(getIndex().isPresent()){
             return "" + getIndex().get();
         }else{

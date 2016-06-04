@@ -45,6 +45,38 @@ public class ASTBuilderTest {
     }
 
     @Test
+    public void graph(){
+        walker.walk(builder, parse(InterpreterFixture.emptyGraph()));
+
+        Program actual = builder.getProgram();
+        Program expected = new Program();
+        expected.add(GraphDefinitionFixture.emptyGraph());
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void graphWithPortAsssignment(){
+        walker.walk(builder, parse(InterpreterFixture.graphWithPortAsssignment()));
+
+        Program actual = builder.getProgram();
+        Program expected = new Program();
+        expected.add(GraphDefinitionFixture.withPortAssignments());
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    public void graphWithPortAssignmentsAndFunctionDeclarations(){
+        walker.walk(builder, parse(InterpreterFixture.graphWithPortAssignmentsAndFunctionDeclarations()));
+        Program actual = builder.getProgram();
+
+        Program expected = new Program();
+        GraphDefinition graph = GraphDefinitionFixture.withPortAssignmentsAndFunctionDeclarations();
+        expected.add(graph);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
     public void add(){
         walker.walk(builder, parse(InterpreterFixture.add()));
 

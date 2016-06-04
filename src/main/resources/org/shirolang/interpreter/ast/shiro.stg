@@ -24,7 +24,7 @@ end
 
 portDef(p) ::= "<if(p.option)>option <endif><if(!p.internal)><p.access> <endif><p.function:funcDef()>"
 
-portAssignment(p) ::= "<p.path><if(p.activeOption)>[<p.option>]<endif>(<args(p)>)"
+portAssignment(p) ::= "<p.path.code>(<args(p)>)"
 
 anonReference(r) ::= "~<r.type><if(r.activeOption)>[<r.option>]<endif>(<args(r)>)<if(r.outputSelector)>[<r.selector>]<endif>"
 

@@ -10,16 +10,18 @@ import static org.junit.Assert.assertTrue;
 
 public class PortAssignmentTest {
     @Test
-    public void create(){
-        PortAssignment assign = PortAssignmentFixture.withPathAndListOfArgs();
-        assertNotNull(assign);
-    }
-
-    @Test
-    public void toCode(){
+    public void withPathAndListOfArgs(){
         PortAssignment assign = PortAssignmentFixture.withPathAndListOfArgs();
         assertEquals(
             "a.y(1, 2, 3)", assign.toCode()
+        );
+    }
+
+    @Test
+    public void withInputsOutputsAndListOfArgs(){
+        PortAssignment assign = PortAssignmentFixture.withInputsOutputsAndListOfArgs();
+        assertEquals(
+                "outputs[a].inputs[y](1, 2, 3)", assign.toCode()
         );
     }
 

@@ -53,7 +53,7 @@ optionSelection
 
 graphDecl
 	:	GRAPH IDENT BEGIN NEWLINE
-		graphStmt+
+		graphStmt*
 		END
 	;
 

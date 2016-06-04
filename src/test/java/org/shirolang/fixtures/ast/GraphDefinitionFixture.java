@@ -58,7 +58,7 @@ public class GraphDefinitionFixture {
      *      a.y(1, 2, 3)
      *  end
      */
-    public static GraphDefinition withFunctionDeclarationsAndPortAssignments(){
+    public static GraphDefinition withPortAssignmentsAndFunctionDeclarations(){
         GraphDefinition g = emptyGraph();
         g.add(FunctionDefinitionFixture.withNameTypeOptionAndListOfArgs());
         g.add(PortAssignmentFixture.withPathAndListOfArgs());

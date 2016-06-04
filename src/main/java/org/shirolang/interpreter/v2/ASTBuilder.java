@@ -22,6 +22,8 @@ public class ASTBuilder extends ShiroBaseListener{
     private ParseTreeProperty<Expression> expressions;
     private Stack<OptionSelection> activations;
     private StateDefinition stateDef;
+    private GraphDefinition graph = null;
+    private NodeDefinition node = null;
 
     public ASTBuilder() {
         p = new Program();
@@ -33,6 +35,125 @@ public class ASTBuilder extends ShiroBaseListener{
     public void exitIncludeStmt(ShiroParser.IncludeStmtContext ctx) {
         String importedFile = ctx.STRING_LITERAL().getText().replaceAll("\"", "");
         p.add(new IncludeStatement(importedFile));
+    }
+
+    @Override
+    public void enterGraphDecl(ShiroParser.GraphDeclContext ctx) {
+        GraphDefinition graph = new GraphDefinition(ctx.IDENT().getText());
+        this.graph = graph;
+        p.add(graph);
+    }
+
+    @Override
+    public void exitGraphDecl(ShiroParser.GraphDeclContext ctx) {
+        this.graph = null;
+    }
+
+    @Override
+    public void enterNodeDecl(ShiroParser.NodeDeclContext ctx) {
+        
+    }
+
+    @Override
+    public void exitNodeDecl(ShiroParser.NodeDeclContext ctx) {
+
+    }
+
+    @Override
+    public void exitPortAssignment(ShiroParser.PortAssignmentContext ctx) {
+        List<Expression> argList = new ArrayList<>();
+        Map<String, Expression> argMap = new HashMap<>();
+
+        if(ctx.arguments() != null){
+            if(ctx.arguments().argList() != null){
+                argList.addAll(create(ctx.arguments().argList()));
+            }else if(ctx.arguments().argMap() != null){
+                argMap.putAll(create(ctx.arguments().argMap()));
+            }
+        }
+
+        Path path = createPath(ctx.path());
+
+        if(inGraph()){
+            if(!argList.isEmpty()){
+                graph.add(new PortAssignment(path, argList));
+            }else if (!argMap.isEmpty()){
+                graph.add(new PortAssignment(path, argMap));
+            }
+        }
+    }
+
+    @Override
+    public void exitFuncDeclInit(ShiroParser.FuncDeclInitContext ctx){
+        String type = convertFullyQualifiedTypeToString(ctx.fullyQualifiedType());
+        String name = ctx.name.getText();
+
+        String activeOption = "";
+
+        if(ctx.activeObject != null){
+            activeOption =  ctx.activeObject.getText();
+        }
+
+        List<Expression> arglist = new ArrayList<>();
+        Map<String, Expression> argMap = new HashMap<>();
+
+        if(ctx.arguments() != null){
+            if(ctx.arguments().argList() != null){
+                arglist.addAll(create(ctx.arguments().argList()));
+            }else if(ctx.arguments().argMap() != null){
+                argMap.putAll(create(ctx.arguments().argMap()));
+            }
+        }
+
+        if(inGraph()) {
+            if (!arglist.isEmpty()) {
+                if (!activeOption.isEmpty()) {
+                    graph.add(new FunctionDefinition(type, name, activeOption, arglist));
+                } else {
+                    graph.add(new FunctionDefinition(type, name, arglist));
+                }
+            } else if (!argMap.isEmpty()) {
+                if (!activeOption.isEmpty()) {
+                    graph.add(new FunctionDefinition(type, name, activeOption, argMap));
+                } else {
+                    graph.add(new FunctionDefinition(type, name, argMap));
+                }
+            } else {
+                if (!activeOption.isEmpty()) {
+                    graph.add(new FunctionDefinition(type, name, activeOption));
+                } else {
+                    graph.add(new FunctionDefinition(type, name));
+                }
+            }
+        }
+    }
+
+    @Override
+    public void exitFuncDecl(ShiroParser.FuncDeclContext ctx) {
+        String type = convertFullyQualifiedTypeToString(ctx.fullyQualifiedType());
+        String name = ctx.name.getText();
+
+        String activeOption = "";
+
+        if(ctx.activeObject != null){
+            activeOption =  ctx.activeObject.getText();
+        }
+
+        if(inGraph()){
+            if(!activeOption.isEmpty()){
+                new FunctionDefinition(type, name, activeOption);
+            }else{
+                new FunctionDefinition(type, name);
+            }
+        }
+    }
+
+    private boolean inGraph(){
+        return graph != null;
+    }
+
+    private boolean inNode(){
+        return this.node != null;
     }
 
     @Override
@@ -83,17 +204,13 @@ public class ASTBuilder extends ShiroBaseListener{
     }
 
     @Override
-    public void exitFuncDeclInit(ShiroParser.FuncDeclInitContext ctx) {
-    }
-
-    @Override
     public void exitAnonExpr(ShiroParser.AnonExprContext ctx) {
         p.getDefaultGraph().add(get(ctx.expr()));
     }
 
     @Override
     public void exitPath(ShiroParser.PathContext ctx) {
-        expressions.put(ctx, createPath(ctx));
+        expressions.put(ctx, createPathExpression(ctx));
     }
 
     @Override
@@ -263,7 +380,11 @@ public class ASTBuilder extends ShiroBaseListener{
         expressions.put(ctx, Literal.asBoolean(Boolean.parseBoolean(value)));
     }
 
-    private Expression createPath(ShiroParser.PathContext ctx) {
+    private Expression createPathExpression(ShiroParser.PathContext ctx) {
+        return Literal.asPath(createPath(ctx));
+    }
+
+    private Path createPath(ShiroParser.PathContext ctx){
         Path p = new Path();
         ctx.segments.stream().map(this::createSegment).forEach(p::addSegment);
 
@@ -275,7 +396,7 @@ public class ASTBuilder extends ShiroBaseListener{
             p.makeSelector();
         }
 
-        return Literal.asPath(p);
+        return p;
     }
 
     private PathSegment createSegment(ShiroParser.PathSegmentContext ctx){

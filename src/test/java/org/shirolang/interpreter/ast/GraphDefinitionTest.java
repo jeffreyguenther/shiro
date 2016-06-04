@@ -59,7 +59,7 @@ public class GraphDefinitionTest {
 
     @Test
     public void withFunctionDefinitionAndPortAssignment(){
-        GraphDefinition graph = GraphDefinitionFixture.withFunctionDeclarationsAndPortAssignments();
+        GraphDefinition graph = GraphDefinitionFixture.withPortAssignmentsAndFunctionDeclarations();
         assertEquals(
             "graph g begin\n" +
             "    b Box[a](1, 2, 3)\n" +

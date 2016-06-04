@@ -11,37 +11,24 @@ import java.util.Map;
  * Define a port assignment
  */
 public class PortAssignment extends FunctionBase implements Codeable{
-    private String path;
+    private Path path;
 
-    public PortAssignment(String path, String option) {
-        super(option);
+    public PortAssignment(Path path) {
+        super();
         this.path = path;
     }
 
-    public PortAssignment(String path, String option, Map<String, Expression> argMap) {
-        super(option, argMap);
+    public PortAssignment(Path path, Map<String, Expression> argMap) {
+        super(argMap);
         this.path = path;
     }
 
-    public PortAssignment(String path, String option, List<Expression> argList) {
-        super(option, argList);
+    public PortAssignment(Path path, List<Expression> argList) {
+        super(argList);
         this.path = path;
     }
 
-    public PortAssignment(String path) {
-        this(path, "");
-    }
-
-    public PortAssignment(String path, Map<String, Expression> argMap) {
-        this(path, "", argMap);
-
-    }
-
-    public PortAssignment(String path, List<Expression> argList) {
-        this(path, "", argList);
-    }
-
-    public String getPath() {
+    public Path getPath() {
         return path;
     }
 

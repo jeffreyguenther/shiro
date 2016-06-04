@@ -1,5 +1,6 @@
 package org.shirolang.fixtures.interpreter;
 
+import org.shirolang.fixtures.ast.PortAssignmentFixture;
 import org.shirolang.interpreter.InterpreterSuite;
 
 import java.io.IOException;
@@ -479,7 +480,42 @@ public class InterpreterFixture {
             "end";
     }
 
+    /**
+     * include "code.sro"
+     */
     public static String include() {
-        return "include \"code.sro\"";
+        return "include \"code.sro\"\n";
+    }
+
+    /**
+     * graph g begin
+     * end
+     */
+    public static String emptyGraph(){
+        return "graph g begin\n" +
+               "end";
+    }
+
+    /**
+     * graph g begin
+     *     a.y(1, 2, 3)
+     * end
+     */
+    public static String graphWithPortAsssignment(){
+        return "graph g begin\n" +
+                "    a.y(1, 2, 3)\n" +
+                "end";
+    }
+
+    /**
+     * graph g begin
+     *     a.y(1, 2, 3)
+     * end
+     */
+    public static String graphWithPortAssignmentsAndFunctionDeclarations(){
+        return "graph g begin\n" +
+                "    b Box[a](1, 2, 3)\n" +
+                "    a.y(1, 2, 3)\n" +
+                "end";
     }
 }
