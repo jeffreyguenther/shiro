@@ -12,6 +12,7 @@ import org.shirolang.interpreter.ast.ASTSuite;
     SymbolTableTest.class,
     IncludeVisitorTest.class,
     NodeVisitorTest.class,
+    GraphVisitorTest.class,
     IncludeNotFoundErrorTest.class,
     RuntimeTest.class
 })

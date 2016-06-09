@@ -33,8 +33,6 @@ import java.util.Objects;
 
 /**
  * An ANTLR listener used to realize node parse trees
- *
- * @author jeffreyguenther
  */
 public class NodeInstantiator extends ShiroExpressionListener {
     private SNode createdNode;

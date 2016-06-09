@@ -24,14 +24,12 @@ public class IncludeVisitor extends BaseVisitor{
     private Path parentDirectory;
     private Path sourceFile;
     private URL stdLib;
-    private SymbolTable symbolTable;
 
-    public IncludeVisitor(SymbolTable lib, Path source) {
-        super();
+    public IncludeVisitor(SymbolTable symbolTable, Path source) {
+        super(symbolTable);
         sourceFiles = new HashSet<>();
         this.sourceFile = source;
         this.parentDirectory = source.getParent();
-        this.symbolTable = lib;
         stdLib = CodeImporter.class.getResource("lib"); //TODO update to new class when migrating to v2
     }
 
