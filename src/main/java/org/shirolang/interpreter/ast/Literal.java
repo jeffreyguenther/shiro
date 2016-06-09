@@ -1,5 +1,8 @@
 package org.shirolang.interpreter.ast;
 
+import org.shirolang.base.SFunc;
+import org.shirolang.values.*;
+
 /**
  * Defines a literal
  * @param <T> type of literal

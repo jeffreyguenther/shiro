@@ -4,6 +4,7 @@ import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
 
+import javax.sound.sampled.Port;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,6 +74,14 @@ public class NodeDefinition implements Codeable{
 
     public List<PortDefinition> getInternal() {
         return internal;
+    }
+
+    public List<PortDefinition> getDeclarations(){
+        ArrayList<PortDefinition> decls = new ArrayList<>();
+        decls.addAll(getInputs());
+        decls.addAll(getInternal());
+        decls.addAll(getOutputs());
+        return decls;
     }
 
     public List<PortAssignment> getAssignments() {

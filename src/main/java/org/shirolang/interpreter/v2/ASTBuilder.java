@@ -7,7 +7,6 @@ import org.shirolang.interpreter.ShiroBaseListener;
 import org.shirolang.interpreter.ShiroParser;
 import org.shirolang.interpreter.ast.*;
 import org.shirolang.values.SegmentType;
-import org.w3c.dom.Node;
 
 import java.util.*;
 import java.util.stream.Collectors;

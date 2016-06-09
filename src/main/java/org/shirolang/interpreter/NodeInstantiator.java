@@ -121,6 +121,5 @@ public class NodeInstantiator extends ShiroExpressionListener {
         }else{
             node.addFunction(function);
         }
-
     }
 }

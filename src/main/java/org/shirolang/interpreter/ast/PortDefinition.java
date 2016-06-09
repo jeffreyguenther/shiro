@@ -67,7 +67,6 @@ public class PortDefinition implements Codeable{
         if (isOption != that.isOption) return false;
         if (access != that.access) return false;
         return function.equals(that.function);
-
     }
 
     @Override

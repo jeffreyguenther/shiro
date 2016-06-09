@@ -1,29 +1,22 @@
 package org.shirolang.interpreter.v2;
 
-import org.antlr.v4.runtime.ANTLRInputStream;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.shirolang.fixtures.ast.GraphDefinitionFixture;
-import org.shirolang.fixtures.ast.NodeDefinitionFixture;
 import org.shirolang.fixtures.ast.PortAssignmentFixture;
 import org.shirolang.fixtures.ast.StateDefinitionFixture;
 import org.shirolang.fixtures.interpreter.InterpreterFixture;
-import org.shirolang.interpreter.ShiroLexer;
-import org.shirolang.interpreter.ShiroParser;
 import org.shirolang.interpreter.ast.*;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-public class ASTBuilderTest {
+public class ASTBuilderTest extends ParsingTest {
     private static ParseTreeWalker walker;
     private ASTBuilder builder;
 
@@ -70,8 +63,8 @@ public class ASTBuilderTest {
     @Test
     public void graphWithPortAssignmentsAndFunctionDeclarations(){
         walker.walk(builder, parse(InterpreterFixture.graphWithPortAssignmentsAndFunctionDeclarations()));
-        Program actual = builder.getProgram();
 
+        Program actual = builder.getProgram();
         Program expected = new Program();
         GraphDefinition graph = GraphDefinitionFixture.withPortAssignmentsAndFunctionDeclarations();
         expected.add(graph);
@@ -109,15 +102,15 @@ public class ASTBuilderTest {
     @Test
     public void nodeWithFunctionDefinitionsPortAssignment(){
         walker.walk(builder, parse(InterpreterFixture.boxNode()));
-        Program actual = builder.getProgram();
 
+        Program actual = builder.getProgram();
         Program expected = new Program();
         NodeDefinition nodeDef = new NodeDefinition("Box");
         nodeDef.add(new PortDefinition(Access.READWRITE, new FunctionDefinition("Double", "length")));
         nodeDef.add(new PortDefinition(Access.READWRITE, new FunctionDefinition("Double", "width")));
-        nodeDef.add(new PortAssignment(Path.create("length"), Arrays.asList(Literal.asDouble(1.0))));
+        nodeDef.add(new PortAssignment(Path.create("length"), Collections.singletonList(Literal.asDouble(1.0))));
         nodeDef.add(new PortDefinition(Access.INTERNAL, new FunctionDefinition("Multiply", "area", Arrays.asList(Literal.asPath(Path.create("length")), Literal.asPath(Path.create("width"))))));
-        nodeDef.add(new PortDefinition(Access.READ, new FunctionDefinition("Double", "result", Arrays.asList(Literal.asPath(Path.create("area"))))));
+        nodeDef.add(new PortDefinition(Access.READ, new FunctionDefinition("Double", "result", Collections.singletonList(Literal.asPath(Path.create("area"))))));
         expected.add(nodeDef);
 
         assertEquals(expected, actual);
@@ -136,7 +129,6 @@ public class ASTBuilderTest {
 
         assertEquals(expected, actual);
     }
-
 
     @Test
     public void add(){
@@ -501,8 +493,8 @@ public class ASTBuilderTest {
     @Test
     public void state(){
         walker.walk(builder, parse(InterpreterFixture.simpleState()));
-        Program result = builder.getProgram();
 
+        Program result = builder.getProgram();
         Program expected = new Program();
         expected.add(StateDefinitionFixture.graphOnly());
         assertEquals(expected, result);
@@ -526,15 +518,5 @@ public class ASTBuilderTest {
         Program expected = new Program();
         expected.add(StateDefinitionFixture.nested());
         assertEquals(expected, result);
-    }
-
-    private ParseTree parse(String code){
-        ShiroLexer lexer = new ShiroLexer(new ANTLRInputStream(code));
-
-        CommonTokenStream tokens = new CommonTokenStream(lexer);
-        ShiroParser parser = new ShiroParser(tokens);
-
-        parser.setBuildParseTree(true);
-        return parser.shiro();
     }
 }

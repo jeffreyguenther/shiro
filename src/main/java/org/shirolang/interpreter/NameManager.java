@@ -22,7 +22,7 @@ import java.util.Set;
  */
 public class NameManager {
     private final Map<String, Integer> nextCounter;
-    private final Map<String, Set<String>> instanceNames; //store a
+    private final Map<String, Set<String>> instanceNames;
 
     /**
      * Default constructor
@@ -44,10 +44,7 @@ public class NameManager {
         }
 
         // initialize the add
-        if(instanceNames.get(type) == null){
-            instanceNames.put(type, new HashSet<>());
-        }
-
+        instanceNames.putIfAbsent(type, new HashSet<>());
         instanceNames.get(type).add(name);
     }
 
