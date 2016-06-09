@@ -23,7 +23,7 @@ import java.util.logging.Logger;
 /**
  * Visit the include statements
  */
-public class IncludeVisitor {
+public class IncludeVisitor extends BaseVisitor{
     private Set<DependencyRelation<Path>> sourceFiles;
     private Path parentDirectory;
     private Path sourceFile;
@@ -31,20 +31,19 @@ public class IncludeVisitor {
     private Library lib;
 
     public IncludeVisitor(Library lib, Path source) {
+        super();
         sourceFiles = new HashSet<>();
         this.sourceFile = source;
         this.parentDirectory = source.getParent();
         this.lib = lib;
-        stdLib = CodeImporter.class.getResource("lib");
+        stdLib = CodeImporter.class.getResource("lib"); //TODO update to new class when migrating to v2
     }
 
-    public void visit(Program p){
+    public Set<DependencyRelation<Path>> visit(Program p){
         for (IncludeStatement include: p.getIncludes()){
             sourceFiles.addAll(visit(include));
         }
-    }
 
-    public Set<DependencyRelation<Path>> getSourceFiles() {
         return sourceFiles;
     }
 
@@ -73,9 +72,11 @@ public class IncludeVisitor {
             } else if (Files.exists(sourceInLib)) {
                 sourceFiles.add(new DependencyRelation<>(sourceFile, sourceInLib));
                 sourceFiles.addAll(getSourceDependencies(sourceInLib));
+            }else{
+                errors.add(new IncludeNotFoundError(importedFile));
             }
         } catch (IOException | URISyntaxException ex) {
-            Logger.getLogger(CodeImporter.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(IncludeVisitor.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return sourceFiles;
@@ -97,7 +98,6 @@ public class IncludeVisitor {
         walker.walk(ast, tree);
 
         IncludeVisitor visitor = new IncludeVisitor(lib, file);
-        visitor.visit(ast.getProgram());
-        return visitor.getSourceFiles();
+        return visitor.visit(ast.getProgram());
     }
 }

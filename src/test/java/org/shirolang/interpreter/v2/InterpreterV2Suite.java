@@ -11,7 +11,8 @@ import org.shirolang.interpreter.ast.ASTSuite;
     ASTSuite.class,
     ASTVisitorTest.class,
     IncludeVisitorTest.class,
-    NodeVisitorTest.class
+    NodeVisitorTest.class,
+    IncludeNotFoundErrorTest.class
 })
 public class InterpreterV2Suite {
 }

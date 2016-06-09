@@ -1,0 +1,14 @@
+include "geom"
+include "a_include.sro"
+include "binclude.sro"
+
+graph includeTester begin
+    a A(1)
+    b B(2.2)
+
+    sum Add(a.value, b.value)
+
+    t Text
+    t.originX(sum)
+    t.text("Look ma, I ran")
+end
