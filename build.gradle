@@ -10,7 +10,7 @@ apply plugin: 'java'
 apply plugin: 'application'
 apply from: 'gradle/javafx.plugin'
 
-version = '0.5.1-SNAPSHOT'
+version = '0.6.0-SNAPSHOT'
 group = 'org.shirolang'
 
 gradle.projectsEvaluated {
@@ -63,10 +63,10 @@ sourceSets{
 }
 
 dependencies {
-    compile group: "org.antlr", name: "antlr4-runtime", version: "4.5"
-    generatedCompile group: "org.antlr", name: "antlr4-runtime", version: "4.5"
+    compile group: "org.antlr", name: "antlr4-runtime", version: "4.5.3"
+    generatedCompile group: "org.antlr", name: "antlr4-runtime", version: "4.5.3"
     compile 'org.antlr:ST4:4.0.8'
-    compile group: "org.antlr", name: "antlr4", version: "4.5"
+    compile group: "org.antlr", name: "antlr4", version: "4.5.3"
 
     compile group: 'org.fxmisc.richtext', name: 'richtextfx', version: '1.0.0-SNAPSHOT'
     compile 'com.google.guava:guava:18.0'
