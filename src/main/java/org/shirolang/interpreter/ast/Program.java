@@ -5,38 +5,43 @@ import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Describes an abstract representation of Shiro program
  */
 public class Program implements Codeable{
     private List<IncludeStatement> includes;
-    private List<GraphDefinition> graphDefs;
+    private Map<String, GraphDefinition> graphDefs;
     private GraphDefinition defaultGraph;
-    private List<NodeDefinition> nodeDefs;
-    private List<StateDefinition> stateDefs;
+    private Map<String, NodeDefinition> nodeDefs;
+    private Map<String, StateDefinition> stateDefs;
 
 
     public Program() {
         includes = new ArrayList<>();
-        graphDefs = new ArrayList<>();
+        graphDefs = new HashMap<>();
         defaultGraph = null;
-        nodeDefs = new ArrayList<>();
-        stateDefs = new ArrayList<>();
+        nodeDefs = new HashMap<>();
+        stateDefs = new HashMap<>();
     }
 
-    public boolean add(GraphDefinition g) {
+    public void add(GraphDefinition g) {
         if(g.isDefault()){
             defaultGraph = g;
-            return true;
         }else{
-            return graphDefs.add(g);
+            graphDefs.put(g.getName(), g);
         }
     }
 
-    public List<GraphDefinition> getGraphDefs(){
+    public Map<String, GraphDefinition> getGraphDefsByName(){
         return graphDefs;
+    }
+
+    public List<GraphDefinition> getGraphDefs(){
+        return new ArrayList<>(graphDefs.values());
     }
 
     public boolean hasDefaultGraph(){
@@ -47,20 +52,28 @@ public class Program implements Codeable{
         return defaultGraph;
     }
 
-    public boolean add(NodeDefinition n) {
-        return nodeDefs.add(n);
+    public void add(NodeDefinition n) {
+        nodeDefs.put(n.getName(), n);
     }
 
-    public List<NodeDefinition> getNodeDefs() {
+    public Map<String, NodeDefinition> getNodeDefsByName() {
         return nodeDefs;
     }
 
-    public boolean add(StateDefinition stateDefinition) {
-        return stateDefs.add(stateDefinition);
+    public List<NodeDefinition> getNodeDefs(){
+        return new ArrayList<>(nodeDefs.values());
     }
 
-    public List<StateDefinition> getStateDefs() {
+    public void add(StateDefinition stateDefinition) {
+        stateDefs.put(stateDefinition.getName(), stateDefinition);
+    }
+
+    public Map<String, StateDefinition> getStateDefsByName() {
         return stateDefs;
+    }
+
+    public List<StateDefinition> getStateDefs(){
+        return new ArrayList<>(stateDefs.values());
     }
 
     public boolean add(IncludeStatement include) {

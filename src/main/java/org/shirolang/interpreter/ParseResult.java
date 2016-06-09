@@ -2,6 +2,7 @@ package org.shirolang.interpreter;
 
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.shirolang.interpreter.ast.Program;
 
 /**
  *  Represents the result of a parsed file
@@ -11,10 +12,19 @@ import org.antlr.v4.runtime.tree.ParseTree;
 public class ParseResult {
     private final CommonTokenStream tokens;
     private final ParseTree parseTree;
+    private final Program ast;
 
+    //TODO remove on migration
     public ParseResult(CommonTokenStream tokens, ParseTree parseTree) {
         this.tokens = tokens;
         this.parseTree = parseTree;
+        this.ast = null;
+    }
+
+    public ParseResult(CommonTokenStream tokens, ParseTree parseTree, Program ast) {
+        this.tokens = tokens;
+        this.parseTree = parseTree;
+        this.ast = ast;
     }
 
     public CommonTokenStream getTokens() {
@@ -25,6 +35,10 @@ public class ParseResult {
         return parseTree;
     }
 
+    public Program getAst() {
+        return ast;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -33,7 +47,8 @@ public class ParseResult {
         ParseResult that = (ParseResult) o;
 
         if (!tokens.equals(that.tokens)) return false;
-        return parseTree.equals(that.parseTree);
+        if (!parseTree.equals(that.parseTree)) return false;
+        return ast != null ? ast.equals(that.ast) : that.ast == null;
 
     }
 
@@ -41,6 +56,7 @@ public class ParseResult {
     public int hashCode() {
         int result = tokens.hashCode();
         result = 31 * result + parseTree.hashCode();
+        result = 31 * result + (ast != null ? ast.hashCode() : 0);
         return result;
     }
 }

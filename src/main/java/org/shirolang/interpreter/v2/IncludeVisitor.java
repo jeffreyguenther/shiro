@@ -1,7 +1,5 @@
 package org.shirolang.interpreter.v2;
 
-import org.antlr.v4.runtime.tree.ParseTree;
-import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.shirolang.dag.DependencyRelation;
 import org.shirolang.interpreter.CodeImporter;
 import org.shirolang.interpreter.ast.IncludeStatement;
@@ -87,13 +85,7 @@ public class IncludeVisitor extends BaseVisitor{
      * @throws IOException
      */
     private Set<DependencyRelation<Path>> getSourceDependencies(Path file) throws IOException {
-        ParseTree tree = symbolTable.lexAndParse(file);
-
-        ParseTreeWalker walker = new ParseTreeWalker();
-        ASTBuilder ast = new ASTBuilder();
-        walker.walk(ast, tree);
-
         IncludeVisitor visitor = new IncludeVisitor(symbolTable, file);
-        return visitor.visit(ast.getProgram());
+        return visitor.visit(symbolTable.buildAST(file));
     }
 }

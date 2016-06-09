@@ -6,7 +6,14 @@ import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
-import org.shirolang.base.*;
+import org.shirolang.base.SFunc;
+import org.shirolang.base.SGraph;
+import org.shirolang.base.SType;
+import org.shirolang.base.SymbolType;
+import org.shirolang.dag.DAGraph;
+import org.shirolang.dag.DependencyRelation;
+import org.shirolang.dag.GraphNode;
+import org.shirolang.dag.TopologicalSort;
 import org.shirolang.exceptions.NameUsedException;
 import org.shirolang.functions.color.ColorFromHSB;
 import org.shirolang.functions.color.ColorFromRGB;
@@ -17,6 +24,7 @@ import org.shirolang.functions.geometry.*;
 import org.shirolang.functions.lists.SMap;
 import org.shirolang.functions.math.*;
 import org.shirolang.interpreter.*;
+import org.shirolang.interpreter.ast.NodeDefinition;
 import org.shirolang.interpreter.ast.Program;
 import org.shirolang.values.*;
 
@@ -25,6 +33,9 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * A SymbolTable is the central store of runtime information.
@@ -36,6 +47,8 @@ public class SymbolTable {
 
     private Map<String, SGraph> graphs;
 
+    private Map<String, NodeDefinition> nodeDefs;
+
     // Cache the results of a file being parsed
     private Map<Path, ParseResult> parseCache;
 
@@ -44,6 +57,8 @@ public class SymbolTable {
         this.functionFactories = new HashMap<>();
 
         graphs = new HashMap<>();
+
+        nodeDefs = new HashMap<>();
 
         this.parseCache = new HashMap<>();
 
@@ -171,6 +186,46 @@ public class SymbolTable {
         }
     }
 
+    public void loadDependencies(Path file) throws IOException {
+        List<Path> paths = resolveDependencies(file);
+        for(Path dep: paths){
+            Program program = getProgram(dep);
+            nodeDefs.putAll(program.getNodeDefsByName());
+        }
+    }
+
+    public List<Path> resolveDependencies(Path file) throws IOException {
+        IncludeVisitor visitor = new IncludeVisitor(this, file);
+        Set<DependencyRelation<Path>> includes = visitor.visit(buildAST(file));
+
+        DAGraph<Path> graph = new DAGraph<>();
+        for (DependencyRelation<Path> dep : includes) {
+            graph.addDependency(graph.getNodeForValue(dep.getDependent(), null), graph.getNodeForValue(dep.getDependedOn(), null));
+        }
+
+        TopologicalSort<Path> topoSort = new TopologicalSort<>(graph);
+        List<GraphNode<Path>> topologicalOrdering = topoSort.getTopologicalOrdering();
+        List<Path> sortedPaths = topologicalOrdering.stream().map(GraphNode::getValue).collect(toList());
+        sortedPaths.remove(file);
+
+        return sortedPaths;
+    }
+
+    public Program buildAST(Path file) throws IOException {
+        CommonTokenStream tokens = lex(file);
+        ParseTree tree = parse(tokens);
+        Program program = buildAST(tree);
+        saveParseResult(file, tokens, tree, program);
+        return program;
+    }
+
+    public Program buildAST(ParseTree tree){
+        ParseTreeWalker walker = new ParseTreeWalker();
+        ASTBuilder ast = new ASTBuilder();
+        walker.walk(ast, tree);
+        return ast.getProgram();
+    }
+
     /**
      * Lexes and parse the code
      * Does not cache the result in the SymbolTable
@@ -186,15 +241,12 @@ public class SymbolTable {
 
     /**
      * Lexes and parse the code
-     * Caches the result in the SymbolTables
      * @param file path of the Shiro code to lex and parse
      * @return a parse tree representing the code
      */
     public ParseTree lexAndParse(Path file) throws IOException {
         CommonTokenStream lex = lex(file);
         ParseTree tree = parse(lex);
-        saveParseResult(file, lex, tree);
-
         return tree;
     }
 
@@ -252,10 +304,11 @@ public class SymbolTable {
      * @param path path to file that was parsed
      * @param tokens tokens representing the file
      * @param tree the parse tree created by the parser
+     * @param ast the abstract representation of the file
      * @return The parse result that is stored
      */
-    public ParseResult saveParseResult(Path path, CommonTokenStream tokens, ParseTree tree){
-        ParseResult parseResult = new ParseResult(tokens, tree);
+    public ParseResult saveParseResult(Path path, CommonTokenStream tokens, ParseTree tree, Program ast){
+        ParseResult parseResult = new ParseResult(tokens, tree, ast);
         parseCache.put(path, parseResult);
         return parseResult;
     }
@@ -263,7 +316,7 @@ public class SymbolTable {
     /**
      * Gets the cached parse tree for the source at the given path
      * @param path the path to lookup
-     * @return parse tree for the source at the path
+     * @return parse tree for the source at the path. Return null if path cannot be found.
      */
     public ParseTree getParseTree(Path path){
         ParseResult result = parseCache.get(path);
@@ -276,14 +329,28 @@ public class SymbolTable {
 
     /**
      * Gets the cached token stream for the source at the path
-     * @param path the path to the source to retrieve from teh cache
-     * @return the token stream of the source at {@code path}
+     * @param path the path to the source to retrieve from the cache
+     * @return the token stream of the source at path. Returns null if path cannot be found.
      */
     public CommonTokenStream getTokens(Path path){
         ParseResult result = parseCache.get(path);
 
         if(result != null){
             return result.getTokens();
+        }
+        return null;
+    }
+
+    /**
+     * Gets the cached AST for the source at the path
+     * @param path the path of the AST to retrience
+     * @return {@code Program} instance representing the file at the path. Returns null if path cannot be found.
+     */
+    private Program getProgram(Path path) {
+        ParseResult result = parseCache.get(path);
+
+        if(result != null){
+            return result.getAst();
         }
         return null;
     }
