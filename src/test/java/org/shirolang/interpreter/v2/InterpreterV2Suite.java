@@ -7,12 +7,13 @@ import org.shirolang.interpreter.ast.ASTSuite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
     LexParseTest.class,
-    ASTBuilderTest.class,
     ASTSuite.class,
-    ASTVisitorTest.class,
+    ASTBuilderTest.class,
+    SymbolTableTest.class,
     IncludeVisitorTest.class,
     NodeVisitorTest.class,
-    IncludeNotFoundErrorTest.class
+    IncludeNotFoundErrorTest.class,
+    RuntimeTest.class
 })
 public class InterpreterV2Suite {
 }

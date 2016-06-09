@@ -1,11 +1,9 @@
 package org.shirolang.interpreter.v2;
 
-import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.shirolang.dag.DependencyRelation;
 import org.shirolang.interpreter.CodeImporter;
-import org.shirolang.interpreter.Library;
 import org.shirolang.interpreter.ast.IncludeStatement;
 import org.shirolang.interpreter.ast.Program;
 
@@ -28,14 +26,14 @@ public class IncludeVisitor extends BaseVisitor{
     private Path parentDirectory;
     private Path sourceFile;
     private URL stdLib;
-    private Library lib;
+    private SymbolTable symbolTable;
 
-    public IncludeVisitor(Library lib, Path source) {
+    public IncludeVisitor(SymbolTable lib, Path source) {
         super();
         sourceFiles = new HashSet<>();
         this.sourceFile = source;
         this.parentDirectory = source.getParent();
-        this.lib = lib;
+        this.symbolTable = lib;
         stdLib = CodeImporter.class.getResource("lib"); //TODO update to new class when migrating to v2
     }
 
@@ -49,7 +47,7 @@ public class IncludeVisitor extends BaseVisitor{
 
     public Set<DependencyRelation<Path>> visit(IncludeStatement include){
         String importedFile = include.getFile();
-        // look in standard lib folders first (org.shirolang.interpreter.lib)
+        // look in standard symbolTable folders first (org.shirolang.interpreter.lib)
 
         if(!importedFile.endsWith(".sro")){
             importedFile = importedFile + ".sro";
@@ -89,15 +87,13 @@ public class IncludeVisitor extends BaseVisitor{
      * @throws IOException
      */
     private Set<DependencyRelation<Path>> getSourceDependencies(Path file) throws IOException {
-        CommonTokenStream lex = lib.lex(file);
-        ParseTree tree = lib.parse(lex);
-        lib.saveParseResult(file, lex, tree);
+        ParseTree tree = symbolTable.lexAndParse(file);
 
         ParseTreeWalker walker = new ParseTreeWalker();
         ASTBuilder ast = new ASTBuilder();
         walker.walk(ast, tree);
 
-        IncludeVisitor visitor = new IncludeVisitor(lib, file);
+        IncludeVisitor visitor = new IncludeVisitor(symbolTable, file);
         return visitor.visit(ast.getProgram());
     }
 }

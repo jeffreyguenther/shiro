@@ -4,7 +4,6 @@ import org.shirolang.base.*;
 import org.shirolang.exceptions.OptionNotFoundException;
 import org.shirolang.functions.math.SNegative;
 import org.shirolang.functions.math.SNot;
-import org.shirolang.interpreter.Library;
 import org.shirolang.interpreter.ast.*;
 import org.shirolang.values.*;
 
@@ -16,12 +15,12 @@ import java.util.stream.Collectors;
  * Visits a <code>NodeDefinition</code> to create an instance of <code>SNode</code>
  */
 public class NodeVisitor {
-    private Library lib;
+    private SymbolTable symbolTable;
     protected Stack<Scope> scope;
     private SGraph graph;
 
-    public NodeVisitor(Library lib, SGraph graph) {
-        this.lib = lib;
+    public NodeVisitor(SymbolTable symbolTable, SGraph graph) {
+        this.symbolTable = symbolTable;
         this.scope = new Stack<>();
         this.scope.push(graph);
     }
@@ -51,7 +50,7 @@ public class NodeVisitor {
         FunctionDefinition funcDef = def.getFunction();
         String type = funcDef.getType();
 
-        SFunc function = lib.createFunction(getGraph(), type);
+        SFunc function = symbolTable.createFunction(getGraph(), type);
         function.setAccess(def.getAccess());
         function.setName(funcDef.getName());
 
