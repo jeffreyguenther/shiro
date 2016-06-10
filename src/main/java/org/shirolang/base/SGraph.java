@@ -95,6 +95,10 @@ public class SGraph implements Scope, Consoleable{
         anonymousPorts.add(port);
     }
 
+    public Set<SFunc> getAnonymousPorts() {
+        return anonymousPorts;
+    }
+
     /**
      * Gets all of the ports in the graph
      * @return the add of named ports in the graph
@@ -245,7 +249,6 @@ public class SGraph implements Scope, Consoleable{
         sb.append("]>");
         return sb.toString();
     }
-
 
     /**
      * Generates a dependency string

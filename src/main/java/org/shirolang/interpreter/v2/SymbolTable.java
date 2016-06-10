@@ -6,10 +6,7 @@ import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
-import org.shirolang.base.SFunc;
-import org.shirolang.base.SGraph;
-import org.shirolang.base.SType;
-import org.shirolang.base.SymbolType;
+import org.shirolang.base.*;
 import org.shirolang.dag.DAGraph;
 import org.shirolang.dag.DependencyRelation;
 import org.shirolang.dag.GraphNode;
@@ -82,6 +79,10 @@ public class SymbolTable {
         graphs.put(Defaults.GRAPH_NAME, new SGraph(Defaults.GRAPH_NAME));
     }
 
+    public void setNodeDefs(Map<String, NodeDefinition> nodeDefs) {
+        this.nodeDefs = nodeDefs;
+    }
+
     /**
      * Creates a function with of the given type
      * @param type type of the function
@@ -95,14 +96,12 @@ public class SymbolTable {
             return port;
         }
 
-//        ParseTree nodeDef = nodeDefs.get(type);
-//        if(nodeDef != null){
-//            NodeInstantiator nodeProducer = new NodeInstantiator(this, g);
-//            ParseTreeWalker walker = new ParseTreeWalker();
-//            walker.walk(nodeProducer, nodeDef);
-//            SNode node = nodeProducer.getCreatedNode();
-//            return node;
-//        }
+        NodeDefinition nodeDef = nodeDefs.get(type);
+        if(nodeDef != null){
+            NodeVisitor visitor = new NodeVisitor(this, g);
+            SNode node = visitor.visit(nodeDef);
+            return node;
+        }
 
         throw new RuntimeException(type + " cannot be found.");
     }

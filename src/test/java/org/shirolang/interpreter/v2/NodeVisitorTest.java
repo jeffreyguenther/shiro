@@ -21,7 +21,6 @@ public class NodeVisitorTest extends ParsingTest{
         Program program = generateProgram(new ANTLRInputStream(CodeImporter.class.getResourceAsStream("node.sro")));
 
         NodeVisitor visitor = new NodeVisitor(symbolTable, symbolTable.getDefaultGraph());
-
         SNode createdNode = visitor.visit(program.getNodeDefs().get(0));
 
         assertEquals("Box", createdNode.getName());

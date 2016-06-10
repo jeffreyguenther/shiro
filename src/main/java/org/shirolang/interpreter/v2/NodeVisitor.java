@@ -34,6 +34,12 @@ public class NodeVisitor extends MultiPassVisitor{
                     node.addFunction(port);
                 }
             }
+
+            try {
+                node.setDefaultOption(def.getDefaultOption());
+            } catch (OptionNotFoundException e) {
+             // TODO create error
+            }
             return node;
         }else{
             def.getAssignments().forEach(this::visit);

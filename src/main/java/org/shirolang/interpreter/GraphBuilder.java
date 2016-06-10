@@ -77,7 +77,7 @@ public class GraphBuilder extends ShiroExpressionListener {
     }
 
     @Override
-    public void exitPortAssignment(@NotNull ShiroParser.PortAssignmentContext ctx) {
+    public void exitPortAssignment(ShiroParser.PortAssignmentContext ctx) {
         if(pass == SECOND_PASS) {
             // look up port based on the path
             try {

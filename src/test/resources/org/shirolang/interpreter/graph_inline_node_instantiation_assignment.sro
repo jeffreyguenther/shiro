@@ -7,7 +7,7 @@ node Box begin
     output name String("Box")
 end
 
-b Box
 b.length(100.0)
+b Box
 b.width(20.0)
 b.height(7.0)

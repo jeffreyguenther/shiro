@@ -15,6 +15,7 @@ public abstract class MultiPassVisitor extends BaseVisitor {
 
     /**
      * Sets the pass of the visitor
+     *
      * @param pass possible values are FIRST_PASS (1) and SECOND_PASS (2)
      */
     public void setPass(int pass) {

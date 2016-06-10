@@ -242,19 +242,11 @@ public class ASTBuilder extends ShiroBaseListener {
 
         if (inGraph()) {
             if (!activeOption.isEmpty()) {
-                new FunctionDefinition(type, name, activeOption);
+                graph.add(new FunctionDefinition(type, name, activeOption));
             } else {
-                new FunctionDefinition(type, name);
+                graph.add(new FunctionDefinition(type, name));
             }
         }
-    }
-
-    private boolean inGraph() {
-        return graph != null;
-    }
-
-    private boolean inNode() {
-        return this.graph == null && !nodes.empty();
     }
 
     @Override
@@ -301,7 +293,13 @@ public class ASTBuilder extends ShiroBaseListener {
 
     @Override
     public void enterAnonymousGraphStmt(ShiroParser.AnonymousGraphStmtContext ctx) {
-        p.add(new GraphDefinition());
+        if(!p.hasDefaultGraph()){
+            GraphDefinition graph = new GraphDefinition();
+            this.graph = graph;
+            p.add(graph);
+        }else{
+            this.graph = p.getDefaultGraph();
+        }
     }
 
     @Override
@@ -324,7 +322,7 @@ public class ASTBuilder extends ShiroBaseListener {
             op = BinaryOperator.ADD;
         }
 
-        expressions.put(ctx, new BinaryOperation(expressions.get(ctx.expr(0)), op, expressions.get(ctx.expr(1))));
+        expressions.put(ctx, new BinaryOperation(get(ctx.expr(0)), op, get(ctx.expr(1))));
     }
 
     @Override
@@ -339,19 +337,19 @@ public class ASTBuilder extends ShiroBaseListener {
             op = BinaryOperator.MOD;
         }
 
-        expressions.put(ctx, new BinaryOperation(expressions.get(ctx.expr(0)), op, expressions.get(ctx.expr(1))));
+        expressions.put(ctx, new BinaryOperation(get(ctx.expr(0)), op, get(ctx.expr(1))));
     }
 
     @Override
     public void exitAndExpr(ShiroParser.AndExprContext ctx) {
         BinaryOperator op = BinaryOperator.AND;
-        expressions.put(ctx, new BinaryOperation(expressions.get(ctx.expr(0)), op, expressions.get(ctx.expr(1))));
+        expressions.put(ctx, new BinaryOperation(get(ctx.expr(0)), op, get(ctx.expr(1))));
     }
 
     @Override
     public void exitOrExpr(ShiroParser.OrExprContext ctx) {
         BinaryOperator op = BinaryOperator.OR;
-        expressions.put(ctx, new BinaryOperation(expressions.get(ctx.expr(0)), op, expressions.get(ctx.expr(1))));
+        expressions.put(ctx, new BinaryOperation(get(ctx.expr(0)), op, get(ctx.expr(1))));
     }
 
     @Override
@@ -368,7 +366,7 @@ public class ASTBuilder extends ShiroBaseListener {
             op = LESS_THAN_OR_EQUAL;
         }
 
-        expressions.put(ctx, new BinaryOperation(expressions.get(ctx.expr(0)), op, expressions.get(ctx.expr(1))));
+        expressions.put(ctx, new BinaryOperation(get(ctx.expr(0)), op, get(ctx.expr(1))));
     }
 
     @Override
@@ -381,22 +379,22 @@ public class ASTBuilder extends ShiroBaseListener {
             op = NOT_EQUAL;
         }
 
-        expressions.put(ctx, new BinaryOperation(expressions.get(ctx.expr(0)), op, expressions.get(ctx.expr(1))));
+        expressions.put(ctx, new BinaryOperation(get(ctx.expr(0)), op, get(ctx.expr(1))));
     }
 
     @Override
     public void exitParensExpr(ShiroParser.ParensExprContext ctx) {
-        expressions.put(ctx, new UnaryOperation(PARENS, expressions.get(ctx.expr())));
+        expressions.put(ctx, new UnaryOperation(PARENS, get(ctx.expr())));
     }
 
     @Override
     public void exitNotExpr(ShiroParser.NotExprContext ctx) {
-        expressions.put(ctx, new UnaryOperation(NOT, expressions.get(ctx.expr())));
+        expressions.put(ctx, new UnaryOperation(NOT, get(ctx.expr())));
     }
 
     @Override
     public void exitNegExpr(ShiroParser.NegExprContext ctx) {
-        expressions.put(ctx, new UnaryOperation(NEGATE, expressions.get(ctx.expr())));
+        expressions.put(ctx, new UnaryOperation(NEGATE, get(ctx.expr())));
     }
 
     @Override
@@ -636,11 +634,19 @@ public class ASTBuilder extends ShiroBaseListener {
         }
     }
 
-    public Expression get(ParseTree t) {
+    private Expression get(ParseTree t) {
         if (expressions.get(t) == null) {
             return expressions.get(t.getChild(0));
         }
         return expressions.get(t);
+    }
+
+    private boolean inGraph() {
+        return graph != null;
+    }
+
+    private boolean inNode() {
+        return this.graph == null && !nodes.empty();
     }
 
     public Program getProgram() {

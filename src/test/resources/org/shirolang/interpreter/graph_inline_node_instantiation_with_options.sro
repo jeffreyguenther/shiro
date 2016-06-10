@@ -3,10 +3,10 @@ node Box[vol] begin
     input width Double
     input height Double
     option base Multiply(length, width)
-    option vol Multiply(length, width, height)
+    option vol Multiply(length, width * height)
     output volume Double(vol)
     output area Double(base)
     output name String("Box")
 end
 
-b Box[base](length: 100, width: 20, height: 7)
+b Box[base](length: 100.0, width: 20.0, height: 7.0)
