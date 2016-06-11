@@ -1,0 +1,9 @@
+node Box begin
+    input length Double
+    leeeength(10.0)
+    input width Double
+    input height Double
+    update Multiply(a: length, b: width)
+end
+
+b Box

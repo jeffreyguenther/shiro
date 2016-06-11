@@ -1,0 +1,3 @@
+node Options[b] begin
+    option input a Double(100.2)
+end

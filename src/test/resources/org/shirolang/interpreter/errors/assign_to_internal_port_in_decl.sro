@@ -1,0 +1,5 @@
+node N begin
+    d Double
+end
+
+n N(100.)

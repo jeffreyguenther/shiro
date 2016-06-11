@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.shirolang.fixtures.interpreter.InterpreterFixture;
 import org.shirolang.interpreter.CodeImporter;
 
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
@@ -50,5 +51,34 @@ public class ProgramEvaluatorTest {
     public void evaluatePathWithSyntaxErrors(){
         List<Error> errors = evaluator.evaluate(Paths.get(CodeImporter.class.getResource("syntax_errors.sro").getPath()));
         assertEquals(1, errors.size());
+    }
+
+    @Test
+    public void active_option_doesnt_exist(){
+        List<Error> errors = evaluator.evaluate(p("errors/active_option_doesnt_exist.sro"));
+        assertEquals(1, errors.size());
+        assertEquals("^.o does not have an option b", errors.get(0).getMessage());
+    }
+
+    @Test
+    public void type_doesnt_exist(){
+        List<Error> errors = evaluator.evaluate(p("errors/type_doesnt_exist.sro"));
+        assertEquals(1, errors.size());
+        assertEquals("Option cannot be found.", errors.get(0).getMessage());
+    }
+
+    @Test
+    public void path_assignment_path_not_found(){
+        List<Error> errors = evaluator.evaluate(p("errors/path_assignment_path_not_found.sro"));
+        assertEquals(1, errors.size());
+        assertEquals("([leeeength]) was not found.", errors.get(0).getMessage());
+    }
+
+    private Path p(String file){
+        return Paths.get(CodeImporter.class.getResource(file).getPath());
+    }
+
+    private void e(List<Error> errors){
+        errors.forEach(e -> System.out.println(e.getMessage()));
     }
 }

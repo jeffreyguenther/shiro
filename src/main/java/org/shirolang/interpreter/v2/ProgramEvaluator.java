@@ -20,6 +20,7 @@ import org.shirolang.functions.conditionals.SConditionalReturnNode;
 import org.shirolang.functions.geometry.*;
 import org.shirolang.functions.lists.SMap;
 import org.shirolang.functions.math.*;
+import org.shirolang.interpreter.Defaults;
 import org.shirolang.interpreter.FunctionFactory;
 import org.shirolang.interpreter.ShiroLexer;
 import org.shirolang.interpreter.ShiroParser;
@@ -115,8 +116,23 @@ public class ProgramEvaluator {
 
         // Generate states
         // Realize state
+
         // Realize Graph
+        GraphVisitor graphVisitor = new GraphVisitor(this);
+        SGraph g = graphVisitor.visit(symbolTable.getGraphDefs().get(Defaults.GRAPH_NAME));
         // Bail if there are errors
+        if(graphVisitor.hasErrors()){
+            return graphVisitor.getErrors();
+        }
+
+        graphVisitor.setPass(MultiPassVisitor.SECOND_PASS);
+        graphVisitor.visit(symbolTable.getGraphDefs().get(Defaults.GRAPH_NAME));
+        // Bail if there are errors
+        if(graphVisitor.hasErrors()){
+            return graphVisitor.getErrors();
+        }
+
+
         // Activate Options
         // Bail if there are errors
         // evaluate
@@ -149,6 +165,9 @@ public class ProgramEvaluator {
     private void loadProgram(Program p){
         symbolTable.setNodeDefs(p.getNodeDefsByName());
         symbolTable.setGraphDefs(p.getGraphDefsByName());
+        if(p.hasDefaultGraph()){
+            symbolTable.getGraphDefs().put(Defaults.GRAPH_NAME, p.getDefaultGraph());
+        }
         symbolTable.setStateDefs(p.getStateDefsByName());
     }
 
@@ -289,23 +308,26 @@ public class ProgramEvaluator {
      * @param type type of the function
      * @return the function corresponding to the type. The function might be a node or a port
      */
-    public SFunc createFunction(SGraph g, String type){
+    public Optional<SFunc> createFunction(SGraph g, String type){
         FunctionFactory factory = symbolTable.getFunctionFactories().get(type);
         if(factory != null){
             SFunc port = factory.create();
             port.setSymbolType(SymbolType.PORT);
-            return port;
+            return Optional.of(port);
         }
 
         Optional<NodeDefinition> nodeDef = resolveTypeToDefinition(type);
         if(nodeDef.isPresent()){
             NodeVisitor visitor = new NodeVisitor(this, g);
             SNode node = visitor.visit(nodeDef.get());
-            return node;
-        }
+            visitor.setPass(MultiPassVisitor.SECOND_PASS);
+            visitor.visit(nodeDef.get());
 
-        errors.add(new TypeNotFoundError(type + " cannot be found."));
-        return null;
+            errors.addAll(visitor.getErrors());
+
+            return Optional.of(node);
+        }
+        return Optional.empty();
     }
 
     /**
@@ -346,7 +368,7 @@ public class ProgramEvaluator {
                 def = resolveTypeToDefinition(def.get(), typeStack);
             }
         }else{
-            def = Optional.of(symbolTable.getNodeDefs().get(type));
+            def = Optional.ofNullable(symbolTable.getNodeDefs().get(type));
         }
 
         return def;

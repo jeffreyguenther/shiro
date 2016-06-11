@@ -8,8 +8,10 @@ import org.shirolang.exceptions.OptionNotFoundException;
 import org.shirolang.exceptions.PathNotFoundException;
 import org.shirolang.interpreter.ast.*;
 
+import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Walks a graph AST to generate a SGraph instance
@@ -31,7 +33,12 @@ public class GraphVisitor extends MultiPassVisitor{
             }
 
             for (FunctionDefinition portDef : def.getFunctions()) {
-                graph.addFunction(visit(portDef));
+                Optional<SFunc> visit = visit(portDef);
+                if(visit.isPresent()){
+                    graph.addFunction(visit.get());
+                }else{
+                    break;
+                }
             }
             return graph;
         }else {
@@ -40,28 +47,36 @@ public class GraphVisitor extends MultiPassVisitor{
         }
     }
 
-    public SFunc visit(FunctionDefinition funcDef){
+    public Optional<SFunc> visit(FunctionDefinition funcDef){
         String type = funcDef.getType();
+        SFunc function;
 
-        SFunc function = evaluator.createFunction(getGraph(), type);
-        function.setName(funcDef.getName());
+        Optional<SFunc> instance = evaluator.createFunction(getGraph(), type);
+        if(instance.isPresent()) {
+            function = instance.get();
+            function.setName(funcDef.getName());
 
-        if(!function.getSymbolType().isNode()) {
-            function.setSymbolType(SymbolType.PORT);
-        }
 
-        if(funcDef.hasActiveOption()){
-            if(function.getSymbolType().isNode()){
-                SNode node = (SNode) function;
-                try {
-                    node.setActiveOption(funcDef.getOption());
-                } catch (OptionNotFoundException e) {
-                    //TODO create error
+            if (!function.getSymbolType().isNode()) {
+                function.setSymbolType(SymbolType.PORT);
+            }
+
+            if (funcDef.hasActiveOption()) {
+                if (function.getSymbolType().isNode()) {
+                    SNode node = (SNode) function;
+                    try {
+                        node.setActiveOption(funcDef.getOption());
+                    } catch (OptionNotFoundException e) {
+                        errors.add(new SyntaxError(e.getMessage()));
+                    }
                 }
             }
-        }
 
-        return assignArguments(function, funcDef);
+            return Optional.of(assignArguments(function, funcDef));
+        }else{
+            errors.add(new TypeNotFoundError(type + " cannot be found."));
+            return Optional.empty();
+        }
     }
 
     public void visit(PortAssignment assignment){
@@ -84,7 +99,7 @@ public class GraphVisitor extends MultiPassVisitor{
                     throw new RuntimeException(path + " is a node. It cannot be assigned.");
                 }
             } catch (PathNotFoundException e) {
-                // TODO create error
+                errors.add(new PathNotFoundError(e.getMessage()));
             }
         }
     }

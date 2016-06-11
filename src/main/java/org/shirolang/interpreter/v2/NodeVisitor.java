@@ -8,6 +8,8 @@ import org.shirolang.exceptions.OptionNotFoundException;
 import org.shirolang.exceptions.PathNotFoundException;
 import org.shirolang.interpreter.ast.*;
 
+import java.util.Optional;
+
 /**
  * Visits a <code>NodeDefinition</code> to create an instance of <code>SNode</code>
  */
@@ -27,23 +29,34 @@ public class NodeVisitor extends MultiPassVisitor{
             scope.push(node);
 
             for (PortDefinition d : def.getDeclarations()) {
-                SFunc port = visit(d);
-                if (d.isOption()) {
-                    node.addOption(port);
-                } else {
-                    node.addFunction(port);
+                Optional<SFunc> visit = visit(d);
+                if(visit.isPresent()) {
+                    SFunc port = visit.get();
+                    if (d.isOption()) {
+                        node.addOption(port);
+                    } else {
+                        node.addFunction(port);
+                    }
+                }else{
+                    break;
                 }
-            }
-
-            try {
-                node.setDefaultOption(def.getDefaultOption());
-            } catch (OptionNotFoundException e) {
-             // TODO create error
             }
             return node;
         }else{
-            def.getAssignments().forEach(this::visit);
-            return null;
+            SNode node = (SNode) scope.peek();
+            try {
+
+                if(def.hasDefaultOption()) {
+                    node.setDefaultOption(def.getDefaultOption());
+                }
+            } catch (OptionNotFoundException e) {
+                errors.add(new SyntaxError(e.getMessage()));
+            }
+
+            if(!hasErrors()){
+                def.getAssignments().forEach(this::visit);
+            }
+            return node;
         }
     }
 
@@ -57,38 +70,44 @@ public class NodeVisitor extends MultiPassVisitor{
                         SNode node = (SNode) scope.peek();
                         node.addFunction(assignArguments(function, assignment));
                     } else {
-                        throw new RuntimeException(path + " is " + function.getAccess() + ". It's inputs cannot be set.");
+                        errors.add(new SyntaxError(path + " is " + function.getAccess() + ". It's inputs cannot be set."));
                     }
                 } else if (function.getSymbolType().isNode()) {
                     throw new RuntimeException(path + " is a node. It cannot be assigned.");
                 }
             } catch (PathNotFoundException e) {
-                // TODO create error
+                errors.add(new PathNotFoundError(e.getMessage()));
             }
         }
     }
 
-    public SFunc visit(PortDefinition def) {
+    public Optional<SFunc> visit(PortDefinition def) {
         FunctionDefinition funcDef = def.getFunction();
         String type = funcDef.getType();
+        SFunc function;
 
-        SFunc function = evaluator.createFunction(getGraph(), type);
-        function.setAccess(def.getAccess());
-        function.setName(funcDef.getName());
+        Optional<SFunc> instance = evaluator.createFunction(getGraph(), type);
+        if(instance.isPresent()) {
+            function = instance.get();
+            function.setAccess(def.getAccess());
+            function.setName(funcDef.getName());
 
-        if (def.getFunction().hasActiveOption()) {
-            try {
-                ((SNode) function).setActiveOption(funcDef.getOption());
-            } catch (OptionNotFoundException e) {
-                System.out.println(e.getMessage());
+            if (def.getFunction().hasActiveOption()) {
+                try {
+                    ((SNode) function).setActiveOption(funcDef.getOption());
+                } catch (OptionNotFoundException e) {
+                    System.out.println(e.getMessage());
+                }
             }
-        }
 
-        if(!function.getSymbolType().isNode()) {
-            function.setSymbolType(SymbolType.PORT);
-        }
+            if (!function.getSymbolType().isNode()) {
+                function.setSymbolType(SymbolType.PORT);
+            }
 
-        return assignArguments(function, funcDef);
+            return Optional.of(assignArguments(function, funcDef));
+        }else{
+            return Optional.empty();
+        }
     }
 
     public SGraph getGraph() {
