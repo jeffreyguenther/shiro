@@ -86,11 +86,10 @@ public class NodeVisitor extends MultiPassVisitor{
         String type = funcDef.getType();
         SFunc function;
 
-        Optional<SFunc> instance = evaluator.createFunction(getGraph(), type);
+        Optional<SFunc> instance = evaluator.createFunction(getGraph(), type, funcDef.getName());
         if(instance.isPresent()) {
             function = instance.get();
             function.setAccess(def.getAccess());
-            function.setName(funcDef.getName());
 
             if (def.getFunction().hasActiveOption()) {
                 try {

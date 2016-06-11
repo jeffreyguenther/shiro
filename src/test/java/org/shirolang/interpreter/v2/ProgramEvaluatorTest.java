@@ -74,6 +74,31 @@ public class ProgramEvaluatorTest {
         assertEquals("([leeeength]) was not found.", errors.get(0).getMessage());
     }
 
+    @Test
+    public void option_selected_as_default_doesnt_exist(){
+        List<Error> errors = evaluator.evaluate(p("errors/option_selected_as_default_doesnt_exist.sro"));
+        assertEquals(1, errors.size());
+        assertEquals("^.o does not have an option b", errors.get(0).getMessage());
+    }
+
+    @Test
+    public void assign_to_internal_port(){
+        List<Error> errors = evaluator.evaluate(p("errors/assign_to_internal_port.sro"));
+        assertEquals(1, errors.size());
+    }
+
+    @Test
+    public void assign_to_internal_port_in_decl(){
+        List<Error> errors = evaluator.evaluate(p("errors/assign_to_internal_port_in_decl.sro"));
+        assertEquals(1, errors.size());
+    }
+
+    @Test
+    public void assign_to_output(){
+        List<Error> errors = evaluator.evaluate(p("errors/assign_to_output.sro"));
+        assertEquals(1, errors.size());
+    }
+
     private Path p(String file){
         return Paths.get(CodeImporter.class.getResource(file).getPath());
     }

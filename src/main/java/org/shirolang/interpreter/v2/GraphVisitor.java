@@ -51,11 +51,9 @@ public class GraphVisitor extends MultiPassVisitor{
         String type = funcDef.getType();
         SFunc function;
 
-        Optional<SFunc> instance = evaluator.createFunction(getGraph(), type);
+        Optional<SFunc> instance = evaluator.createFunction(getGraph(), type, funcDef.getName());
         if(instance.isPresent()) {
             function = instance.get();
-            function.setName(funcDef.getName());
-
 
             if (!function.getSymbolType().isNode()) {
                 function.setSymbolType(SymbolType.PORT);

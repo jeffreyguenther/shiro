@@ -1,6 +1,7 @@
 package org.shirolang.interpreter.v2;
 
 import org.shirolang.base.SFunc;
+import org.shirolang.base.SNode;
 import org.shirolang.base.Scope;
 import org.shirolang.functions.math.*;
 import org.shirolang.interpreter.ast.*;
@@ -67,8 +68,12 @@ public abstract class BaseVisitor {
 
                 return arg0;
             } else {
-                for (int i = 0; i < args.size(); i++) {
-                    func.setInput(i, args.get(i));
+                if(func.getSymbolType().isPort() || func.hasInputs()) {
+                    for (int i = 0; i < args.size(); i++) {
+                        func.setInput(i, args.get(i));
+                    }
+                }else{
+                    errors.add(new SyntaxError(func.getFullName() + " has not inputs."));
                 }
                 return func;
             }

@@ -1,0 +1,6 @@
+node N begin
+    output d Double(132.0)
+end
+
+n N
+n.d(100.0)

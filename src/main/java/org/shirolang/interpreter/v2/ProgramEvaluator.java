@@ -115,7 +115,11 @@ public class ProgramEvaluator {
         loadProgram(program);
 
         // Generate states
+//        generateStates();
         // Realize state
+//        symbolTable.getStateDefs().values().forEach(s -> {
+//            System.out.println(s.getName());
+//        });
 
         // Realize Graph
         GraphVisitor graphVisitor = new GraphVisitor(this);
@@ -132,8 +136,8 @@ public class ProgramEvaluator {
             return graphVisitor.getErrors();
         }
 
-
         // Activate Options
+
         // Bail if there are errors
         // evaluate
 
@@ -308,10 +312,11 @@ public class ProgramEvaluator {
      * @param type type of the function
      * @return the function corresponding to the type. The function might be a node or a port
      */
-    public Optional<SFunc> createFunction(SGraph g, String type){
+    public Optional<SFunc> createFunction(SGraph g, String type, String name){
         FunctionFactory factory = symbolTable.getFunctionFactories().get(type);
         if(factory != null){
             SFunc port = factory.create();
+            port.setName(name);
             port.setSymbolType(SymbolType.PORT);
             return Optional.of(port);
         }
@@ -320,6 +325,8 @@ public class ProgramEvaluator {
         if(nodeDef.isPresent()){
             NodeVisitor visitor = new NodeVisitor(this, g);
             SNode node = visitor.visit(nodeDef.get());
+            node.setName(name);
+
             visitor.setPass(MultiPassVisitor.SECOND_PASS);
             visitor.visit(nodeDef.get());
 

@@ -20,7 +20,14 @@ public class EvaluatorErrorListener extends BaseErrorListener {
 
     @Override
     public void syntaxError(Recognizer<?, ?> recognizer, Object offendingSymbol, int line, int charPositionInLine, String msg, RecognitionException e) {
-        errors.add(new SyntaxError("line "+line+":"+charPositionInLine+" "+msg));
+
+        String sourceName = recognizer.getInputStream().getSourceName();
+        if(!sourceName.isEmpty()){
+            errors.add(new SyntaxError(sourceName + ":line "+line+":"+charPositionInLine+" "+msg));
+        }else{
+            errors.add(new SyntaxError("line "+line+":"+charPositionInLine+" "+msg));
+        }
+
     }
 
     public List<Error> getErrors() {
