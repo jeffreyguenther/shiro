@@ -75,7 +75,7 @@ public class IncludeVisitor extends BaseVisitor{
                 errors.add(new IncludeNotFoundError(importedFile));
             }
         } catch (IOException | URISyntaxException ex) {
-            Logger.getLogger(IncludeVisitor.class.getName()).log(Level.SEVERE, null, ex);
+            errors.add(new SyntaxError(importedFile + " cannot be opened."));
         }
 
         return sourceFiles;

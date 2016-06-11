@@ -51,16 +51,30 @@ public class ProgramEvaluator {
         loadGraphicsFunctions();
     }
 
+    /**
+     * Gets the symbol table
+     * @return the current symbol table for the runtime
+     */
     public SymbolTable getSymbolTable() {
         return symbolTable;
     }
 
+    /**
+     * Evaluates a string of Shiro code
+     * @param code the code to evaluate
+     * @return the list of errors. If the evaluation was successful, the list will be empty.
+     */
     public List<Error> evaluate(String code) {
         Path mainProgramFile = Paths.get("main.sro");
 
         return evaluate(mainProgramFile, lex(code));
     }
 
+    /**
+     * Evaluates a string of Shiro code
+     * @param code the code to evaluate
+     * @return the list of errors. If the evaluation was successful, the list will be empty.
+     */
     public List<Error> evaluate(Path code){
         CommonTokenStream tokens = lex(code);
         if(tokens != null){
@@ -70,6 +84,12 @@ public class ProgramEvaluator {
         }
     }
 
+    /**
+     * Evaluates a program
+     * @param mainProgramFile the path of the file
+     * @param tokens the tokens for the file
+     * @return the list of errors. If the evaluation was successful, the list will be empty.
+     */
     private List<Error> evaluate(Path mainProgramFile, CommonTokenStream tokens){
         symbolTable = new SymbolTable();
 
@@ -104,21 +124,40 @@ public class ProgramEvaluator {
         return errors;
     }
 
+    /**
+     * Determines if the evaluator has errors
+     * @return true if the evaluator has errors, otherwise false
+     */
     public boolean hasErrors(){
         return !errors.isEmpty();
     }
 
+    /**
+     * Loads a dependency
+     * @param file the file to load
+     *             This method looks up the path in the symbol table's cache and loads it's node definitions
+     */
     private void loadDependency(Path file){
         Program program = symbolTable.getProgram(file);
         symbolTable.setNodeDefs(program.getNodeDefsByName());
     }
 
+    /**
+     * Loads the programs nodes, states, and graph definitions
+     * @param p the program to lad
+     */
     private void loadProgram(Program p){
         symbolTable.setNodeDefs(p.getNodeDefsByName());
         symbolTable.setGraphDefs(p.getGraphDefsByName());
         symbolTable.setStateDefs(p.getStateDefsByName());
     }
 
+    /**
+     * Resolves the depencies for a program
+     * @param p the program whose dependencies are to be loaded
+     * @param pathToMainProgram the file path of the program
+     * @return a list of paths in topological order
+     */
     private List<Path> resolveDependencies(Program p, Path pathToMainProgram) {
         IncludeVisitor visitor = new IncludeVisitor(this, pathToMainProgram);
         Set<DependencyRelation<Path>> includes = visitor.visit(p);
@@ -136,6 +175,12 @@ public class ProgramEvaluator {
         return sortedPaths;
     }
 
+    /**
+     * Builds an instance of Program for the file
+     * @param file the file to lex, parse, and convert into an AST
+     * @return an Optional program. The optional will be empty if there were syntax errors
+     * @throws IOException if the file cannot be opened
+     */
     public Optional<Program> buildAST(Path file) throws IOException {
         CommonTokenStream tokens = lex(file);
         if(hasErrors()){
@@ -152,6 +197,11 @@ public class ProgramEvaluator {
         return Optional.of(program);
     }
 
+    /**
+     * Builds an instance of Program for the parse tree
+     * @param tree a parse tree to turn into an AST tree
+     * @return a Program instance representing the parse tree
+     */
     private Program buildAST(ParseTree tree){
         ParseTreeWalker walker = new ParseTreeWalker();
         ASTBuilder ast = new ASTBuilder();
@@ -214,6 +264,9 @@ public class ProgramEvaluator {
         return parser;
     }
 
+    /**
+     * Creates a new instance of the EvaluatorErrorListener
+     */
     private void updateErrorListener(){
         parseLexErrorListener = new EvaluatorErrorListener();
     }
@@ -251,7 +304,8 @@ public class ProgramEvaluator {
             return node;
         }
 
-        throw new RuntimeException(type + " cannot be found.");
+        errors.add(new TypeNotFoundError(type + " cannot be found."));
+        return null;
     }
 
     /**
@@ -271,6 +325,11 @@ public class ProgramEvaluator {
         }
     }
 
+    /**
+     * Resolve the string type a NodeDefinition
+     * @param type type of NodeDefinition
+     * @return an Optional containing the NodeDefinition if it exists
+     */
     private Optional<NodeDefinition> resolveTypeToDefinition(String type){
         Optional<NodeDefinition> def;
 
@@ -317,7 +376,7 @@ public class ProgramEvaluator {
     }
 
     /**
-     * Creates FunctionFactories for all of the internal Shiro multi-functions
+     * Creates FunctionFactories for all of the internal Shiro functions
      */
     private void loadRuntimeFunctions(){
         try {
@@ -354,6 +413,9 @@ public class ProgramEvaluator {
         }
     }
 
+    /**
+     * Creates FunctionFactories for internal graphics functions
+     */
     private void loadGraphicsFunctions(){
         try{
             registerFunction("Color", SColor::new);

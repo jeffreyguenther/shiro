@@ -12,8 +12,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 public class ProgramEvaluatorTest {
-    SymbolTable t;
-    ProgramEvaluator evaluator;
+    private SymbolTable t;
+    private ProgramEvaluator evaluator;
+
     @Before
     public void setupTest(){
         t = new SymbolTable();

@@ -30,7 +30,6 @@ public class SymbolTable {
     private Map<String, GraphDefinition> graphDefs;
     private Map<String, StateDefinition> stateDefs;
 
-
     // Cache the results of a file being parsed
     private Map<Path, ParseResult> parseCache;
 
