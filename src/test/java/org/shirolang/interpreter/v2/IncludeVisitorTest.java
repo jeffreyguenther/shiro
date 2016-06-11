@@ -25,7 +25,8 @@ public class IncludeVisitorTest extends ParsingTest{
 
         // This test is a little deceiving as the path created when testing does not reference the normal
         // runtime resources location.
-        SymbolTable symbolTable = new SymbolTable();
+        SymbolTable table = new SymbolTable();
+        ProgramEvaluator evaluator = new ProgramEvaluator(table);
         Path path = Paths.get(CodeImporter.class.getResource("graph_with_includes.sro").getPath());
 
         ParseTree program = parse(new ANTLRInputStream(CodeImporter.class.getResourceAsStream("graph_with_includes.sro")));
@@ -33,14 +34,15 @@ public class IncludeVisitorTest extends ParsingTest{
         ASTBuilder ast = new ASTBuilder();
         walker.walk(ast, program);
 
-        IncludeVisitor visitor = new IncludeVisitor(symbolTable, path);
+        IncludeVisitor visitor = new IncludeVisitor(evaluator, path);
         Set<DependencyRelation<Path>> includes = visitor.visit(ast.getProgram());
         assertEquals(3, includes.size());
     }
 
     @Test
     public void visitHasErrors() throws IOException {
-        SymbolTable symbolTable = new SymbolTable();
+        SymbolTable table = new SymbolTable();
+        ProgramEvaluator evaluator = new ProgramEvaluator(table);
         Path path = Paths.get(CodeImporter.class.getResource("graph_with_include_errors.sro").getPath());
 
         ParseTree program = parse(new ANTLRInputStream(CodeImporter.class.getResourceAsStream("graph_with_include_errors.sro")));
@@ -48,7 +50,7 @@ public class IncludeVisitorTest extends ParsingTest{
         ASTBuilder ast = new ASTBuilder();
         walker.walk(ast, program);
 
-        IncludeVisitor visitor = new IncludeVisitor(symbolTable, path);
+        IncludeVisitor visitor = new IncludeVisitor(evaluator, path);
         Set<DependencyRelation<Path>> includes = visitor.visit(ast.getProgram());
         assertTrue(visitor.hasErrors());
         assertEquals("binclude.sro cannot be found.", visitor.getErrors().get(0).getMessage());

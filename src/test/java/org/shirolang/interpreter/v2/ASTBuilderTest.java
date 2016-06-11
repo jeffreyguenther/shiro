@@ -37,6 +37,7 @@ public class ASTBuilderTest extends ParsingTest {
         Program actual = builder.getProgram();
         Program expected = new Program();
         expected.add(new IncludeStatement("code.sro"));
+
         assertEquals(expected, actual);
     }
 
@@ -518,5 +519,13 @@ public class ASTBuilderTest extends ParsingTest {
         Program expected = new Program();
         expected.add(StateDefinitionFixture.nested());
         assertEquals(expected, result);
+    }
+
+    @Test
+    public void nestedNodeTypes(){
+        walker.walk(builder, parse(InterpreterFixture.nestedNode()));
+        Program result = builder.getProgram();
+
+        assertTrue(result.getNodeDefsByName().containsKey("A"));
     }
 }

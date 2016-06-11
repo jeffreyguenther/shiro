@@ -1,38 +1,20 @@
 package org.shirolang.interpreter.v2;
 
-import org.antlr.v4.runtime.ANTLRFileStream;
-import org.antlr.v4.runtime.ANTLRInputStream;
-import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.antlr.v4.runtime.tree.ParseTreeWalker;
-import org.shirolang.base.*;
-import org.shirolang.dag.DAGraph;
-import org.shirolang.dag.DependencyRelation;
-import org.shirolang.dag.GraphNode;
-import org.shirolang.dag.TopologicalSort;
-import org.shirolang.exceptions.NameUsedException;
-import org.shirolang.functions.color.ColorFromHSB;
-import org.shirolang.functions.color.ColorFromRGB;
-import org.shirolang.functions.color.SColor;
-import org.shirolang.functions.conditionals.SConditionalReturn;
-import org.shirolang.functions.conditionals.SConditionalReturnNode;
-import org.shirolang.functions.geometry.*;
-import org.shirolang.functions.lists.SMap;
-import org.shirolang.functions.math.*;
-import org.shirolang.interpreter.*;
+import org.shirolang.base.SGraph;
+import org.shirolang.interpreter.Defaults;
+import org.shirolang.interpreter.FunctionFactory;
+import org.shirolang.interpreter.NameManager;
+import org.shirolang.interpreter.ParseResult;
+import org.shirolang.interpreter.ast.GraphDefinition;
 import org.shirolang.interpreter.ast.NodeDefinition;
 import org.shirolang.interpreter.ast.Program;
-import org.shirolang.values.*;
+import org.shirolang.interpreter.ast.StateDefinition;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
-
-import static java.util.stream.Collectors.toList;
 
 /**
  * A SymbolTable is the central store of runtime information.
@@ -45,6 +27,9 @@ public class SymbolTable {
     private Map<String, SGraph> graphs;
 
     private Map<String, NodeDefinition> nodeDefs;
+    private Map<String, GraphDefinition> graphDefs;
+    private Map<String, StateDefinition> stateDefs;
+
 
     // Cache the results of a file being parsed
     private Map<Path, ParseResult> parseCache;
@@ -56,11 +41,10 @@ public class SymbolTable {
         graphs = new HashMap<>();
 
         nodeDefs = new HashMap<>();
+        graphDefs = new HashMap<>();
+        stateDefs = new HashMap<>();
 
         this.parseCache = new HashMap<>();
-
-        loadRuntimeFunctions();
-        loadGraphicsFunctions();
         createDefaultGraph();
     }
 
@@ -83,219 +67,28 @@ public class SymbolTable {
         this.nodeDefs = nodeDefs;
     }
 
-    /**
-     * Creates a function with of the given type
-     * @param type type of the function
-     * @return the function corresponding to the type. The function might be a node or a port
-     */
-    public SFunc createFunction(SGraph g, String type){
-        FunctionFactory factory = functionFactories.get(type);
-        if(factory != null){
-            SFunc port = factory.create();
-            port.setSymbolType(SymbolType.PORT);
-            return port;
-        }
-
-        NodeDefinition nodeDef = nodeDefs.get(type);
-        if(nodeDef != null){
-            NodeVisitor visitor = new NodeVisitor(this, g);
-            SNode node = visitor.visit(nodeDef);
-            return node;
-        }
-
-        throw new RuntimeException(type + " cannot be found.");
+    public Map<String, NodeDefinition> getNodeDefs() {
+        return nodeDefs;
     }
 
-    /**
-     * Registers a function factory with the library. Use this method to add
-     * a custom type to the Shiro runtime.
-     * @param name name of the multi-function you are adding
-     * @param f factory being associated with the name
-     */
-    public final void registerFunction(String name, FunctionFactory f) throws NameUsedException {
-        if(isTypeNameUsed(name)){
-            throw new NameUsedException(name + " is already used. Please choose another name for your type.");
-        }
-
-        functionFactories.put(name, f);
+    public Map<String, GraphDefinition> getGraphDefs() {
+        return graphDefs;
     }
 
-    /**
-     * Checks if type already used
-     * @param type name of type being checked
-     * @return true if the name is already being used, otherwise false
-     */
-    public boolean isTypeNameUsed(String type){
-        return functionFactories.keySet().contains(type);
+    public void setGraphDefs(Map<String, GraphDefinition> graphDefs) {
+        this.graphDefs = graphDefs;
     }
 
-    /**
-     * Creates FunctionFactories for all of the internal Shiro multi-functions
-     */
-    private void loadRuntimeFunctions(){
-        try {
-            registerFunction(SType.BOOLEAN, SBoolean::new);
-            registerFunction(SType.DOUBLE, SDouble::new);
-            registerFunction(SType.IDENT, SIdent::new);
-            registerFunction(SType.INTEGER, SInteger::new);
-            registerFunction(SType.STRING, SString::new);
-            registerFunction(SType.LIST, SList::new);
-
-            registerFunction(SType.ADD, SAdd::new);
-            registerFunction(SType.AND, SAnd::new);
-            registerFunction(SType.DIVIDE, SDivide::new);
-            registerFunction(SType.EQUAL, SEqual::new);
-            registerFunction(SType.GREATERTHAN, SGreaterThan::new);
-            registerFunction(SType.GREATERTHAN_OR_EQUAL, SGreaterThanOrEqual::new);
-            registerFunction(SType.LESSTHAN, SLessThan::new);
-            registerFunction(SType.LESSTHAN_OR_EQUAL, SLessThanOrEqual::new);
-            registerFunction(SType.MODULO, SModulo::new);
-            registerFunction(SType.MULTIPLY, SMultiply::new);
-            registerFunction(SType.NEGATIVE, SNegative::new);
-            registerFunction(SType.NOT, SNot::new);
-            registerFunction(SType.NOT_EQUAL, SNotEqual::new);
-            registerFunction(SType.OR, SOr::new);
-            registerFunction(SType.POWER, SPower::new);
-            registerFunction(SType.SUBTRACT, SSubtract::new);
-            registerFunction(SType.SUM, SSum::new);
-
-            registerFunction(SType.MAP, SMap::new);
-            registerFunction(SType.CONDITIONAL_RETURN, SConditionalReturn::new);
-            registerFunction(SType.CONDITIONAL_RETURN_NODE, SConditionalReturnNode::new);
-        } catch (NameUsedException e) {
-            throw new RuntimeException("Something crazy happened and an internal type is already defined!");
-        }
+    public Map<String, StateDefinition> getStateDefs() {
+        return stateDefs;
     }
 
-    private void loadGraphicsFunctions(){
-        try{
-            registerFunction("Color", SColor::new);
-            registerFunction("ColorFromRGB", ColorFromRGB::new);
-            registerFunction("ColorFromHSB", ColorFromHSB::new);
-            registerFunction("ColorToGrayscale", ColorFromHSB::new);
-
-            registerFunction("SRectangle", SRectangle::new);
-            registerFunction("SEllipse", SEllipse::new);
-            registerFunction("SArc", SArc::new);
-            registerFunction("SLine", SLine::new);
-            registerFunction("SText", SText::new);
-            registerFunction("SGroup", SGroup::new);
-        }catch (NameUsedException e) {
-            throw new RuntimeException("Something crazy happened and an internal type is already defined!");
-        }
+    public void setStateDefs(Map<String, StateDefinition> stateDefs) {
+        this.stateDefs = stateDefs;
     }
 
-    public void loadDependencies(Path file) throws IOException {
-        List<Path> paths = resolveDependencies(file);
-        for(Path dep: paths){
-            Program program = getProgram(dep);
-            nodeDefs.putAll(program.getNodeDefsByName());
-        }
-    }
-
-    public List<Path> resolveDependencies(Path file) throws IOException {
-        IncludeVisitor visitor = new IncludeVisitor(this, file);
-        Set<DependencyRelation<Path>> includes = visitor.visit(buildAST(file));
-
-        DAGraph<Path> graph = new DAGraph<>();
-        for (DependencyRelation<Path> dep : includes) {
-            graph.addDependency(graph.getNodeForValue(dep.getDependent(), null), graph.getNodeForValue(dep.getDependedOn(), null));
-        }
-
-        TopologicalSort<Path> topoSort = new TopologicalSort<>(graph);
-        List<GraphNode<Path>> topologicalOrdering = topoSort.getTopologicalOrdering();
-        List<Path> sortedPaths = topologicalOrdering.stream().map(GraphNode::getValue).collect(toList());
-        sortedPaths.remove(file);
-
-        return sortedPaths;
-    }
-
-    public Program buildAST(Path file) throws IOException {
-        CommonTokenStream tokens = lex(file);
-        ParseTree tree = parse(tokens);
-        Program program = buildAST(tree);
-        saveParseResult(file, tokens, tree, program);
-        return program;
-    }
-
-    public Program buildAST(ParseTree tree){
-        ParseTreeWalker walker = new ParseTreeWalker();
-        ASTBuilder ast = new ASTBuilder();
-        walker.walk(ast, tree);
-        return ast.getProgram();
-    }
-
-    /**
-     * Lexes and parse the code
-     * Does not cache the result in the SymbolTable
-     * @param code string of the Shiro code to lex and parse
-     * @return a parse tree representing the code
-     */
-    public ParseTree lexAndParse(String code){
-        CommonTokenStream lex = lex(code);
-        ParseTree tree = parse(lex);
-
-        return tree;
-    }
-
-    /**
-     * Lexes and parse the code
-     * @param file path of the Shiro code to lex and parse
-     * @return a parse tree representing the code
-     */
-    public ParseTree lexAndParse(Path file) throws IOException {
-        CommonTokenStream lex = lex(file);
-        ParseTree tree = parse(lex);
-        return tree;
-    }
-
-    /**
-     * Gets an instance of the Shiro lexer
-     * @param input code to be lexed
-     * @return a {@code ShiroLexer} initialized with the source
-     */
-    public ShiroLexer getLexer(CharStream input){
-        ShiroLexer lexer = new ShiroLexer(input);
-        return lexer;
-    }
-
-    /**
-     * Lex the code
-     * @param code code to be lexed
-     * @return stream of tokens
-     */
-    public CommonTokenStream lex(String code){
-        return new CommonTokenStream(getLexer(new ANTLRInputStream(code)));
-    }
-
-    /**
-     * Lex the code at the given path
-     * @param path path of the source code
-     * @return stream of tokens
-     * @throws IOException
-     */
-    public CommonTokenStream lex(Path path) throws IOException {
-        return new CommonTokenStream(getLexer(new ANTLRFileStream(path.toRealPath().toString())));
-    }
-
-    /**
-     * Creates an instance of {@code ShiroParser} initialized with the token stream
-     * @param tokens the token stream
-     * @return instance of Shiro parser
-     */
-    public ShiroParser getParser(CommonTokenStream tokens){
-        ShiroParser parser = new ShiroParser(tokens);
-        parser.setBuildParseTree(true);
-        return parser;
-    }
-
-    /**
-     * Parses the token stream
-     * @param tokens tokens to be parsed
-     * @return the parse tree of the token stream
-     */
-    public ParseTree parse(CommonTokenStream tokens){
-        return getParser(tokens).shiro();
+    public Map<String, FunctionFactory> getFunctionFactories() {
+        return functionFactories;
     }
 
     /**
@@ -345,7 +138,7 @@ public class SymbolTable {
      * @param path the path of the AST to retrience
      * @return {@code Program} instance representing the file at the path. Returns null if path cannot be found.
      */
-    private Program getProgram(Path path) {
+    public Program getProgram(Path path) {
         ParseResult result = parseCache.get(path);
 
         if(result != null){

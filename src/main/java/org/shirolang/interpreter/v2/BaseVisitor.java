@@ -18,12 +18,12 @@ import java.util.stream.Collectors;
 public abstract class BaseVisitor {
     protected List<Error> errors;
     protected Stack<Scope> scope;
-    protected SymbolTable symbolTable;
+    protected ProgramEvaluator evaluator;
 
-    public BaseVisitor(SymbolTable symbolTable) {
+    public BaseVisitor(ProgramEvaluator evaluator) {
         this.errors = new ArrayList<>();
         this.scope = new Stack<>();
-        this.symbolTable = symbolTable;
+        this.evaluator = evaluator;
     }
 
     /**

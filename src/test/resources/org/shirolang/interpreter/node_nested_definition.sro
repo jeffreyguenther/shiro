@@ -2,3 +2,7 @@ node A begin
     node B begin
     end
 end
+
+
+a A
+b A.B

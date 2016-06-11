@@ -1,6 +1,7 @@
 package org.shirolang.interpreter.v2;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
+import org.junit.Assert;
 import org.junit.Test;
 import org.shirolang.base.SFunc;
 import org.shirolang.base.SGraph;
@@ -17,12 +18,12 @@ import static org.junit.Assert.assertNotNull;
 public class GraphVisitorTest extends ParsingTest{
     @Test
     public void anonymousExpr() throws IOException {
-        SymbolTable t = new SymbolTable();
+        ProgramEvaluator evaluator = new ProgramEvaluator(new SymbolTable());
 
         Program program = generateProgram(new ANTLRInputStream(CodeImporter.class.getResourceAsStream("graph_inline_expression.sro")));
         assertEquals(3, program.getDefaultGraph().getFunctions().size());
 
-        GraphVisitor visitor = new GraphVisitor(t);
+        GraphVisitor visitor = new GraphVisitor(evaluator);
         SGraph graph = visitor.visit(program.getDefaultGraph());
         assertNotNull(graph);
         assertEquals(1, graph.getAnonymousPorts().size());
@@ -33,14 +34,15 @@ public class GraphVisitorTest extends ParsingTest{
 
     @Test
     public void anonymousExprWithNode() throws IOException {
-        SymbolTable t = new SymbolTable();
+        SymbolTable table = new SymbolTable();
+        ProgramEvaluator evaluator = new ProgramEvaluator(table);
 
         Program program = generateProgram(new ANTLRInputStream(CodeImporter.class.getResourceAsStream("graph_inline_node_instantiation_assignment.sro")));
         assertEquals(3, program.getDefaultGraph().getAssignments().size());
 
-        t.setNodeDefs(program.getNodeDefsByName());
+        table.setNodeDefs(program.getNodeDefsByName());
 
-        GraphVisitor visitor = new GraphVisitor(t);
+        GraphVisitor visitor = new GraphVisitor(evaluator);
         SGraph graph = visitor.visit(program.getDefaultGraph());
         visitor.setPass(MultiPassVisitor.SECOND_PASS);
         visitor.visit(program.getDefaultGraph());
@@ -60,12 +62,13 @@ public class GraphVisitorTest extends ParsingTest{
 
     @Test
     public void anonymousGraphWithNodeWithKeywordArgs() throws IOException {
-        SymbolTable t = new SymbolTable();
+        SymbolTable table = new SymbolTable();
+        ProgramEvaluator evaluator = new ProgramEvaluator(table);
 
         Program program = generateProgram(new ANTLRInputStream(CodeImporter.class.getResourceAsStream("graph_inline_node_instantiation_named_args.sro")));
-        t.setNodeDefs(program.getNodeDefsByName());
+        table.setNodeDefs(program.getNodeDefsByName());
 
-        GraphVisitor visitor = new GraphVisitor(t);
+        GraphVisitor visitor = new GraphVisitor(evaluator);
         SGraph graph = visitor.visit(program.getDefaultGraph());
         assertNotNull(graph);
 
@@ -81,12 +84,13 @@ public class GraphVisitorTest extends ParsingTest{
 
     @Test
     public void anonymousGraphWithOptions() throws IOException {
-        SymbolTable t = new SymbolTable();
+        SymbolTable table = new SymbolTable();
+        ProgramEvaluator evaluator = new ProgramEvaluator(table);
 
         Program program = generateProgram(new ANTLRInputStream(CodeImporter.class.getResourceAsStream("graph_inline_node_instantiation_with_options.sro")));
-        t.setNodeDefs(program.getNodeDefsByName());
+        table.setNodeDefs(program.getNodeDefsByName());
 
-        GraphVisitor visitor = new GraphVisitor(t);
+        GraphVisitor visitor = new GraphVisitor(evaluator);
         SGraph graph = visitor.visit(program.getDefaultGraph());
         visitor.setPass(MultiPassVisitor.SECOND_PASS);
         visitor.visit(program.getDefaultGraph());
@@ -103,5 +107,26 @@ public class GraphVisitorTest extends ParsingTest{
 
         assertNotNull(n.getPort("width"));
         assertNotNull(n.getPort("height"));
+    }
+
+    @Test
+    public void createNestedNode() throws IOException {
+        SymbolTable table = new SymbolTable();
+        ProgramEvaluator evaluator = new ProgramEvaluator(table);
+
+        Program program = generateProgram(new ANTLRInputStream(CodeImporter.class.getResourceAsStream("node_nested_definition.sro")));
+        table.setNodeDefs(program.getNodeDefsByName());
+
+        GraphVisitor visitor = new GraphVisitor(evaluator);
+        SGraph graph = visitor.visit(program.getDefaultGraph());
+        visitor.setPass(MultiPassVisitor.SECOND_PASS);
+        visitor.visit(program.getDefaultGraph());
+        assertNotNull(graph);
+
+        SNode nA = graph.getNode("a");
+        assertEquals("A", nA.getType());
+
+        SNode nB = graph.getNode("b");
+        assertEquals("B", nB.getType());
     }
 }

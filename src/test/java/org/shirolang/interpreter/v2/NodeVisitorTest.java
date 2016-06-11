@@ -17,13 +17,13 @@ import static org.junit.Assert.assertEquals;
 public class NodeVisitorTest extends ParsingTest{
     @Test
     public void createNode() throws IOException {
-        SymbolTable symbolTable = new SymbolTable();
+        ProgramEvaluator evaluator = new ProgramEvaluator(new SymbolTable());
         Program program = generateProgram(new ANTLRInputStream(CodeImporter.class.getResourceAsStream("node.sro")));
 
-        NodeVisitor visitor = new NodeVisitor(symbolTable, symbolTable.getDefaultGraph());
+        NodeVisitor visitor = new NodeVisitor(evaluator, evaluator.getSymbolTable().getDefaultGraph());
         SNode createdNode = visitor.visit(program.getNodeDefs().get(0));
 
-        assertEquals("Box", createdNode.getName());
+        assertEquals("", createdNode.getName());
         Assert.assertNotNull(createdNode.getPort("length"));
         Assert.assertNotNull(createdNode.getPort("width"));
         Assert.assertNotNull(createdNode.getPort("height"));
@@ -34,14 +34,14 @@ public class NodeVisitorTest extends ParsingTest{
 
     @Test
     public void createNodeWithMapArgs() throws IOException {
-        SymbolTable symbolTable = new SymbolTable();
+        ProgramEvaluator evaluator = new ProgramEvaluator(new SymbolTable());
         Program program = generateProgram(new ANTLRInputStream(CodeImporter.class.getResourceAsStream("node_with_map_args.sro")));
 
-        NodeVisitor visitor = new NodeVisitor(symbolTable, symbolTable.getDefaultGraph());
+        NodeVisitor visitor = new NodeVisitor(evaluator, evaluator.getSymbolTable().getDefaultGraph());
 
         SNode createdNode = visitor.visit(program.getNodeDefs().get(0));
 
-        assertEquals("Box", createdNode.getName());
+        assertEquals("", createdNode.getName());
         Assert.assertNotNull(createdNode.getPort("length"));
         Assert.assertNotNull(createdNode.getPort("width"));
         Assert.assertNotNull(createdNode.getPort("height"));
@@ -52,11 +52,11 @@ public class NodeVisitorTest extends ParsingTest{
 
     @Test
     public void createNodeWithPortAssignment() throws IOException {
-        SymbolTable symbolTable = new SymbolTable();
+        ProgramEvaluator evaluator = new ProgramEvaluator(new SymbolTable());
         Program program = generateProgram(new ANTLRInputStream(CodeImporter.class.getResourceAsStream("node_with_port_assignment.sro")));
 
-        SGraph defaultGraph = symbolTable.getDefaultGraph();
-        NodeVisitor visitor = new NodeVisitor(symbolTable, defaultGraph);
+        SGraph defaultGraph = evaluator.getSymbolTable().getDefaultGraph();
+        NodeVisitor visitor = new NodeVisitor(evaluator, evaluator.getSymbolTable().getDefaultGraph());
 
 
         SNode createdNode = visitor.visit(program.getNodeDefs().get(0));
@@ -65,7 +65,7 @@ public class NodeVisitorTest extends ParsingTest{
         visitor.setPass(NodeVisitor.SECOND_PASS);
         visitor.visit(program.getNodeDefs().get(0));
 
-        assertEquals("Box", createdNode.getName());
+        assertEquals("Box", createdNode.getType());
         SDouble length = (SDouble) createdNode.getPort("length");
         length.evaluate();
         assertEquals(10, length.getValue(), 1E-15);
@@ -76,3 +76,4 @@ public class NodeVisitorTest extends ParsingTest{
         assertEquals(2, update.getInputs().size());
     }
 }
+

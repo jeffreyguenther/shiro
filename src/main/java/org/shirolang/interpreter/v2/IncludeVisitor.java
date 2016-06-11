@@ -12,6 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,8 +26,8 @@ public class IncludeVisitor extends BaseVisitor{
     private Path sourceFile;
     private URL stdLib;
 
-    public IncludeVisitor(SymbolTable symbolTable, Path source) {
-        super(symbolTable);
+    public IncludeVisitor(ProgramEvaluator programEvaluator, Path source) {
+        super(programEvaluator);
         sourceFiles = new HashSet<>();
         this.sourceFile = source;
         this.parentDirectory = source.getParent();
@@ -35,7 +36,11 @@ public class IncludeVisitor extends BaseVisitor{
 
     public Set<DependencyRelation<Path>> visit(Program p){
         for (IncludeStatement include: p.getIncludes()){
-            sourceFiles.addAll(visit(include));
+            if(!evaluator.hasErrors()) {
+                sourceFiles.addAll(visit(include));
+            }else{
+                return sourceFiles;
+            }
         }
 
         return sourceFiles;
@@ -43,7 +48,7 @@ public class IncludeVisitor extends BaseVisitor{
 
     public Set<DependencyRelation<Path>> visit(IncludeStatement include){
         String importedFile = include.getFile();
-        // look in standard symbolTable folders first (org.shirolang.interpreter.lib)
+        // look in standard evaluator folders first (org.shirolang.interpreter.lib)
 
         if(!importedFile.endsWith(".sro")){
             importedFile = importedFile + ".sro";
@@ -83,7 +88,12 @@ public class IncludeVisitor extends BaseVisitor{
      * @throws IOException
      */
     private Set<DependencyRelation<Path>> getSourceDependencies(Path file) throws IOException {
-        IncludeVisitor visitor = new IncludeVisitor(symbolTable, file);
-        return visitor.visit(symbolTable.buildAST(file));
+        Optional<Program> program = evaluator.buildAST(file);
+        if(!evaluator.hasErrors() && program.isPresent()){
+            IncludeVisitor visitor = new IncludeVisitor(evaluator, file);
+            return visitor.visit(program.get());
+        }else{
+            return new HashSet<>();
+        }
     }
 }

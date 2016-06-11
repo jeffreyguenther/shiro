@@ -55,7 +55,7 @@ public class SNode extends SFuncBase implements Scope{
     /**
      * Creates a new node
      * @param type type of the node
-     * @param name name of node ( the same as the type for prototype instances)
+     * @param name name of node
      * @param scope scope the node is in
      */
     public SNode(String type, String name, Scope scope) {
@@ -67,7 +67,7 @@ public class SNode extends SFuncBase implements Scope{
      * Initializes variables. This is a work around to using this() in
      * a constructor with super
      * @param type type of node
-     * @param name name of node ( the same as the type for prototype instances)
+     * @param name name of node
      * @param scope scope the node is in
      */
     private void initializeVars(String type, String name, Scope scope) {

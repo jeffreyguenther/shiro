@@ -8,8 +8,8 @@ public abstract class MultiPassVisitor extends BaseVisitor {
     public static final int SECOND_PASS = 2;
     protected int pass;
 
-    public MultiPassVisitor(SymbolTable symbolTable) {
-        super(symbolTable);
+    public MultiPassVisitor(ProgramEvaluator evaluator) {
+        super(evaluator);
         this.pass = FIRST_PASS;
     }
 

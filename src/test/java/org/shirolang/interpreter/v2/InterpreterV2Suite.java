@@ -14,6 +14,7 @@ import org.shirolang.interpreter.ast.ASTSuite;
     NodeVisitorTest.class,
     GraphVisitorTest.class,
     IncludeNotFoundErrorTest.class,
+    ProgramEvaluatorTest.class,
     RuntimeTest.class
 })
 public class InterpreterV2Suite {

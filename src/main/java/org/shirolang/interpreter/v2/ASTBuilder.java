@@ -53,12 +53,12 @@ public class ASTBuilder extends ShiroBaseListener {
     @Override
     public void enterNodeDecl(ShiroParser.NodeDeclContext ctx) {
         String name = ctx.MFNAME().getText();
-        String activeOption = "";
+        String defaultOption = "";
 
         NodeDefinition def;
         if (ctx.optionSelector() != null) {
-            activeOption = ctx.optionSelector().IDENT().getText();
-            def = new NodeDefinition(name, activeOption);
+            defaultOption = ctx.optionSelector().IDENT().getText();
+            def = new NodeDefinition(name, defaultOption);
         } else {
             def = new NodeDefinition(name);
         }

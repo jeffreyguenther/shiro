@@ -16,8 +16,8 @@ import java.util.List;
  */
 public class GraphVisitor extends MultiPassVisitor{
 
-    public GraphVisitor(SymbolTable symbolTable) {
-        super(symbolTable);
+    public GraphVisitor(ProgramEvaluator evaluator) {
+        super(evaluator);
     }
 
     public SGraph visit(GraphDefinition def){
@@ -43,7 +43,7 @@ public class GraphVisitor extends MultiPassVisitor{
     public SFunc visit(FunctionDefinition funcDef){
         String type = funcDef.getType();
 
-        SFunc function = symbolTable.createFunction(getGraph(), type);
+        SFunc function = evaluator.createFunction(getGraph(), type);
         function.setName(funcDef.getName());
 
         if(!function.getSymbolType().isNode()) {

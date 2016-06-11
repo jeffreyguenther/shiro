@@ -14,8 +14,8 @@ import org.shirolang.interpreter.ast.*;
 public class NodeVisitor extends MultiPassVisitor{
     private SGraph graph;
 
-    public NodeVisitor(SymbolTable symbolTable, SGraph graph) {
-        super(symbolTable);
+    public NodeVisitor(ProgramEvaluator evaluator, SGraph graph) {
+        super(evaluator);
         this.scope.push(graph);
         this.graph = graph;
     }
@@ -23,7 +23,7 @@ public class NodeVisitor extends MultiPassVisitor{
     public SNode visit(NodeDefinition def){
         if(pass == FIRST_PASS) {
 
-            SNode node = new SNode(def.getName(), def.getName(), scope.peek());
+            SNode node = new SNode(def.getName(), "", scope.peek());
             scope.push(node);
 
             for (PortDefinition d : def.getDeclarations()) {
@@ -72,7 +72,7 @@ public class NodeVisitor extends MultiPassVisitor{
         FunctionDefinition funcDef = def.getFunction();
         String type = funcDef.getType();
 
-        SFunc function = symbolTable.createFunction(getGraph(), type);
+        SFunc function = evaluator.createFunction(getGraph(), type);
         function.setAccess(def.getAccess());
         function.setName(funcDef.getName());
 

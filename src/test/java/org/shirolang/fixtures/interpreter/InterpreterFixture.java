@@ -579,4 +579,38 @@ public class InterpreterFixture {
             "    input width Double\n" +
             "end";
     }
+
+    /**
+     * node Box begin
+     *     input length Double
+     *     input width Double
+     * end
+     *
+     * b Box(length: 100.0, width: 13.5)
+     */
+    public static String boxNodeProgram(){
+        return
+            "node Box begin\n" +
+            "    input length Double\n" +
+            "    input width Double\n" +
+            "end\n\n" +
+            "b Box(length: 100.0, width: 13.5)";
+    }
+
+    /**
+     * node Box begin
+     *     input length Double
+     *     input width Double
+     * end
+     *
+     * b Box((length: 100.0, width: 13.5)
+     */
+    public static String boxNodeProgramSyntaxError(){
+        return
+            "node Box begin\n" +
+            "    input length Double\n" +
+            "    input width Double\n" +
+            "end\n\n" +
+            "b Box((length: 100.0, width: 13.5)";
+    }
 }
