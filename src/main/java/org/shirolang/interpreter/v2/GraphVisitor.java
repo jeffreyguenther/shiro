@@ -8,7 +8,6 @@ import org.shirolang.exceptions.OptionNotFoundException;
 import org.shirolang.exceptions.PathNotFoundException;
 import org.shirolang.interpreter.ast.*;
 
-import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -105,5 +104,4 @@ public class GraphVisitor extends MultiPassVisitor{
     public SGraph getGraph(){
         return (SGraph) scope.peek();
     }
-
 }

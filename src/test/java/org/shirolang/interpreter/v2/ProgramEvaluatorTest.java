@@ -99,6 +99,13 @@ public class ProgramEvaluatorTest {
         assertEquals(1, errors.size());
     }
 
+    @Test
+    public void read_from_internal_port(){
+        List<Error> errors = evaluator.evaluate(p("errors/read_from_internal_port.sro"));
+        assertEquals(1, errors.size());
+        // TODO
+    }
+
     private Path p(String file){
         return Paths.get(CodeImporter.class.getResource(file).getPath());
     }

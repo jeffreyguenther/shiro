@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Represents an argument and result of a multi-function.
+ * Represents an argument and result of a function.
  * Has a field to indicate what types should be expected
  */
 public class TypedValue {

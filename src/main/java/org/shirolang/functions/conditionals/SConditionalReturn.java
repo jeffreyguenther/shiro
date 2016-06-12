@@ -7,7 +7,7 @@ import org.shirolang.values.SBoolean;
 import org.shirolang.values.SInteger;
 
 /**
- * A multi-function that returns different values depending on the condition
+ * A function that returns different values depending on the condition
  */
 public class SConditionalReturn extends SFuncBase {
 
