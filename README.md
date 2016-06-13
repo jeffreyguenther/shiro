@@ -123,8 +123,8 @@ Shiro is implemented in Java. [Gradle](http://www.gradle.org/) is used as the
 build system and dependency manager. The interpreter depends on [ANTLR
 4.5](http://www.antlr.org/) to generate the parser, lexer and parse tree event
 listeners. `build.gradle` is setup to automatically generate the Java code at
-compile time. You can use gradle from the commandline or use Netbeans or
-Eclipse, as both IDE's support gradle projects.
+compile time. You can use gradle from the commandline or use your favourite Java IDE.
+The awesome ANTLR plugin for IntelliJ makes it an easy choice.
 
 You can start the **Shiro Playground** application that allows you to load and
 run Shiro code using this command:
@@ -180,6 +180,7 @@ the [Computational Design Group](http://www.computationaldesign.ca/).
 * [Chris Shaw](http://www.sfu.ca/~shaw/) - PhD Supervisor
 * [Siniša Kolarić](http://www.sfu.ca/~skolaric/) - Research Group Colleague
 * [Ankit Gupta](http://www.linkedin.com/pub/ankit-gupta/37/b7b/851) - Research Group Colleague
+* [Maher Elkhaldi](https://ca.linkedin.com/in/melkhaldi) - Research Group Colleague
 
 Mailing list: shiro-lang@googlegroups.com
 
