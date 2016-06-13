@@ -13,6 +13,56 @@ The Shiro runtime is designed to be used as the computational engine for
 applications like parametric CAD tools, vector editors, and spreadsheets. The
 runtime provides an API to modify a program.
 
+#### A Quick Sample
+
+Here's an example that describes a pool with three alternatives layouts:
+
+```
+node Layout begin
+  input width Double
+  output length Double
+end
+
+node Pool[basin] begin
+  option singleLane Layout(width: 10.0, length: 30.0)
+  option basin Layout(width: 20.0, length: 20.0)
+  option olympic Layout(width: 25.0, length: 30.0)
+end
+
+node Box begin
+  input length Double
+  input width Double
+  input height Double
+  output volume Double( length * width * height)
+end
+
+node Cost begin
+  input volume Double
+  output cost Double(volume * 12.0)
+end
+
+graph poolCosts begin
+  pool Pool
+  b Box(length: pool.active.length, width: pool.active.width, height: 10.0)
+  c Cost(b.volume)
+end
+
+state singleLane begin
+  graph poolCosts
+  pool[singleLane]
+end
+
+state basin begin
+  graph poolCosts
+  pool[basin]
+end
+
+state olympic begin
+  graph poolCosts
+  pool[olympic]
+end
+```
+
 #### Examples
 In `examples`, you'll find folders with example Shiro programs. Checked examples
 run in **Shiro Playground**.
