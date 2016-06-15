@@ -1,0 +1,62 @@
+include "geom"
+
+node Palette begin
+    stroke ColorFromRGB(0, 0, 0, 1.0)
+
+    sideLength Double(50.0)
+    x Double(0.0)
+    y Double(0.0)
+
+    r ColorFromRGB(150, 0, 0, 1.0)
+    color1 Color(r)
+    color2 Color(r)
+    color3 Color(r)
+    color4 Color(r)
+
+    // create the swatches
+    r1 Rectangle
+    r1.originX(0.0)
+    r1.originY(0.0)
+    r1.width(sideLength)
+    r1.height(sideLength)
+    r1.stroke(stroke)
+    r1.fill(color1)
+
+    r2 Rectangle
+    r2.originX(50.0)
+    r2.originY(0.0)
+    r2.width(sideLength)
+    r2.height(sideLength)
+    r2.stroke(stroke)
+    r2.fill(color2)
+
+    r3 Rectangle
+    r3.originX(100.0)
+    r3.originY(0.0)
+    r3.width(sideLength)
+    r3.height(sideLength)
+    r3.stroke(stroke)
+    r3.fill(color3)
+
+    r4 Rectangle
+    r4.originX(150.0)
+    r4.originY(0.0)
+    r4.width(sideLength)
+    r4.height(sideLength)
+    r4.stroke(stroke)
+    r4.fill(color4)
+
+    // put all the rectangles in a group so they can be moved as a unit
+    g Group
+    g.originX(x)
+    g.originY(y)
+    g.children(~r1.rect, ~r2.rect, ~r3.rect, ~r4.rect)
+end
+
+graph colors begin
+    palette Palette
+end
+
+state s1 begin
+    graph colors
+end

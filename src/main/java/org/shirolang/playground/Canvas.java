@@ -2,6 +2,7 @@ package org.shirolang.playground;
 
 import javafx.geometry.Insets;
 import javafx.scene.Group;
+import javafx.scene.layout.Background;
 import javafx.scene.layout.Pane;
 
 /**
@@ -17,6 +18,7 @@ public class Canvas extends Pane{
 
         setPadding(new Insets(10));
         setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+        setBackground(Background.EMPTY);
     }
     
     /***

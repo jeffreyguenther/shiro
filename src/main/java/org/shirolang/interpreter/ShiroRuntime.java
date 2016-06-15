@@ -169,7 +169,7 @@ public class ShiroRuntime{
                 List<SFunc> collect = graph.getPorts().stream().filter(p -> p.getType().equals(type)).collect(toList());
 
                 for (SFunc sFunc : collect) {
-                    if (!type.equals("Group")) {
+                    if (!type.equals("SGroup")) {
                         Callback<SFunc, Node> callback = visualCallBacks.get(type);
                         if (callback != null) {
                             visualized.computeIfAbsent(sFunc, callback::call);
@@ -179,12 +179,14 @@ public class ShiroRuntime{
                     } else { // if the type is a "Group"
                         // Render the group
                         SGroup group = (SGroup) sFunc;
-                        Callback<SFunc, Node> groupCallback = visualCallBacks.get("Group");
+                        Callback<SFunc, Node> groupCallback = visualCallBacks.get("SGroup");
                         GroupViz groupViz = (GroupViz) groupCallback.call(group);
 
                         // Render each of the children
                         SList args = (SList) group.getInput("children").getResult();
                         List<SFunc> shapes = args.getValue().stream().map(SFunc::getResult).collect(toList());
+                        Collections.reverse(shapes);
+
                         shapes.forEach((s) ->{
                             Callback<SFunc, Node> callback = visualCallBacks.get(s.getType());
                             groupViz.getChildren().add(visualized.computeIfAbsent(s, callback::call));
@@ -192,6 +194,8 @@ public class ShiroRuntime{
                         });
 
                         visualized.put(sFunc, groupViz);
+
+                        System.out.println("rendering a group");
                     }
                 }
             }

@@ -91,7 +91,7 @@ public class SIdent extends SFuncBase{
 
     @Override
     public void evaluate() {
-        SFunc val;
+        SFunc val = null;
 
         // selector
         if(path.isSelector()){
@@ -100,20 +100,22 @@ public class SIdent extends SFuncBase{
             try {
                 SFunc func = scope.resolvePath(path);
 
-                // return result 0 by default
-                val = func.getResult();
-
-                // port value
-                if (path.doesReferencePortValue()) {
-                    val = func.get(path.getLast());
-                    if (val == null) {
-                        throw new RuntimeException("The path tried to access a port value and failed. " + path + " can't be resolved.");
-                    }
-                }
-
                 // reference value
                 if (path.isReference()) {
                     val = func;
+                } else {
+                    if (path.doesReferencePortValue()) {
+                        val = func.get(path.getLast());
+
+                        if (val == null) {
+                            throw new RuntimeException("The path tried to access a port value and failed. " + path + " can't be resolved.");
+                        }
+                    }
+
+                    if (val == null) {
+                        // return result 0 by default
+                        val = func.getResult();
+                    }
                 }
             } catch (PathNotFoundException e) {
                 throw new RuntimeException(e.getMessage());

@@ -548,12 +548,12 @@ public class SNode extends SFuncBase implements Scope{
             }
 
             if (portReferenced != null) {
-                path.resetHead();
-
                 if (path.atSecondLast()) {
                     path.setReferencesPortValue(true);
 
                 }
+
+                path.resetHead();
             }
         }
 
@@ -574,12 +574,12 @@ public class SNode extends SFuncBase implements Scope{
             }
 
             if (portReferenced != null) {
-                path.resetHead();
-
                 if (path.atSecondLast()) {
                     path.setReferencesPortValue(true);
 
                 }
+
+                path.resetHead();
             }
         }
 
@@ -601,12 +601,12 @@ public class SNode extends SFuncBase implements Scope{
             }
 
             if (portReferenced != null) {
-                path.resetHead();
-
                 if (path.atSecondLast()) {
                     path.setReferencesPortValue(true);
 
                 }
+
+                path.resetHead();
             }
         }
 
@@ -615,9 +615,9 @@ public class SNode extends SFuncBase implements Scope{
             Scope nestedNodeMatch = nestedNodes.get(head.getKey().get());
             if (nestedNodeMatch != null) {
                 // pop the head and search the nested node
-                if(!path.isReference()) {
-                    path.advanceHead();
-                }
+//                if(!path.isReference()) {
+                path.advanceHead();
+//                }
                 portReferenced = nestedNodeMatch.resolvePath(path);
             }
         }

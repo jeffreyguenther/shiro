@@ -194,13 +194,9 @@ public class SGraph implements Scope, Consoleable{
         }else{ // recursively examine the node
             PathSegment head = path.getSegmentAtHead();
 
-            if(head.getKey().get().equals(getName())){
-                path.advanceHead();
-            }
-
             if(head.isSimple()) {
                 if (nodes.containsKey(head.getKey().get())) {
-                    SNode nodeReferenced = nodes.get(path.getSegmentAtHead().getKey().get());
+                    SNode nodeReferenced = nodes.get(head.getKey().get());
                     path.advanceHead();
                     funcReferenced = nodeReferenced.resolvePath(path);
                 }

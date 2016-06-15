@@ -36,7 +36,7 @@ node Rectangle begin
     input fill Color
     input arcHeight Double(0.0)
     input arcWidth Double(0.0)
-    rect SRectangle(originX, originY, rotate, width, height, stroke, strokeWeight, fill, arcHeight, arcWidth)
+    output rect SRectangle(originX, originY, rotate, width, height, stroke, strokeWeight, fill, arcHeight, arcWidth)
 end
 
 node Arc begin
@@ -50,7 +50,7 @@ node Arc begin
     input fill Color
     input stroke Color
     input strokeWeight Double(1.0)
-    update SArc(centerX, centerY, radiusX, radiusY, length, startAngle, arcType, fill, stroke, strokeWeight)
+    output arc SArc(centerX, centerY, radiusX, radiusY, length, startAngle, arcType, fill, stroke, strokeWeight)
 end
 
 node Ellipse begin
@@ -62,7 +62,7 @@ node Ellipse begin
     input stroke Color(ColorFromRGB(0, 0, 0, 1.0))
     input strokeWeight Double(1.0)
     input fill Color(ColorFromRGB(255, 255, 255, 1.0))
-    update SEllipse(centerX, centerY, rotate, radiusX, radiusY, stroke, strokeWeight, fill)
+    output ellipse SEllipse(centerX, centerY, rotate, radiusX, radiusY, stroke, strokeWeight, fill)
 end
 
 node Line begin
@@ -72,7 +72,7 @@ node Line begin
     input endY Double
     input stroke Color
     input strokeWeight Double(1.0)
-    update SLine(startX, startY, endX, endY, stroke, strokeWeight)
+    output line SLine(startX, startY, endX, endY, stroke, strokeWeight)
 end
 
 node Text begin
@@ -83,7 +83,7 @@ node Text begin
     input font String
     input size Double(12.0)
     input weight String("normal")
-    update SText(originX, originY, rotate, text, font, size, weight)
+    output text SText(originX, originY, rotate, text, font, size, weight)
 end
 
 node Group begin

@@ -21,6 +21,6 @@ c.stroke(stroke)
 c.fill(c_fill)
 
 g Group
-g.originX(100.0)
-g.originY(150.0)
-g.children(~r, ~c)
+g.originX(0.0)
+g.originY(0.0)
+g.children(~r.rect, ~c.ellipse)

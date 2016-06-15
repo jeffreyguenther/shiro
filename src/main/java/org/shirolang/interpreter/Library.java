@@ -33,6 +33,7 @@ import org.shirolang.base.*;
 import org.shirolang.exceptions.NameUsedException;
 import org.shirolang.functions.color.ColorFromHSB;
 import org.shirolang.functions.color.ColorFromRGB;
+import org.shirolang.functions.color.ColorToGrayscale;
 import org.shirolang.functions.color.SColor;
 import org.shirolang.functions.conditionals.SConditionalReturn;
 import org.shirolang.functions.conditionals.SConditionalReturnNode;
@@ -147,6 +148,9 @@ public class Library {
             NodeInstantiator nodeProducer = new NodeInstantiator(this, g);
             ParseTreeWalker walker = new ParseTreeWalker();
             walker.walk(nodeProducer, nodeDef);
+            nodeProducer.setPass(2);
+            walker.walk(nodeProducer, nodeDef);
+
             SNode node = nodeProducer.getCreatedNode();
             return node;
         }
@@ -378,7 +382,7 @@ public class Library {
             registerFunction("Color", SColor::new);
             registerFunction("ColorFromRGB", ColorFromRGB::new);
             registerFunction("ColorFromHSB", ColorFromHSB::new);
-            registerFunction("ColorToGrayscale", ColorFromHSB::new);
+            registerFunction("ColorToGrayscale", ColorToGrayscale::new);
 
             registerFunction("SRectangle", SRectangle::new);
             registerFunction("SEllipse", SEllipse::new);

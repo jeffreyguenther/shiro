@@ -17,6 +17,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -308,7 +309,7 @@ public class FXMLViewerController {
                 codeArea.replaceText(sb.toString());
                 currentFile = fileToOpen;
                 Stage stage = (Stage) root.getScene().getWindow();
-                stage.setTitle(stage.getTitle() + " | " +fileToOpen.getName());
+                stage.setTitle("Shiro Playground" + " | " +fileToOpen.getName());
 
             }
         } catch (IOException ex) {
@@ -381,10 +382,17 @@ public class FXMLViewerController {
         ObservableList<Node> children = canvas.getChildren();
         children.clear();
 
+        StackPane stack = new StackPane();
+
         for (String s : alts) {
+            System.out.println(alts);
             Canvas c = layers.get(s);
-            children.add(c);
+
+            stack.getChildren().add(c);
+
         }
+
+        children.add(stack);
     }
 
     /**

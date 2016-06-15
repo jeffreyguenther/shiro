@@ -389,7 +389,7 @@ public class ShiroExpressionListener extends ShiroBaseListener {
     }
 
     @Override
-    public void exitPortDeclInit(@NotNull ShiroParser.PortDeclInitContext ctx) {
+    public void exitPortDeclInit(ShiroParser.PortDeclInitContext ctx) {
         SFunc function = getExpr(ctx.funcDeclInit());
 
         String portType = Objects.isNull(ctx.accessModifier())? "" : ctx.accessModifier().getText();
