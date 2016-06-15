@@ -1,0 +1,24 @@
+include "geom"
+
+node Costumes[bball] begin
+    option bball Image(originX: 0.0, originY: 0.0, file: "file:/Users/jeffrey/Projects/shiro/examples/Drawing/Costume_Selection/basketball.png")
+    option tux Image( originX: 0.0, originY: 0.0, file: "file:/Users/jeffrey/Projects/shiro/examples/Drawing/Costume_Selection/tux.png")
+end
+
+graph costumeSelection begin
+    character Image(originX: 0.0, originY: 0.0, file: "file:/Users/jeffrey/Projects/shiro/examples/Drawing/Costume_Selection/character.png")
+    costumes Costumes
+
+    g Group
+    g.children(~costumes.active, ~character)
+end
+
+state tux begin
+    graph costumeSelection
+    costumes[tux]
+end
+
+state bball begin
+    graph costumeSelection
+    costumes[bball]
+end

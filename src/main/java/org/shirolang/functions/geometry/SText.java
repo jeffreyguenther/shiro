@@ -54,6 +54,9 @@ public class SText extends SFuncBase {
         inputs.setKeyForIndex("weight", 6);
         inputs.add(new TypedValue("String"));
 
+        inputs.setKeyForIndex("fill", 7);
+        inputs.add(new TypedValue("Color"));
+
         results.add(new TypedValue(getType()));
     }
 
@@ -63,12 +66,12 @@ public class SText extends SFuncBase {
 
     @Override
     public int getMaxArgs() {
-        return 7;
+        return 8;
     }
 
     @Override
     public int getMinArgs() {
-        return 7;
+        return 8;
     }
 
     @Override

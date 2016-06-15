@@ -26,6 +26,7 @@ package org.shirolang.playground.editors;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import org.shirolang.functions.color.SColor;
 import org.shirolang.functions.geometry.SText;
 import org.shirolang.values.SDouble;
 import org.shirolang.values.SString;
@@ -52,6 +53,9 @@ public class TextViz extends Text {
         SString font = (SString) t.getInput("font").getResult();
         SDouble size = (SDouble) t.getInput("size").getResult();
         SString weight = (SString) t.getInput("weight").getResult();
+
+        SColor file = (SColor) t.getInput("fill").getResult();
+        setFill(file.getValue());
 
         setFont(Font.font(font.getValue(), FontWeight.findByName(weight.getValue()), size.getValue()));
 

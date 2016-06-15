@@ -1,57 +1,51 @@
 include "geom"
 
 node Typefaces begin
-	option output helvetica String("Helvetica")
-	option output times String("Times New Roman")
+    option output helvetica String("Helvetica")
+    option output times String("Times New Roman")
 end
 
 node TypeColors begin
-	option output grey ColorFromRGB(10, 10, 10, 1.0)
-	option output white ColorFromRGB(255, 255, 255, 1.0)
+    option output grey ColorFromRGB(10, 10, 10, 1.0)
+    option output white ColorFromRGB(255, 255, 255, 1.0)
 end
 
 node BackgroundColors begin
-	option output black ColorFromRGB(0, 0, 0, 1.0)
-	option output green ColorFromRGB(0, 231, 10, 1.0)
+    option output black ColorFromRGB(22, 33, 0, 1.0)
+    option output green ColorFromRGB(0, 231, 10, 1.0)
 end
 
 graph everGreenLogo begin
-	type Typefaces
-	typeColors TypeColors
-	bgColors BackgroundColors
+    type Typefaces
+    typeColors TypeColors
+    bgColors BackgroundColors
 
-	radius Double(200.0)
-	lineLength Double(300.0)
-	lineColor ColorFromRGB(0, 0, 0, 1.0)
-	
-	top Line(startX: radius - (lineLength / 2), startY: radius - 20)
-	top.stroke(lineColor)
-	top.endX(radius - (lineLength / 2) + lineLength)
-	top.endY(radius - 20)
+    radius Double(200.0)
+    lineLength Double(300.0)
+    lineColor ColorFromRGB(0, 0, 0, 1.0)
+    
+    top Line(startX: radius - (lineLength / 2), startY: radius - 20)
+    top.stroke(lineColor)
+    top.endX(radius - (lineLength / 2) + lineLength)
+    top.endY(radius - 20)
 
-	bottom Line(startX: radius - (lineLength / 2), startY: radius + 20)
-	bottom.stroke(lineColor)
-	bottom.endX(radius - (lineLength / 2) + lineLength)
-	bottom.endY(radius + 20)
+    bottom Line(startX: radius - (lineLength / 2), startY: radius + 20)
+    bottom.stroke(lineColor)
+    bottom.endX(radius - (lineLength / 2) + lineLength)
+    bottom.endY(radius + 20)
 
-	bg Ellipse(centerX: radius, centerY: radius, fill: bgColors.active)
-	bg.stroke(bgColors.active)
-	bg.radiusX(radius)
-	bg.radiusY(radius)
+    bg Ellipse(centerX: radius, centerY: radius, fill: bgColors.active)
+    bg.stroke(bgColors.active)
+    bg.radiusX(radius)
+    bg.radiusY(radius)
 
-	logotype Text(text: "EverClean", font: type.active)
-	logotype.originX(radius - 100)
-	logotype.originY(radius)
+    logotype Text(text: "EverClean", font: type.active)
+    logotype.color(typeColors.active)
+    logotype.originX(radius - 100)
+    logotype.originY(radius)
 
-	g Group
-	g.originX(0.0)
-	g.originY(0.0)
-	g.children(~top, ~bottom, ~logotype, ~bg)
-end
-
-state test begin
-   graph everGreenLogo
-   type[times]
-   typeColors[grey]
-   bgColors[green]
+    g Group
+    g.originX(0.0)
+    g.originY(0.0)
+    g.children(~top.line, ~bottom.line, ~logotype.elem, ~bg.ellipse)
 end

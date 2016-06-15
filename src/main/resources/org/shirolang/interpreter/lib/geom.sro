@@ -83,22 +83,19 @@ node Text begin
     input font String
     input size Double(12.0)
     input weight String("normal")
-    output text SText(originX, originY, rotate, text, font, size, weight)
+    input fill Color(ColorFromRGB(255, 255, 255, 1.0))
+    output elem SText(originX, originY, rotate, text, font, size, weight, fill)
 end
 
 node Group begin
-    input originX Double
-    input originY Double
+    input originX Double(0.0)
+    input originY Double(0.0)
     input rotate Double(0.0)
     input children List
     update SGroup(originX, originY, rotate, children)
 end
 
 /**
-node Layer begin
-    input shapes List
-end
-
 node Image begin
     input path String
     input originX Double

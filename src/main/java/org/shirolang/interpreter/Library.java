@@ -389,6 +389,7 @@ public class Library {
             registerFunction("SArc", SArc::new);
             registerFunction("SLine", SLine::new);
             registerFunction("SText", SText::new);
+            registerFunction("Image", SImage::new);
             registerFunction("SGroup", SGroup::new);
         }catch (NameUsedException e) {
             throw new RuntimeException("Something crazy happened and an internal type is already defined!");
