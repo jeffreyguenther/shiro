@@ -84,7 +84,7 @@ run in **Shiro Playground**.
 	* [x] `Investment.sro` shows how to compare two investment products
 
 * Logo - create alternative versions of a logo
-	* [ ] 'EverClean_logo.sro' defines a design for a logo
+	* [x] 'EverClean_logo.sro' defines a design for a logo
 
 * Old_Examples - examples written in the old syntax to be ported
 
