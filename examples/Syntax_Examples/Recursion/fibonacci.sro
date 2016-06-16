@@ -34,4 +34,4 @@ node Fibonacci begin
     output sum Sum(values)
 end
 
-fib Fibonacci(n: 5)
+fib Fibonacci(n: 7)

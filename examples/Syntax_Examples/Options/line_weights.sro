@@ -1,14 +1,13 @@
 include "geom.sro"
 
 node StrokeWidths begin
-	option input small Double (25.0)
-	option input large Double( 55.0)
+	option input small Double(15.0)
+	option input large Double(55.0)
 end
 
-
 graph aSketch begin
-	s StrokeWidths  
-	Geometry.r Rectangle(originX: 40.0, originY: 100.0, width: 100.0, height: 400.0)
+	s StrokeWidths
+	r Rectangle(originX: 40.0, originY: 100.0, width: 100.0, height: 400.0, stroke: ColorFromRGB(0, 0, 0, 1.0))
 	r.strokeWeight(s.active)
 end
 

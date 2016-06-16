@@ -7,10 +7,11 @@ end
 
 graph typefaces begin
     f Faces
-    Geometry.t Text
+    t Text
     t.originX(100.00)
     t.originY(75.0)
     t.text("Hello world!")
     t.font(f.active)
     t.size(100.0)
+    t.fill(ColorFromRGB(0, 0, 0, 1.0))
 end
