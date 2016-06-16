@@ -68,14 +68,14 @@ In `examples`, you'll find folders with example Shiro programs. Checked examples
 run in **Shiro Playground**.
 
 * Color_Schemes - shows how to create a color scheme
-	* [ ] `ColorScheme_OnColor.sro` creates alternatives on individual colors
-	* [ ] `ColorScheme_OnScheme.sro` creates alternatives on the entire scheme
+	* [x] `ColorScheme_OnColor.sro` creates alternatives on individual colors
+	* [x] `ColorScheme_OnScheme.sro` creates alternatives on the entire scheme
 
 * Data_Analysis - example of processing a CSV file and viewing the result in a table
 	* [ ] `poverty.sro` analysis of the world's population in poverty
 
 * Drawing - shows how to draw in Shiro
-	* [ ] `Costume_Selection.sro` shows how to render differty costumes for a character
+	* [x] `Costume_Selection.sro` shows how to render differty costumes for a character
 	* [x] `FlowerOfLife.sro` uses traces of the Flower of Life, a patterns of circles to create images
 	* [x] `shapes.sro` is collage of the shapes you can draw in Shiro
 
