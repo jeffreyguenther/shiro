@@ -79,8 +79,8 @@ public class FilterTableMFunc extends SFuncBase{
 
         Map<Integer, Map<String, Comparable>> rowMap = tableValue.rowMap();
 
-        Table<Integer, String, Comparable> tableMatches = HashBasedTable.<Integer, String, Comparable> create();
-        Table<Integer, String, Comparable> tableNotMatches = HashBasedTable.<Integer, String, Comparable> create();
+        Table<Integer, String, Comparable> tableMatches = HashBasedTable.create();
+        Table<Integer, String, Comparable> tableNotMatches = HashBasedTable.create();
 
         for (Integer rowKey : rowMap.keySet()) {
             Map<String, Comparable> row = rowMap.get(rowKey);

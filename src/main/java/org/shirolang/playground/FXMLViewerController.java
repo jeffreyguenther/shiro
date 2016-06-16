@@ -23,7 +23,12 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.Token;
-import org.fxmisc.richtext.*;
+import org.fxmisc.richtext.CodeArea;
+import org.fxmisc.richtext.LineNumberFactory;
+import org.fxmisc.richtext.model.PlainTextChange;
+import org.fxmisc.richtext.model.StyleSpans;
+import org.fxmisc.richtext.model.StyleSpansBuilder;
+import org.fxmisc.wellbehaved.event.Nodes;
 import org.reactfx.EventStream;
 import org.reactfx.util.Try;
 import org.shirolang.functions.geometry.*;
@@ -39,6 +44,12 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static javafx.scene.input.KeyCode.*;
+import static javafx.scene.input.KeyCombination.SHORTCUT_DOWN;
+import static org.fxmisc.wellbehaved.event.EventPattern.keyPressed;
+import static org.fxmisc.wellbehaved.event.InputMap.consume;
+import static org.fxmisc.wellbehaved.event.InputMap.sequence;
 
 /**
  * FXML Controller class
@@ -103,6 +114,12 @@ public class FXMLViewerController {
         codeArea.textProperty().addListener((observable, oldValue, newValue) -> {
             needsSave = true;
         });
+
+        Nodes.addInputMap(codeArea, sequence(
+                consume(keyPressed(TAB), e -> codeArea.replaceSelection("    ")),
+                consume(keyPressed(UP, SHORTCUT_DOWN), e -> codeArea.selectRange(0,0)),
+                consume(keyPressed(DOWN, SHORTCUT_DOWN), e -> codeArea.moveTo(codeArea.getLength()))
+        ));
 
         EventStream<PlainTextChange> textChanges = codeArea.plainTextChanges();
 

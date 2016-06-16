@@ -34,8 +34,7 @@ public class CSV2TableMFunc extends SFuncBase {
 
         String p = ((SString) path).getValue();
 
-        Table<Integer, String, Comparable> table = HashBasedTable
-                .<Integer, String, Comparable> create();
+        Table<Integer, String, Comparable> table = HashBasedTable.create();
         int rowCount = 0;
         File f = new File(p);
 

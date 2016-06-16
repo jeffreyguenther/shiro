@@ -276,4 +276,8 @@ public class SGraph implements Scope, Consoleable{
 
         return sb.toString();
     }
+
+    public boolean isEmpty() {
+        return nodes.isEmpty() && ports.isEmpty() && anonymousPorts.isEmpty();
+    }
 }

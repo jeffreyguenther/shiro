@@ -193,6 +193,8 @@ public class ShiroRuntime{
                             visualized.remove(s);
                         });
 
+                        System.out.println(shapes);
+
                         visualized.put(sFunc, groupViz);
 
                         System.out.println("rendering a group");
@@ -260,26 +262,28 @@ public class ShiroRuntime{
 
         // for each graph
         for(SGraph g: graphs){
-            // get all the nodes with options in a given graph
-            Set<SNode> nodesWithOptions = g.getNodesWithOptions();
-            if(nodesWithOptions.isEmpty()){
-                SState state = new SState(library.getNameManager().generateName("state"), g.getName());
-                states.add(state);
-            }else {
-
-                List<Set<Pair<String, String>>> rawOptions = nodesWithOptions.stream()
-                        .map(SNode::getOptionPairs).collect(toList());
-
-                // Calculate the cartesian product
-                Set<List<Pair<String, String>>> cartesianProduct = Sets.cartesianProduct(rawOptions);
-                // build all possible subjunct tables
-                for (List<Pair<String, String>> table : cartesianProduct) {
-                    // create a state
+            if(!g.isEmpty()) {
+                // get all the nodes with options in a given graph
+                Set<SNode> nodesWithOptions = g.getNodesWithOptions();
+                if (nodesWithOptions.isEmpty()) {
                     SState state = new SState(library.getNameManager().generateName("state"), g.getName());
-                    for (Pair<String, String> entry : table) {
-                        state.addActivation(new StateActivation(entry.getKey(), entry.getValue()));
-                    }
                     states.add(state);
+                } else {
+
+                    List<Set<Pair<String, String>>> rawOptions = nodesWithOptions.stream()
+                            .map(SNode::getOptionPairs).collect(toList());
+
+                    // Calculate the cartesian product
+                    Set<List<Pair<String, String>>> cartesianProduct = Sets.cartesianProduct(rawOptions);
+                    // build all possible subjunct tables
+                    for (List<Pair<String, String>> table : cartesianProduct) {
+                        // create a state
+                        SState state = new SState(library.getNameManager().generateName("state"), g.getName());
+                        for (Pair<String, String> entry : table) {
+                            state.addActivation(new StateActivation(entry.getKey(), entry.getValue()));
+                        }
+                        states.add(state);
+                    }
                 }
             }
         }
