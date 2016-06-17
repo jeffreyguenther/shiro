@@ -14,7 +14,7 @@ import java.util.Map;
  *
  */
 public class SelectColumnMFunc extends SFuncBase {
-    private static final String TYPE = "SelectColumn";
+    private static final String TYPE = "SSelectColumn";
     private static final String TABLE = "table";
     private static final String COLUMN = "column";
 
@@ -60,11 +60,11 @@ public class SelectColumnMFunc extends SFuncBase {
 
     @Override
     public int getMaxArgs() {
-        return 1;
+        return 2;
     }
 
     @Override
     public int getMinArgs() {
-        return 1;
+        return 2;
     }
 }

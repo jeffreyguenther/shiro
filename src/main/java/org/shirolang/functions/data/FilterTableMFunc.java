@@ -9,6 +9,7 @@ import org.shirolang.values.SDouble;
 import org.shirolang.values.SString;
 
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * This multifunction takes a table, a column name, a conditional operator and
@@ -20,7 +21,7 @@ import java.util.Map;
  */
 public class FilterTableMFunc extends SFuncBase{
     // inputs
-    private static final String TYPE = "FilterTable";
+    private static final String TYPE = "SFilterTable";
     private static final String TABLE = "table";
     private static final String COLUMN = "column";
     private static final String OPERATOR = "operator";
@@ -46,7 +47,7 @@ public class FilterTableMFunc extends SFuncBase{
         inputs.add(new TypedValue("String"));
 
         inputs.setKeyForIndex(VALUE, 3);
-        inputs.add(new TypedValue("Double"));
+        inputs.add(new TypedValue("String"));
 
         results.setKeyForIndex(MATCH, 0);
         results.add(new TypedValue("Table"));
@@ -65,16 +66,16 @@ public class FilterTableMFunc extends SFuncBase{
         Table<Integer, String, Comparable> tableValue = ((STable) table).getValue();
         String columnToFilterOn = ((SString) column).getValue();
         String operator = ((SString)op ).getValue();
+
         Double val = 0.0;
         String valString = "";
 
-
-        if( value.getType().equals("String")){
-            stringMode = true;
-            valString = ((SString) value).getValue();
-        }else if ( value.getType().equals("Double")){
+        valString = ((SString) value).getValue();
+        try{
             stringMode = false;
-            val = ((SDouble) value).getValue();
+            val = Double.parseDouble(valString);
+        }catch (NumberFormatException ex){
+            stringMode = true;
         }
 
         Map<Integer, Map<String, Comparable>> rowMap = tableValue.rowMap();
@@ -87,7 +88,6 @@ public class FilterTableMFunc extends SFuncBase{
 
             if (!stringMode) {
 
-                Double valueToCompare = val;
                 Double valuetoCompareWith;
 
                 Comparable get = row.get(columnToFilterOn);
@@ -97,8 +97,7 @@ public class FilterTableMFunc extends SFuncBase{
                     valuetoCompareWith = Double.parseDouble((String)get);
                 }
 
-                if (doubleCompare(operator, valuetoCompareWith,
-                        valueToCompare)) {
+                if (doubleCompare(operator, valuetoCompareWith, val)) {
                     putRowInTable(tableMatches, rowKey, row);
                 } else {
                     putRowInTable(tableNotMatches, rowKey, row);
@@ -106,8 +105,7 @@ public class FilterTableMFunc extends SFuncBase{
             }
             else{
 
-                String valueToCompare = valString;
-                if (stringCompare(operator, (String) row.get(columnToFilterOn), valueToCompare)) {
+                if (stringCompare(operator, (String) row.get(columnToFilterOn), valString)) {
                     putRowInTable(tableMatches, rowKey, row);
                 } else {
                     putRowInTable(tableNotMatches, rowKey, row);
@@ -126,12 +124,12 @@ public class FilterTableMFunc extends SFuncBase{
 
     @Override
     public int getMinArgs() {
-        return 3;
+        return 4;
     }
 
     @Override
     public int getMaxArgs() {
-        return 3;
+        return 4;
     }
 
     @Override
@@ -150,7 +148,7 @@ public class FilterTableMFunc extends SFuncBase{
             Double valueToCompareWith) {
         switch (operator) {
         case "==":
-            return valueToCompare == valueToCompareWith;
+            return Objects.equals(valueToCompare, valueToCompareWith);
         case ">":
             return valueToCompare > valueToCompareWith;
         case "<":

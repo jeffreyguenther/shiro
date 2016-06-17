@@ -1,0 +1,7 @@
+node TableView begin
+	input table Table
+	input tableName String
+	input originX Double(0.0)
+	input originY Double(0.0)
+	update STableView(table, tableName, originX, originY)
+end

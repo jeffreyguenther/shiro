@@ -53,12 +53,12 @@ public class ColumnAverageMFunc extends SFuncBase {
 
     @Override
     public int getMaxArgs() {
-        return 1;
+        return 2;
     }
 
     @Override
     public int getMinArgs() {
-        return 1;
+        return 2;
     }
 
     @Override

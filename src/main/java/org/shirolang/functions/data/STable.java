@@ -11,7 +11,7 @@ public class STable extends SValue<Table<Integer, String, Comparable>> {
     private static final String NAME = "Table";
 
     public STable(){
-        this(HashBasedTable.<Integer, String, Comparable> create());
+        this(HashBasedTable.create());
     }
 
     public STable(Table<Integer, String, Comparable> table){

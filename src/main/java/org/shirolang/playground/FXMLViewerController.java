@@ -32,6 +32,7 @@ import org.fxmisc.wellbehaved.event.Nodes;
 import org.reactfx.EventStream;
 import org.reactfx.util.Try;
 import org.shirolang.functions.geometry.*;
+import org.shirolang.functions.ui.STableView;
 import org.shirolang.interpreter.ShiroLexer;
 import org.shirolang.interpreter.ShiroRuntime;
 import org.shirolang.playground.editors.*;
@@ -139,6 +140,8 @@ public class FXMLViewerController {
         model.mapCallBack("SLine", l -> new LineViz((SLine) l));
         model.mapCallBack("SGroup", g -> new GroupViz((SGroup) g));
         model.mapCallBack("Image", i -> new ImageViz((SImage) i));
+        model.mapCallBack("STableView", t -> new TableViewViz((STableView) t));
+
 
         errorLabel.visibleProperty().bind(model.hasErrorProperty());
         model.hasErrorProperty().addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {

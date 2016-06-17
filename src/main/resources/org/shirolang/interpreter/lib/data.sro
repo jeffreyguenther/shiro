@@ -1,13 +1,29 @@
-node Data begin
-    // read CSV
-    // table view
-    // list view
+node ReadCSV begin
+	input path String
+	update CSV2Table(path)
+	output table Table(update)
+end
 
-    // Filter table
-    // Select column
+node FilterTable begin
+	input table Table
+	input column String
+	input operator String
+	input toMatch String
+	update SFilterTable(table, column, operator, toMatch)
+	output matches Table(update.outputs[0])
+	output didNotMatch Table(update.outputs[1])
+end
 
-    // average list
+node SelectColumn begin
+	input table Table
+	input column String
+	update SSelectColumn(table, column)
+	output table Table(update)
+end
 
-    // set union
-    // set intersect
+node Average begin
+	input table Table
+	input column String
+	update ColumnAverage(table, column)
+	output average Double(update)
 end

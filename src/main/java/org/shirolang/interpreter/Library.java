@@ -23,6 +23,7 @@
 
 package org.shirolang.interpreter;
 
+import com.sun.org.apache.regexp.internal.RE;
 import org.antlr.v4.runtime.ANTLRFileStream;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CharStream;
@@ -37,9 +38,11 @@ import org.shirolang.functions.color.ColorToGrayscale;
 import org.shirolang.functions.color.SColor;
 import org.shirolang.functions.conditionals.SConditionalReturn;
 import org.shirolang.functions.conditionals.SConditionalReturnNode;
+import org.shirolang.functions.data.*;
 import org.shirolang.functions.geometry.*;
 import org.shirolang.functions.lists.SMap;
 import org.shirolang.functions.math.*;
+import org.shirolang.functions.ui.STableView;
 import org.shirolang.values.*;
 
 import java.io.IOException;
@@ -368,6 +371,15 @@ public class Library {
             registerFunction(SType.POWER, SPower::new);
             registerFunction(SType.SUBTRACT, SSubtract::new);
             registerFunction(SType.SUM, SSum::new);
+
+            registerFunction("Double2String", SDouble2String::new);
+
+            registerFunction("Table", STable::new);
+            registerFunction("ColumnAverage", ColumnAverageMFunc::new);
+            registerFunction("CSV2Table", CSV2TableMFunc::new);
+            registerFunction("SFilterTable", FilterTableMFunc::new);
+            registerFunction("SSelectColumn", SelectColumnMFunc::new);
+            registerFunction("STableView", STableView::new);
 
             registerFunction(SType.MAP, SMap::new);
             registerFunction(SType.CONDITIONAL_RETURN, SConditionalReturn::new);
