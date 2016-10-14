@@ -24,4 +24,3 @@ node CompoundInterest begin
    output interest Double(principal - (principal * iFactor))
    output accrued Double(principal * iFactor)
 end
-

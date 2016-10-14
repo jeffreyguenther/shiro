@@ -494,7 +494,7 @@ public class SNode extends SFuncBase implements Scope{
 
     @Override
     public int getMaxArgs() {
-        return 0;
+        return inputs.size();
     }
 
     @Override
@@ -519,7 +519,7 @@ public class SNode extends SFuncBase implements Scope{
         }
 
         // match active
-        if(portReferenced == null && head.isActiveKeyword()) {
+        if (portReferenced == null && head.isActiveKeyword()) {
             portReferenced = activeOption;
             if (portReferenced.getSymbolType().isPort()) {
                 if (path.atSecondLast()) {
@@ -534,16 +534,16 @@ public class SNode extends SFuncBase implements Scope{
             }
         }
 
-        if(portReferenced == null && head.isSimple()){
+        if (portReferenced == null && head.isSimple()) {
             String portName = head.getKey().get();
 
             portReferenced = getInput(portName);
 
-            if(portReferenced == null){
+            if (portReferenced == null) {
                 portReferenced = getOutput(portName);
             }
 
-            if(portReferenced == null){
+            if (portReferenced == null) {
                 portReferenced = ports.get(portName);
             }
 
@@ -557,17 +557,17 @@ public class SNode extends SFuncBase implements Scope{
             }
         }
 
-        if(portReferenced == null && head.isInput()){
+        if (portReferenced == null && head.isInput()) {
             // look in the inputs list of ports
             // look for a named port if there is a key
-            if(head.getKey().isPresent()){
+            if (head.getKey().isPresent()) {
                 String portName = head.getKey().get();
                 // get the input port with the name
                 portReferenced = getInput(portName);
             }
 
             // look for the port if there is an index
-            if(head.getIndex().isPresent()){
+            if (head.getIndex().isPresent()) {
                 int portIndex = head.getIndex().get();
                 // get the input port with the index
                 portReferenced = getInput(portIndex);
@@ -583,17 +583,17 @@ public class SNode extends SFuncBase implements Scope{
             }
         }
 
-        if(portReferenced == null && head.isOutput()){
+        if (portReferenced == null && head.isOutput()) {
             // look in the results list of ports
             // look for a named port if there is a key
-            if(head.getKey().isPresent()){
+            if (head.getKey().isPresent()) {
                 String portName = head.getKey().get();
                 // get the input port with the name
                 portReferenced = getOutput(portName);
             }
 
             // look for the port if there is an index
-            if(head.getIndex().isPresent()){
+            if (head.getIndex().isPresent()) {
                 int portIndex = head.getIndex().get();
 
                 // get the input port with the index
@@ -610,7 +610,7 @@ public class SNode extends SFuncBase implements Scope{
             }
         }
 
-        if(portReferenced == null && hasNestedNodes()){
+        if (portReferenced == null && hasNestedNodes()) {
             // check the nested nodes
             Scope nestedNodeMatch = nestedNodes.get(head.getKey().get());
             if (nestedNodeMatch != null) {
@@ -623,12 +623,12 @@ public class SNode extends SFuncBase implements Scope{
         }
 
         // since we didn't find anything, pop up one level in the scope tree.
-        if(!path.isAtEnd() && portReferenced == null && parentScope != null) {
+        if (!path.isAtEnd() && portReferenced == null && parentScope != null) {
             path.resetHead();
             portReferenced = parentScope.resolvePath(path);
         }
 
-        if(portReferenced == null){
+        if (portReferenced == null) {
             throw new PathNotFoundException(path + " was not found.");
         }
 

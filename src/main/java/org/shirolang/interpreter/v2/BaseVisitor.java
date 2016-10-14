@@ -1,7 +1,6 @@
 package org.shirolang.interpreter.v2;
 
 import org.shirolang.base.SFunc;
-import org.shirolang.base.SNode;
 import org.shirolang.base.Scope;
 import org.shirolang.functions.math.*;
 import org.shirolang.interpreter.ast.*;
@@ -153,8 +152,8 @@ public abstract class BaseVisitor {
             return new SBoolean((Boolean) l.getValue());
         }else if (l.getValue() instanceof String){
             return new SString((String) l.getValue());
-        }else if(l.getValue() instanceof Path){
-            return new SIdent(scope.peek(), (Path) l.getValue());
+        }else if(l.getValue() instanceof org.shirolang.interpreter.ast.Path){
+            return new SIdent(scope.peek(), (org.shirolang.interpreter.ast.Path) l.getValue());
         }
 
         return null;
